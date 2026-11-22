@@ -1,0 +1,4957 @@
+{
+  "description": "row = [question set, invariant, endpoints]; endpoint = [source path, kind, name, body]",
+  "gained": [
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/2f93c9YJTSSaH5dGf_inv11.als",
+          "correct-student",
+          "inv11_correct_0",
+          "all c : Class | (some c.Groups implies some (Teaches.c & Teacher))"
+        ],
+        [
+          "classroom_rl/correct/4jiGAkKtizYKSyjgY_inv11.als",
+          "correct-student",
+          "inv11_correct_2",
+          "all c: Class | some c.Groups => some Teacher <: Teaches.c"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/2f93c9YJTSSaH5dGf_inv11.als",
+          "correct-student",
+          "inv11_correct_0",
+          "all c : Class | (some c.Groups implies some (Teaches.c & Teacher))"
+        ],
+        [
+          "classroom_rl/correct/6doccqJJNtJdRojxC_inv11.als",
+          "correct-student",
+          "inv11_correct_4",
+          "all c : Class | no (Teacher <: Teaches).c => no c.Groups"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/2f93c9YJTSSaH5dGf_inv11.als",
+          "correct-student",
+          "inv11_correct_0",
+          "all c : Class | (some c.Groups implies some (Teaches.c & Teacher))"
+        ],
+        [
+          "classroom_rl/correct/C2pzim5KD9kh7cBjL_inv11.als",
+          "correct-student",
+          "inv11_correct_7",
+          "all c : Class | (some c.Groups) implies some (Teacher<:Teaches).c"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/2f93c9YJTSSaH5dGf_inv11.als",
+          "correct-student",
+          "inv11_correct_0",
+          "all c : Class | (some c.Groups implies some (Teaches.c & Teacher))"
+        ],
+        [
+          "classroom_rl/correct/hq8ZpBHS227Bdp4XH_inv11.als",
+          "correct-student",
+          "inv11_correct_18",
+          "all c: Class | some c.Groups implies some Teaches.c :> Teacher"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/2f93c9YJTSSaH5dGf_inv11.als",
+          "oracle",
+          "inv11_oracle",
+          "all c:Class | some c.Groups implies some Teacher&Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/4jiGAkKtizYKSyjgY_inv11.als",
+          "correct-student",
+          "inv11_correct_2",
+          "all c: Class | some c.Groups => some Teacher <: Teaches.c"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/2f93c9YJTSSaH5dGf_inv11.als",
+          "oracle",
+          "inv11_oracle",
+          "all c:Class | some c.Groups implies some Teacher&Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/6doccqJJNtJdRojxC_inv11.als",
+          "correct-student",
+          "inv11_correct_4",
+          "all c : Class | no (Teacher <: Teaches).c => no c.Groups"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/2f93c9YJTSSaH5dGf_inv11.als",
+          "oracle",
+          "inv11_oracle",
+          "all c:Class | some c.Groups implies some Teacher&Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/C2pzim5KD9kh7cBjL_inv11.als",
+          "correct-student",
+          "inv11_correct_7",
+          "all c : Class | (some c.Groups) implies some (Teacher<:Teaches).c"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/2f93c9YJTSSaH5dGf_inv11.als",
+          "oracle",
+          "inv11_oracle",
+          "all c:Class | some c.Groups implies some Teacher&Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/hq8ZpBHS227Bdp4XH_inv11.als",
+          "correct-student",
+          "inv11_correct_18",
+          "all c: Class | some c.Groups implies some Teaches.c :> Teacher"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/2qnMwcWp7Sz83x8hT_inv11.als",
+          "correct-student",
+          "inv11_correct_1",
+          "all c: Class | some c.Groups implies some c.~Teaches & Teacher"
+        ],
+        [
+          "classroom_rl/correct/qmgEFH8smqgS5G6S6_inv11.als",
+          "correct-student",
+          "inv11_correct_21",
+          "all c : Class | no (c.~Teaches :> Teacher) implies no c.Groups"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/4jiGAkKtizYKSyjgY_inv11.als",
+          "correct-student",
+          "inv11_correct_2",
+          "all c: Class | some c.Groups => some Teacher <: Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/GRP85rwsHuKm8zhkx_inv11.als",
+          "correct-student",
+          "inv11_correct_9",
+          "all c: Class | no (c.Groups) or some Teacher & Teaches.c"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/4jiGAkKtizYKSyjgY_inv11.als",
+          "correct-student",
+          "inv11_correct_2",
+          "all c: Class | some c.Groups => some Teacher <: Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/yWLwhhi4KwZdsAnXQ_inv11.als",
+          "correct-student",
+          "inv11_correct_23",
+          "all c: Class | some c.Groups implies (some t: Teacher | t in Teaches.c)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/6doccqJJNtJdRojxC_inv11.als",
+          "correct-student",
+          "inv11_correct_4",
+          "all c : Class | no (Teacher <: Teaches).c => no c.Groups"
+        ],
+        [
+          "classroom_rl/correct/GRP85rwsHuKm8zhkx_inv11.als",
+          "correct-student",
+          "inv11_correct_9",
+          "all c: Class | no (c.Groups) or some Teacher & Teaches.c"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/6doccqJJNtJdRojxC_inv11.als",
+          "correct-student",
+          "inv11_correct_4",
+          "all c : Class | no (Teacher <: Teaches).c => no c.Groups"
+        ],
+        [
+          "classroom_rl/correct/yWLwhhi4KwZdsAnXQ_inv11.als",
+          "correct-student",
+          "inv11_correct_23",
+          "all c: Class | some c.Groups implies (some t: Teacher | t in Teaches.c)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/C2pzim5KD9kh7cBjL_inv11.als",
+          "correct-student",
+          "inv11_correct_7",
+          "all c : Class | (some c.Groups) implies some (Teacher<:Teaches).c"
+        ],
+        [
+          "classroom_rl/correct/GRP85rwsHuKm8zhkx_inv11.als",
+          "correct-student",
+          "inv11_correct_9",
+          "all c: Class | no (c.Groups) or some Teacher & Teaches.c"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/C2pzim5KD9kh7cBjL_inv11.als",
+          "correct-student",
+          "inv11_correct_7",
+          "all c : Class | (some c.Groups) implies some (Teacher<:Teaches).c"
+        ],
+        [
+          "classroom_rl/correct/yWLwhhi4KwZdsAnXQ_inv11.als",
+          "correct-student",
+          "inv11_correct_23",
+          "all c: Class | some c.Groups implies (some t: Teacher | t in Teaches.c)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/GRP85rwsHuKm8zhkx_inv11.als",
+          "correct-student",
+          "inv11_correct_9",
+          "all c: Class | no (c.Groups) or some Teacher & Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/hq8ZpBHS227Bdp4XH_inv11.als",
+          "correct-student",
+          "inv11_correct_18",
+          "all c: Class | some c.Groups implies some Teaches.c :> Teacher"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv11",
+      [
+        [
+          "classroom_rl/correct/hq8ZpBHS227Bdp4XH_inv11.als",
+          "correct-student",
+          "inv11_correct_18",
+          "all c: Class | some c.Groups implies some Teaches.c :> Teacher"
+        ],
+        [
+          "classroom_rl/correct/yWLwhhi4KwZdsAnXQ_inv11.als",
+          "correct-student",
+          "inv11_correct_23",
+          "all c: Class | some c.Groups implies (some t: Teacher | t in Teaches.c)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv13",
+      [
+        [
+          "classroom_rl/correct/CpNETGjDGBh9LQLRH_inv13.als",
+          "correct-student",
+          "inv13_correct_11",
+          "all t,s:Person | some Tutors.s:>t implies t in Teacher and s in Student"
+        ],
+        [
+          "classroom_rl/correct/ph4nrhQLsyeJjR8dD_inv13.als",
+          "correct-student",
+          "inv13_correct_20",
+          "all t,s:Person | some  Tutors.s <:t implies s in Student and t in Teacher"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv15",
+      [
+        [
+          "classroom_rl/correct/2i6dWF5h8NXKNe3eF_inv15.als",
+          "correct-student",
+          "inv15_correct_0",
+          "all p:Person | some ^Tutors.p & Teacher"
+        ],
+        [
+          "classroom_rl/correct/mcgrrTdoXw4qSkx6Q_inv15.als",
+          "correct-student",
+          "inv15_correct_7",
+          "all p : Person | some Teacher <: (^ Tutors) . p"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv15",
+      [
+        [
+          "classroom_rl/correct/2i6dWF5h8NXKNe3eF_inv15.als",
+          "oracle",
+          "inv15_oracle",
+          "all p:Person | some Teacher&(^Tutors).p"
+        ],
+        [
+          "classroom_rl/correct/mcgrrTdoXw4qSkx6Q_inv15.als",
+          "correct-student",
+          "inv15_correct_7",
+          "all p : Person | some Teacher <: (^ Tutors) . p"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv15",
+      [
+        [
+          "classroom_rl/correct/6B3Wvgj4DyxCFNMru_inv15.als",
+          "correct-student",
+          "inv15_correct_1",
+          "all p : Person | some (p.^(~Tutors) & Teacher)"
+        ],
+        [
+          "classroom_rl/correct/omBz6uZc658QfXHaW_inv15.als",
+          "correct-student",
+          "inv15_correct_8",
+          "all p:Person | some Teacher <: (p.^~Tutors)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv15",
+      [
+        [
+          "classroom_rl/correct/9HgYvadiPc3LRLsNW_inv15.als",
+          "correct-student",
+          "inv15_correct_3",
+          "all s:Person |some  (^Tutors.s & Teacher)"
+        ],
+        [
+          "classroom_rl/correct/mcgrrTdoXw4qSkx6Q_inv15.als",
+          "correct-student",
+          "inv15_correct_7",
+          "all p : Person | some Teacher <: (^ Tutors) . p"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv15",
+      [
+        [
+          "classroom_rl/correct/CjmZFaAvq94MSB9jc_inv15.als",
+          "correct-student",
+          "inv15_correct_4",
+          "all s : Person | some Teacher & ^Tutors.s"
+        ],
+        [
+          "classroom_rl/correct/mcgrrTdoXw4qSkx6Q_inv15.als",
+          "correct-student",
+          "inv15_correct_7",
+          "all p : Person | some Teacher <: (^ Tutors) . p"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv15",
+      [
+        [
+          "classroom_rl/correct/NwTeA38iCySi9x9nm_inv15.als",
+          "correct-student",
+          "inv15_correct_5",
+          "all p:Person | some t:Teacher | t in p.^~Tutors"
+        ],
+        [
+          "classroom_rl/correct/omBz6uZc658QfXHaW_inv15.als",
+          "correct-student",
+          "inv15_correct_8",
+          "all p:Person | some Teacher <: (p.^~Tutors)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv7",
+      [
+        [
+          "classroom_rl/correct/2Zw8RG7xshjs6oxCz_inv7.als",
+          "oracle",
+          "inv7_oracle",
+          "all c:Class | some Teacher&Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/a5EjEoPWeeBxLfpgS_inv7.als",
+          "correct-student",
+          "inv7_correct_13",
+          "all c : Class | some ( Teacher <:Teaches.c)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv7",
+      [
+        [
+          "classroom_rl/correct/2Zw8RG7xshjs6oxCz_inv7.als",
+          "oracle",
+          "inv7_oracle",
+          "all c:Class | some Teacher&Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/zJX2dsAkMLSNdSWr4_inv7.als",
+          "correct-student",
+          "inv7_correct_19",
+          "all c : Class | some (Teaches.c :> Teacher)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv7",
+      [
+        [
+          "classroom_rl/correct/68GwCuhYd7qsnAutD_inv7.als",
+          "correct-student",
+          "inv7_correct_5",
+          "all c : Class | some Teaches.c & Teacher"
+        ],
+        [
+          "classroom_rl/correct/a5EjEoPWeeBxLfpgS_inv7.als",
+          "correct-student",
+          "inv7_correct_13",
+          "all c : Class | some ( Teacher <:Teaches.c)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv7",
+      [
+        [
+          "classroom_rl/correct/68GwCuhYd7qsnAutD_inv7.als",
+          "correct-student",
+          "inv7_correct_5",
+          "all c : Class | some Teaches.c & Teacher"
+        ],
+        [
+          "classroom_rl/correct/zJX2dsAkMLSNdSWr4_inv7.als",
+          "correct-student",
+          "inv7_correct_19",
+          "all c : Class | some (Teaches.c :> Teacher)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv7",
+      [
+        [
+          "classroom_rl/correct/QekTa5B2J9eNj3Kry_inv7.als",
+          "correct-student",
+          "inv7_correct_10",
+          "all c:Class | some t:Teacher | t in Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/a5EjEoPWeeBxLfpgS_inv7.als",
+          "correct-student",
+          "inv7_correct_13",
+          "all c : Class | some ( Teacher <:Teaches.c)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv7",
+      [
+        [
+          "classroom_rl/correct/QekTa5B2J9eNj3Kry_inv7.als",
+          "correct-student",
+          "inv7_correct_10",
+          "all c:Class | some t:Teacher | t in Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/zJX2dsAkMLSNdSWr4_inv7.als",
+          "correct-student",
+          "inv7_correct_19",
+          "all c : Class | some (Teaches.c :> Teacher)"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv9",
+      [
+        [
+          "classroom_rl/correct/2mz5E9FvbtyP3fxsb_inv9.als",
+          "correct-student",
+          "inv9_correct_0",
+          "all c:Class | lone Teaches.c & Teacher"
+        ],
+        [
+          "classroom_rl/correct/5d7Q26GX2EyxP6iMy_inv9.als",
+          "correct-student",
+          "inv9_correct_6",
+          "all c:Class | lone Teaches.c:>Teacher"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv9",
+      [
+        [
+          "classroom_rl/correct/2mz5E9FvbtyP3fxsb_inv9.als",
+          "correct-student",
+          "inv9_correct_0",
+          "all c:Class | lone Teaches.c & Teacher"
+        ],
+        [
+          "classroom_rl/correct/79chGR8kP5prxuBNt_inv9.als",
+          "correct-student",
+          "inv9_correct_9",
+          "all c: Class | lone Teacher :> Teaches.c"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv9",
+      [
+        [
+          "classroom_rl/correct/2mz5E9FvbtyP3fxsb_inv9.als",
+          "oracle",
+          "inv9_oracle",
+          "all c:Class | lone Teacher&Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/5d7Q26GX2EyxP6iMy_inv9.als",
+          "correct-student",
+          "inv9_correct_6",
+          "all c:Class | lone Teaches.c:>Teacher"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv9",
+      [
+        [
+          "classroom_rl/correct/2mz5E9FvbtyP3fxsb_inv9.als",
+          "oracle",
+          "inv9_oracle",
+          "all c:Class | lone Teacher&Teaches.c"
+        ],
+        [
+          "classroom_rl/correct/79chGR8kP5prxuBNt_inv9.als",
+          "correct-student",
+          "inv9_correct_9",
+          "all c: Class | lone Teacher :> Teaches.c"
+        ]
+      ]
+    ],
+    [
+      "classroom_rl",
+      "inv9",
+      [
+        [
+          "classroom_rl/correct/5d7Q26GX2EyxP6iMy_inv9.als",
+          "correct-student",
+          "inv9_correct_6",
+          "all c:Class | lone Teaches.c:>Teacher"
+        ],
+        [
+          "classroom_rl/correct/79chGR8kP5prxuBNt_inv9.als",
+          "correct-student",
+          "inv9_correct_9",
+          "all c: Class | lone Teacher :> Teaches.c"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/2EMfp6wr8ojAPcepi_inv4.als",
+          "oracle",
+          "inv4_oracle",
+          "all p : Project | one (Course <: projects).p"
+        ],
+        [
+          "coursesNew/correct/57vscjBYazrE67Wiy_inv4.als",
+          "correct-student",
+          "inv4_correct_9",
+          "all p: Project | one Course :> projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/2EMfp6wr8ojAPcepi_inv4.als",
+          "oracle",
+          "inv4_oracle",
+          "all p : Project | one (Course <: projects).p"
+        ],
+        [
+          "coursesNew/correct/ipEScbQAtT6PRLJtr_inv4.als",
+          "correct-student",
+          "inv4_correct_27",
+          "all p:Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/2LDWFqapxQEYaKWpf_inv4.als",
+          "correct-student",
+          "inv4_correct_1",
+          "all p : Project | one Course <: (projects.p)"
+        ],
+        [
+          "coursesNew/correct/57vscjBYazrE67Wiy_inv4.als",
+          "correct-student",
+          "inv4_correct_9",
+          "all p: Project | one Course :> projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/2LDWFqapxQEYaKWpf_inv4.als",
+          "correct-student",
+          "inv4_correct_1",
+          "all p : Project | one Course <: (projects.p)"
+        ],
+        [
+          "coursesNew/correct/ipEScbQAtT6PRLJtr_inv4.als",
+          "correct-student",
+          "inv4_correct_27",
+          "all p:Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/2ahzaJ9AgN9ukD4kt_inv4.als",
+          "correct-student",
+          "inv4_correct_2",
+          "all p : Project | #((Course <: projects).p) = 1"
+        ],
+        [
+          "coursesNew/correct/JPH8Sx793i4cG4BmZ_inv4.als",
+          "correct-student",
+          "inv4_correct_19",
+          "all p:Project| #Course:>projects.p=1"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/3GLu4XtdRL39mXA8X_inv4.als",
+          "correct-student",
+          "inv4_correct_3",
+          "all g:Project | one ( (Course <: projects).g)"
+        ],
+        [
+          "coursesNew/correct/57vscjBYazrE67Wiy_inv4.als",
+          "correct-student",
+          "inv4_correct_9",
+          "all p: Project | one Course :> projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/3GLu4XtdRL39mXA8X_inv4.als",
+          "correct-student",
+          "inv4_correct_3",
+          "all g:Project | one ( (Course <: projects).g)"
+        ],
+        [
+          "coursesNew/correct/ipEScbQAtT6PRLJtr_inv4.als",
+          "correct-student",
+          "inv4_correct_27",
+          "all p:Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/3ywuzmFAx3RCecMpc_inv4.als",
+          "correct-student",
+          "inv4_correct_5",
+          "all x : Project | one Course <: projects.x"
+        ],
+        [
+          "coursesNew/correct/57vscjBYazrE67Wiy_inv4.als",
+          "correct-student",
+          "inv4_correct_9",
+          "all p: Project | one Course :> projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/3ywuzmFAx3RCecMpc_inv4.als",
+          "correct-student",
+          "inv4_correct_5",
+          "all x : Project | one Course <: projects.x"
+        ],
+        [
+          "coursesNew/correct/ipEScbQAtT6PRLJtr_inv4.als",
+          "correct-student",
+          "inv4_correct_27",
+          "all p:Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/57vscjBYazrE67Wiy_inv4.als",
+          "correct-student",
+          "inv4_correct_9",
+          "all p: Project | one Course :> projects.p"
+        ],
+        [
+          "coursesNew/correct/5u7szkL5PhbpfGyoo_inv4.als",
+          "correct-student",
+          "inv4_correct_11",
+          "all p:Project| one projects.p & Course"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/57vscjBYazrE67Wiy_inv4.als",
+          "correct-student",
+          "inv4_correct_9",
+          "all p: Project | one Course :> projects.p"
+        ],
+        [
+          "coursesNew/correct/Eqot8SgRNEdXcirLv_inv4.als",
+          "correct-student",
+          "inv4_correct_18",
+          "all x:Project |  one (Course <: projects).x"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/5u7szkL5PhbpfGyoo_inv4.als",
+          "correct-student",
+          "inv4_correct_11",
+          "all p:Project| one projects.p & Course"
+        ],
+        [
+          "coursesNew/correct/ipEScbQAtT6PRLJtr_inv4.als",
+          "correct-student",
+          "inv4_correct_27",
+          "all p:Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/Eqot8SgRNEdXcirLv_inv4.als",
+          "correct-student",
+          "inv4_correct_18",
+          "all x:Project |  one (Course <: projects).x"
+        ],
+        [
+          "coursesNew/correct/ipEScbQAtT6PRLJtr_inv4.als",
+          "correct-student",
+          "inv4_correct_27",
+          "all p:Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/JPH8Sx793i4cG4BmZ_inv4.als",
+          "correct-student",
+          "inv4_correct_19",
+          "all p:Project| #Course:>projects.p=1"
+        ],
+        [
+          "coursesNew/correct/RcLJDF6PXCW5bCo34_inv4.als",
+          "correct-student",
+          "inv4_correct_23",
+          "all p : Project | #projects.p:>Course = 1"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv4",
+      [
+        [
+          "coursesNew/correct/JPH8Sx793i4cG4BmZ_inv4.als",
+          "correct-student",
+          "inv4_correct_19",
+          "all p:Project| #Course:>projects.p=1"
+        ],
+        [
+          "coursesNew/correct/b95hnfYbB2q3tRB86_inv4.als",
+          "correct-student",
+          "inv4_correct_25",
+          "all p : Project | #Course<:projects.p = 1"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv5",
+      [
+        [
+          "coursesNew/correct/2MkcbBWxWsjpdqCjP_inv5.als",
+          "oracle",
+          "inv5_oracle",
+          "all p : Project | some (Person <: projects).p\n\tall p : Project | (Person <: projects).p in Student"
+        ],
+        [
+          "coursesNew/correct/LhvKGZ6tSGXjMj4Ay_inv5.als",
+          "correct-student",
+          "inv5_correct_44",
+          "all p:Project | projects.p <: Person in Student\n  all p:Project | some projects.p <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv5",
+      [
+        [
+          "coursesNew/correct/49J6ErcihLza9g8p3_inv5.als",
+          "correct-student",
+          "inv5_correct_9",
+          "all p:Project | projects.p & Person in Student\n  all p:Project | some projects.p & Person"
+        ],
+        [
+          "coursesNew/correct/LhvKGZ6tSGXjMj4Ay_inv5.als",
+          "correct-student",
+          "inv5_correct_44",
+          "all p:Project | projects.p <: Person in Student\n  all p:Project | some projects.p <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv5",
+      [
+        [
+          "coursesNew/correct/CGMxNskaYckdYtkLZ_inv5.als",
+          "correct-student",
+          "inv5_correct_27",
+          "Person :> projects.Project in Student\n  \tall p: Project | some Person :> projects.p"
+        ],
+        [
+          "coursesNew/correct/zRxm3kAX3N5CMZKzg_inv5.als",
+          "correct-student",
+          "inv5_correct_103",
+          "Person <: projects.Project in Student\n    all p : Project | some Person <: projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv5",
+      [
+        [
+          "coursesNew/correct/LhvKGZ6tSGXjMj4Ay_inv5.als",
+          "correct-student",
+          "inv5_correct_44",
+          "all p:Project | projects.p <: Person in Student\n  all p:Project | some projects.p <: Person"
+        ],
+        [
+          "coursesNew/correct/M9knuFsJJpGWF4r5Q_inv5.als",
+          "correct-student",
+          "inv5_correct_46",
+          "all p : Project | Person <: projects.p in Student\n\tall p : Project | some Person <: projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv5",
+      [
+        [
+          "coursesNew/correct/LhvKGZ6tSGXjMj4Ay_inv5.als",
+          "correct-student",
+          "inv5_correct_44",
+          "all p:Project | projects.p <: Person in Student\n  all p:Project | some projects.p <: Person"
+        ],
+        [
+          "coursesNew/correct/NKGs4ycsi4gR8mfZE_inv5.als",
+          "correct-student",
+          "inv5_correct_51",
+          "all p : Project | some Person <: projects.p and Person <: projects.p in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv5",
+      [
+        [
+          "coursesNew/correct/LhvKGZ6tSGXjMj4Ay_inv5.als",
+          "correct-student",
+          "inv5_correct_44",
+          "all p:Project | projects.p <: Person in Student\n  all p:Project | some projects.p <: Person"
+        ],
+        [
+          "coursesNew/correct/WMaZF8BzuZsAdHB85_inv5.als",
+          "correct-student",
+          "inv5_correct_63",
+          "all p : Project | all s : (Person<:projects).p | s in Student\n  \tall p : Project | some (Person<:projects).p"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv5",
+      [
+        [
+          "coursesNew/correct/LhvKGZ6tSGXjMj4Ay_inv5.als",
+          "correct-student",
+          "inv5_correct_44",
+          "all p:Project | projects.p <: Person in Student\n  all p:Project | some projects.p <: Person"
+        ],
+        [
+          "coursesNew/correct/aQb3Jjt9Wfm6BAvkE_inv5.als",
+          "correct-student",
+          "inv5_correct_69",
+          "all p : Project | Person <: projects.p in Student and some Person <: projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv5",
+      [
+        [
+          "coursesNew/correct/LhvKGZ6tSGXjMj4Ay_inv5.als",
+          "correct-student",
+          "inv5_correct_44",
+          "all p:Project | projects.p <: Person in Student\n  all p:Project | some projects.p <: Person"
+        ],
+        [
+          "coursesNew/correct/aqrEdEDkQDSCfzZxc_inv5.als",
+          "correct-student",
+          "inv5_correct_71",
+          "all x : Project | some Person <: projects.x && Person <: projects.x in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesNew",
+      "inv5",
+      [
+        [
+          "coursesNew/correct/fi4oLT9NQfL4ATW4k_inv5.als",
+          "correct-student",
+          "inv5_correct_78",
+          "(((Person :> ((Person <: projects) . Project)) in Student) && (all ref0:(one Project)|(some (Person :> ((Person <: projects) . ref0)))))"
+        ],
+        [
+          "coursesNew/correct/zRxm3kAX3N5CMZKzg_inv5.als",
+          "correct-student",
+          "inv5_correct_103",
+          "Person <: projects.Project in Student\n    all p : Project | some Person <: projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/29c9369cReYp9FEm6_inv4.als",
+          "oracle",
+          "inv4_oracle",
+          "all p : Project | one (Course <: projects).p"
+        ],
+        [
+          "coursesOld/correct/3KMmCEvvbaqAusXGu_inv4.als",
+          "correct-student",
+          "inv4_correct_5",
+          "all p : Project | one (Course:>projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/29c9369cReYp9FEm6_inv4.als",
+          "oracle",
+          "inv4_oracle",
+          "all p : Project | one (Course <: projects).p"
+        ],
+        [
+          "coursesOld/correct/4T92MDgavQmgb3Tat_inv4.als",
+          "correct-student",
+          "inv4_correct_8",
+          "all x : Project | one projects.x <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/29c9369cReYp9FEm6_inv4.als",
+          "oracle",
+          "inv4_oracle",
+          "all p : Project | one (Course <: projects).p"
+        ],
+        [
+          "coursesOld/correct/WJnPBJiBXtKZLGmeX_inv4.als",
+          "correct-student",
+          "inv4_correct_28",
+          "all p : Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/3AykaZDrPK7f7n7ms_inv4.als",
+          "correct-student",
+          "inv4_correct_4",
+          "all p:Project | one Course<:projects.p"
+        ],
+        [
+          "coursesOld/correct/3KMmCEvvbaqAusXGu_inv4.als",
+          "correct-student",
+          "inv4_correct_5",
+          "all p : Project | one (Course:>projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/3AykaZDrPK7f7n7ms_inv4.als",
+          "correct-student",
+          "inv4_correct_4",
+          "all p:Project | one Course<:projects.p"
+        ],
+        [
+          "coursesOld/correct/4T92MDgavQmgb3Tat_inv4.als",
+          "correct-student",
+          "inv4_correct_8",
+          "all x : Project | one projects.x <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/3AykaZDrPK7f7n7ms_inv4.als",
+          "correct-student",
+          "inv4_correct_4",
+          "all p:Project | one Course<:projects.p"
+        ],
+        [
+          "coursesOld/correct/WJnPBJiBXtKZLGmeX_inv4.als",
+          "correct-student",
+          "inv4_correct_28",
+          "all p : Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/3KMmCEvvbaqAusXGu_inv4.als",
+          "correct-student",
+          "inv4_correct_5",
+          "all p : Project | one (Course:>projects.p)"
+        ],
+        [
+          "coursesOld/correct/4vzTBnGPNtk9pzWTk_inv4.als",
+          "correct-student",
+          "inv4_correct_10",
+          "all proj:Project | one (Course<:projects).proj"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/3KMmCEvvbaqAusXGu_inv4.als",
+          "correct-student",
+          "inv4_correct_5",
+          "all p : Project | one (Course:>projects.p)"
+        ],
+        [
+          "coursesOld/correct/589TqCD57Yx8jk5cC_inv4.als",
+          "correct-student",
+          "inv4_correct_11",
+          "all p:Project | one (projects.p & Course)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/3KMmCEvvbaqAusXGu_inv4.als",
+          "correct-student",
+          "inv4_correct_5",
+          "all p : Project | one (Course:>projects.p)"
+        ],
+        [
+          "coursesOld/correct/MYpjer2FR6c5aQQzP_inv4.als",
+          "correct-student",
+          "inv4_correct_27",
+          "all p : Project | one projects.p :> Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/3KMmCEvvbaqAusXGu_inv4.als",
+          "correct-student",
+          "inv4_correct_5",
+          "all p : Project | one (Course:>projects.p)"
+        ],
+        [
+          "coursesOld/correct/Y5sAL2MakjZnoG9ME_inv4.als",
+          "correct-student",
+          "inv4_correct_29",
+          "all p : Project | one Course & (projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/3KMmCEvvbaqAusXGu_inv4.als",
+          "correct-student",
+          "inv4_correct_5",
+          "all p : Project | one (Course:>projects.p)"
+        ],
+        [
+          "coursesOld/correct/bF26kXMpR6fYBbBzt_inv4.als",
+          "correct-student",
+          "inv4_correct_31",
+          "all x : Project | one projects.x & Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/4T92MDgavQmgb3Tat_inv4.als",
+          "correct-student",
+          "inv4_correct_8",
+          "all x : Project | one projects.x <: Course"
+        ],
+        [
+          "coursesOld/correct/4vzTBnGPNtk9pzWTk_inv4.als",
+          "correct-student",
+          "inv4_correct_10",
+          "all proj:Project | one (Course<:projects).proj"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/4T92MDgavQmgb3Tat_inv4.als",
+          "correct-student",
+          "inv4_correct_8",
+          "all x : Project | one projects.x <: Course"
+        ],
+        [
+          "coursesOld/correct/589TqCD57Yx8jk5cC_inv4.als",
+          "correct-student",
+          "inv4_correct_11",
+          "all p:Project | one (projects.p & Course)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/4T92MDgavQmgb3Tat_inv4.als",
+          "correct-student",
+          "inv4_correct_8",
+          "all x : Project | one projects.x <: Course"
+        ],
+        [
+          "coursesOld/correct/MYpjer2FR6c5aQQzP_inv4.als",
+          "correct-student",
+          "inv4_correct_27",
+          "all p : Project | one projects.p :> Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/4T92MDgavQmgb3Tat_inv4.als",
+          "correct-student",
+          "inv4_correct_8",
+          "all x : Project | one projects.x <: Course"
+        ],
+        [
+          "coursesOld/correct/Y5sAL2MakjZnoG9ME_inv4.als",
+          "correct-student",
+          "inv4_correct_29",
+          "all p : Project | one Course & (projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/4T92MDgavQmgb3Tat_inv4.als",
+          "correct-student",
+          "inv4_correct_8",
+          "all x : Project | one projects.x <: Course"
+        ],
+        [
+          "coursesOld/correct/bF26kXMpR6fYBbBzt_inv4.als",
+          "correct-student",
+          "inv4_correct_31",
+          "all x : Project | one projects.x & Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/4vzTBnGPNtk9pzWTk_inv4.als",
+          "correct-student",
+          "inv4_correct_10",
+          "all proj:Project | one (Course<:projects).proj"
+        ],
+        [
+          "coursesOld/correct/WJnPBJiBXtKZLGmeX_inv4.als",
+          "correct-student",
+          "inv4_correct_28",
+          "all p : Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/589TqCD57Yx8jk5cC_inv4.als",
+          "correct-student",
+          "inv4_correct_11",
+          "all p:Project | one (projects.p & Course)"
+        ],
+        [
+          "coursesOld/correct/WJnPBJiBXtKZLGmeX_inv4.als",
+          "correct-student",
+          "inv4_correct_28",
+          "all p : Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/MYpjer2FR6c5aQQzP_inv4.als",
+          "correct-student",
+          "inv4_correct_27",
+          "all p : Project | one projects.p :> Course"
+        ],
+        [
+          "coursesOld/correct/WJnPBJiBXtKZLGmeX_inv4.als",
+          "correct-student",
+          "inv4_correct_28",
+          "all p : Project | one projects.p <: Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/WJnPBJiBXtKZLGmeX_inv4.als",
+          "correct-student",
+          "inv4_correct_28",
+          "all p : Project | one projects.p <: Course"
+        ],
+        [
+          "coursesOld/correct/Y5sAL2MakjZnoG9ME_inv4.als",
+          "correct-student",
+          "inv4_correct_29",
+          "all p : Project | one Course & (projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv4",
+      [
+        [
+          "coursesOld/correct/WJnPBJiBXtKZLGmeX_inv4.als",
+          "correct-student",
+          "inv4_correct_28",
+          "all p : Project | one projects.p <: Course"
+        ],
+        [
+          "coursesOld/correct/bF26kXMpR6fYBbBzt_inv4.als",
+          "correct-student",
+          "inv4_correct_31",
+          "all x : Project | one projects.x & Course"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/26DpyvP64fTz8SYwK_inv5.als",
+          "oracle",
+          "inv5_oracle",
+          "all p : Project | some (Person <: projects).p\n\tall p : Project | (Person <: projects).p in Student"
+        ],
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/26DpyvP64fTz8SYwK_inv5.als",
+          "oracle",
+          "inv5_oracle",
+          "all p : Project | some (Person <: projects).p\n\tall p : Project | (Person <: projects).p in Student"
+        ],
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/26DpyvP64fTz8SYwK_inv5.als",
+          "oracle",
+          "inv5_oracle",
+          "all p : Project | some (Person <: projects).p\n\tall p : Project | (Person <: projects).p in Student"
+        ],
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/5Sd4HxvNZrYHN2B3u_inv5.als",
+          "correct-student",
+          "inv5_correct_21",
+          "all pr : Project | Person <:projects.pr in Student\n  \tall pr: Project | some Person <:projects.pr"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/6ALyX9cDiLvi4XqH5_inv5.als",
+          "correct-student",
+          "inv5_correct_25",
+          "all p: Project | some (Person<:projects).p and (Person<:projects).p in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/6JjWA4ojR8XeSfAp4_inv5.als",
+          "correct-student",
+          "inv5_correct_28",
+          "all p:Project | Person<:projects.p in Student\n  all p:Project | some Person<:projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/8Y9L5XDTTqJKhRN6i_inv5.als",
+          "correct-student",
+          "inv5_correct_36",
+          "all p : Project | no ((Person<:projects).p & (Person - Student)) and some (Person<:projects).p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/9R4QzLgJcPNB4Tpcn_inv5.als",
+          "correct-student",
+          "inv5_correct_37",
+          "all p : Project | (Person<:projects.p) in Student and some (Person<:projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/BDJCcj9pCs3DKxxgd_inv5.als",
+          "correct-student",
+          "inv5_correct_45",
+          "all p: Project | (Person<:projects).p in Student and some (Person<:projects).p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/GJXHx4qbrSomnosg6_inv5.als",
+          "correct-student",
+          "inv5_correct_67",
+          "all p : Project | some Person<:projects.p and Person<:projects.p in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/JDbfpBrJtsWbtviHg_inv5.als",
+          "correct-student",
+          "inv5_correct_78",
+          "all p : Project | some Person<:projects.p\n  \tall p : Project | Person<:projects.p in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/ci3DH7zdupxpDK8PL_inv5.als",
+          "correct-student",
+          "inv5_correct_123",
+          "all p:Project | some projects.p & Person\n  \t\n  \n  \tall p:Project | projects.p & Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/s9FTGDsAvsrd9sTGk_inv5.als",
+          "correct-student",
+          "inv5_correct_147",
+          "all p : Project | no (Person-Student)  & (Person<:projects.p) and some (Person<:projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2KAuKnFcS662Esd9s_inv5.als",
+          "correct-student",
+          "inv5_correct_3",
+          "all p : Project | some (Person :> projects.p)\n\tall p: Project | (Person :> projects.p) in Student"
+        ],
+        [
+          "coursesOld/correct/sKPyjkdFkskppjEuu_inv5.als",
+          "correct-student",
+          "inv5_correct_148",
+          "all p:Project | (Person <: projects).p in Student\n  \tall p:Project |\tsome (Person <: projects).p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2MZTbEri827n8HLoe_inv5.als",
+          "correct-student",
+          "inv5_correct_5",
+          "all p : Project | some (Person :> projects.p)\n  \n    \n     (Person :> projects.Project) in Student"
+        ],
+        [
+          "coursesOld/correct/3ACGFToBT7eHg9FAt_inv5.als",
+          "correct-student",
+          "inv5_correct_10",
+          "no (Person-Student) & projects.Project\n\t\n  \t\n  \tall p:Project | some pe:Person | pe in projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2MZTbEri827n8HLoe_inv5.als",
+          "correct-student",
+          "inv5_correct_5",
+          "all p : Project | some (Person :> projects.p)\n  \n    \n     (Person :> projects.Project) in Student"
+        ],
+        [
+          "coursesOld/correct/5mEjMoMBs48QSdWH4_inv5.als",
+          "correct-student",
+          "inv5_correct_22",
+          "no (Person-Student) & projects.Project\n\t\n  \tall p:Project | some (Person <: projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2MZTbEri827n8HLoe_inv5.als",
+          "correct-student",
+          "inv5_correct_5",
+          "all p : Project | some (Person :> projects.p)\n  \n    \n     (Person :> projects.Project) in Student"
+        ],
+        [
+          "coursesOld/correct/6cvfaaWsBmRRaRuZP_inv5.als",
+          "correct-student",
+          "inv5_correct_30",
+          "Person<:projects.Project in Student\n  \tall p : Project | some Person<:projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2MZTbEri827n8HLoe_inv5.als",
+          "correct-student",
+          "inv5_correct_5",
+          "all p : Project | some (Person :> projects.p)\n  \n    \n     (Person :> projects.Project) in Student"
+        ],
+        [
+          "coursesOld/correct/PPX7X4dW4Z84xLt8j_inv5.als",
+          "correct-student",
+          "inv5_correct_95",
+          "no (Person <: projects).Project - Student\n  \tall p : Project | some (Person <: projects).p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2MZTbEri827n8HLoe_inv5.als",
+          "correct-student",
+          "inv5_correct_5",
+          "all p : Project | some (Person :> projects.p)\n  \n    \n     (Person :> projects.Project) in Student"
+        ],
+        [
+          "coursesOld/correct/ScCWroWoHPj9jty33_inv5.als",
+          "correct-student",
+          "inv5_correct_104",
+          "(Person<:projects).Project in Student\n    \n    all y:Project| some (Person<:projects).y"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/2MZTbEri827n8HLoe_inv5.als",
+          "correct-student",
+          "inv5_correct_5",
+          "all p : Project | some (Person :> projects.p)\n  \n    \n     (Person :> projects.Project) in Student"
+        ],
+        [
+          "coursesOld/correct/w2ESgFuSbtC4qc5P4_inv5.als",
+          "correct-student",
+          "inv5_correct_151",
+          "no (Person-Student) & (Person<:projects).Project\n  \n  \n\t\n  \tall proj:Project | some (Person<:projects).proj"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/3ACGFToBT7eHg9FAt_inv5.als",
+          "correct-student",
+          "inv5_correct_10",
+          "no (Person-Student) & projects.Project\n\t\n  \t\n  \tall p:Project | some pe:Person | pe in projects.p"
+        ],
+        [
+          "coursesOld/correct/M322rRd4M5QTK3HNN_inv5.als",
+          "correct-student",
+          "inv5_correct_86",
+          "Person :> projects.Project in Student\n  \tall p: Project | some Person :> projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/3ACGFToBT7eHg9FAt_inv5.als",
+          "correct-student",
+          "inv5_correct_10",
+          "no (Person-Student) & projects.Project\n\t\n  \t\n  \tall p:Project | some pe:Person | pe in projects.p"
+        ],
+        [
+          "coursesOld/correct/ayQxT4RsN7g2HSWkW_inv5.als",
+          "correct-student",
+          "inv5_correct_118",
+          "no (Person-Student) & (Person :> projects.Project)\n  \tall p : Project | some (Person :> projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/3ACGFToBT7eHg9FAt_inv5.als",
+          "correct-student",
+          "inv5_correct_10",
+          "no (Person-Student) & projects.Project\n\t\n  \t\n  \tall p:Project | some pe:Person | pe in projects.p"
+        ],
+        [
+          "coursesOld/correct/kcQyPWYQSerStCxkx_inv5.als",
+          "correct-student",
+          "inv5_correct_139",
+          "projects.Project <: Person in Student\n    all p : Project | some projects.p <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/5Sd4HxvNZrYHN2B3u_inv5.als",
+          "correct-student",
+          "inv5_correct_21",
+          "all pr : Project | Person <:projects.pr in Student\n  \tall pr: Project | some Person <:projects.pr"
+        ],
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/5Sd4HxvNZrYHN2B3u_inv5.als",
+          "correct-student",
+          "inv5_correct_21",
+          "all pr : Project | Person <:projects.pr in Student\n  \tall pr: Project | some Person <:projects.pr"
+        ],
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/5mEjMoMBs48QSdWH4_inv5.als",
+          "correct-student",
+          "inv5_correct_22",
+          "no (Person-Student) & projects.Project\n\t\n  \tall p:Project | some (Person <: projects.p)"
+        ],
+        [
+          "coursesOld/correct/M322rRd4M5QTK3HNN_inv5.als",
+          "correct-student",
+          "inv5_correct_86",
+          "Person :> projects.Project in Student\n  \tall p: Project | some Person :> projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/5mEjMoMBs48QSdWH4_inv5.als",
+          "correct-student",
+          "inv5_correct_22",
+          "no (Person-Student) & projects.Project\n\t\n  \tall p:Project | some (Person <: projects.p)"
+        ],
+        [
+          "coursesOld/correct/ayQxT4RsN7g2HSWkW_inv5.als",
+          "correct-student",
+          "inv5_correct_118",
+          "no (Person-Student) & (Person :> projects.Project)\n  \tall p : Project | some (Person :> projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/5mEjMoMBs48QSdWH4_inv5.als",
+          "correct-student",
+          "inv5_correct_22",
+          "no (Person-Student) & projects.Project\n\t\n  \tall p:Project | some (Person <: projects.p)"
+        ],
+        [
+          "coursesOld/correct/kcQyPWYQSerStCxkx_inv5.als",
+          "correct-student",
+          "inv5_correct_139",
+          "projects.Project <: Person in Student\n    all p : Project | some projects.p <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/6ALyX9cDiLvi4XqH5_inv5.als",
+          "correct-student",
+          "inv5_correct_25",
+          "all p: Project | some (Person<:projects).p and (Person<:projects).p in Student"
+        ],
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/6ALyX9cDiLvi4XqH5_inv5.als",
+          "correct-student",
+          "inv5_correct_25",
+          "all p: Project | some (Person<:projects).p and (Person<:projects).p in Student"
+        ],
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/6JjWA4ojR8XeSfAp4_inv5.als",
+          "correct-student",
+          "inv5_correct_28",
+          "all p:Project | Person<:projects.p in Student\n  all p:Project | some Person<:projects.p"
+        ],
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/6JjWA4ojR8XeSfAp4_inv5.als",
+          "correct-student",
+          "inv5_correct_28",
+          "all p:Project | Person<:projects.p in Student\n  all p:Project | some Person<:projects.p"
+        ],
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/6cvfaaWsBmRRaRuZP_inv5.als",
+          "correct-student",
+          "inv5_correct_30",
+          "Person<:projects.Project in Student\n  \tall p : Project | some Person<:projects.p"
+        ],
+        [
+          "coursesOld/correct/M322rRd4M5QTK3HNN_inv5.als",
+          "correct-student",
+          "inv5_correct_86",
+          "Person :> projects.Project in Student\n  \tall p: Project | some Person :> projects.p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/6cvfaaWsBmRRaRuZP_inv5.als",
+          "correct-student",
+          "inv5_correct_30",
+          "Person<:projects.Project in Student\n  \tall p : Project | some Person<:projects.p"
+        ],
+        [
+          "coursesOld/correct/ayQxT4RsN7g2HSWkW_inv5.als",
+          "correct-student",
+          "inv5_correct_118",
+          "no (Person-Student) & (Person :> projects.Project)\n  \tall p : Project | some (Person :> projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/6cvfaaWsBmRRaRuZP_inv5.als",
+          "correct-student",
+          "inv5_correct_30",
+          "Person<:projects.Project in Student\n  \tall p : Project | some Person<:projects.p"
+        ],
+        [
+          "coursesOld/correct/kcQyPWYQSerStCxkx_inv5.als",
+          "correct-student",
+          "inv5_correct_139",
+          "projects.Project <: Person in Student\n    all p : Project | some projects.p <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/8Y9L5XDTTqJKhRN6i_inv5.als",
+          "correct-student",
+          "inv5_correct_36",
+          "all p : Project | no ((Person<:projects).p & (Person - Student)) and some (Person<:projects).p"
+        ],
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/8Y9L5XDTTqJKhRN6i_inv5.als",
+          "correct-student",
+          "inv5_correct_36",
+          "all p : Project | no ((Person<:projects).p & (Person - Student)) and some (Person<:projects).p"
+        ],
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/9R4QzLgJcPNB4Tpcn_inv5.als",
+          "correct-student",
+          "inv5_correct_37",
+          "all p : Project | (Person<:projects.p) in Student and some (Person<:projects.p)"
+        ],
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/9R4QzLgJcPNB4Tpcn_inv5.als",
+          "correct-student",
+          "inv5_correct_37",
+          "all p : Project | (Person<:projects.p) in Student and some (Person<:projects.p)"
+        ],
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/BDJCcj9pCs3DKxxgd_inv5.als",
+          "correct-student",
+          "inv5_correct_45",
+          "all p: Project | (Person<:projects).p in Student and some (Person<:projects).p"
+        ],
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/BDJCcj9pCs3DKxxgd_inv5.als",
+          "correct-student",
+          "inv5_correct_45",
+          "all p: Project | (Person<:projects).p in Student and some (Person<:projects).p"
+        ],
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ],
+        [
+          "coursesOld/correct/GJXHx4qbrSomnosg6_inv5.als",
+          "correct-student",
+          "inv5_correct_67",
+          "all p : Project | some Person<:projects.p and Person<:projects.p in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ],
+        [
+          "coursesOld/correct/JDbfpBrJtsWbtviHg_inv5.als",
+          "correct-student",
+          "inv5_correct_78",
+          "all p : Project | some Person<:projects.p\n  \tall p : Project | Person<:projects.p in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ],
+        [
+          "coursesOld/correct/ci3DH7zdupxpDK8PL_inv5.als",
+          "correct-student",
+          "inv5_correct_123",
+          "all p:Project | some projects.p & Person\n  \t\n  \n  \tall p:Project | projects.p & Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ],
+        [
+          "coursesOld/correct/s9FTGDsAvsrd9sTGk_inv5.als",
+          "correct-student",
+          "inv5_correct_147",
+          "all p : Project | no (Person-Student)  & (Person<:projects.p) and some (Person<:projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/DsMK69K7r5MwBJRdS_inv5.als",
+          "correct-student",
+          "inv5_correct_57",
+          "all x : Project | (projects).x <: Person in Student\n  \tall x : Project | some (projects).x <: Person"
+        ],
+        [
+          "coursesOld/correct/sKPyjkdFkskppjEuu_inv5.als",
+          "correct-student",
+          "inv5_correct_148",
+          "all p:Project | (Person <: projects).p in Student\n  \tall p:Project |\tsome (Person <: projects).p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ],
+        [
+          "coursesOld/correct/GJXHx4qbrSomnosg6_inv5.als",
+          "correct-student",
+          "inv5_correct_67",
+          "all p : Project | some Person<:projects.p and Person<:projects.p in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ],
+        [
+          "coursesOld/correct/JDbfpBrJtsWbtviHg_inv5.als",
+          "correct-student",
+          "inv5_correct_78",
+          "all p : Project | some Person<:projects.p\n  \tall p : Project | Person<:projects.p in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ],
+        [
+          "coursesOld/correct/ci3DH7zdupxpDK8PL_inv5.als",
+          "correct-student",
+          "inv5_correct_123",
+          "all p:Project | some projects.p & Person\n  \t\n  \n  \tall p:Project | projects.p & Person in Student"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ],
+        [
+          "coursesOld/correct/s9FTGDsAvsrd9sTGk_inv5.als",
+          "correct-student",
+          "inv5_correct_147",
+          "all p : Project | no (Person-Student)  & (Person<:projects.p) and some (Person<:projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/ERcPW7bPtsEkGrssb_inv5.als",
+          "correct-student",
+          "inv5_correct_59",
+          "all p : Project | some projects.p <: Person\n\tall p : Project | projects.p <: Person in Student"
+        ],
+        [
+          "coursesOld/correct/sKPyjkdFkskppjEuu_inv5.als",
+          "correct-student",
+          "inv5_correct_148",
+          "all p:Project | (Person <: projects).p in Student\n  \tall p:Project |\tsome (Person <: projects).p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/GDANXupGbwonf47iX_inv5.als",
+          "correct-student",
+          "inv5_correct_63",
+          "all p : Project | (Person <: p.~projects) in Student and some (Person <: p.~projects)"
+        ],
+        [
+          "coursesOld/correct/gC9SnyAXpKXf8S5Qw_inv5.als",
+          "correct-student",
+          "inv5_correct_131",
+          "all p : Project | (Person :> p.~projects) in Student and some (Person :> p.~projects)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/GcNhC4gdQfMb9nTjp_inv5.als",
+          "correct-student",
+          "inv5_correct_69",
+          "all p : Project | p.~(Person <: projects) in Student\n    \n    all p : Project | some p.~(Person <: projects)"
+        ],
+        [
+          "coursesOld/correct/gC9SnyAXpKXf8S5Qw_inv5.als",
+          "correct-student",
+          "inv5_correct_131",
+          "all p : Project | (Person :> p.~projects) in Student and some (Person :> p.~projects)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/Hm4KLdazhhePcBg2w_inv5.als",
+          "correct-student",
+          "inv5_correct_73",
+          "all p : Project | p.~(Person <: projects) in Student and some p.~(Person <: projects)"
+        ],
+        [
+          "coursesOld/correct/gC9SnyAXpKXf8S5Qw_inv5.als",
+          "correct-student",
+          "inv5_correct_131",
+          "all p : Project | (Person :> p.~projects) in Student and some (Person :> p.~projects)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/M322rRd4M5QTK3HNN_inv5.als",
+          "correct-student",
+          "inv5_correct_86",
+          "Person :> projects.Project in Student\n  \tall p: Project | some Person :> projects.p"
+        ],
+        [
+          "coursesOld/correct/PPX7X4dW4Z84xLt8j_inv5.als",
+          "correct-student",
+          "inv5_correct_95",
+          "no (Person <: projects).Project - Student\n  \tall p : Project | some (Person <: projects).p"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/M322rRd4M5QTK3HNN_inv5.als",
+          "correct-student",
+          "inv5_correct_86",
+          "Person :> projects.Project in Student\n  \tall p: Project | some Person :> projects.p"
+        ],
+        [
+          "coursesOld/correct/ScCWroWoHPj9jty33_inv5.als",
+          "correct-student",
+          "inv5_correct_104",
+          "(Person<:projects).Project in Student\n    \n    all y:Project| some (Person<:projects).y"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/M322rRd4M5QTK3HNN_inv5.als",
+          "correct-student",
+          "inv5_correct_86",
+          "Person :> projects.Project in Student\n  \tall p: Project | some Person :> projects.p"
+        ],
+        [
+          "coursesOld/correct/w2ESgFuSbtC4qc5P4_inv5.als",
+          "correct-student",
+          "inv5_correct_151",
+          "no (Person-Student) & (Person<:projects).Project\n  \n  \n\t\n  \tall proj:Project | some (Person<:projects).proj"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/PPX7X4dW4Z84xLt8j_inv5.als",
+          "correct-student",
+          "inv5_correct_95",
+          "no (Person <: projects).Project - Student\n  \tall p : Project | some (Person <: projects).p"
+        ],
+        [
+          "coursesOld/correct/ayQxT4RsN7g2HSWkW_inv5.als",
+          "correct-student",
+          "inv5_correct_118",
+          "no (Person-Student) & (Person :> projects.Project)\n  \tall p : Project | some (Person :> projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/PPX7X4dW4Z84xLt8j_inv5.als",
+          "correct-student",
+          "inv5_correct_95",
+          "no (Person <: projects).Project - Student\n  \tall p : Project | some (Person <: projects).p"
+        ],
+        [
+          "coursesOld/correct/kcQyPWYQSerStCxkx_inv5.als",
+          "correct-student",
+          "inv5_correct_139",
+          "projects.Project <: Person in Student\n    all p : Project | some projects.p <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/ScCWroWoHPj9jty33_inv5.als",
+          "correct-student",
+          "inv5_correct_104",
+          "(Person<:projects).Project in Student\n    \n    all y:Project| some (Person<:projects).y"
+        ],
+        [
+          "coursesOld/correct/ayQxT4RsN7g2HSWkW_inv5.als",
+          "correct-student",
+          "inv5_correct_118",
+          "no (Person-Student) & (Person :> projects.Project)\n  \tall p : Project | some (Person :> projects.p)"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/ScCWroWoHPj9jty33_inv5.als",
+          "correct-student",
+          "inv5_correct_104",
+          "(Person<:projects).Project in Student\n    \n    all y:Project| some (Person<:projects).y"
+        ],
+        [
+          "coursesOld/correct/kcQyPWYQSerStCxkx_inv5.als",
+          "correct-student",
+          "inv5_correct_139",
+          "projects.Project <: Person in Student\n    all p : Project | some projects.p <: Person"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/ayQxT4RsN7g2HSWkW_inv5.als",
+          "correct-student",
+          "inv5_correct_118",
+          "no (Person-Student) & (Person :> projects.Project)\n  \tall p : Project | some (Person :> projects.p)"
+        ],
+        [
+          "coursesOld/correct/w2ESgFuSbtC4qc5P4_inv5.als",
+          "correct-student",
+          "inv5_correct_151",
+          "no (Person-Student) & (Person<:projects).Project\n  \n  \n\t\n  \tall proj:Project | some (Person<:projects).proj"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv5",
+      [
+        [
+          "coursesOld/correct/kcQyPWYQSerStCxkx_inv5.als",
+          "correct-student",
+          "inv5_correct_139",
+          "projects.Project <: Person in Student\n    all p : Project | some projects.p <: Person"
+        ],
+        [
+          "coursesOld/correct/w2ESgFuSbtC4qc5P4_inv5.als",
+          "correct-student",
+          "inv5_correct_151",
+          "no (Person-Student) & (Person<:projects).Project\n  \n  \n\t\n  \tall proj:Project | some (Person<:projects).proj"
+        ]
+      ]
+    ],
+    [
+      "coursesOld",
+      "inv6",
+      [
+        [
+          "coursesOld/correct/A659sfHAefh5zmu8Q_inv6.als",
+          "correct-student",
+          "inv6_correct_4",
+          "all p : Project | projects.p <: Person in enrolled.(projects.p <: Course)"
+        ],
+        [
+          "coursesOld/correct/b9dyEDfqARwG3APkB_inv6.als",
+          "correct-student",
+          "inv6_correct_10",
+          "all p: Project | (Person<:projects).p in enrolled.projects.p"
+        ]
+      ]
+    ],
+    [
+      "lts",
+      "inv6",
+      [
+        [
+          "lts/correct/M2WSNesQg4LyPvD2c_inv6.als",
+          "correct-student",
+          "inv6_correct_11",
+          "all e : Event | some State.trans.State <: e"
+        ],
+        [
+          "lts/correct/guWCgjng4tE2CFjQA_inv6.als",
+          "correct-student",
+          "inv6_correct_15",
+          "all e:Event | some (State.trans.State & e)"
+        ]
+      ]
+    ],
+    [
+      "productionLine_v2",
+      "inv1",
+      [
+        [
+          "productionLine_v2/correct/2GqhkNoeEAdnoqqzj_inv1.als",
+          "oracle",
+          "inv1_oracle",
+          "Worker = Human + Robot"
+        ],
+        [
+          "productionLine_v2/correct/bm3T7JSzBwvc3ZzPo_inv1.als",
+          "correct-student",
+          "inv1_correct_17",
+          "(Human + Robot) <: Worker = Worker"
+        ]
+      ]
+    ],
+    [
+      "productionLine_v2",
+      "inv1",
+      [
+        [
+          "productionLine_v2/correct/AdMDgrBqJRJqsbtad_inv1.als",
+          "correct-student",
+          "inv1_correct_6",
+          "Human <: Worker = Worker - (Robot <: Worker)"
+        ],
+        [
+          "productionLine_v2/correct/TybiibKw4htgKsqtD_inv1.als",
+          "correct-student",
+          "inv1_correct_13",
+          "(Human & Worker) = Worker - (Robot & Worker)"
+        ]
+      ]
+    ],
+    [
+      "productionLine_v2",
+      "inv1",
+      [
+        [
+          "productionLine_v2/correct/bm3T7JSzBwvc3ZzPo_inv1.als",
+          "correct-student",
+          "inv1_correct_17",
+          "(Human + Robot) <: Worker = Worker"
+        ],
+        [
+          "productionLine_v2/correct/iFx4nR4JknLhJ564E_inv1.als",
+          "correct-student",
+          "inv1_correct_23",
+          "Human + Robot = Worker"
+        ]
+      ]
+    ],
+    [
+      "productionLine_v2",
+      "inv1",
+      [
+        [
+          "productionLine_v2/correct/bm3T7JSzBwvc3ZzPo_inv1.als",
+          "correct-student",
+          "inv1_correct_17",
+          "(Human + Robot) <: Worker = Worker"
+        ],
+        [
+          "productionLine_v2/correct/syXMvkY3mQ64KDPLp_inv1.als",
+          "correct-student",
+          "inv1_correct_25",
+          "(Human + Robot) & Worker = Worker"
+        ]
+      ]
+    ],
+    [
+      "socialMedia",
+      "inv4",
+      [
+        [
+          "socialMedia/correct/9SuXS6BoRXN8r6bK2_inv4.als",
+          "correct-student",
+          "inv4_correct_59",
+          "no (posts.Ad & posts.(Photo - Ad))"
+        ],
+        [
+          "socialMedia/correct/gfAFXKPRW4Y2TZFJv_inv4.als",
+          "correct-student",
+          "inv4_correct_166",
+          "no((posts :> Ad).Ad & (posts :> (Photo - Ad)).Photo)"
+        ]
+      ]
+    ],
+    [
+      "socialMedia",
+      "inv4",
+      [
+        [
+          "socialMedia/correct/9SuXS6BoRXN8r6bK2_inv4.als",
+          "correct-student",
+          "inv4_correct_59",
+          "no (posts.Ad & posts.(Photo - Ad))"
+        ],
+        [
+          "socialMedia/correct/is7D7xLKaRFxu6WuR_inv4.als",
+          "correct-student",
+          "inv4_correct_175",
+          "no(posts.(Photo - Ad) <: (posts :> Ad).Ad)"
+        ]
+      ]
+    ],
+    [
+      "socialMedia",
+      "inv4",
+      [
+        [
+          "socialMedia/correct/CmT6aCmwL4znXAX3v_inv4.als",
+          "correct-student",
+          "inv4_correct_75",
+          "no((posts :> Ad).Ad & posts.(Photo - Ad))"
+        ],
+        [
+          "socialMedia/correct/gfAFXKPRW4Y2TZFJv_inv4.als",
+          "correct-student",
+          "inv4_correct_166",
+          "no((posts :> Ad).Ad & (posts :> (Photo - Ad)).Photo)"
+        ]
+      ]
+    ],
+    [
+      "socialMedia",
+      "inv4",
+      [
+        [
+          "socialMedia/correct/CmT6aCmwL4znXAX3v_inv4.als",
+          "correct-student",
+          "inv4_correct_75",
+          "no((posts :> Ad).Ad & posts.(Photo - Ad))"
+        ],
+        [
+          "socialMedia/correct/is7D7xLKaRFxu6WuR_inv4.als",
+          "correct-student",
+          "inv4_correct_175",
+          "no(posts.(Photo - Ad) <: (posts :> Ad).Ad)"
+        ]
+      ]
+    ],
+    [
+      "socialMedia",
+      "inv4",
+      [
+        [
+          "socialMedia/correct/gfAFXKPRW4Y2TZFJv_inv4.als",
+          "correct-student",
+          "inv4_correct_166",
+          "no((posts :> Ad).Ad & (posts :> (Photo - Ad)).Photo)"
+        ],
+        [
+          "socialMedia/correct/is7D7xLKaRFxu6WuR_inv4.als",
+          "correct-student",
+          "inv4_correct_175",
+          "no(posts.(Photo - Ad) <: (posts :> Ad).Ad)"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv8",
+      [
+        [
+          "trainStationNew/correct/7iQGqs872XMHcjGTK_inv8.als",
+          "correct-student",
+          "inv8_correct_12",
+          "all e : Entry | Exit = (e.*succs)&Exit"
+        ],
+        [
+          "trainStationNew/correct/TiXwux5GMQHp9qhwL_inv8.als",
+          "correct-student",
+          "inv8_correct_34",
+          "all e : Entry | e.(*succs :> Exit) = Exit"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/2Bbxn8ERt9iHpoWFc_inv9.als",
+          "correct-student",
+          "inv9_correct_0",
+          "all t: Track | no Junction & t.succs => no Semaphore & t.signals"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/2Bbxn8ERt9iHpoWFc_inv9.als",
+          "oracle",
+          "inv9_oracle",
+          "all t : Track | no t.succs & Junction implies no t.signals & Semaphore"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/37tvCRCigZ4nnqmkF_inv9.als",
+          "correct-student",
+          "inv9_correct_2",
+          "all t:Track | no t.succs & Junction => not some s:Semaphore| s in t.signals"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/3xv6cYf4ewAhtR4HW_inv9.als",
+          "correct-student",
+          "inv9_correct_3",
+          "all e : Track |  (not (some j : Junction|j in e.succs)) implies (all s : Semaphore | s not in e.signals)"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/4RSBuyJPR5r7Hc5bi_inv9.als",
+          "correct-student",
+          "inv9_correct_4",
+          "all t : Track| no (t.succs & Junction) implies no (Semaphore & t.signals)"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/5ezFovd4HiTmWDmsQ_inv9.als",
+          "correct-student",
+          "inv9_correct_5",
+          "no Semaphore & (Track - succs.Junction).signals"
+        ],
+        [
+          "trainStationNew/correct/6XPgsqRoW4u9wLp4R_inv9.als",
+          "correct-student",
+          "inv9_correct_9",
+          "no (Track - succs.Junction).signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/5zCd8rMJoxGXtrwfk_inv9.als",
+          "correct-student",
+          "inv9_correct_6",
+          "all t:Track | no Junction&t.succs implies no t.signals&Semaphore"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/6KKSqJ9yzSyF9E962_inv9.als",
+          "correct-student",
+          "inv9_correct_7",
+          "all t : Track | (all j : Junction | j not in t.succs) implies (all s : Semaphore | s not in t.signals)"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/6MK2GXr9Dr7zCs2gk_inv9.als",
+          "correct-student",
+          "inv9_correct_8",
+          "all x : Track | no x.succs & Junction => no x.signals & Semaphore"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/6XPgsqRoW4u9wLp4R_inv9.als",
+          "correct-student",
+          "inv9_correct_9",
+          "no (Track - succs.Junction).signals :> Semaphore"
+        ],
+        [
+          "trainStationNew/correct/PAKaqxWYfL5e36f7S_inv9.als",
+          "correct-student",
+          "inv9_correct_19",
+          "no ( (Track-(succs.Junction)).signals & Semaphore)"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/ATSGF4ogkW7WCRRSR_inv9.als",
+          "correct-student",
+          "inv9_correct_11",
+          "all t:Track | not some (Junction & t.succs) => not some (Semaphore & t.signals)"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/JRk7cazCM95hsLwgd_inv9.als",
+          "correct-student",
+          "inv9_correct_15",
+          "all x : Track | no Junction & x.succs implies no Semaphore & x.signals"
+        ],
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ]
+      ]
+    ],
+    [
+      "trainStationNew",
+      "inv9",
+      [
+        [
+          "trainStationNew/correct/aE6GYyhsiMtrZh6Bd_inv9.als",
+          "correct-student",
+          "inv9_correct_22",
+          "all t : Track | no t.succs & Junction implies no t.signals :> Semaphore"
+        ],
+        [
+          "trainStationNew/correct/h65FSK8vbfHsxH2YE_inv9.als",
+          "correct-student",
+          "inv9_correct_27",
+          "all t:Track | no t.succs & Junction  implies(all s:Semaphore | s not in t.signals)"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv10",
+      [
+        [
+          "trainStationOld/correct/5zsipsMGAc32X2a3k_inv10.als",
+          "correct-student",
+          "inv10_correct_0",
+          "always (all j:Junction |  lone((prox.j).signal :> Green))"
+        ],
+        [
+          "trainStationOld/correct/5zsipsMGAc32X2a3k_inv10.als",
+          "oracle",
+          "inv10_oracle",
+          "all j : Junction | always lone (prox.j).signal & Green"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv10",
+      [
+        [
+          "trainStationOld/correct/5zsipsMGAc32X2a3k_inv10.als",
+          "correct-student",
+          "inv10_correct_0",
+          "always (all j:Junction |  lone((prox.j).signal :> Green))"
+        ],
+        [
+          "trainStationOld/correct/Md27pnLssJ4hAXTic_inv10.als",
+          "correct-student",
+          "inv10_correct_2",
+          "always (all j:Junction | lone (prox.j).signal & Green)"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv10",
+      [
+        [
+          "trainStationOld/correct/5zsipsMGAc32X2a3k_inv10.als",
+          "oracle",
+          "inv10_oracle",
+          "all j : Junction | always lone (prox.j).signal & Green"
+        ],
+        [
+          "trainStationOld/correct/Md27pnLssJ4hAXTic_inv10.als",
+          "correct-student",
+          "inv10_correct_2",
+          "always (all j:Junction | lone (prox.j).signal & Green)"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv11",
+      [
+        [
+          "trainStationOld/correct/839dtQiJdjWA3aTDc_inv11.als",
+          "correct-student",
+          "inv11_correct_0",
+          "always ( all t:Train | some t.pos implies once some t.pos :> Entry)"
+        ],
+        [
+          "trainStationOld/correct/839dtQiJdjWA3aTDc_inv11.als",
+          "oracle",
+          "inv11_oracle",
+          "all t : Train | always (some t.pos implies once some t.pos & Entry)"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv13",
+      [
+        [
+          "trainStationOld/correct/YKCHzjNhrJFEWxvK7_inv13.als",
+          "oracle",
+          "inv13_oracle",
+          "all t : Train | always ((no t.pos and once some t.pos) implies always no t.pos)"
+        ],
+        [
+          "trainStationOld/correct/egzsXEQBoc4WEeQcL_inv13.als",
+          "correct-student",
+          "inv13_correct_1",
+          "always (all t:Train | (once some t.pos and no t.pos ) => always no t.pos)"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv3",
+      [
+        [
+          "trainStationOld/correct/5NbasrAwwMRo6aBfn_inv3.als",
+          "correct-student",
+          "inv3_correct_0",
+          "all t : Train | always t.pos' = t.pos"
+        ],
+        [
+          "trainStationOld/correct/63TwSvA7ypSkhFas2_inv3.als",
+          "correct-student",
+          "inv3_correct_1",
+          "always all t : Train | t.pos = t.pos'"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv3",
+      [
+        [
+          "trainStationOld/correct/5NbasrAwwMRo6aBfn_inv3.als",
+          "correct-student",
+          "inv3_correct_0",
+          "all t : Train | always t.pos' = t.pos"
+        ],
+        [
+          "trainStationOld/correct/P8AZSrfiEfeoNuh3h_inv3.als",
+          "correct-student",
+          "inv3_correct_7",
+          "always all t:Train | t.pos' = t.pos"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv3",
+      [
+        [
+          "trainStationOld/correct/63TwSvA7ypSkhFas2_inv3.als",
+          "correct-student",
+          "inv3_correct_1",
+          "always all t : Train | t.pos = t.pos'"
+        ],
+        [
+          "trainStationOld/correct/Ytyj2bFsiw9id3Gbe_inv3.als",
+          "correct-student",
+          "inv3_correct_8",
+          "all t : Train | always t.pos = t.pos'"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv3",
+      [
+        [
+          "trainStationOld/correct/P8AZSrfiEfeoNuh3h_inv3.als",
+          "correct-student",
+          "inv3_correct_7",
+          "always all t:Train | t.pos' = t.pos"
+        ],
+        [
+          "trainStationOld/correct/Ytyj2bFsiw9id3Gbe_inv3.als",
+          "correct-student",
+          "inv3_correct_8",
+          "all t : Train | always t.pos = t.pos'"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv4",
+      [
+        [
+          "trainStationOld/correct/55frXgngepY66WWoL_inv4.als",
+          "correct-student",
+          "inv4_correct_1",
+          "all t : Track | always lone t.~pos"
+        ],
+        [
+          "trainStationOld/correct/TtKPjXaLnAChxvzus_inv4.als",
+          "correct-student",
+          "inv4_correct_7",
+          "always all t : Track| lone (t.~pos)"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv4",
+      [
+        [
+          "trainStationOld/correct/56Mgh2n7YoRtZfhF7_inv4.als",
+          "correct-student",
+          "inv4_correct_2",
+          "always all disj t1,t2:Train | no (t1.pos & t2.pos )"
+        ],
+        [
+          "trainStationOld/correct/BwtipzbCzgeTEGRY6_inv4.als",
+          "correct-student",
+          "inv4_correct_3",
+          "all disj t1,t2:Train | always no (t1.pos & t2.pos)"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv7",
+      [
+        [
+          "trainStationOld/correct/22PE9FyqnSW852nTT_inv7.als",
+          "oracle",
+          "inv7_oracle",
+          "all t : Train | always (some t.pos implies eventually no t.pos)"
+        ],
+        [
+          "trainStationOld/correct/RB64xqjjdfmfEEMhA_inv7.als",
+          "correct-student",
+          "inv7_correct_1",
+          "always ( all t:Train | some t.pos implies eventually no t.pos )"
+        ]
+      ]
+    ],
+    [
+      "trainStationOld",
+      "inv7",
+      [
+        [
+          "trainStationOld/correct/22PE9FyqnSW852nTT_inv7.als",
+          "oracle",
+          "inv7_oracle",
+          "all t : Train | always (some t.pos implies eventually no t.pos)"
+        ],
+        [
+          "trainStationOld/correct/oFCFB8k8e5EzFnGNB_inv7.als",
+          "correct-student",
+          "inv7_correct_2",
+          "always ( all t:Train | some t.pos :> Track implies eventually no t.pos :> Track )"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv11",
+      [
+        [
+          "trash_ltl/correct/2wTnb4AEEuhJDCiWY_inv11.als",
+          "correct-student",
+          "inv11_correct_0",
+          "always all f:File | f in File-Protected implies after f in Protected"
+        ],
+        [
+          "trash_ltl/correct/2wTnb4AEEuhJDCiWY_inv11.als",
+          "oracle",
+          "inv11_oracle",
+          "always File-Protected in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv11",
+      [
+        [
+          "trash_ltl/correct/2wTnb4AEEuhJDCiWY_inv11.als",
+          "correct-student",
+          "inv11_correct_0",
+          "always all f:File | f in File-Protected implies after f in Protected"
+        ],
+        [
+          "trash_ltl/correct/BQFvfSMMyBC7P4vvN_inv11.als",
+          "correct-student",
+          "inv11_correct_4",
+          "always all f : File - Protected | f in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv11",
+      [
+        [
+          "trash_ltl/correct/2wTnb4AEEuhJDCiWY_inv11.als",
+          "oracle",
+          "inv11_oracle",
+          "always File-Protected in Protected'"
+        ],
+        [
+          "trash_ltl/correct/4A9jhyMovCKX4jKon_inv11.als",
+          "correct-student",
+          "inv11_correct_1",
+          "always (all f:File-Protected | after f in Protected)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv11",
+      [
+        [
+          "trash_ltl/correct/2wTnb4AEEuhJDCiWY_inv11.als",
+          "oracle",
+          "inv11_oracle",
+          "always File-Protected in Protected'"
+        ],
+        [
+          "trash_ltl/correct/bNE7jtzJmxk9osNoG_inv11.als",
+          "correct-student",
+          "inv11_correct_6",
+          "always(all a : File - (File & Protected) |  after (a in Protected))"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv11",
+      [
+        [
+          "trash_ltl/correct/4A9jhyMovCKX4jKon_inv11.als",
+          "correct-student",
+          "inv11_correct_1",
+          "always (all f:File-Protected | after f in Protected)"
+        ],
+        [
+          "trash_ltl/correct/BQFvfSMMyBC7P4vvN_inv11.als",
+          "correct-student",
+          "inv11_correct_4",
+          "always all f : File - Protected | f in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv11",
+      [
+        [
+          "trash_ltl/correct/4eme9srL2eEbi7D4S_inv11.als",
+          "correct-student",
+          "inv11_correct_2",
+          "always all f : File | f not in Protected implies f in Protected'"
+        ],
+        [
+          "trash_ltl/correct/6GPddrrnvTd5qYZDP_inv11.als",
+          "correct-student",
+          "inv11_correct_3",
+          "always all f:File |  f not in Protected implies after f in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv11",
+      [
+        [
+          "trash_ltl/correct/BQFvfSMMyBC7P4vvN_inv11.als",
+          "correct-student",
+          "inv11_correct_4",
+          "always all f : File - Protected | f in Protected'"
+        ],
+        [
+          "trash_ltl/correct/bNE7jtzJmxk9osNoG_inv11.als",
+          "correct-student",
+          "inv11_correct_6",
+          "always(all a : File - (File & Protected) |  after (a in Protected))"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/4Mx5Y5PwxSykv46sq_inv14.als",
+          "correct-student",
+          "inv14_correct_0",
+          "always(all f:Trash&Protected | after f not in Protected)"
+        ],
+        [
+          "trash_ltl/correct/4Mx5Y5PwxSykv46sq_inv14.als",
+          "oracle",
+          "inv14_oracle",
+          "always (all f:Trash&Protected | f not in Protected')"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/4Mx5Y5PwxSykv46sq_inv14.als",
+          "correct-student",
+          "inv14_correct_0",
+          "always(all f:Trash&Protected | after f not in Protected)"
+        ],
+        [
+          "trash_ltl/correct/5G4cp3MXzSzbvjc8h_inv14.als",
+          "correct-student",
+          "inv14_correct_1",
+          "always no Protected & Trash & Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/4Mx5Y5PwxSykv46sq_inv14.als",
+          "correct-student",
+          "inv14_correct_0",
+          "always(all f:Trash&Protected | after f not in Protected)"
+        ],
+        [
+          "trash_ltl/correct/747zjNTiodknKQASK_inv14.als",
+          "correct-student",
+          "inv14_correct_4",
+          "always all f : Protected & Trash | f not in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/4Mx5Y5PwxSykv46sq_inv14.als",
+          "oracle",
+          "inv14_oracle",
+          "always (all f:Trash&Protected | f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/NdiF6MjyLozJRp8Zm_inv14.als",
+          "correct-student",
+          "inv14_correct_10",
+          "always all p: (Protected & Trash) | after p not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/4Mx5Y5PwxSykv46sq_inv14.als",
+          "oracle",
+          "inv14_oracle",
+          "always (all f:Trash&Protected | f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/Wz2GjxnbrxdEq3bge_inv14.als",
+          "correct-student",
+          "inv14_correct_12",
+          "always all pt : Protected & Trash | after pt not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/4Mx5Y5PwxSykv46sq_inv14.als",
+          "oracle",
+          "inv14_oracle",
+          "always (all f:Trash&Protected | f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/vDcHr5cxhD2rupry2_inv14.als",
+          "correct-student",
+          "inv14_correct_17",
+          "always all t: Trash & Protected | after t not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/5G4cp3MXzSzbvjc8h_inv14.als",
+          "correct-student",
+          "inv14_correct_1",
+          "always no Protected & Trash & Protected'"
+        ],
+        [
+          "trash_ltl/correct/NdiF6MjyLozJRp8Zm_inv14.als",
+          "correct-student",
+          "inv14_correct_10",
+          "always all p: (Protected & Trash) | after p not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/5G4cp3MXzSzbvjc8h_inv14.als",
+          "correct-student",
+          "inv14_correct_1",
+          "always no Protected & Trash & Protected'"
+        ],
+        [
+          "trash_ltl/correct/Wz2GjxnbrxdEq3bge_inv14.als",
+          "correct-student",
+          "inv14_correct_12",
+          "always all pt : Protected & Trash | after pt not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/5G4cp3MXzSzbvjc8h_inv14.als",
+          "correct-student",
+          "inv14_correct_1",
+          "always no Protected & Trash & Protected'"
+        ],
+        [
+          "trash_ltl/correct/vDcHr5cxhD2rupry2_inv14.als",
+          "correct-student",
+          "inv14_correct_17",
+          "always all t: Trash & Protected | after t not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/6sc6JN22rpWT22s22_inv14.als",
+          "correct-student",
+          "inv14_correct_3",
+          "always all f : File | (f in Protected & Trash) implies (f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/Br74tqcSxroc6ciia_inv14.als",
+          "correct-student",
+          "inv14_correct_6",
+          "always all p: Protected | p in Trash implies after p not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/6sc6JN22rpWT22s22_inv14.als",
+          "correct-student",
+          "inv14_correct_3",
+          "always all f : File | (f in Protected & Trash) implies (f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/GCfm8MeeXhPAY2goX_inv14.als",
+          "correct-student",
+          "inv14_correct_8",
+          "always (all f : Protected | f in Trash implies after f not in Protected)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/6sc6JN22rpWT22s22_inv14.als",
+          "correct-student",
+          "inv14_correct_3",
+          "always all f : File | (f in Protected & Trash) implies (f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/XDqBEcnB6qedPAqqy_inv14.als",
+          "correct-student",
+          "inv14_correct_13",
+          "always (all f:File | f in Trash and f in Protected implies after f not in Protected)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/6sc6JN22rpWT22s22_inv14.als",
+          "correct-student",
+          "inv14_correct_3",
+          "always all f : File | (f in Protected & Trash) implies (f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/eeNxANZMMvCLok5b4_inv14.als",
+          "correct-student",
+          "inv14_correct_16",
+          "always (all f:File | f in Protected&Trash implies after (f not in Protected))"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/747zjNTiodknKQASK_inv14.als",
+          "correct-student",
+          "inv14_correct_4",
+          "always all f : Protected & Trash | f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/NdiF6MjyLozJRp8Zm_inv14.als",
+          "correct-student",
+          "inv14_correct_10",
+          "always all p: (Protected & Trash) | after p not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/747zjNTiodknKQASK_inv14.als",
+          "correct-student",
+          "inv14_correct_4",
+          "always all f : Protected & Trash | f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/Wz2GjxnbrxdEq3bge_inv14.als",
+          "correct-student",
+          "inv14_correct_12",
+          "always all pt : Protected & Trash | after pt not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/747zjNTiodknKQASK_inv14.als",
+          "correct-student",
+          "inv14_correct_4",
+          "always all f : Protected & Trash | f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/vDcHr5cxhD2rupry2_inv14.als",
+          "correct-student",
+          "inv14_correct_17",
+          "always all t: Trash & Protected | after t not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/8x4Shj67PijTgxgsn_inv14.als",
+          "correct-student",
+          "inv14_correct_5",
+          "always all f:File | f in Trash and f in Protected implies f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/Br74tqcSxroc6ciia_inv14.als",
+          "correct-student",
+          "inv14_correct_6",
+          "always all p: Protected | p in Trash implies after p not in Protected"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/8x4Shj67PijTgxgsn_inv14.als",
+          "correct-student",
+          "inv14_correct_5",
+          "always all f:File | f in Trash and f in Protected implies f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/GCfm8MeeXhPAY2goX_inv14.als",
+          "correct-student",
+          "inv14_correct_8",
+          "always (all f : Protected | f in Trash implies after f not in Protected)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/8x4Shj67PijTgxgsn_inv14.als",
+          "correct-student",
+          "inv14_correct_5",
+          "always all f:File | f in Trash and f in Protected implies f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/XDqBEcnB6qedPAqqy_inv14.als",
+          "correct-student",
+          "inv14_correct_13",
+          "always (all f:File | f in Trash and f in Protected implies after f not in Protected)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/8x4Shj67PijTgxgsn_inv14.als",
+          "correct-student",
+          "inv14_correct_5",
+          "always all f:File | f in Trash and f in Protected implies f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/eeNxANZMMvCLok5b4_inv14.als",
+          "correct-student",
+          "inv14_correct_16",
+          "always (all f:File | f in Protected&Trash implies after (f not in Protected))"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/Br74tqcSxroc6ciia_inv14.als",
+          "correct-student",
+          "inv14_correct_6",
+          "always all p: Protected | p in Trash implies after p not in Protected"
+        ],
+        [
+          "trash_ltl/correct/CPvbP4sLgBBrznYYr_inv14.als",
+          "correct-student",
+          "inv14_correct_7",
+          "always (all f: Protected | f in Trash implies f not in Protected')"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/Br74tqcSxroc6ciia_inv14.als",
+          "correct-student",
+          "inv14_correct_6",
+          "always all p: Protected | p in Trash implies after p not in Protected"
+        ],
+        [
+          "trash_ltl/correct/HCBY8qjyEbHGRLkzy_inv14.als",
+          "correct-student",
+          "inv14_correct_9",
+          "always all f:Trash | f in Protected implies f not in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/Br74tqcSxroc6ciia_inv14.als",
+          "correct-student",
+          "inv14_correct_6",
+          "always all p: Protected | p in Trash implies after p not in Protected"
+        ],
+        [
+          "trash_ltl/correct/RR9Y7tChBAnyQkQdg_inv14.als",
+          "correct-student",
+          "inv14_correct_11",
+          "always all f : File | f in Trash & Protected implies f not in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/Br74tqcSxroc6ciia_inv14.als",
+          "correct-student",
+          "inv14_correct_6",
+          "always all p: Protected | p in Trash implies after p not in Protected"
+        ],
+        [
+          "trash_ltl/correct/xJ8Bp6Q3XsfxE6J8w_inv14.als",
+          "correct-student",
+          "inv14_correct_18",
+          "always all f:File | f in Protected and f in Trash implies f not in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/CPvbP4sLgBBrznYYr_inv14.als",
+          "correct-student",
+          "inv14_correct_7",
+          "always (all f: Protected | f in Trash implies f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/GCfm8MeeXhPAY2goX_inv14.als",
+          "correct-student",
+          "inv14_correct_8",
+          "always (all f : Protected | f in Trash implies after f not in Protected)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/CPvbP4sLgBBrznYYr_inv14.als",
+          "correct-student",
+          "inv14_correct_7",
+          "always (all f: Protected | f in Trash implies f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/XDqBEcnB6qedPAqqy_inv14.als",
+          "correct-student",
+          "inv14_correct_13",
+          "always (all f:File | f in Trash and f in Protected implies after f not in Protected)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/CPvbP4sLgBBrznYYr_inv14.als",
+          "correct-student",
+          "inv14_correct_7",
+          "always (all f: Protected | f in Trash implies f not in Protected')"
+        ],
+        [
+          "trash_ltl/correct/eeNxANZMMvCLok5b4_inv14.als",
+          "correct-student",
+          "inv14_correct_16",
+          "always (all f:File | f in Protected&Trash implies after (f not in Protected))"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/GCfm8MeeXhPAY2goX_inv14.als",
+          "correct-student",
+          "inv14_correct_8",
+          "always (all f : Protected | f in Trash implies after f not in Protected)"
+        ],
+        [
+          "trash_ltl/correct/HCBY8qjyEbHGRLkzy_inv14.als",
+          "correct-student",
+          "inv14_correct_9",
+          "always all f:Trash | f in Protected implies f not in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/GCfm8MeeXhPAY2goX_inv14.als",
+          "correct-student",
+          "inv14_correct_8",
+          "always (all f : Protected | f in Trash implies after f not in Protected)"
+        ],
+        [
+          "trash_ltl/correct/RR9Y7tChBAnyQkQdg_inv14.als",
+          "correct-student",
+          "inv14_correct_11",
+          "always all f : File | f in Trash & Protected implies f not in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/GCfm8MeeXhPAY2goX_inv14.als",
+          "correct-student",
+          "inv14_correct_8",
+          "always (all f : Protected | f in Trash implies after f not in Protected)"
+        ],
+        [
+          "trash_ltl/correct/xJ8Bp6Q3XsfxE6J8w_inv14.als",
+          "correct-student",
+          "inv14_correct_18",
+          "always all f:File | f in Protected and f in Trash implies f not in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/HCBY8qjyEbHGRLkzy_inv14.als",
+          "correct-student",
+          "inv14_correct_9",
+          "always all f:Trash | f in Protected implies f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/XDqBEcnB6qedPAqqy_inv14.als",
+          "correct-student",
+          "inv14_correct_13",
+          "always (all f:File | f in Trash and f in Protected implies after f not in Protected)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/HCBY8qjyEbHGRLkzy_inv14.als",
+          "correct-student",
+          "inv14_correct_9",
+          "always all f:Trash | f in Protected implies f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/eeNxANZMMvCLok5b4_inv14.als",
+          "correct-student",
+          "inv14_correct_16",
+          "always (all f:File | f in Protected&Trash implies after (f not in Protected))"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/RR9Y7tChBAnyQkQdg_inv14.als",
+          "correct-student",
+          "inv14_correct_11",
+          "always all f : File | f in Trash & Protected implies f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/XDqBEcnB6qedPAqqy_inv14.als",
+          "correct-student",
+          "inv14_correct_13",
+          "always (all f:File | f in Trash and f in Protected implies after f not in Protected)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/RR9Y7tChBAnyQkQdg_inv14.als",
+          "correct-student",
+          "inv14_correct_11",
+          "always all f : File | f in Trash & Protected implies f not in Protected'"
+        ],
+        [
+          "trash_ltl/correct/eeNxANZMMvCLok5b4_inv14.als",
+          "correct-student",
+          "inv14_correct_16",
+          "always (all f:File | f in Protected&Trash implies after (f not in Protected))"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/XDqBEcnB6qedPAqqy_inv14.als",
+          "correct-student",
+          "inv14_correct_13",
+          "always (all f:File | f in Trash and f in Protected implies after f not in Protected)"
+        ],
+        [
+          "trash_ltl/correct/xJ8Bp6Q3XsfxE6J8w_inv14.als",
+          "correct-student",
+          "inv14_correct_18",
+          "always all f:File | f in Protected and f in Trash implies f not in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv14",
+      [
+        [
+          "trash_ltl/correct/eeNxANZMMvCLok5b4_inv14.als",
+          "correct-student",
+          "inv14_correct_16",
+          "always (all f:File | f in Protected&Trash implies after (f not in Protected))"
+        ],
+        [
+          "trash_ltl/correct/xJ8Bp6Q3XsfxE6J8w_inv14.als",
+          "correct-student",
+          "inv14_correct_18",
+          "always all f:File | f in Protected and f in Trash implies f not in Protected'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "correct-student",
+          "inv17_correct_0",
+          "always ( all f : (File & Trash) | after (f not in File))"
+        ],
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "oracle",
+          "inv17_oracle",
+          "always (no Trash&File')"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "correct-student",
+          "inv17_correct_0",
+          "always ( all f : (File & Trash) | after (f not in File))"
+        ],
+        [
+          "trash_ltl/correct/3toT3vdaBDapQKiJW_inv17.als",
+          "correct-student",
+          "inv17_correct_1",
+          "always all t : Trash | t not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "correct-student",
+          "inv17_correct_0",
+          "always ( all f : (File & Trash) | after (f not in File))"
+        ],
+        [
+          "trash_ltl/correct/4f48GoHsnP2knffog_inv17.als",
+          "correct-student",
+          "inv17_correct_2",
+          "always no File' & File & Trash"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "correct-student",
+          "inv17_correct_0",
+          "always ( all f : (File & Trash) | after (f not in File))"
+        ],
+        [
+          "trash_ltl/correct/7vddwrKdjS4yvo4JN_inv17.als",
+          "correct-student",
+          "inv17_correct_5",
+          "always all f : File | f in Trash => f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "correct-student",
+          "inv17_correct_0",
+          "always ( all f : (File & Trash) | after (f not in File))"
+        ],
+        [
+          "trash_ltl/correct/855829Kr2cvuMTcdX_inv17.als",
+          "correct-student",
+          "inv17_correct_6",
+          "always all f:Trash | f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "oracle",
+          "inv17_oracle",
+          "always (no Trash&File')"
+        ],
+        [
+          "trash_ltl/correct/6BNAop27gwr3kbiYH_inv17.als",
+          "correct-student",
+          "inv17_correct_3",
+          "always (all f:File | f in Trash implies after f not in File)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "oracle",
+          "inv17_oracle",
+          "always (no Trash&File')"
+        ],
+        [
+          "trash_ltl/correct/7JaQNTERfBw7pmEYA_inv17.als",
+          "correct-student",
+          "inv17_correct_4",
+          "always all f : Trash | after f not in File"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "oracle",
+          "inv17_oracle",
+          "always (no Trash&File')"
+        ],
+        [
+          "trash_ltl/correct/7vddwrKdjS4yvo4JN_inv17.als",
+          "correct-student",
+          "inv17_correct_5",
+          "always all f : File | f in Trash => f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3cGh6zxH6ZroLa5fv_inv17.als",
+          "oracle",
+          "inv17_oracle",
+          "always (no Trash&File')"
+        ],
+        [
+          "trash_ltl/correct/RydwrwjckwZz3hM47_inv17.als",
+          "correct-student",
+          "inv17_correct_8",
+          "always all t: Trash | after t not in File"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3toT3vdaBDapQKiJW_inv17.als",
+          "correct-student",
+          "inv17_correct_1",
+          "always all t : Trash | t not in File'"
+        ],
+        [
+          "trash_ltl/correct/6BNAop27gwr3kbiYH_inv17.als",
+          "correct-student",
+          "inv17_correct_3",
+          "always (all f:File | f in Trash implies after f not in File)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3toT3vdaBDapQKiJW_inv17.als",
+          "correct-student",
+          "inv17_correct_1",
+          "always all t : Trash | t not in File'"
+        ],
+        [
+          "trash_ltl/correct/7JaQNTERfBw7pmEYA_inv17.als",
+          "correct-student",
+          "inv17_correct_4",
+          "always all f : Trash | after f not in File"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3toT3vdaBDapQKiJW_inv17.als",
+          "correct-student",
+          "inv17_correct_1",
+          "always all t : Trash | t not in File'"
+        ],
+        [
+          "trash_ltl/correct/7vddwrKdjS4yvo4JN_inv17.als",
+          "correct-student",
+          "inv17_correct_5",
+          "always all f : File | f in Trash => f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/3toT3vdaBDapQKiJW_inv17.als",
+          "correct-student",
+          "inv17_correct_1",
+          "always all t : Trash | t not in File'"
+        ],
+        [
+          "trash_ltl/correct/RydwrwjckwZz3hM47_inv17.als",
+          "correct-student",
+          "inv17_correct_8",
+          "always all t: Trash | after t not in File"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/4f48GoHsnP2knffog_inv17.als",
+          "correct-student",
+          "inv17_correct_2",
+          "always no File' & File & Trash"
+        ],
+        [
+          "trash_ltl/correct/6BNAop27gwr3kbiYH_inv17.als",
+          "correct-student",
+          "inv17_correct_3",
+          "always (all f:File | f in Trash implies after f not in File)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/4f48GoHsnP2knffog_inv17.als",
+          "correct-student",
+          "inv17_correct_2",
+          "always no File' & File & Trash"
+        ],
+        [
+          "trash_ltl/correct/7JaQNTERfBw7pmEYA_inv17.als",
+          "correct-student",
+          "inv17_correct_4",
+          "always all f : Trash | after f not in File"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/4f48GoHsnP2knffog_inv17.als",
+          "correct-student",
+          "inv17_correct_2",
+          "always no File' & File & Trash"
+        ],
+        [
+          "trash_ltl/correct/7vddwrKdjS4yvo4JN_inv17.als",
+          "correct-student",
+          "inv17_correct_5",
+          "always all f : File | f in Trash => f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/4f48GoHsnP2knffog_inv17.als",
+          "correct-student",
+          "inv17_correct_2",
+          "always no File' & File & Trash"
+        ],
+        [
+          "trash_ltl/correct/RydwrwjckwZz3hM47_inv17.als",
+          "correct-student",
+          "inv17_correct_8",
+          "always all t: Trash | after t not in File"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/6BNAop27gwr3kbiYH_inv17.als",
+          "correct-student",
+          "inv17_correct_3",
+          "always (all f:File | f in Trash implies after f not in File)"
+        ],
+        [
+          "trash_ltl/correct/7vddwrKdjS4yvo4JN_inv17.als",
+          "correct-student",
+          "inv17_correct_5",
+          "always all f : File | f in Trash => f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/6BNAop27gwr3kbiYH_inv17.als",
+          "correct-student",
+          "inv17_correct_3",
+          "always (all f:File | f in Trash implies after f not in File)"
+        ],
+        [
+          "trash_ltl/correct/855829Kr2cvuMTcdX_inv17.als",
+          "correct-student",
+          "inv17_correct_6",
+          "always all f:Trash | f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/7JaQNTERfBw7pmEYA_inv17.als",
+          "correct-student",
+          "inv17_correct_4",
+          "always all f : Trash | after f not in File"
+        ],
+        [
+          "trash_ltl/correct/7vddwrKdjS4yvo4JN_inv17.als",
+          "correct-student",
+          "inv17_correct_5",
+          "always all f : File | f in Trash => f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/7JaQNTERfBw7pmEYA_inv17.als",
+          "correct-student",
+          "inv17_correct_4",
+          "always all f : Trash | after f not in File"
+        ],
+        [
+          "trash_ltl/correct/855829Kr2cvuMTcdX_inv17.als",
+          "correct-student",
+          "inv17_correct_6",
+          "always all f:Trash | f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/7vddwrKdjS4yvo4JN_inv17.als",
+          "correct-student",
+          "inv17_correct_5",
+          "always all f : File | f in Trash => f not in File'"
+        ],
+        [
+          "trash_ltl/correct/855829Kr2cvuMTcdX_inv17.als",
+          "correct-student",
+          "inv17_correct_6",
+          "always all f:Trash | f not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/7vddwrKdjS4yvo4JN_inv17.als",
+          "correct-student",
+          "inv17_correct_5",
+          "always all f : File | f in Trash => f not in File'"
+        ],
+        [
+          "trash_ltl/correct/RydwrwjckwZz3hM47_inv17.als",
+          "correct-student",
+          "inv17_correct_8",
+          "always all t: Trash | after t not in File"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv17",
+      [
+        [
+          "trash_ltl/correct/855829Kr2cvuMTcdX_inv17.als",
+          "correct-student",
+          "inv17_correct_6",
+          "always all f:Trash | f not in File'"
+        ],
+        [
+          "trash_ltl/correct/RydwrwjckwZz3hM47_inv17.als",
+          "correct-student",
+          "inv17_correct_8",
+          "always all t: Trash | after t not in File"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv18",
+      [
+        [
+          "trash_ltl/correct/58vBDczGa4ojSeCFf_inv18.als",
+          "correct-student",
+          "inv18_correct_1",
+          "always all f : Protected | f not in Protected' implies f in Trash"
+        ],
+        [
+          "trash_ltl/correct/5rAdA6oReyfPuT3k5_inv18.als",
+          "correct-student",
+          "inv18_correct_2",
+          "always all p: Protected | after p not in Protected implies p in Trash"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv18",
+      [
+        [
+          "trash_ltl/correct/58vBDczGa4ojSeCFf_inv18.als",
+          "correct-student",
+          "inv18_correct_1",
+          "always all f : Protected | f not in Protected' implies f in Trash"
+        ],
+        [
+          "trash_ltl/correct/63FuouKpB8u6nm3YB_inv18.als",
+          "correct-student",
+          "inv18_correct_3",
+          "always (all f:Protected | after f not in Protected implies f in Trash)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv18",
+      [
+        [
+          "trash_ltl/correct/5rAdA6oReyfPuT3k5_inv18.als",
+          "correct-student",
+          "inv18_correct_2",
+          "always all p: Protected | after p not in Protected implies p in Trash"
+        ],
+        [
+          "trash_ltl/correct/DBc3NJR28mcCJTiYq_inv18.als",
+          "correct-student",
+          "inv18_correct_4",
+          "always all p:Protected | p not in Protected' implies p in Trash"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv18",
+      [
+        [
+          "trash_ltl/correct/63FuouKpB8u6nm3YB_inv18.als",
+          "correct-student",
+          "inv18_correct_3",
+          "always (all f:Protected | after f not in Protected implies f in Trash)"
+        ],
+        [
+          "trash_ltl/correct/DBc3NJR28mcCJTiYq_inv18.als",
+          "correct-student",
+          "inv18_correct_4",
+          "always all p:Protected | p not in Protected' implies p in Trash"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv2",
+      [
+        [
+          "trash_ltl/correct/2KKT7qevntzf2DavJ_inv2.als",
+          "correct-student",
+          "inv2_correct_0",
+          "no File and after some File"
+        ],
+        [
+          "trash_ltl/correct/2KKT7qevntzf2DavJ_inv2.als",
+          "oracle",
+          "inv2_oracle",
+          "no File\n  \tsome File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv2",
+      [
+        [
+          "trash_ltl/correct/DWZoA2PP62eQPBNAZ_inv2.als",
+          "correct-student",
+          "inv2_correct_1",
+          "historically no File\nafter some File"
+        ],
+        [
+          "trash_ltl/correct/GwLt2Wa44YWFWFKCW_inv2.als",
+          "correct-student",
+          "inv2_correct_2",
+          "historically no File and some File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv5",
+      [
+        [
+          "trash_ltl/correct/2vhav3cxsiej2bKoN_inv5.als",
+          "correct-student",
+          "inv5_correct_0",
+          "eventually (some f : File | after f not in File)"
+        ],
+        [
+          "trash_ltl/correct/2vhav3cxsiej2bKoN_inv5.als",
+          "oracle",
+          "inv5_oracle",
+          "eventually (some f:File | f not in File')"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv5",
+      [
+        [
+          "trash_ltl/correct/2vhav3cxsiej2bKoN_inv5.als",
+          "correct-student",
+          "inv5_correct_0",
+          "eventually (some f : File | after f not in File)"
+        ],
+        [
+          "trash_ltl/correct/6F4dYJTR9YYZXvthB_inv5.als",
+          "correct-student",
+          "inv5_correct_2",
+          "eventually File not in File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv5",
+      [
+        [
+          "trash_ltl/correct/2vhav3cxsiej2bKoN_inv5.als",
+          "correct-student",
+          "inv5_correct_0",
+          "eventually (some f : File | after f not in File)"
+        ],
+        [
+          "trash_ltl/correct/JmW2cnrScjBDan7Mb_inv5.als",
+          "correct-student",
+          "inv5_correct_5",
+          "eventually some File - File'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/2qwB42TnjQjenGbov_inv6.als",
+          "oracle",
+          "inv6_oracle",
+          "always Trash in Trash'"
+        ],
+        [
+          "trash_ltl/correct/FiNKbTyH4XSYQ8pN2_inv6.als",
+          "correct-student",
+          "inv6_correct_7",
+          "always all f:File |  f in Trash implies after f in Trash"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/2qwB42TnjQjenGbov_inv6.als",
+          "oracle",
+          "inv6_oracle",
+          "always Trash in Trash'"
+        ],
+        [
+          "trash_ltl/correct/SQz4KYtR4QMEeDXdj_inv6.als",
+          "correct-student",
+          "inv6_correct_9",
+          "always (all f : Trash | after f in Trash)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/2qwB42TnjQjenGbov_inv6.als",
+          "oracle",
+          "inv6_oracle",
+          "always Trash in Trash'"
+        ],
+        [
+          "trash_ltl/correct/XDPZ7wHxJpxYWJwAz_inv6.als",
+          "correct-student",
+          "inv6_correct_10",
+          "always (all t:Trash | after t in Trash)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/2qwB42TnjQjenGbov_inv6.als",
+          "oracle",
+          "inv6_oracle",
+          "always Trash in Trash'"
+        ],
+        [
+          "trash_ltl/correct/iwBBbjYm4WBZgeBpm_inv6.als",
+          "correct-student",
+          "inv6_correct_12",
+          "always all f : File | f in Trash implies f in Trash'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/8qY5EkDJdCJ87L2pi_inv6.als",
+          "correct-student",
+          "inv6_correct_3",
+          "always (all f:Trash| f in Trash')"
+        ],
+        [
+          "trash_ltl/correct/FiNKbTyH4XSYQ8pN2_inv6.als",
+          "correct-student",
+          "inv6_correct_7",
+          "always all f:File |  f in Trash implies after f in Trash"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/8qY5EkDJdCJ87L2pi_inv6.als",
+          "correct-student",
+          "inv6_correct_3",
+          "always (all f:Trash| f in Trash')"
+        ],
+        [
+          "trash_ltl/correct/SQz4KYtR4QMEeDXdj_inv6.als",
+          "correct-student",
+          "inv6_correct_9",
+          "always (all f : Trash | after f in Trash)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/8qY5EkDJdCJ87L2pi_inv6.als",
+          "correct-student",
+          "inv6_correct_3",
+          "always (all f:Trash| f in Trash')"
+        ],
+        [
+          "trash_ltl/correct/XDPZ7wHxJpxYWJwAz_inv6.als",
+          "correct-student",
+          "inv6_correct_10",
+          "always (all t:Trash | after t in Trash)"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/8qY5EkDJdCJ87L2pi_inv6.als",
+          "correct-student",
+          "inv6_correct_3",
+          "always (all f:Trash| f in Trash')"
+        ],
+        [
+          "trash_ltl/correct/iwBBbjYm4WBZgeBpm_inv6.als",
+          "correct-student",
+          "inv6_correct_12",
+          "always all f : File | f in Trash implies f in Trash'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/FiNKbTyH4XSYQ8pN2_inv6.als",
+          "correct-student",
+          "inv6_correct_7",
+          "always all f:File |  f in Trash implies after f in Trash"
+        ],
+        [
+          "trash_ltl/correct/iwBBbjYm4WBZgeBpm_inv6.als",
+          "correct-student",
+          "inv6_correct_12",
+          "always all f : File | f in Trash implies f in Trash'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/SQz4KYtR4QMEeDXdj_inv6.als",
+          "correct-student",
+          "inv6_correct_9",
+          "always (all f : Trash | after f in Trash)"
+        ],
+        [
+          "trash_ltl/correct/iwBBbjYm4WBZgeBpm_inv6.als",
+          "correct-student",
+          "inv6_correct_12",
+          "always all f : File | f in Trash implies f in Trash'"
+        ]
+      ]
+    ],
+    [
+      "trash_ltl",
+      "inv6",
+      [
+        [
+          "trash_ltl/correct/XDPZ7wHxJpxYWJwAz_inv6.als",
+          "correct-student",
+          "inv6_correct_10",
+          "always (all t:Trash | after t in Trash)"
+        ],
+        [
+          "trash_ltl/correct/iwBBbjYm4WBZgeBpm_inv6.als",
+          "correct-student",
+          "inv6_correct_12",
+          "always all f : File | f in Trash implies f in Trash'"
+        ]
+      ]
+    ],
+    [
+      "trash_rl",
+      "inv3",
+      [
+        [
+          "trash_rl/correct/5Qn4D9PbeEDNEbtey_inv3.als",
+          "correct-student",
+          "inv3_correct_0",
+          "some f: File | f in Trash"
+        ],
+        [
+          "trash_rl/correct/yR8g2iMeQutEbmpJZ_inv3.als",
+          "correct-student",
+          "inv3_correct_9",
+          "some Trash <: File"
+        ]
+      ]
+    ],
+    [
+      "trash_rl",
+      "inv3",
+      [
+        [
+          "trash_rl/correct/5Qn4D9PbeEDNEbtey_inv3.als",
+          "oracle",
+          "inv3_oracle",
+          "some Trash"
+        ],
+        [
+          "trash_rl/correct/yR8g2iMeQutEbmpJZ_inv3.als",
+          "correct-student",
+          "inv3_correct_9",
+          "some Trash <: File"
+        ]
+      ]
+    ],
+    [
+      "trash_rl",
+      "inv3",
+      [
+        [
+          "trash_rl/correct/782DmjeLmWYnkzG6j_inv3.als",
+          "correct-student",
+          "inv3_correct_1",
+          "some f : File | f in Trash\n\n\n\n\n\nsome Trash"
+        ],
+        [
+          "trash_rl/correct/yR8g2iMeQutEbmpJZ_inv3.als",
+          "correct-student",
+          "inv3_correct_9",
+          "some Trash <: File"
+        ]
+      ]
+    ],
+    [
+      "trash_rl",
+      "inv3",
+      [
+        [
+          "trash_rl/correct/7q3AEFb7bPkFP7am6_inv3.als",
+          "correct-student",
+          "inv3_correct_2",
+          "some (File & Trash)"
+        ],
+        [
+          "trash_rl/correct/yR8g2iMeQutEbmpJZ_inv3.als",
+          "correct-student",
+          "inv3_correct_9",
+          "some Trash <: File"
+        ]
+      ]
+    ],
+    [
+      "trash_rl",
+      "inv3",
+      [
+        [
+          "trash_rl/correct/FfZ6aRvSCgYPQp6Xs_inv3.als",
+          "correct-student",
+          "inv3_correct_3",
+          "some file: File |\nfile in Trash"
+        ],
+        [
+          "trash_rl/correct/yR8g2iMeQutEbmpJZ_inv3.als",
+          "correct-student",
+          "inv3_correct_9",
+          "some Trash <: File"
+        ]
+      ]
+    ],
+    [
+      "trash_rl",
+      "inv3",
+      [
+        [
+          "trash_rl/correct/ZSgdNBDav4ngjArEc_inv3.als",
+          "correct-student",
+          "inv3_correct_5",
+          "some s : File | s in Trash"
+        ],
+        [
+          "trash_rl/correct/yR8g2iMeQutEbmpJZ_inv3.als",
+          "correct-student",
+          "inv3_correct_9",
+          "some Trash <: File"
+        ]
+      ]
+    ],
+    [
+      "trash_rl",
+      "inv3",
+      [
+        [
+          "trash_rl/correct/ggQCeqBbCckf2sCBh_inv3.als",
+          "correct-student",
+          "inv3_correct_6",
+          "some Trash & File"
+        ],
+        [
+          "trash_rl/correct/yR8g2iMeQutEbmpJZ_inv3.als",
+          "correct-student",
+          "inv3_correct_9",
+          "some Trash <: File"
+        ]
+      ]
+    ]
+  ],
+  "lost": [],
+  "rawDistanceDrift": []
+}

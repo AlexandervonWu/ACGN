@@ -569,6 +569,7 @@ public final class CertificateBundleWriter {
         private final Map<ParentRecordKey, InsertionWire> shapeWires =
                 new LinkedHashMap<>();
         private final Map<StructuralKey, Node> snapshots = new LinkedHashMap<>();
+        private final Map<String, Node> shapePreimages = new LinkedHashMap<>();
         private final Map<String, Node> schemas = new TreeMap<>();
         private final Map<String, Node> operators = new TreeMap<>();
         private final Map<String, Node> binders = new TreeMap<>();
@@ -3287,13 +3288,11 @@ public final class CertificateBundleWriter {
             return shapeId(key.owner(), shapeTerm);
         }
 
-        private String shapeId(EClassId owner, Node shapeTerm) {
-            return "shape/" + contentId(node(
-                    "producer-shape-id",
-                    List.of(
-                            owner.toString(),
-                            scalar(shapeTerm, 0)),
-                    List.of()));
+        private String shapeId(EClassId owner, Node shapeTerm) throws IOException {
+            Node preimage = leaf("producer-shape-id", owner.toString(), scalar(shapeTerm, 0));
+            String id = "shape/" + contentId(preimage);
+            internManifest(shapePreimages, id, preimage, "shape");
+            return id;
         }
 
         private InsertionWire shapeWire(

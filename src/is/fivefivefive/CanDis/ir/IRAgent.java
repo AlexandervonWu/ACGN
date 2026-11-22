@@ -192,7 +192,7 @@ public class IRAgent {
                             "Temporal source visit contains an uncommitted child edge");
                 }
             }
-            if (consuming && childIndex + arity > owner.getTemporalChildren().size()) {
+            if (consuming && childIndex + arity > owner.getSourceTemporalChildren().size()) {
                 throw new IllegalStateException(
                         "Temporal parser occurrence has no complete child phase group");
             }
@@ -477,6 +477,14 @@ public class IRAgent {
             stages.onStage("reachable-egraph", null, nfs);
             EGraphNode.endGraph();
         }
+        java.util.Set<NormalForm> reachable = java.util.Collections.newSetFromMap(new IdentityHashMap<>());
+        java.util.ArrayDeque<NormalForm> pending = new java.util.ArrayDeque<>();
+        pending.add(nfs.get(0));
+        while (!pending.isEmpty()) {
+            NormalForm phase = pending.removeFirst();
+            if (reachable.add(phase)) pending.addAll(phase.getTemporalChildren());
+        }
+        nfs.removeIf(phase -> !reachable.contains(phase));
     }
 
     private EGraphNode buildEGraph(
@@ -513,11 +521,13 @@ public class IRAgent {
         } else {
             current = new EGraphNode(
                     currentId, opcode, new ArrayList<>(), isCommutative(opcode),
-                    maxArity(node, opcode), isFlexibleArity(opcode),
+                    maxArity(node, opcode), isFlexibleArity(node, opcode),
                     metatypeOf(node, opcode, exactType),
                     semanticProfile);
         }
         attachSourceMetadata(current, node, exactType);
+        var origin = node.parsedBindingVisit(graph, tov);
+        if (origin != null) current.attachParsedBinding(new BindingOrigin(current, origin));
 
         if (opcode == Opcode.LET && (downlinks == null || downlinks.isEmpty())) {
             EGraphNode replacement = letBindings.get(node);
@@ -657,6 +667,8 @@ public class IRAgent {
         observer.onStage("begin-temporal-negation", normalForm, nfs);
         normalForm.pushTemporalNegations();
         observer.onStage("temporal-negation", normalForm, nfs);
+        normalForm.projectReferencedTemporalChildren();
+        observer.onStage("temporal-reachability", normalForm, nfs);
         Map<String, QuantiVar> descendants = new HashMap<>(inherited);
         for (QuantiVar variable : normalForm.getParams()) {
             for (String alias : variable.getOriginalNames()) {
@@ -864,6 +876,19 @@ public class IRAgent {
             return 2;
         }
         return -1;
+    }
+
+    public static final class BindingOrigin {
+        private final EGraphNode recipient;
+        private final is.fivefivefive.ACGN.visitor.MASGVisitor.BindingVisit visit;
+        private BindingOrigin(EGraphNode recipient, is.fivefivefive.ACGN.visitor.MASGVisitor.BindingVisit visit) {
+            this.recipient = recipient;
+            this.visit = visit;
+        }
+        public is.fivefivefive.ACGN.visitor.MASGVisitor.BindingVisit checked(EGraphNode node) {
+            if (recipient != node) throw new IllegalArgumentException("Wrong binding occurrence recipient");
+            return visit;
+        }
     }
 
     private void attachSourceMetadata(
@@ -1301,7 +1326,7 @@ public class IRAgent {
         if (opcode == Opcode.CALL) {
             return requireCallSymbol(node).getDeclaredArity();
         }
-        if (isFlexibleArity(opcode)) {
+        if (isFlexibleArity(node, opcode)) {
             return -1;
         }
         if (isLeaf(opcode)) {
@@ -1325,7 +1350,12 @@ public class IRAgent {
                 || opcode == Opcode.END;
     }
 
-    private static boolean isFlexibleArity(Opcode opcode) {
+    private static boolean isFlexibleArity(AugmentedNode node, Opcode opcode) {
+        int syntax = node.getSyntactic();
+        // NO/ONE/LONE also name quantifiers; source syntax distinguishes their unary forms.
+        if (isUnary(opcode) && (syntax == -6 || syntax == 6 || syntax == 16)) {
+            return false;
+        }
         return isAssociative(opcode) || opcode == Opcode.LIST
                 || opcode == Opcode.DISJOINT || opcode == Opcode.DISJOINT_LIST
                 || opcode == Opcode.TOTALORDER_LIST

@@ -107,8 +107,14 @@ public final class AlloyLibraryCallableLedger {
             String member,
             CallSymbol.Kind kind,
             int arity) {
+        // Module paths may contain '/'. A member is a single declaration name.
+        // This makes the last three delimiters unambiguous for every admitted tuple.
+        if (Objects.requireNonNull(member, "member").contains("/")) {
+            throw new IllegalStateException("Imported call lacks an independently pinned declaration: "
+                    + module + "/" + member + "/" + kind + "/" + arity);
+        }
         return Objects.requireNonNull(module, "module") + "/"
-                + Objects.requireNonNull(member, "member") + "/"
+                + member + "/"
                 + Objects.requireNonNull(kind, "kind") + "/" + arity;
     }
 

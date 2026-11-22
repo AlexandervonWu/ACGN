@@ -170,7 +170,7 @@ complete alternative-pair JOIN matrix. Synthetic union and common-ancestor DAG
 nodes are excluded from the nominal parent ledger. An explicit `univ` boundary
 may participate by exact identity or by a supplied concrete-to-`univ` subtype
 path; merely finding `univ` as the first common ancestor of two divergent
-concrete branches does not authorize overlap. The verifier cannot authenticate that the nominal
+concrete branches does not authorize overlap. For JOINs the verifier cannot authenticate that the nominal
 ledger was extracted from the source
 parser or that it belongs to the claimed source occurrence: raw declarations
 and an external hierarchy commitment are outside the
@@ -179,6 +179,15 @@ or divergent-branch JOIN evidence is `UNCHECKABLE / MISSING_EVIDENCE`. Invalid s
 is `REJECTED`, and exact-boundary dependent chains remain eligible for normal
 verification. This distinction prevents internally consistent producer data
 from becoming its own subtype authority.
+
+A separate caller-owned ARROW source commitment covers a single closed SOME
+whose tree has immutable primitive signature leaves. The caller resolves the
+selected predicate and the signatures' parent declarations from the original
+bytes. The standalone verifier checks the same root, binary roles, declaration
+names and complete ancestry from its decoded terms and checked DAGs. Supplied
+foreign or incomplete authority cannot release the ancestry hold. Nonexact
+parser-subfamily and JOIN-specific evidence retain their independent holds.
+[Bounded ARROW authority](../docs/obligation-repair/seventh-five/G08-source-to-wire.md)
 
 Schema v10 introduces the correlated-family and complete-matrix boundary.
 Schema v9 and earlier bytes are rejected, not migrated or reinterpreted.

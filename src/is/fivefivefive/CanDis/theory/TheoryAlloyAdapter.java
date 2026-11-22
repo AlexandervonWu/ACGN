@@ -513,6 +513,7 @@ public final class TheoryAlloyAdapter {
         private final List<List<Integer>> phaseSourceCoordinates;
         private final Map<EGraphNode, BinderBlockDescriptor> localBinderDescriptors;
         private final Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates;
+        private final Map<EGraphNode,EGraphNode> localBinderProjectionSources;
         private final Map<NormalForm, List<PhaseLocalBindingCertificate>>
                 phaseLocalBindingCertificates;
         private final Map<EGraphNode, DependentChainCertificate>
@@ -539,6 +540,7 @@ public final class TheoryAlloyAdapter {
                 List<? extends List<Integer>> phaseSourceCoordinates,
                 Map<EGraphNode, BinderBlockDescriptor> localBinderDescriptors,
                 Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates,
+                Map<EGraphNode,EGraphNode> localBinderProjectionSources,
                 Map<NormalForm, List<PhaseLocalBindingCertificate>>
                         phaseLocalBindingCertificates,
                 Map<EGraphNode, DependentChainSourceBinding>
@@ -586,6 +588,7 @@ public final class TheoryAlloyAdapter {
             }
             this.localBinderSourceCoordinates = Collections.unmodifiableMap(
                     localCoordinateCopies);
+            this.localBinderProjectionSources=Collections.unmodifiableMap(new IdentityHashMap<>(localBinderProjectionSources));
             IdentityHashMap<NormalForm, List<PhaseLocalBindingCertificate>>
                     phaseLocalCopies = new IdentityHashMap<>();
             for (Map.Entry<NormalForm, List<PhaseLocalBindingCertificate>> entry
@@ -677,6 +680,10 @@ public final class TheoryAlloyAdapter {
             return localBinderDescriptors;
         }
 
+        public EGraphNode localBinderProjectionSource(EGraphNode projectedOwner) {
+            return localBinderProjectionSources.get(projectedOwner);
+        }
+
         /** Source local-variable name to certified descriptor coordinate. */
         public Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates() {
             return localBinderSourceCoordinates;
@@ -763,6 +770,7 @@ public final class TheoryAlloyAdapter {
                 new IdentityHashMap<>();
         private final Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates =
                 new IdentityHashMap<>();
+        private final Map<EGraphNode,EGraphNode> localBinderProjectionSources = new IdentityHashMap<>();
         private final Map<NormalForm, List<PhaseLocalBindingCertificate>>
                 phaseLocalBindingCertificates = new IdentityHashMap<>();
         private final IdentityHashMap<NormalForm, Integer> phaseIndices =
@@ -890,6 +898,7 @@ public final class TheoryAlloyAdapter {
         private static void requirePristineCertificationSources(
                 List<NormalForm> normalForms) {
             Set<EGraphNode> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+            Set<Integer> classIds = new HashSet<>();
             ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
             for (NormalForm normalForm : normalForms) {
                 EGraphNode root = normalForm.getCertificationMatrixEGraph();
@@ -903,6 +912,10 @@ public final class TheoryAlloyAdapter {
                     continue;
                 }
                 node.requirePristineCertificationSource();
+                if (!classIds.add(node.getEClass().getId())) {
+                    throw new IllegalStateException(
+                            "Distinct pristine source e-classes share a numeric identifier");
+                }
                 pending.addAll(node.getChildren());
             }
         }
@@ -1037,6 +1050,7 @@ public final class TheoryAlloyAdapter {
                     orderedSourceCoordinates,
                     localBinderDescriptors,
                     localBinderSourceCoordinates,
+                    localBinderProjectionSources,
                     phaseLocalBindingCertificates,
                     dependentChainSourceBindings,
                     repairedSetOperandPartitions,
@@ -1206,8 +1220,12 @@ public final class TheoryAlloyAdapter {
                     new LinkedHashMap<>();
             Map<Long, Map<String, Integer>> localCoordinatesByLineage =
                     new LinkedHashMap<>();
+            Map<Long,EGraphNode> originalOwners=new HashMap<>();
+            Set<Long> ambiguousOwners=new HashSet<>();
             for (EGraphNode source : new ArrayList<>(localBinderDescriptors.keySet())) {
                 long lineage = source.getSourceOccurrenceLineage();
+                EGraphNode priorOwner=originalOwners.putIfAbsent(lineage,source);
+                if(priorOwner!=null&&priorOwner!=source)ambiguousOwners.add(lineage);
                 BinderBlockDescriptor descriptor =
                         localBinderDescriptors.get(source);
                 Map<String, Integer> coordinates =
@@ -1254,6 +1272,7 @@ public final class TheoryAlloyAdapter {
                     }
                     localBinderDescriptors.put(candidate, descriptor);
                     localBinderSourceCoordinates.put(candidate, coordinates);
+                    if(!ambiguousOwners.contains(lineage))localBinderProjectionSources.put(candidate,originalOwners.get(lineage));
                 }
                 pending.addAll(candidate.getChildren());
             }
@@ -1849,8 +1868,7 @@ public final class TheoryAlloyAdapter {
             if (--budget[0] < 0 || depth > 64)
                 throw new IllegalArgumentException("Guarded JOIN source budget exceeded");
             DependentTypeDag exact = dependentTypeDagForSource(source, new HashSet<>());
-            if (exact.alternatives().size() != 1)
-                throw new IllegalArgumentException("Guarded JOIN source is not one exact product");
+            GuardedJoinTree.requireAdmittedJoinType(exact, "Guarded JOIN source");
             if (source.getOpcode() != Opcode.JOIN) {
                 OnePort port = buildOperand(source, names, context, bindings, temporalReferences);
                 return GuardedJoinTree.leaf(new DependentChainLeaf(port, exact, source.getExactAlloyType()));
@@ -1990,10 +2008,12 @@ public final class TheoryAlloyAdapter {
                         ? storedType
                         : DependentChainTheory.relationViewFromStoredType(storedType);
                 ExactAlloyType exactType = child.getExactAlloyType();
-                DependentTypeDag typeDag = exactType != null
-                                && (exactType.kind() == ExactAlloyType.Kind.RELATION
-                                        || exactType.kind()
-                                                == ExactAlloyType.Kind.EMPTY_RELATION)
+                boolean sourceSetOperation = child.getOpcode() == Opcode.PLUS
+                        || child.getOpcode() == Opcode.INTERSECT;
+                boolean relationFamily = exactType != null
+                        && (exactType.kind() == ExactAlloyType.Kind.RELATION
+                                || exactType.kind() == ExactAlloyType.Kind.EMPTY_RELATION);
+                DependentTypeDag typeDag = sourceSetOperation || relationFamily
                         ? dependentTypeDagForSource(child, new HashSet<>())
                         : DependentTypeDag.fromRelationFamilyType(relationType);
                 return new DependentChainLeaf(leaf, typeDag, exactType);
@@ -2009,13 +2029,17 @@ public final class TheoryAlloyAdapter {
             ExactAlloyType exactType = source.getExactAlloyType();
             if (exactType == null
                     || (exactType.kind() != ExactAlloyType.Kind.RELATION
-                            && exactType.kind()
-                                    != ExactAlloyType.Kind.EMPTY_RELATION)) {
+                            && exactType.kind() != ExactAlloyType.Kind.EMPTY_RELATION
+                            && exactType.kind() != ExactAlloyType.Kind.INT)) {
                 throw new DependentChainTheory.UnsupportedFlattening(
                         "A dependent DAG leaf lacks an exact relation family");
             }
-            DependentTypeDag parserDag = AlloyTypeBridge.dependentTypeDag(
-                    exactType);
+            // Alloy represents a unary Int set as INT. Reuse the declared primitive
+            // relation lift when checking the source operator and each of its children.
+            DependentTypeDag parserDag = exactType.kind() == ExactAlloyType.Kind.INT
+                    ? DependentTypeDag.fromRelationFamilyType(
+                            DependentChainTheory.relationViewFromStoredType(GraphType.INT))
+                    : AlloyTypeBridge.dependentTypeDag(exactType);
             if (source.getOpcode() != Opcode.PLUS
                     && source.getOpcode() != Opcode.INTERSECT) {
                 return parserDag;
@@ -2030,6 +2054,14 @@ public final class TheoryAlloyAdapter {
                 for (EClassRef childRef : source.getChildClasses()) {
                     EGraphNode child = childRef.canonical().getEClass()
                             .getRepresentative();
+                    ExactAlloyType operandType = child.getExactAlloyType();
+                    if (operandType != null
+                            && (exactType.kind() == ExactAlloyType.Kind.INT)
+                                    != (operandType.kind() == ExactAlloyType.Kind.INT)) {
+                        // The primitive lift supplies no nominal ancestry for a mixed proof.
+                        throw new DependentChainTheory.UnsupportedFlattening(
+                                "A mixed primitive Int set operand lacks a common source evidence representation");
+                    }
                     operands.add(dependentTypeDagForSource(
                             child, activeTypeClasses));
                 }
@@ -2459,10 +2491,16 @@ public final class TheoryAlloyAdapter {
                     // an ambient dependency into a generated-name-free annotation.
                     OnePort operand = buildChildOperand(domainRef, declarationNames,
                             context, bindings, temporalReferences);
+                    // Source grouping must not duplicate an equal typed ambient
+                    // operand. Every original domain occurrence is still built below.
+                    int domainIndex = explicitDomains.indexOf(operand);
+                    if (domainIndex < 0) {
+                        domainIndex = explicitDomains.size();
+                        explicitDomains.add(operand);
+                    }
                     domainKey = StructuralKey.of("alloy-local-domain-port",
-                            List.of(Integer.toString(explicitDomains.size())),
+                            List.of(Integer.toString(domainIndex)),
                             List.of(TheoryKeys.type(operand.schema().type())));
-                    explicitDomains.add(operand);
                 }
                 String multiplicity = domainMultiplicity(domain);
                 int disjointnessClass = isDisjointDecl(child.getOpcode())
@@ -2622,7 +2660,7 @@ public final class TheoryAlloyAdapter {
                 TypedSlotContext context, Map<String, TypedSlot> bindings,
                 List<LocalCoordinate> preceding, int[] budget, int depth) {
             if (depth > 128 || --budget[0] < 0) {
-                throw new IllegalStateException("Local domain operand admission budget exceeded");
+                throw new is.fivefivefive.CanDis.metric.TraceResources.Exhausted("Local domain operand admission budget exceeded");
             }
             EClassRef canonical = reference.canonical();
             EGraphNode node = canonical.getEClass().getRepresentative();

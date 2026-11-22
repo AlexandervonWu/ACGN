@@ -35,7 +35,11 @@ public final class PolicyRepresentationExtractor {
         require(compiler != null, "A full JDK is required");
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         try (var fm = compiler.getStandardFileManager(diagnostics, Locale.ROOT, StandardCharsets.UTF_8)) {
-            List<Path> jars;
+            List<Path> sources, jars;
+            // Sealed hierarchies can name package-private classes in another file.
+            try (var stream = Files.walk(root.resolve("src"))) {
+                sources = stream.filter(p -> p.toString().endsWith(".java")).sorted().toList();
+            }
             try (var stream = Files.list(root.resolve("lib"))) {
                 jars = stream.filter(p -> p.toString().endsWith(".jar")).sorted().toList();
             }
@@ -43,8 +47,13 @@ public final class PolicyRepresentationExtractor {
                     List.of("--release", "17", "-proc:none", "-implicit:none", "-encoding", "UTF-8",
                             "-sourcepath", root.resolve("src").toString(), "-classpath",
                             jars.stream().map(Path::toString).collect(Collectors.joining(File.pathSeparator))),
-                    null, fm.getJavaFileObjectsFromPaths(List.of(source)));
-            CompilationUnitTree unit = task.parse().iterator().next();
+                    null, fm.getJavaFileObjectsFromPaths(sources));
+            List<CompilationUnitTree> units = new ArrayList<>();
+            task.parse().forEach(units::add);
+            List<CompilationUnitTree> matching = units.stream()
+                    .filter(u -> Path.of(u.getSourceFile().toUri()).equals(source)).toList();
+            require(matching.size() == 1, "Missing/ambiguous policy source unit");
+            CompilationUnitTree unit = matching.get(0);
             task.analyze();
             for (var d : diagnostics.getDiagnostics()) {
                 require(d.getKind() != Diagnostic.Kind.ERROR, d.toString());

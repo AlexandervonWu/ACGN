@@ -1,0 +1,2292 @@
+{
+  "baseCommit": "7aa4d5029f7b4078b40f581d949d5f8ffe1ce4d2",
+  "builds": [
+    {
+      "commands": [
+        {
+          "argvSha256": "8592337c5e6e9eeea942c412ccc4703c615dc18e51c84a139fc26dfa5c137116",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "qualification-guard-controls",
+          "logSha256": "09e49b5d61bad12c7ef01e7f17ea8677f314529f8d5bc239f017dd3f9567dec8"
+        },
+        {
+          "argvSha256": "06214a79db78b93ba40826eadefd8869d6a18536bd8cfab1b51ec6f78e04b33d",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "javac-version",
+          "logSha256": "785311ab4e5a27bedf1ffec541d403f660832b61852266829b28ef8ef7427550"
+        },
+        {
+          "argvSha256": "94470f1c9895db839deaf23de9b8489427e6b323989234c509aa80d53ce61c8e",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "java-version",
+          "logSha256": "1cda7f6f8a5d4b797aaacf251df2ea6490a4d824472916ebeb0bc6ea5d244c7c"
+        },
+        {
+          "argvSha256": "083c572932ffac59a7c7a8a7005cb25ca5e72d606badfcd45beab1196c9594a3",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "lean-version",
+          "logSha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a"
+        },
+        {
+          "argvSha256": "429445e0ddc9c1b0f391120c858e701e7ac59cd2eef61812eeed2aa930df6a12",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-init",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "824fd8f0e0e9d08266b95e371a82feff7f830bf60042a842d0e765567f311b61",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-add",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "1014843a006005b094dbe5ea7c8a2ab712aedfc6f2c7f7221ccfcee125c8fa06",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-commit",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "1c9c02b540314470f457962d1d84c8b1a5591b6e3e62fd4d2852cdfee22d4b1a",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-sha",
+          "logSha256": "33b6ac1e924af728d5dd4d9a2650979511b8c40a7a810efa3063bacec590342a"
+        },
+        {
+          "argvSha256": "b2774a539ad96445a333cf571597485de286c8a223d58de5cc625cea7f0b123f",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "producer",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "22d2f7acf55447cc05b7172cc2965ae3d2ad5f7051b9e830e3f3f92758df9bed",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "b352b4d20e2e44c5ee6d9747efa053fabb921128db11440af9f78447d3aa4243",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier-tests",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "01c3975ab50f10a02d1ebc46c4dbe13abcf850a6dba2ad31ec6f815d1524cc31",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "producer-jar",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "a4bc1720bc87b76131d0aec177e0fb923f17c0232b02298c433086937d0409bc",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier-jar",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "137095655d8065e85206dfa3124cb7b3fae3eb33370cf3c4bd12984e11ee10cd",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "writer",
+          "logSha256": "0ede56f228e73ecbdf602810c34353a879affbf33703c714b1bafd37dfc8978e"
+        },
+        {
+          "argvSha256": "823bf7490af6951b5d70c78d1fb1cdaf53704b94e104aef9113dc5482cc6fd6c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-inspect",
+          "logSha256": "3c853180ab58f58874eca799a49c51ff5797f242036324dc4f9d1a2da1d75bb6"
+        },
+        {
+          "argvSha256": "037e5e9de84a325f3211090b5122c1cb5dc2c0f88b8934b3584b2ae9436c10fd",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "public-accepted",
+          "logSha256": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760"
+        },
+        {
+          "argvSha256": "7262b3975fd6447f18ec3f3dbeec35f4c3f1531d18c94712aa4f43afe57fc696",
+          "exit": 3,
+          "expectedExit": 3,
+          "id": "public-no-authority",
+          "logSha256": "b564c3c29fb3e1da33fb834fc934e033c6d6ea57ffe3737829c5199f5192bf3f"
+        },
+        {
+          "argvSha256": "5e96050fd61cf8ad42e9796e3f81c3f3899291a77b5177db5ab983d75ea818f5",
+          "exit": 2,
+          "expectedExit": 2,
+          "id": "public-foreign-theory",
+          "logSha256": "3287aa469e1aded645ece522579c1999d2a733947da406d90474ff99f602f4b9"
+        },
+        {
+          "argvSha256": "f6707874a47ca367ee76606311ed4f001d6f52b54e05c4d77df00c3deaae47d3",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "distribution-fixture-inspect",
+          "logSha256": "3c853180ab58f58874eca799a49c51ff5797f242036324dc4f9d1a2da1d75bb6"
+        },
+        {
+          "argvSha256": "e39d44c870a08a9b899c320d97111a43ae4d76f14aa644eea83f65c6ccc2e11a",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "distribution-accepted",
+          "logSha256": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760"
+        },
+        {
+          "argvSha256": "f11cd7565360dbe3924a94a984ec0067e6dbbd2ed96e59b210bcf55838a9c30b",
+          "exit": 3,
+          "expectedExit": 3,
+          "id": "distribution-no-authority",
+          "logSha256": "b564c3c29fb3e1da33fb834fc934e033c6d6ea57ffe3737829c5199f5192bf3f"
+        },
+        {
+          "argvSha256": "e9b6b8c8f7575db559c96d35ad05a7905d1e8aa34c27dc435e3fa5d954eaca9e",
+          "exit": 2,
+          "expectedExit": 2,
+          "id": "distribution-foreign-theory",
+          "logSha256": "3287aa469e1aded645ece522579c1999d2a733947da406d90474ff99f602f4b9"
+        },
+        {
+          "argvSha256": "caac6f77cd41f92cbec58a31465abdfaf20dcde1f816d749e5c7c3451627c07d",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "public-byte-mutations",
+          "logSha256": "6e10bec6a1245f0e19079b3a8d19b9b1d32067d9a66cb5e6108b28c2cb688748"
+        },
+        {
+          "argvSha256": "643339c444a40f7d09fd148a1c81949d2ef3906a95daf0f24a44aa99771f0592",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "eighth-witnesses",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "8346a2ffa360f559924f4caef569f879b039b37d6503b70e6174875caf733fa0",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-11-lean",
+          "logSha256": "319d6d028f5650f25a0bc0433addb41b015bd2cc70eed6eed69eaa792649ca1e"
+        },
+        {
+          "argvSha256": "716fd25e2a32ab9fb236ba4a3441ba5b6e74c5693a3f49130f567ac5a154ff0f",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-11-witness",
+          "logSha256": "89f4d322746c95961ba7d4489f6592263e91865faf9026aa77eb6fd2e746d228"
+        },
+        {
+          "argvSha256": "ccb2600a6df2cf9ae7fc6eab16b12d9d74b0cfe044ae2ab54f182d269c4c5df5",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P1-15-lean",
+          "logSha256": "437edc8af2219a2293e92b05ebc20e554bd77ea5da1856640c2eee9b27b63d7d"
+        },
+        {
+          "argvSha256": "adce1f406031a902d2b67620601f41bb730620fd3460bcc14b59e75c69cad310",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P1-15-witness",
+          "logSha256": "0db7e5e3e0127e386bf2e3867fc3f62940aaba12f338ea375027f1eddde65c01"
+        },
+        {
+          "argvSha256": "0284c813471ec408e3fc417a6f51860fc6bfc3067e1b28f5547cd1f0799f0f24",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P4-11-lean",
+          "logSha256": "7c8c922d420b8365a8cf2b171d2b83547344a4cc32c1ba26eee2e370a11e8622"
+        },
+        {
+          "argvSha256": "39838500d81f4415c1b97820fe102a1ba4539d3e6d1f7d28e1bb702db949ab63",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P4-11-witness",
+          "logSha256": "db3c6f622605a8f4c0fb2e71487ea1060f573a90900783ab241b426ebb267915"
+        },
+        {
+          "argvSha256": "bb271e8d4f47ef4ad76055cbd821fdbbae3681217d16a8799420a5b437fa2b76",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-09-lean-import-DecodedEvidenceCoverage",
+          "logSha256": "c5316a76a032c4baa28c81c15d08912bfd46070d743476490a6912739640960e"
+        },
+        {
+          "argvSha256": "ca0425ed3912bca51901fbc529a5b501dcb70669fc45fcac598d53f3748fd16d",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-09-lean",
+          "logSha256": "379230c692c591d1d5b401d4bcb4fedae045bedd2b09f7a7c548ed3998e12862"
+        },
+        {
+          "argvSha256": "13ffd1a29709047bcfc9a5480dbcf5343bf81c64687a1ae672cbcf3dcc191795",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-09-witness",
+          "logSha256": "1f4e775b4e32fca216ebdbf09fe232e9017b1fe3ac355f887e63d81e43ee1df4"
+        },
+        {
+          "argvSha256": "f300237f9624bb72573443075a0c292fef10e37236f4d7275455461072c1980c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-23-lean",
+          "logSha256": "c794520d1ec30fb5c671e9c74685312348303b3544f1b9a79d11d915c9245725"
+        },
+        {
+          "argvSha256": "e7d9c82d96492720bd6debd5b8ff82103f4787d5349b4850d7709adb3c4caffb",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-23-witness",
+          "logSha256": "202cfa25677825a9141a211e3692ac4dc569c14a7335f36d78dbc99fa004d61e"
+        }
+      ],
+      "evidenceHash": "dbd27cb0799963bec280bad2b9f52085d9a4df7a4d9027771181773f49c1ddac",
+      "number": 1,
+      "status": "PASS"
+    },
+    {
+      "commands": [
+        {
+          "argvSha256": "46ce99318d8d79093aa9d0c552c0c4d82d558cc1a70e72c572be91fd0a940095",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "qualification-guard-controls",
+          "logSha256": "09e49b5d61bad12c7ef01e7f17ea8677f314529f8d5bc239f017dd3f9567dec8"
+        },
+        {
+          "argvSha256": "7919f86bcd9fc4c9052ffe779e78a42edecfcfab06107936cf91ec73f8d2397c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "javac-version",
+          "logSha256": "785311ab4e5a27bedf1ffec541d403f660832b61852266829b28ef8ef7427550"
+        },
+        {
+          "argvSha256": "ee225326a94f880aa6e25588cdd3c071bd2470098cfed1e4e847332f18d64622",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "java-version",
+          "logSha256": "1cda7f6f8a5d4b797aaacf251df2ea6490a4d824472916ebeb0bc6ea5d244c7c"
+        },
+        {
+          "argvSha256": "083c572932ffac59a7c7a8a7005cb25ca5e72d606badfcd45beab1196c9594a3",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "lean-version",
+          "logSha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a"
+        },
+        {
+          "argvSha256": "429445e0ddc9c1b0f391120c858e701e7ac59cd2eef61812eeed2aa930df6a12",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-init",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "824fd8f0e0e9d08266b95e371a82feff7f830bf60042a842d0e765567f311b61",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-add",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "1014843a006005b094dbe5ea7c8a2ab712aedfc6f2c7f7221ccfcee125c8fa06",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-commit",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "1c9c02b540314470f457962d1d84c8b1a5591b6e3e62fd4d2852cdfee22d4b1a",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-sha",
+          "logSha256": "33b6ac1e924af728d5dd4d9a2650979511b8c40a7a810efa3063bacec590342a"
+        },
+        {
+          "argvSha256": "324336e30210536a095564ac31960e2c37e043b0efa64de2d18b6a7d6524ff1e",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "producer",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "ce76b5949fc6206a69c131513679d70cfb64f8af7c584f281459d98aa0b179d4",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "365c4354767c3233b32f4e45f5b48e50121ff394dcbc1a31e939b4d44cc1d582",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier-tests",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "ca2f4462bcb6ba9caf3ce9d77e682722cc80b71e24edde1b505665e40dc91a7a",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "producer-jar",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "f65561fd9fec97398c4c75264463b064ec4481088e345c0809ed073a0f3a5616",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier-jar",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "a157f9ea00ce7131c95a9632d5ea161974738cab613bb72f30a61122e3af4bf4",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "writer",
+          "logSha256": "56b6c6d3b0d06c5cf676d88714f9ba03ece0ef5ab42250b2a686cb3cbb5b950a"
+        },
+        {
+          "argvSha256": "61bdccdd4393fffff361973ac90963c337ac68c34fd00129ba15ce3d9b565e19",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-inspect",
+          "logSha256": "3c853180ab58f58874eca799a49c51ff5797f242036324dc4f9d1a2da1d75bb6"
+        },
+        {
+          "argvSha256": "83a33fb0572354cacb5258c3ed2d8f0d87fa00c09a9d2000ab567f5e7217ccc8",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "public-accepted",
+          "logSha256": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760"
+        },
+        {
+          "argvSha256": "b8d518011c3d6bc9e23da5cb622d4adbc52cf1f2e65ab2a4ca62baeb056b49b3",
+          "exit": 3,
+          "expectedExit": 3,
+          "id": "public-no-authority",
+          "logSha256": "b564c3c29fb3e1da33fb834fc934e033c6d6ea57ffe3737829c5199f5192bf3f"
+        },
+        {
+          "argvSha256": "7ec2d2a393be0bee4a2a938f5af476e8d7a706638b3d1c74a2d355448584e546",
+          "exit": 2,
+          "expectedExit": 2,
+          "id": "public-foreign-theory",
+          "logSha256": "3287aa469e1aded645ece522579c1999d2a733947da406d90474ff99f602f4b9"
+        },
+        {
+          "argvSha256": "7f55493eee4e191aaa793c17c8d37d4305b04d0a6d2dda48f542ccaa89ac6e7c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "distribution-fixture-inspect",
+          "logSha256": "3c853180ab58f58874eca799a49c51ff5797f242036324dc4f9d1a2da1d75bb6"
+        },
+        {
+          "argvSha256": "ea00e7f9f4292482ebd521cb096f2c25c79d497d4b7fb83ccbf30ede3cf28c07",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "distribution-accepted",
+          "logSha256": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760"
+        },
+        {
+          "argvSha256": "b654a6f7bf4b9cbcdaba89796759912854422b7994d54744abe16e1cb20fecef",
+          "exit": 3,
+          "expectedExit": 3,
+          "id": "distribution-no-authority",
+          "logSha256": "b564c3c29fb3e1da33fb834fc934e033c6d6ea57ffe3737829c5199f5192bf3f"
+        },
+        {
+          "argvSha256": "51e04f782582cdae56472d661a71e3e946774612c0fc5fbe6c0bf20d0069663e",
+          "exit": 2,
+          "expectedExit": 2,
+          "id": "distribution-foreign-theory",
+          "logSha256": "3287aa469e1aded645ece522579c1999d2a733947da406d90474ff99f602f4b9"
+        },
+        {
+          "argvSha256": "75fa7ebb6113d9bc699d6402c47e0b620b96c8e786f093b908eaa11928eab4fe",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "public-byte-mutations",
+          "logSha256": "6e10bec6a1245f0e19079b3a8d19b9b1d32067d9a66cb5e6108b28c2cb688748"
+        },
+        {
+          "argvSha256": "0a2fe6dd5e843a2fa716aae89dfb68935e721a4394d38fae6fbcf040af3db85b",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "eighth-witnesses",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "8346a2ffa360f559924f4caef569f879b039b37d6503b70e6174875caf733fa0",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-11-lean",
+          "logSha256": "319d6d028f5650f25a0bc0433addb41b015bd2cc70eed6eed69eaa792649ca1e"
+        },
+        {
+          "argvSha256": "737cbde0f52ec06fb6e3555e5bbd417e67ab0f91e20d6237ecdf7733f1a420be",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-11-witness",
+          "logSha256": "89f4d322746c95961ba7d4489f6592263e91865faf9026aa77eb6fd2e746d228"
+        },
+        {
+          "argvSha256": "ccb2600a6df2cf9ae7fc6eab16b12d9d74b0cfe044ae2ab54f182d269c4c5df5",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P1-15-lean",
+          "logSha256": "437edc8af2219a2293e92b05ebc20e554bd77ea5da1856640c2eee9b27b63d7d"
+        },
+        {
+          "argvSha256": "5e18ee5c4d714580c33a6e7b27db9a3b6f22b95f824d4e71b303e50af9f23dda",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P1-15-witness",
+          "logSha256": "0db7e5e3e0127e386bf2e3867fc3f62940aaba12f338ea375027f1eddde65c01"
+        },
+        {
+          "argvSha256": "0284c813471ec408e3fc417a6f51860fc6bfc3067e1b28f5547cd1f0799f0f24",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P4-11-lean",
+          "logSha256": "7c8c922d420b8365a8cf2b171d2b83547344a4cc32c1ba26eee2e370a11e8622"
+        },
+        {
+          "argvSha256": "51475cc8e361f72fdc85d1ed17ce5ae767c035dfed89f4fff0bc24fbd461ee7b",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P4-11-witness",
+          "logSha256": "db3c6f622605a8f4c0fb2e71487ea1060f573a90900783ab241b426ebb267915"
+        },
+        {
+          "argvSha256": "4d8e13f36bc78ab0773c26e8947fb88616018d1f470cc2741ec2a3ce76a86ad5",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-09-lean-import-DecodedEvidenceCoverage",
+          "logSha256": "c5316a76a032c4baa28c81c15d08912bfd46070d743476490a6912739640960e"
+        },
+        {
+          "argvSha256": "ca0425ed3912bca51901fbc529a5b501dcb70669fc45fcac598d53f3748fd16d",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-09-lean",
+          "logSha256": "379230c692c591d1d5b401d4bcb4fedae045bedd2b09f7a7c548ed3998e12862"
+        },
+        {
+          "argvSha256": "c6223430eb2216af36d22557f8a448a5d5104b41cd353eebb20794c95af6ff73",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-09-witness",
+          "logSha256": "1f4e775b4e32fca216ebdbf09fe232e9017b1fe3ac355f887e63d81e43ee1df4"
+        },
+        {
+          "argvSha256": "f300237f9624bb72573443075a0c292fef10e37236f4d7275455461072c1980c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-23-lean",
+          "logSha256": "c794520d1ec30fb5c671e9c74685312348303b3544f1b9a79d11d915c9245725"
+        },
+        {
+          "argvSha256": "9dbdd230f2c11e43260506fd01aa89fd0e76148ee5be3e93cb237a535d3668ef",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-23-witness",
+          "logSha256": "202cfa25677825a9141a211e3692ac4dc569c14a7335f36d78dbc99fa004d61e"
+        }
+      ],
+      "evidenceHash": "dbd27cb0799963bec280bad2b9f52085d9a4df7a4d9027771181773f49c1ddac",
+      "number": 2,
+      "status": "PASS"
+    }
+  ],
+  "closureId": "eighth-public-certification-v1-8db565bd1c42d2de",
+  "commonEvidence": {
+    "claims": {
+      "A2-23": {
+        "leanImportFiles": {},
+        "leanImports": {},
+        "observations": [
+          "A223ArrowFamiliesTest passed: rows=15"
+        ],
+        "originalRow": {
+          "ledgerStatus": "PROVED/DIRECT",
+          "sha256": "88cd036c148f8baf6ed019c18205184021f9e037772881eb81e1c081ee9c7a2a",
+          "statement": "Dependent ARROW is the ordered Cartesian product of correlated product alternatives and retains source order and duplicate occurrences.",
+          "traceability": {
+            "claim_sha256": "88cd036c148f8baf6ed019c18205184021f9e037772881eb81e1c081ee9c7a2a",
+            "conformance_status": "DIRECT",
+            "formal_declarations": "arbitrary_reassociation;mapped_matrix;evidence_absorption;unique_evidence_on_keys;normalize_preserves_actual_evidence;pair_at;duplicate_columns;exact_rows;case_count;split_weak;no_new_absorption;lex_prefix;lex_suffix;row_major_is_sorted;unique_on_nodup;normalized_matrix_exact;row_width;empty_cases;inner_accumulator;outer_accumulator;accepted_compiler_stream_refines;put_keys;put_admits;grouped_admits;prune_antichain;sorted_keys;constructor_invariants;constructor_arrow_exact;grouped_on_unique;admission_fixed;constructor_to_constructor;source_occurrence_order;source_leaf_multiplicity;admitted_atomic_comparator;relation_product_comparator;registered_complete_result",
+            "formal_file": "docs/section3-repair-audit/formal/A223ArrowFamilies.lean",
+            "formal_status": "PROVED",
+            "implementation_refs": "src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainApplication.java#DependentChainApplication;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#normalize;src/is/fivefivefive/CanDis/theory/GraphType.java#compareTo",
+            "notes": "For admitted finite product families, the proof derives canonical constructor order and shows that the compiled ARROW loop enumerates the ordered Cartesian product. Source columns and leaves retain order and repeated occurrences, including across nesting and typed-empty cases.",
+            "requirement_id": "A2-23",
+            "test_classes": "NOMINAL+BOUNDARY+ROBUSTNESS",
+            "test_refs": "src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;docs/obligation-repair/eighth-five/java/A223ArrowFamiliesTest.java#main"
+          }
+        },
+        "originalRowAssessment": {
+          "boundary": "For admitted finite correlated input families with fixed positive widths, distinct sorted product keys, consistent module/type evidence and representable indices, the outer left and inner right indices enumerate all products in canonical family order, preserving operand order and repeated source columns. Raw union branch listings are normalized before combination.",
+          "clauses": [
+            {
+              "boundary": "The registered Java/Lean constructor and loop contract takes arbitrary valid raw families, derives canonical coalescing, antichain and sort premises, and checks the complete ordered result at representable widths and indices.",
+              "claim": "Dependent ARROW enumerates the ordered Cartesian product of the admitted correlated product alternatives.",
+              "rows": [
+                {
+                  "file": "arrow-families.tsv",
+                  "line": "powerset-family-pairs\tCHECKED\t128"
+                },
+                {
+                  "file": "arrow-families.tsv",
+                  "line": "exact-case-and-result-products\tCHECKED\t384"
+                },
+                {
+                  "file": "arrow-families.tsv",
+                  "line": "typed-empty-pairs\tCHECKED\t23"
+                },
+                {
+                  "file": "arrow-families.tsv",
+                  "line": "parser-correlated-products\tCHECKED\t4"
+                },
+                {
+                  "file": "arrow-families.tsv",
+                  "line": "compiler-contract\tCHECKED\t17 methods, 2 semantic mutations rejected"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "outer:left:ascending-index"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "inner:right:ascending-index"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "new:CombinationCase:leftIndex:rightIndex:CombinationDecision.ARROW_PRODUCT:null:product"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "admission:positive-uniform-width-and-compatible-authority"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "group:exact-product-key-prefer-authenticated-duplicate"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "prune:all-other-products-strict-coordinate-subtype"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "sort:by-structural-product-type"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "type-order:int-before-nominal-UTF16-then-lex-columns"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "freeze:rows-and-ordered-column-evidence"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.A223.pair_at",
+                "ACGN.Eighth.A223.exact_rows",
+                "ACGN.Eighth.A223.case_count",
+                "ACGN.Eighth.A223.normalized_matrix_exact",
+                "ACGN.Eighth.A223.inner_accumulator",
+                "ACGN.Eighth.A223.outer_accumulator",
+                "ACGN.Eighth.A223.accepted_compiler_stream_refines",
+                "ACGN.Eighth.A223.constructor_invariants",
+                "ACGN.Eighth.A223.constructor_to_constructor",
+                "ACGN.Eighth.A223.admitted_atomic_comparator",
+                "ACGN.Eighth.A223.relation_product_comparator",
+                "ACGN.Eighth.A223.registered_complete_result"
+              ]
+            },
+            {
+              "boundary": "Individual source column occurrences and parser-authenticated evidence survive ordered concatenation; duplicate raw family alternatives are coalesced under the separate input normalization contract.",
+              "claim": "Each case retains left-to-right source order and duplicate column occurrences.",
+              "rows": [
+                {
+                  "file": "arrow-families.tsv",
+                  "line": "duplicate-representative\tCHECKED\tauthenticated in both orders"
+                },
+                {
+                  "file": "arrow-families.tsv",
+                  "line": "conflicting-duplicate-evidence\tCHECKED\trejected"
+                },
+                {
+                  "file": "arrow-families.tsv",
+                  "line": "same-key-foreign-case-owner\tCHECKED\trejected"
+                },
+                {
+                  "file": "arrow-families.tsv",
+                  "line": "both-associated-repeated-source\tCHECKED\t8"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "addAll:leftProduct"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "addAll:rightProduct"
+                },
+                {
+                  "file": "arrow-program.txt",
+                  "line": "source:append-left-leaves-then-right-leaves"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.A223.duplicate_columns",
+                "ACGN.Eighth.A223.arbitrary_reassociation",
+                "ACGN.Eighth.A223.normalize_preserves_actual_evidence",
+                "ACGN.Eighth.A223.row_width",
+                "ACGN.Eighth.A223.empty_cases",
+                "ACGN.Eighth.A223.source_occurrence_order",
+                "ACGN.Eighth.A223.source_leaf_multiplicity"
+              ]
+            }
+          ],
+          "status": "VERIFIED"
+        },
+        "outputSha256": {
+          "arrow-families.tsv": "59998a57aa237a09097a400105f41d07644242dfb3fbc0b9762393c543c0a213",
+          "arrow-program.txt": "4f04e1619bcaf71ee0fb36fc08171e9dab1256fd3abf79b1c6b3efa2cabd3a94"
+        },
+        "proof": "docs/section3-repair-audit/formal/A223ArrowFamilies.lean",
+        "proofAuditSha256": "c794520d1ec30fb5c671e9c74685312348303b3544f1b9a79d11d915c9245725",
+        "proofSha256": "f9575933d1ec38a5cd38b24156b5621f8fcc4b93519273a32bd06d1b1f0375b2",
+        "scope": "Ordered ARROW products over normalized finite input families, dependent type preservation and correspondence of the attributed Java enumeration loop to the executable Lean instruction checker.",
+        "sourceSha256": "876f9750f18a1da09f92b02070f1b25599d5eda05013bfb1f693c5a4effc96c7",
+        "theorems": [
+          "ACGN.Eighth.A223.arbitrary_reassociation",
+          "ACGN.Eighth.A223.mapped_matrix",
+          "ACGN.Eighth.A223.evidence_absorption",
+          "ACGN.Eighth.A223.unique_evidence_on_keys",
+          "ACGN.Eighth.A223.normalize_preserves_actual_evidence",
+          "ACGN.Eighth.A223.pair_at",
+          "ACGN.Eighth.A223.duplicate_columns",
+          "ACGN.Eighth.A223.exact_rows",
+          "ACGN.Eighth.A223.case_count",
+          "ACGN.Eighth.A223.split_weak",
+          "ACGN.Eighth.A223.no_new_absorption",
+          "ACGN.Eighth.A223.lex_prefix",
+          "ACGN.Eighth.A223.lex_suffix",
+          "ACGN.Eighth.A223.row_major_is_sorted",
+          "ACGN.Eighth.A223.unique_on_nodup",
+          "ACGN.Eighth.A223.normalized_matrix_exact",
+          "ACGN.Eighth.A223.row_width",
+          "ACGN.Eighth.A223.empty_cases",
+          "ACGN.Eighth.A223.inner_accumulator",
+          "ACGN.Eighth.A223.outer_accumulator",
+          "ACGN.Eighth.A223.accepted_compiler_stream_refines",
+          "ACGN.Eighth.A223.put_keys",
+          "ACGN.Eighth.A223.put_admits",
+          "ACGN.Eighth.A223.grouped_admits",
+          "ACGN.Eighth.A223.prune_antichain",
+          "ACGN.Eighth.A223.sorted_keys",
+          "ACGN.Eighth.A223.constructor_invariants",
+          "ACGN.Eighth.A223.constructor_arrow_exact",
+          "ACGN.Eighth.A223.grouped_on_unique",
+          "ACGN.Eighth.A223.admission_fixed",
+          "ACGN.Eighth.A223.constructor_to_constructor",
+          "ACGN.Eighth.A223.source_occurrence_order",
+          "ACGN.Eighth.A223.source_leaf_multiplicity",
+          "ACGN.Eighth.A223.admitted_atomic_comparator",
+          "ACGN.Eighth.A223.relation_product_comparator",
+          "ACGN.Eighth.A223.registered_complete_result"
+        ],
+        "witness": "docs/obligation-repair/eighth-five/java/A223ArrowFamiliesTest.java"
+      },
+      "P1-15": {
+        "leanImportFiles": {},
+        "leanImports": {},
+        "observations": [
+          "P115ImportedCallAdmissionTest: PASS (20 admitted, 25 outside ledger, 11 rejections, 1 alternative library origin)"
+        ],
+        "originalRow": {
+          "ledgerStatus": "PROVED/DIRECT",
+          "sha256": "54d4d2121c0f1d04cc4fbfda65748f845b226da5cb8b89efc18491de910af381",
+          "statement": "Imported callable arity is accepted only from a fixed library ledger.",
+          "traceability": {
+            "claim_sha256": "54d4d2121c0f1d04cc4fbfda65748f845b226da5cb8b89efc18491de910af381",
+            "conformance_status": "DIRECT",
+            "formal_declarations": "last_field_decodes;field_injective;exact_tuple_key;lookup_exact;slash_member_never_admitted;imported_admission_exact;other_pinned_overload_rejected;foreign_open_rejected;same_request_preserves_original_arity_kind",
+            "formal_file": "docs/section3-repair-audit/formal/P115ImportedCallAdmission.lean",
+            "formal_status": "PROVED",
+            "implementation_refs": "src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#signatures;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#resolveCallable;src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#key;src/parser/ast/nodes/ResolvedCallOrigins.java#original",
+            "notes": "The immutable fixed ledger admits the exact module, member, kind and arity bound by the originating parser call. The pinned Alloy distribution supplies the independent declaration census. Callers can supply module bodies with the same signature.",
+            "requirement_id": "P1-15",
+            "test_classes": "NOMINAL+BOUNDARY+ROBUSTNESS",
+            "test_refs": "src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main;docs/obligation-repair/eighth-five/java/P115ImportedCallAdmissionTest.java#main"
+          }
+        },
+        "originalRowAssessment": {
+          "boundary": "The original statement concerns the authority for an imported callable’s arity. The producer accepts the independently fixed module/member/kind/arity tuple and binds it to the resolved declaration. An alternate library body can present that same admitted signature; this evidence does not authenticate arbitrary module bodies.",
+          "clauses": [
+            {
+              "boundary": "Complete fixed ledger and complete declaration census of two registered library modules, anchored to the loaded JAR resources.",
+              "claim": "A fixed library ledger is the source of every admitted imported tuple.",
+              "rows": [
+                {
+                  "file": "observations.tsv",
+                  "line": "P1-15\tutil/integer/max/EXPRESSION/0\tACCEPT ledger + resolved producer CALL"
+                },
+                {
+                  "file": "observations.tsv",
+                  "line": "P1-15\tutil/integer/max/EXPRESSION/1\tACCEPT ledger + resolved producer CALL"
+                },
+                {
+                  "file": "observations.tsv",
+                  "line": "P1-15\tutil/integer/zero/FORMULA/1\tREJECT outside fixed library ledger"
+                },
+                {
+                  "file": "observations.tsv",
+                  "line": "P1-15\tdelimiter-collision\tREJECT lacks an independently pinned declaration"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.P115.last_field_decodes",
+                "ACGN.Eighth.P115.field_injective",
+                "ACGN.Eighth.P115.exact_tuple_key",
+                "ACGN.Eighth.P115.lookup_exact",
+                "ACGN.Eighth.P115.slash_member_never_admitted"
+              ]
+            },
+            {
+              "boundary": "Every admissible tuple and both integer overloads have ordinary parser/producer witnesses. The module-body source override preserves the admitted signature.",
+              "claim": "The producer checks declaration arity, kind and resolved module at imported-call admission.",
+              "rows": [
+                {
+                  "file": "observations.tsv",
+                  "line": "P1-15\tmax-0-to-1\tREJECT arity disagrees with imported declaration"
+                },
+                {
+                  "file": "observations.tsv",
+                  "line": "P1-15\tmin-1-to-0\tREJECT arity disagrees with imported declaration"
+                },
+                {
+                  "file": "observations.tsv",
+                  "line": "P1-15\tforeign-parser-instance\tREJECT disagrees with its resolved module"
+                },
+                {
+                  "file": "observations.tsv",
+                  "line": "P1-15\tcaller-supplied-library\tACCEPT exact signature; source-map body differs from JAR"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.P115.imported_admission_exact",
+                "ACGN.Eighth.P115.other_pinned_overload_rejected",
+                "ACGN.Eighth.P115.foreign_open_rejected",
+                "ACGN.Eighth.P115.same_request_preserves_original_arity_kind"
+              ]
+            }
+          ],
+          "status": "VERIFIED"
+        },
+        "outputSha256": {
+          "observations.tsv": "cbee1e601f715efbc2e304d427bbaa6de283f66a54072757d34faa1f473ab176"
+        },
+        "proof": "docs/section3-repair-audit/formal/P115ImportedCallAdmission.lean",
+        "proofAuditSha256": "437edc8af2219a2293e92b05ebc20e554bd77ea5da1856640c2eee9b27b63d7d",
+        "proofSha256": "2e65d3944e52094adb2c71f28bb4ed2c66421b34ab1f7049e4e319b170bb2fda",
+        "scope": "Admission of every callable tuple in the pinned ordering/integer ledger, rejection of all other declarations enumerated in those two library modules, and parser-identity, kind, module and arity guards.",
+        "sourceSha256": "c3287bbb39589050bc82f029c2c14ec2fa50f34d4818df7536bc1e733fc00e8c",
+        "theorems": [
+          "ACGN.Eighth.P115.last_field_decodes",
+          "ACGN.Eighth.P115.field_injective",
+          "ACGN.Eighth.P115.exact_tuple_key",
+          "ACGN.Eighth.P115.lookup_exact",
+          "ACGN.Eighth.P115.slash_member_never_admitted",
+          "ACGN.Eighth.P115.imported_admission_exact",
+          "ACGN.Eighth.P115.other_pinned_overload_rejected",
+          "ACGN.Eighth.P115.foreign_open_rejected",
+          "ACGN.Eighth.P115.same_request_preserves_original_arity_kind"
+        ],
+        "witness": "docs/obligation-repair/eighth-five/java/P115ImportedCallAdmissionTest.java"
+      },
+      "P4-11": {
+        "leanImportFiles": {},
+        "leanImports": {},
+        "observations": [
+          "P411ShapeIdentityTest passed: cases=11"
+        ],
+        "originalRow": {
+          "ledgerStatus": "PROVED/DIRECT",
+          "sha256": "4d40daa73cffd3cc30363c0ddb3f0a5467907489b67460490c28157b37b52fe6",
+          "statement": "Shape IDs use one canonical `(owner, canonical term ID)` preimage, are deterministically recomputed, and any observed content-ID collision fails closed. No mathematical SHA-256 injectivity is claimed.",
+          "traceability": {
+            "claim_sha256": "4d40daa73cffd3cc30363c0ddb3f0a5467907489b67460490c28157b37b52fe6",
+            "conformance_status": "DIRECT",
+            "formal_declarations": "read32_u32;readFrame_frame;shape_roundtrip;shape_frame_injective;accepted_entry;accepted_preserves;run_preserves;run_contains_every_pair;observed_digest_nonaliasing;repeated_pair_idempotent;observed_collision_rejects",
+            "formal_file": "docs/section3-repair-audit/formal/P411ShapeIdentity.lean",
+            "formal_status": "PROVED",
+            "implementation_refs": "src/is/fivefivefive/CanDis/theory/ParentRecordKey.java#structuralKey;certificate-verifier/src/org/acgn/cert/CheckpointVerifier.java#verifyTransitions;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#shapeId;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#internManifest;certificate-verifier/src/org/acgn/cert/CheckpointVerifier.java#shapeId",
+            "notes": "Length-framed owner and canonical-term bytes determine the preimage. The writer and checkpoint verifier recompute each observed ID and reject distinct preimages under an occupied digest across the bundle. The registry proof permits an arbitrary digest function.",
+            "requirement_id": "P4-11",
+            "test_classes": "NOMINAL+BOUNDARY+ROBUSTNESS",
+            "test_refs": "certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;src/is/fivefivefive/CanDis/theory/Phase4ProducerTransitionEvidenceTest.java#testSnapshotRejectsMalformedParentTopology;docs/obligation-repair/eighth-five/java/P411ShapeIdentityTest.java#main"
+          }
+        },
+        "originalRowAssessment": {
+          "boundary": "UTF-8 framed owner and canonical term identifiers and bundle-wide observed histories in the public writer and checkpoint verifier. The Lean results allow an arbitrary digest and need no SHA-256 injectivity assumption.",
+          "clauses": [
+            {
+              "boundary": "Finite-length frame left inverse, named production entry points and exact native frame bytes.",
+              "claim": "Each shape identifier uses a single canonical owner and canonical-term-ID preimage.",
+              "rows": [
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "snapshot-preimages\tTHREE_EXACT_OWNER_TERM_FRAMES"
+                },
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "writer-trace\tALL_FRAMES_IDENTICAL_BYTES"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.P411.read32_u32",
+                "ACGN.Eighth.P411.readFrame_frame",
+                "ACGN.Eighth.P411.shape_roundtrip",
+                "ACGN.Eighth.P411.shape_frame_injective"
+              ]
+            },
+            {
+              "boundary": "Ordinary fresh export, checkpoint trace and repeated replay.",
+              "claim": "Producer and verifier deterministically recompute the same shape IDs.",
+              "rows": [
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "ordinary-full\tVERIFIED/NONE"
+                },
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "writer-trace\tALL_FRAMES_IDENTICAL_BYTES"
+                },
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "verifier-trace\tVERIFIED/NONE"
+                },
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "fresh-replay\tVERIFIED/NONE"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.P411.accepted_entry",
+                "ACGN.Eighth.P411.run_contains_every_pair"
+              ]
+            },
+            {
+              "boundary": "Per-bundle histories, including different snapshots. Controlled shape-only colliding digest in the writer and in both fresh and distributed verifier processes.",
+              "claim": "Any observed content-ID collision in one bundle fails closed.",
+              "rows": [
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "writer-collision\tREFUSED_DESTINATION_PRESERVED"
+                },
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "disjoint-snapshot-alias\tREJECTED/DUPLICATE_ID"
+                },
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "fresh-jar-alias\tREJECTED/DUPLICATE_ID"
+                },
+                {
+                  "file": "shape-identities.tsv",
+                  "line": "distributed-jar-alias\tREJECTED/DUPLICATE_ID"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.P411.accepted_preserves",
+                "ACGN.Eighth.P411.run_preserves",
+                "ACGN.Eighth.P411.run_contains_every_pair",
+                "ACGN.Eighth.P411.observed_digest_nonaliasing",
+                "ACGN.Eighth.P411.repeated_pair_idempotent",
+                "ACGN.Eighth.P411.observed_collision_rejects"
+              ]
+            }
+          ],
+          "status": "VERIFIED"
+        },
+        "outputSha256": {
+          "shape-identities.tsv": "978f5105bb5ea74e7d03b23795ab59e78181a5ba5f4c05ad479ee6f83c445eaa"
+        },
+        "proof": "docs/section3-repair-audit/formal/P411ShapeIdentity.lean",
+        "proofAuditSha256": "7c8c922d420b8365a8cf2b171d2b83547344a4cc32c1ba26eee2e370a11e8622",
+        "proofSha256": "288ee17a65ed750019529e17505ed49386cbd648f32523400c0a84f57cdd8492",
+        "scope": "Canonical owner/term frames, deterministic public writer and verifier evaluation, and fail-closed bundle-wide collision handling on observed shape identifiers.",
+        "sourceSha256": "de1d3257d4f5a9d32059dcee263875f6b258b258c2d585682e16e62dcdaba6a3",
+        "theorems": [
+          "ACGN.Eighth.P411.read32_u32",
+          "ACGN.Eighth.P411.readFrame_frame",
+          "ACGN.Eighth.P411.shape_roundtrip",
+          "ACGN.Eighth.P411.shape_frame_injective",
+          "ACGN.Eighth.P411.accepted_entry",
+          "ACGN.Eighth.P411.accepted_preserves",
+          "ACGN.Eighth.P411.run_preserves",
+          "ACGN.Eighth.P411.run_contains_every_pair",
+          "ACGN.Eighth.P411.observed_digest_nonaliasing",
+          "ACGN.Eighth.P411.repeated_pair_idempotent",
+          "ACGN.Eighth.P411.observed_collision_rejects"
+        ],
+        "witness": "docs/obligation-repair/eighth-five/java/P411ShapeIdentityTest.java"
+      },
+      "P6-09": {
+        "leanImportFiles": {
+          "DecodedEvidenceCoverage.olean": "788231a05a8ca5f2a35f4d4e8e4a3f596f98ccf8036297f0e474d809d3143e13"
+        },
+        "leanImports": {
+          "DecodedEvidenceCoverage": {
+            "compiledSha256": "788231a05a8ca5f2a35f4d4e8e4a3f596f98ccf8036297f0e474d809d3143e13",
+            "proofAuditSha256": "c5316a76a032c4baa28c81c15d08912bfd46070d743476490a6912739640960e",
+            "source": "docs/obligation-repair/sixth-five/DecodedEvidenceCoverage.lean",
+            "sourceSha256": "d1df2cb20871de8cf2973502ef1bf049aa747a107d92cc5c94f68250e51d9cce",
+            "theorems": [
+              "ACGN.Sixth.EvidenceCoverage.walk_exact",
+              "ACGN.Sixth.EvidenceCoverage.children_exact",
+              "ACGN.Sixth.EvidenceCoverage.orbit_omission_rejected",
+              "ACGN.Sixth.EvidenceCoverage.orbit_surplus_rejected",
+              "ACGN.Sixth.EvidenceCoverage.kernel_owner_substitution_rejected",
+              "ACGN.Sixth.EvidenceCoverage.repeated_reference_preserves_key_set",
+              "ACGN.Sixth.EvidenceCoverage.shared_child_path_and_generator_witness",
+              "ACGN.Sixth.EvidenceCoverage.coordinated_omission_witness"
+            ]
+          }
+        },
+        "observations": [
+          "P609RootedBinderTest passed: observations=13"
+        ],
+        "originalRow": {
+          "ledgerStatus": "PROVED/DIRECT",
+          "sha256": "6a274f121f2919d837dbc11d0f4e7aa20981d1512883b4ef1baa8a963e87e48a",
+          "statement": "Binder-occurrence identity commits to the enclosing root as well as local path, descriptor occurrence, and automorphism; rootless replay is impossible.",
+          "traceability": {
+            "claim_sha256": "6a274f121f2919d837dbc11d0f4e7aa20981d1512883b4ef1baa8a963e87e48a",
+            "conformance_status": "DIRECT",
+            "formal_declarations": "splitDelimiter;noColon;decimal_inj;header_separates;field_separates;fields_separate;render_injective;nested_keys_injective;nested_children_injective;path_injective;identity_injective;rootless_substitution_refused;resolved_iff;no_dangling_empty_claim",
+            "formal_file": "docs/section3-repair-audit/formal/P609RootedBinder.lean",
+            "formal_status": "PROVED",
+            "implementation_refs": "src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#create;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderRoot;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#derivedBinderOccurrenceKey;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireNoEmptyFixtureBinderClaims;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyBinderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyEvidenceCoverage",
+            "notes": "The producer binds each occurrence to a typed enclosing root, path, descriptor occurrence and automorphism. Replay walks the decoded root, reconstructs the key, and requires exact orbit coverage even for the empty fixture envelope. The framing proof covers nested keys and UTF-16 lengths.",
+            "requirement_id": "P6-09",
+            "test_classes": "NOMINAL+BOUNDARY+ROBUSTNESS",
+            "test_refs": "src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testNestedSameDescriptorOccurrences;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;docs/obligation-repair/eighth-five/java/P609RootedBinderTest.java#main"
+          }
+        },
+        "originalRowAssessment": {
+          "boundary": "Every emitted or admitted binder-occurrence identity on the registered producer and verification routes is scoped to its enclosing root. The result does not require all input programs to be exportable; the witness records rejections for unsupported port forms and absent laws.",
+          "clauses": [
+            {
+              "boundary": "The root, identity, path framing, decoded-term traversal and emitted/replayed keys are tied to a compiled method inventory and public dual-root and nested-binder fixtures.",
+              "claim": "Binder-occurrence identity commits to the enclosing root, the local path, the descriptor occurrence and the automorphism.",
+              "rows": [
+                {
+                  "file": "p609.tsv",
+                  "line": "java\tsource-layouts\tmatched"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "grammar\tproducer-ports/decoded-term-kinds\t6/12"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "utf16\tsupplementary/delimiters\t7"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "dual\tFULL/roots/paths\tVERIFIED/2/1"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "nested\tFULL/roots/paths\tVERIFIED/1/2"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "BIND\texported-occurrences/FULL\t1/VERIFIED"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.P609.header_separates",
+                "ACGN.Eighth.P609.fields_separate",
+                "ACGN.Eighth.P609.render_injective",
+                "ACGN.Eighth.P609.path_injective",
+                "ACGN.Eighth.P609.identity_injective",
+                "ACGN.Eighth.P609.resolved_iff",
+                "ACGN.Eighth.P609.nested_keys_injective",
+                "ACGN.Eighth.P609.nested_children_injective"
+              ]
+            },
+            {
+              "boundary": "The empty-evidence guard blocks dangling occurrence references and needs. Generic endpoint equality introduces no independent binder occurrence; unregistered constructor/law combinations refuse admission.",
+              "claim": "Rootless replay cannot supply a valid binder-occurrence claim.",
+              "rows": [
+                {
+                  "file": "p609.tsv",
+                  "line": "empty-reference\tdecoded-only-rejection\tMISSING_EVIDENCE"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "empty-needs-binder\tdecoded-only-rejection\tMISSING_EVIDENCE"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "empty-fixture\tKERNEL\tVERIFIED"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "empty-fixture\tFULL\tVERIFIED"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "SEQ\texported-occurrences/FULL\t3/REJECTED_NO_EXACT_LAWS"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "BAG\tordinary-source-construction\tREFUSED_NO_COMMUTATIVITY"
+                },
+                {
+                  "file": "p609.tsv",
+                  "line": "SET\tordinary-source-construction\tREFUSED_NO_COMMUTATIVITY"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.P609.rootless_substitution_refused",
+                "ACGN.Eighth.P609.resolved_iff",
+                "ACGN.Eighth.P609.no_dangling_empty_claim"
+              ]
+            }
+          ],
+          "status": "VERIFIED"
+        },
+        "outputSha256": {
+          "p609.tsv": "176a2a0fcb2374fe4ea84e8ac5e04bc976f3952672965f5ee1617bac78f8165c"
+        },
+        "proof": "docs/section3-repair-audit/formal/P609RootedBinder.lean",
+        "proofAuditSha256": "379230c692c591d1d5b401d4bcb4fedae045bedd2b09f7a7c548ed3998e12862",
+        "proofSha256": "0e4b1140ecb7bb37767bc46c53c4c1d4b0438e341539e1a213d04a2f90a30f57",
+        "scope": "Recover the scoped rooted binder identity and prove injective UTF-16 framing, including paths, descriptor occurrences and automorphisms. Audit the compiled producer and replay routes and compare actual dual/nested, empty-evidence and port-admission outcomes.",
+        "sourceSha256": "e047b8caf3eb5a412943a8880a4d6848806f0447289252b3b81ce223d5939073",
+        "theorems": [
+          "ACGN.Eighth.P609.splitDelimiter",
+          "ACGN.Eighth.P609.noColon",
+          "ACGN.Eighth.P609.decimal_inj",
+          "ACGN.Eighth.P609.header_separates",
+          "ACGN.Eighth.P609.field_separates",
+          "ACGN.Eighth.P609.fields_separate",
+          "ACGN.Eighth.P609.render_injective",
+          "ACGN.Eighth.P609.nested_keys_injective",
+          "ACGN.Eighth.P609.nested_children_injective",
+          "ACGN.Eighth.P609.path_injective",
+          "ACGN.Eighth.P609.identity_injective",
+          "ACGN.Eighth.P609.rootless_substitution_refused",
+          "ACGN.Eighth.P609.resolved_iff",
+          "ACGN.Eighth.P609.no_dangling_empty_claim"
+        ],
+        "witness": "docs/obligation-repair/eighth-five/java/P609RootedBinderTest.java"
+      },
+      "P6-11": {
+        "leanImportFiles": {},
+        "leanImports": {},
+        "observations": [
+          "P6-11 schema admission verified: 391 observations"
+        ],
+        "originalRow": {
+          "ledgerStatus": "PROVED/DIRECT",
+          "sha256": "e7ebd891d005c44dbaa58c5b4684fc9862849738159688111f38f8c1a7c09f8d",
+          "statement": "The current rooted-binder, CALL-provenance, exact-transition, witness-unfold, dependent-subtype, and correlated-DAG trust-boundary contract is admitted only under schema v10; schemas v5 through v9 are never reinterpreted.",
+          "traceability": {
+            "claim_sha256": "e7ebd891d005c44dbaa58c5b4684fc9862849738159688111f38f8c1a7c09f8d",
+            "conformance_status": "DIRECT",
+            "formal_declarations": "exact_scalar_necessary;every_other_string_rejects;post_decode_admission;single_route;pair_route;all_admitted_roots",
+            "formal_file": "docs/section3-repair-audit/formal/P611SchemaAdmission.lean",
+            "formal_status": "PROVED",
+            "implementation_refs": "certificate-verifier/src/org/acgn/cert/Bundle.java#SCHEMA_VERSION;certificate-verifier/src/org/acgn/cert/Bundle.java#parse;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#open",
+            "notes": "Exact v10 is necessary on every admitted root, including both operands of a pair. Compiler-resolved routes and separate source-built and distributed JVM executions cover verification, inspection, and source-bound entry points. Body and policy checks still govern v10 inputs.",
+            "requirement_id": "P6-11",
+            "test_classes": "NOMINAL+BOUNDARY+ROBUSTNESS",
+            "test_refs": "certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;docs/obligation-repair/eighth-five/java/P611SchemaAdmissionTest.java#main"
+          }
+        },
+        "originalRowAssessment": {
+          "boundary": "Schema admission is a necessary precondition for the six-feature contract on the governed entry points. Independent feature validity still requires its own proof; inspection reports metadata rather than a full verification judgment.",
+          "clauses": [
+            {
+              "boundary": "All source-built and repository-distributed verification/inspection paths reach the exact schema guard before admission; the JARs have identical bytes.",
+              "claim": "The current rooted-binder, CALL, exact-transition, witness-unfold, dependent-subtype and correlated-DAG contract can be admitted only under schema v10.",
+              "rows": [
+                {
+                  "file": "out.tsv",
+                  "line": "source\tBundle#<init>\tattributed\ta168222cc8e5f3fd0f6644da27c1d210bb1d8c9b29c1d1f1009ca23879580ecc"
+                },
+                {
+                  "file": "out.tsv",
+                  "line": "source\tIndependentVerifier#open\tattributed\tf563907435422fe428c161da02460df24f600f4ce5b8c07944757494019eb10c"
+                },
+                {
+                  "file": "out.tsv",
+                  "line": "source\tIndependentVerifier#verifyPair\tattributed\t14ab1246e98bba0a988ded57a3a9e51a48addef69b8fe2afc98a2c813d70994d"
+                },
+                {
+                  "file": "out.tsv",
+                  "line": "tracked-jar\ttwo-root-FULL\tv10\tEXIT_0/VERIFIED/NONE"
+                },
+                {
+                  "file": "out.tsv",
+                  "line": "distribution\tjar-bytes\tclean-vs-tracked\t760c72c9e2a2df4b06013fb6898c64016affed9fca12bee46594e07b10929d57"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.P611.exact_scalar_necessary",
+                "ACGN.Eighth.P611.post_decode_admission",
+                "ACGN.Eighth.P611.single_route",
+                "ACGN.Eighth.P611.pair_route",
+                "ACGN.Eighth.P611.all_admitted_roots"
+              ]
+            },
+            {
+              "boundary": "The equality test excludes every other schema string; real source APIs, both PAIR positions, inspectors and independent JAR processes exercise historical and near-miss labels.",
+              "claim": "Schemas v5 through v9 are never reinterpreted as the current contract.",
+              "rows": [
+                {
+                  "file": "out.tsv",
+                  "line": "built-jar\ttwo-root-FULL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION"
+                },
+                {
+                  "file": "out.tsv",
+                  "line": "tracked-jar\tPAIR-right\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION"
+                },
+                {
+                  "file": "out.tsv",
+                  "line": "source-tool\tmetadata\tv9\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION"
+                }
+              ],
+              "status": "DISCHARGED",
+              "theorems": [
+                "ACGN.Eighth.P611.every_other_string_rejects",
+                "ACGN.Eighth.P611.pair_route",
+                "ACGN.Eighth.P611.all_admitted_roots"
+              ]
+            }
+          ],
+          "status": "VERIFIED"
+        },
+        "outputSha256": {
+          "out.tsv": "203bf1fe7b83ac83fe8670b4aa851dc4abbde2b0f2712d41b3520b004f47baa2"
+        },
+        "proof": "docs/section3-repair-audit/formal/P611SchemaAdmission.lean",
+        "proofAuditSha256": "319d6d028f5650f25a0bc0433addb41b015bd2cc70eed6eed69eaa792649ca1e",
+        "proofSha256": "6dc8913dcf9c6e9fda0351b3077515adfbb8fe4a39346eca481d89b08fed3379",
+        "scope": "Source entry points, both inputs of PAIR, public CLI profiles and inspection routes gate interpretation on exact schema v10, across the independently built and checked-in JARs.",
+        "sourceSha256": "158fff9ff63c29c76a4efeb35f21e0f7cd995e63d11367f714e525311e9f4fdd",
+        "theorems": [
+          "ACGN.Eighth.P611.exact_scalar_necessary",
+          "ACGN.Eighth.P611.every_other_string_rejects",
+          "ACGN.Eighth.P611.post_decode_admission",
+          "ACGN.Eighth.P611.single_route",
+          "ACGN.Eighth.P611.pair_route",
+          "ACGN.Eighth.P611.all_admitted_roots"
+        ],
+        "witness": "docs/obligation-repair/eighth-five/java/P611SchemaAdmissionTest.java"
+      }
+    },
+    "distributionClasses": {
+      "classes": {
+        "classes": 119,
+        "mapSha256": "220e761d4ad5af35d9960606381a79f6757fb7f29a6f99bb3ecbc0cd1a4da9c2"
+      },
+      "test-classes": {
+        "classes": 27,
+        "mapSha256": "115c7bb8de864db42d45162a61bbc7e446633acd208cb37139a86ce9b85126d1"
+      }
+    },
+    "distributionJar": "760c72c9e2a2df4b06013fb6898c64016affed9fca12bee46594e07b10929d57",
+    "fixtureFiles": {
+      "nullary-a.acgncert": "3f7cdbf88a023538ffb96a7e1685f8fe1052a218ae50f6866493e8c0b0009971",
+      "nullary-b.acgncert": "3f7cdbf88a023538ffb96a7e1685f8fe1052a218ae50f6866493e8c0b0009971",
+      "pair-equivalent-left.acgncert": "539f9dbd7784b7677b4ab0cd81f2d65125a53d07174cee204c3f763a77d9ccd1",
+      "pair-equivalent-right.acgncert": "8ecc3242239a482a19b9a8d586891db7648e072bde6259950a8a0dc376d9668c",
+      "pair-non-equivalent.acgncert": "29c77375165f3aeb7d293e8dd7b45d89c3ee41055b2a193df3d63b1c0d042237",
+      "parent-path-a.acgncert": "a76f4a5675828e2a97b8c50a22d741daacbabf517010aaf93ebfbd22ec7c83bc",
+      "parent-path-b.acgncert": "a76f4a5675828e2a97b8c50a22d741daacbabf517010aaf93ebfbd22ec7c83bc",
+      "schema-v8-coverage/bind-a.acgncert": "c897e45bab77f3877b6fa4d2340e6da46cd1dc81b20c699edce260ba49958229",
+      "schema-v8-coverage/bind-b.acgncert": "c897e45bab77f3877b6fa4d2340e6da46cd1dc81b20c699edce260ba49958229",
+      "schema-v8-coverage/bind-block-a.acgncert": "20be1a70db4d8ff09658d8d7d39d48a2049fcb859b23f61bc90714acc35c1ab3",
+      "schema-v8-coverage/bind-block-b.acgncert": "20be1a70db4d8ff09658d8d7d39d48a2049fcb859b23f61bc90714acc35c1ab3",
+      "schema-v8-coverage/bind-block-dual-a.acgncert": "4d75c83628a70065e638d39846a97a95db1b45f1378f099852dec946c15e91a9",
+      "schema-v8-coverage/bind-block-dual-b.acgncert": "4d75c83628a70065e638d39846a97a95db1b45f1378f099852dec946c15e91a9",
+      "schema-v8-coverage/bind-block-nested-same-descriptor-a.acgncert": "16d38cab573031af3908e00eb1ce8d9473655019ef22d9107bc74b6a5679427a",
+      "schema-v8-coverage/bind-block-nested-same-descriptor-b.acgncert": "16d38cab573031af3908e00eb1ce8d9473655019ef22d9107bc74b6a5679427a",
+      "schema-v8-coverage/bind-block-symmetric-a.acgncert": "0e18d7a1644e67d58e6c8f2f068770fe51061cefa89116b8f75c63fd8cbc00af",
+      "schema-v8-coverage/bind-block-symmetric-b.acgncert": "0e18d7a1644e67d58e6c8f2f068770fe51061cefa89116b8f75c63fd8cbc00af",
+      "schema-v8-coverage/call-occurrence-a.acgncert": "a49ac5a2ee45d65adc50f0095b3e2b6f5f620afdac2fb694c72dbc103e03c06a",
+      "schema-v8-coverage/call-occurrence-b.acgncert": "a49ac5a2ee45d65adc50f0095b3e2b6f5f620afdac2fb694c72dbc103e03c06a",
+      "schema-v8-coverage/call-occurrence-nested-a.acgncert": "bd3221103f61d72d3c3adb3a2c4befe2eb98b5fddc95bfad838e3249330a9882",
+      "schema-v8-coverage/call-occurrence-nested-b.acgncert": "bd3221103f61d72d3c3adb3a2c4befe2eb98b5fddc95bfad838e3249330a9882",
+      "schema-v8-coverage/container-equals-a.acgncert": "096d3a5a4c6a13b7148b873ece63dc997c6ac3d7056a1621fbb47aff29793257",
+      "schema-v8-coverage/container-equals-b.acgncert": "096d3a5a4c6a13b7148b873ece63dc997c6ac3d7056a1621fbb47aff29793257",
+      "schema-v8-coverage/flat-and-a.acgncert": "996a2b2310546e1be6b75f6c09db7022580ed52e3cd12c893e2e0f6c0f4446ac",
+      "schema-v8-coverage/flat-and-alt-a.acgncert": "1ff3b2ae6040d00503045ac54bbbc55cd5a25aa6da3f31c03239a46c535fd07b",
+      "schema-v8-coverage/flat-and-alt-b.acgncert": "1ff3b2ae6040d00503045ac54bbbc55cd5a25aa6da3f31c03239a46c535fd07b",
+      "schema-v8-coverage/flat-and-b.acgncert": "996a2b2310546e1be6b75f6c09db7022580ed52e3cd12c893e2e0f6c0f4446ac",
+      "schema-v8-coverage/relation-columns-a.acgncert": "b5489ade56789386714e07fe8acc1df837ebf489c14627e04c49d8fedf1a6e30",
+      "schema-v8-coverage/relation-columns-b.acgncert": "b5489ade56789386714e07fe8acc1df837ebf489c14627e04c49d8fedf1a6e30",
+      "schema-v8-coverage/relation-empty-a.acgncert": "d7d5653c7b28b9586d0f8c872d37c39ba8882fe9f8e2bf0e9f7886f6f107b9e2",
+      "schema-v8-coverage/relation-empty-b.acgncert": "d7d5653c7b28b9586d0f8c872d37c39ba8882fe9f8e2bf0e9f7886f6f107b9e2",
+      "schema-v8-coverage/relation-empty-interior-a.acgncert": "daa2ace7251554751366cfcb5e54f8e749a81196b1b3d0ca2bc794f161aa9c5f",
+      "schema-v8-coverage/relation-empty-interior-b.acgncert": "daa2ace7251554751366cfcb5e54f8e749a81196b1b3d0ca2bc794f161aa9c5f",
+      "schema-v8-coverage/relation-family-a.acgncert": "247ccf121ca2f9cd2f4968b7f47608d4bb68e65241eca1d825c87611777579fa",
+      "schema-v8-coverage/relation-family-b.acgncert": "247ccf121ca2f9cd2f4968b7f47608d4bb68e65241eca1d825c87611777579fa",
+      "schema-v8-coverage/repeated-same-type-slot-a.acgncert": "27989006a5175f15f2c77ec2cb5c3078a3b25b90320c2a2937697f74633907ad",
+      "schema-v8-coverage/repeated-same-type-slot-b.acgncert": "27989006a5175f15f2c77ec2cb5c3078a3b25b90320c2a2937697f74633907ad",
+      "slot-only-a.acgncert": "226178ac75033684c4d1f064e33e8566d40e8bf9dfbc5da7cd7276522825e6c9",
+      "slot-only-b.acgncert": "226178ac75033684c4d1f064e33e8566d40e8bf9dfbc5da7cd7276522825e6c9"
+    },
+    "producerJar": "e633b3ee27f46b0dd5ee773c2f0da6bd3783ef71bd2ea27ecb00f2ab20ad25cc",
+    "publicByteMutationCount": 135,
+    "publicDistributionControls": {
+      "accepted": {
+        "code": "NONE",
+        "detail": "full profile independently verified",
+        "outcome": "VERIFIED"
+      },
+      "foreign-theory": {
+        "code": "UNTRUSTED_THEORY",
+        "detail": "Theory digest is not pinned by the verifier caller",
+        "outcome": "REJECTED"
+      },
+      "no-authority": {
+        "code": "MISSING_EVIDENCE",
+        "detail": "CALL occurrence completeness requires a caller-pinned commitment for input scope 938a5ba52b00b062ab8f00cb86063e300c9fa93e7ac875c1d5c19d4f76b8bdac (source eb8fbb5390478c57ecf750be79793ef713534150049aa783d4069f371c747887)",
+        "outcome": "UNCHECKABLE"
+      }
+    },
+    "publicFixtureControls": {
+      "accepted": {
+        "code": "NONE",
+        "detail": "full profile independently verified",
+        "outcome": "VERIFIED"
+      },
+      "foreign-theory": {
+        "code": "UNTRUSTED_THEORY",
+        "detail": "Theory digest is not pinned by the verifier caller",
+        "outcome": "REJECTED"
+      },
+      "no-authority": {
+        "code": "MISSING_EVIDENCE",
+        "detail": "CALL occurrence completeness requires a caller-pinned commitment for input scope 938a5ba52b00b062ab8f00cb86063e300c9fa93e7ac875c1d5c19d4f76b8bdac (source eb8fbb5390478c57ecf750be79793ef713534150049aa783d4069f371c747887)",
+        "outcome": "UNCHECKABLE"
+      }
+    },
+    "tools": {
+      "java": "openjdk version \"17.0.21.1\" 2026-11-17",
+      "javac": "javac 17.0.21.1",
+      "lean": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)"
+    },
+    "verifierJar": "760c72c9e2a2df4b06013fb6898c64016affed9fca12bee46594e07b10929d57",
+    "verifierTests": {
+      "org/acgn/cert/DecodedBinderCoverageTest$1.class": "2682f0a1b705efbab52d8e8b78438af0f83f259a5cd118e2642aab4d032234e7",
+      "org/acgn/cert/DecodedBinderCoverageTest$Construction.class": "e1a892db050910a5dbb204596c4b2634349d54deb274e3cd5871992be79c4464",
+      "org/acgn/cert/DecodedBinderCoverageTest$Coordinate.class": "f3c8e8e245ee8e5e9a952f2118212046f6db7667b738a1d7f4f44c96734a31a3",
+      "org/acgn/cert/DecodedBinderCoverageTest$Occurrence.class": "6b8578cad663c25a8178634c35102662c0eb6bec92c0394693a90f18822658cd",
+      "org/acgn/cert/DecodedBinderCoverageTest.class": "31e835a605be6f2e302ed90a39a265f81b263dd2822bf7c8cb1785dd06197977",
+      "org/acgn/cert/ParsedSourcePairInspectionTest.class": "50e0bd79ad6d2a5b602622d2979b621f425c96ba99aed2f5e76cb97f6f58f35d",
+      "org/acgn/cert/Phase6SemanticOrderVerifierRegressionTest.class": "e58976e42971f15b62c8e92058b74daeb4b2d984dd0427aae77e2f8321138ee4",
+      "org/acgn/cert/ProducerBundleInspectionTest.class": "5a4479b6b2723410d9ec9b949055a7602f6cf52d10f0121c3b1d164ad5e01ac2",
+      "org/acgn/cert/ProducerSemanticEvidenceMutationTest$ReplayMutation.class": "7659b882ab688640bc16601210ab48de0fc98b89b66c550fc3799b8082dc4775",
+      "org/acgn/cert/ProducerSemanticEvidenceMutationTest.class": "fe58884da24f306c395ebbe099d18d8b430f8f15e65c73a1463f78e2bf076579",
+      "org/acgn/cert/TestBundleBuilder$Encoded.class": "403d169ce7988b7f7a78c7a7af3341740ff7223467b4181d25d63cb9a7b16578",
+      "org/acgn/cert/TestBundleBuilder.class": "459d130ed73b3754191ef8b0a8771ec7f6c175cfd75c2db14bb72ac1a5831f2d",
+      "org/acgn/cert/TrustedTheoryPinsTest$Pin.class": "10c43f846b02038832bd050d54111d6c81e914ed2a08fbf8c7765a05e38b341a",
+      "org/acgn/cert/TrustedTheoryPinsTest.class": "38404c393b1dcbb1037bb5ecc65cc5d1460c7042db781615c487df7c88914f7d",
+      "org/acgn/cert/VerifierTest$1.class": "a2ed46f2a2e59f56c6e3ab00a7a59abab75e2d83d862cb69882c1f9a86724412",
+      "org/acgn/cert/VerifierTest$BaseOptions.class": "4c78083a19b16c2a4223425efdf069bcb97e43961f43f96ce7fa5bbd82de784e",
+      "org/acgn/cert/VerifierTest$BuilderSetup.class": "42b80cb7ad77170102d976c246b869626a361ef06617d0a3f0974debbae2ec03",
+      "org/acgn/cert/VerifierTest$ClassWitness.class": "59c407a0d3be43eb5e52803a365a6f09ec8ee447095f1597c1edae88189f5d3f",
+      "org/acgn/cert/VerifierTest$CollisionEdge.class": "18591c491f77d1bef7a0e6c1cdad15b1febf5e169e0e2aba64baf0d1ab6bb05e",
+      "org/acgn/cert/VerifierTest$ContainerTerms.class": "14f4ed362f157f1a48b83e6c0eb00872a0534f26e61e7aafd38ca2fd30eae8e6",
+      "org/acgn/cert/VerifierTest$ContractionMutation.class": "d8e71eff2fa4447d71abd7529291fbc691c48ff81e1685e5675012f6b1c63b7d",
+      "org/acgn/cert/VerifierTest$FixtureExtension.class": "8fa03d6d64d03098f19b01b575f654ab9d64f567ea4743706bffff44778d5206",
+      "org/acgn/cert/VerifierTest$FixtureParts.class": "93a078a4ca2a97e79d08a0d0fd1b9aeef8c9733c77c9dd98199a81cc19d87457",
+      "org/acgn/cert/VerifierTest$FreshBox.class": "05081fc95ed2b01984e473892ee458262788f6ef50709b0f7f0d96a95cc61fd5",
+      "org/acgn/cert/VerifierTest$FreshNullary.class": "8d436ac716ace2ae83c32474987739ca2e59c3136841a1b65ee1dd4bbae44a2e",
+      "org/acgn/cert/VerifierTest$WitnessUnfoldMutation.class": "01d0e7ef5624a132bcd7abf99ad78ef7d0e62d39df44cd9f5f0d67162f3116e4",
+      "org/acgn/cert/VerifierTest.class": "cc5eed2cd7dab3502a372b80ad57fbb75e8c3c05e08e3dc84b73fc5e3052392e"
+    }
+  },
+  "commonEvidenceFileSha256": "6105ebaf047b23fe4096a920d5ffaa41e22eb68308fe87cd1273ad7bb16a2fa8",
+  "counts": {
+    "cleanBuilds": 2,
+    "commandsPerBuild": 35,
+    "compilerInstructions": 19,
+    "directTheorems": 76,
+    "frozenInputs": 1041,
+    "importedTheorems": 8,
+    "originalClauses": 11,
+    "originalRows": 5,
+    "publicByteMutationsPerBuild": 135,
+    "witnessRowsByParent": {
+      "A2-23": 15,
+      "P1-15": 57,
+      "P4-11": 11,
+      "P6-09": 13,
+      "P6-11": 391
+    },
+    "witnessRowsPerBuild": 487,
+    "writerFixturesPerBuild": 39
+  },
+  "decisionScope": "five registered finite proof and observation surfaces; original rows assessed separately",
+  "deterministic": true,
+  "durableEvidence": {
+    "archiveBytes": 1466455,
+    "files": {
+      "qualification-evidence.zip": "289bebd3be31a7b0fe57f429f3b6cef3942b08ddd0c18e72124655d31d580eff",
+      "receipt.json": "9ccec0e620152db09958b6e8ef6cb7adb9c5f3f5df782033e763f16c8399619b",
+      "report.json": "d362ac50cd19c5f65de48d12894469f6e6fe44ccddfe762e750880326c54a653"
+    },
+    "inputManifest": "input-manifest.json",
+    "perBuildEvidence": [
+      "build1/evidence.json",
+      "build2/evidence.json"
+    ],
+    "substantiveArchiveMembers": 236,
+    "uncompressedEvidenceBytes": 11712796,
+    "zipMemberChecksums": "SHA256SUMS"
+  },
+  "excluded": [
+    "unregistered claim IDs, production corpus workloads, benchmarks, unpublished user inputs and performance claims",
+    "universal refinement of Lean to the JVM, release authenticity outside the exact tracked distribution bytes, and assumptions beyond each original clause’s declared boundary"
+  ],
+  "inputManifestFileSha256": "086c852bc7293b0d4741fb8bcc50704da88d8d6d1a9192bac7e99c3716d9a610",
+  "inputRootHash": "8db565bd1c42d2de2a0e1a07f2c415ac64e82fbb5911873f819a766f3f955c19",
+  "normalRoutes": {
+    "bounded-java": {
+      "exitCode": 0,
+      "logSha256": "b52be2373f1bf164c51b20c7a3fe484cb99661ee2068d8990161f25561ee2206",
+      "script": "scripts/run_bounded_ci_java_tests.sh"
+    },
+    "certificates": {
+      "exitCode": 0,
+      "logSha256": "2c91b3748c98b14dd5a786319efb96b58888d34f6f730a2ac06952ca7c083dae",
+      "script": "scripts/run_certificate_bundle_writer_tests.sh"
+    }
+  },
+  "observations": {
+    "A2-23/arrow-families.tsv": [
+      "case\toutcome\tvalue",
+      "powerset-family-pairs\tCHECKED\t128",
+      "exact-case-and-result-products\tCHECKED\t384",
+      "typed-empty-pairs\tCHECKED\t23",
+      "structural-int-before-nominal\tCHECKED\tInt,A",
+      "parser-correlated-products\tCHECKED\t4",
+      "input-subtype-absorption\tCHECKED\tP,P",
+      "duplicate-representative\tCHECKED\tauthenticated in both orders",
+      "conflicting-duplicate-evidence\tCHECKED\trejected",
+      "same-key-foreign-case-owner\tCHECKED\trejected",
+      "both-associated-repeated-source\tCHECKED\t8",
+      "foreign-module\tCHECKED\trejected",
+      "mixed-width-input\tCHECKED\trejected",
+      "nullary-empty\tCHECKED\trejected",
+      "checked-arity-overflow\tCHECKED\trejected",
+      "compiler-contract\tCHECKED\t17 methods, 2 semantic mutations rejected"
+    ],
+    "A2-23/arrow-program.txt": [
+      "outer:left:ascending-index",
+      "lookup:left:outer",
+      "inner:right:ascending-index",
+      "lookup:right:inner",
+      "guard:ARROW",
+      "addAll:leftProduct",
+      "addAll:rightProduct",
+      "add:product",
+      "new:CombinationCase:leftIndex:rightIndex:CombinationDecision.ARROW_PRODUCT:null:product",
+      "add:case",
+      "continue",
+      "admission:positive-uniform-width-and-compatible-authority",
+      "group:exact-product-key-prefer-authenticated-duplicate",
+      "prune:all-other-products-strict-coordinate-subtype",
+      "sort:by-structural-product-type",
+      "type-order:int-before-nominal-UTF16-then-lex-columns",
+      "freeze:rows-and-ordered-column-evidence",
+      "return:typed-empty-or-normalized-products-and-cases",
+      "source:append-left-leaves-then-right-leaves"
+    ],
+    "P1-15/observations.tsv": [
+      "P1-15\tutil/integer/max/EXPRESSION/0\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/integer/max/EXPRESSION/1\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/integer/min/EXPRESSION/0\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/integer/min/EXPRESSION/1\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/integer/next/EXPRESSION/0\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/integer/prev/EXPRESSION/0\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/first/EXPRESSION/0\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/gt/FORMULA/2\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/gte/FORMULA/2\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/larger/EXPRESSION/2\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/last/EXPRESSION/0\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/lt/FORMULA/2\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/lte/FORMULA/2\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/max/EXPRESSION/1\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/min/EXPRESSION/1\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/next/EXPRESSION/0\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/nexts/EXPRESSION/1\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/prev/EXPRESSION/0\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/prevs/EXPRESSION/1\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/ordering/smaller/EXPRESSION/2\tACCEPT ledger + resolved producer CALL",
+      "P1-15\tutil/integer/add/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/div/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/elem2int/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/eq/FORMULA/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/gt/FORMULA/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/gte/FORMULA/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/int2elem/EXPRESSION/3\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/larger/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/lt/FORMULA/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/lte/FORMULA/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/minus/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/mul/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/neg/FORMULA/1\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/negate/EXPRESSION/1\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/nexts/EXPRESSION/1\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/nonneg/FORMULA/1\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/nonpos/FORMULA/1\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/plus/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/pos/FORMULA/1\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/prevs/EXPRESSION/1\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/rem/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/signum/EXPRESSION/1\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/smaller/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/sub/EXPRESSION/2\tREJECT outside fixed library ledger",
+      "P1-15\tutil/integer/zero/FORMULA/1\tREJECT outside fixed library ledger",
+      "P1-15\tdelimiter-collision\tREJECT lacks an independently pinned declaration",
+      "P1-15\twrong-kind\tREJECT lacks an independently pinned declaration",
+      "P1-15\twrong-integer-arity\tREJECT arity disagrees with imported declaration",
+      "P1-15\tmax-0-to-1\tREJECT arity disagrees with imported declaration",
+      "P1-15\tmax-1-to-0\tREJECT arity disagrees with imported declaration",
+      "P1-15\tmin-0-to-1\tREJECT arity disagrees with imported declaration",
+      "P1-15\tmin-1-to-0\tREJECT arity disagrees with imported declaration",
+      "P1-15\tsame-type-renamed-import\tREJECT disagrees with its resolved declaration",
+      "P1-15\timport-masquerading-as-local\tREJECT disagrees with its resolved declaration",
+      "P1-15\tforeign-module-arguments\tREJECT disagrees with its resolved module",
+      "P1-15\tforeign-parser-instance\tREJECT disagrees with its resolved module",
+      "P1-15\tcaller-supplied-library\tACCEPT exact signature; source-map body differs from JAR"
+    ],
+    "P4-11/shape-identities.tsv": [
+      "case\toutcome",
+      "snapshot-preimages\tTHREE_EXACT_OWNER_TERM_FRAMES",
+      "ordinary-full\tVERIFIED/NONE",
+      "writer-trace\tALL_FRAMES_IDENTICAL_BYTES",
+      "verifier-trace\tVERIFIED/NONE",
+      "writer-collision\tREFUSED_DESTINATION_PRESERVED",
+      "one-frame-a\tREJECTED/NONCANONICAL_ENCODING",
+      "one-frame-b\tREJECTED/NONCANONICAL_ENCODING",
+      "disjoint-snapshot-alias\tREJECTED/DUPLICATE_ID",
+      "fresh-jar-alias\tREJECTED/DUPLICATE_ID",
+      "distributed-jar-alias\tREJECTED/DUPLICATE_ID",
+      "fresh-replay\tVERIFIED/NONE"
+    ],
+    "P6-09/p609.tsv": [
+      "case\tobservation\tvalue",
+      "java\tsource-layouts\tmatched",
+      "grammar\tproducer-ports/decoded-term-kinds\t6/12",
+      "utf16\tsupplementary/delimiters\t7",
+      "dual\tFULL/roots/paths\tVERIFIED/2/1",
+      "nested\tFULL/roots/paths\tVERIFIED/1/2",
+      "empty-reference\tdecoded-only-rejection\tMISSING_EVIDENCE",
+      "empty-needs-binder\tdecoded-only-rejection\tMISSING_EVIDENCE",
+      "empty-fixture\tKERNEL\tVERIFIED",
+      "empty-fixture\tFULL\tVERIFIED",
+      "BIND\texported-occurrences/FULL\t1/VERIFIED",
+      "SEQ\texported-occurrences/FULL\t3/REJECTED_NO_EXACT_LAWS",
+      "BAG\tordinary-source-construction\tREFUSED_NO_COMMUTATIVITY",
+      "SET\tordinary-source-construction\tREFUSED_NO_COMMUTATIVITY"
+    ],
+    "P6-11/out.tsv": [
+      "authority\troute\tcase\tobservation",
+      "source\tBundle#<init>\tattributed\ta168222cc8e5f3fd0f6644da27c1d210bb1d8c9b29c1d1f1009ca23879580ecc",
+      "source\tBundle#metadata\tattributed\tc0fe9439317cc850a12953ca7a33ec14d6817baf0c0a5e686fd52fb3ccc26750",
+      "source\tBundle#parse\tattributed\t9edbd064ddfdd0c79b4a70aea7369e74fa762de3f06c1a91dbad8d7c10a4b222",
+      "source\tCallOccurrenceCommitment#inspect\tattributed\te5040de4bac8e66555fa235df2e270582234d9f432954c85e5128b12fb3fed78",
+      "source\tIndependentVerifier#open\tattributed\tf563907435422fe428c161da02460df24f600f4ce5b8c07944757494019eb10c",
+      "source\tIndependentVerifier#verify\tattributed\t80db51f50ade97d616f26462804dba30652d9ef2ab8abeae0c20850e5b5defba",
+      "source\tIndependentVerifier#verifyPair\tattributed\t14ab1246e98bba0a988ded57a3a9e51a48addef69b8fe2afc98a2c813d70994d",
+      "source\tMain#main\tattributed\tb03120ff6a990efe42c1e142862546a665225e03651228548f6b99b3cb80b79d",
+      "source\tMain#run\tattributed\teab1d3c2f412a366f86e94cd620f41f8b571d7690d8888f34d18879650adfbc0",
+      "source\tManifestInspector#main\tattributed\ta7e4bf034098e837684f1edf76aab36b36b8b917e809aea5647b53d3f49ef5f1",
+      "source\tP613SourcePair#bind\tattributed\t2337c7f20189030bd79eb36bcd244ed0a69cf455d5427123d99c40d425cbfe16",
+      "source\tP613SourcePair#main\tattributed\t3c8ed9fa5e6efae60768da7c89c90cb08c9f8677b92e51813befa629dfa3c9fe",
+      "source\tP613SourcePair#verify\tattributed\tbf96db99c52c99be0b385b9d5ca6969de0f05f3013192a41544190fb36629ce4",
+      "source\tP613SourcePair#verifyFull\tattributed\tc55eab624aed9b637c3500ab9387214d4dc020c3aa5bf5e5045478cfbfab6465",
+      "source\tRawCallSourceAuthority#commitment\tattributed\t6befc248600357882e84c842c5243eb7c48a3c682136ac6b1a93bb6d50b1eb24",
+      "source\tRawCallSourceAuthority#main\tattributed\t18f1a9f10d3a6aa93d958ff30e60a6e71c191425f0ffcb3aa327a795afd09700",
+      "source\tWire.Node#requireShape\tattributed\t137f4067798379ad7091e4709753db1f72667bd849f72d2c90198b26c8c83894",
+      "api\ttwo-root-binder\tv10\tTWO_OWNERS/SAME_LOCAL_PATH",
+      "api\ttwo-root-binder\tv9\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\ttwo-root-FULL\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\ttwo-root-FULL\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\ttwo-root-FULL\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\ttwo-root-FULL\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\ttwo-root-FULL\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\ttwo-root-FULL\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\ttwo-root-FULL\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\ttwo-root-FULL\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\ttwo-root-FULL\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\ttwo-root-FULL\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\ttwo-root-FULL\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\ttwo-root-FULL\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\ttwo-root-FULL\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\ttwo-root-FULL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\ttwo-root-FULL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\ttwo-root-FULL\tv10\tVERIFIED/NONE",
+      "built-jar\ttwo-root-FULL\tv10\tEXIT_0/VERIFIED/NONE",
+      "tracked-jar\ttwo-root-FULL\tv10\tEXIT_0/VERIFIED/NONE",
+      "api\tsingle-PAIR\tbad-magic\tREJECTED/INVALID_RECORD_SHAPE",
+      "api\troot-shape\tother/1/12\tREJECTED/INVALID_RECORD_SHAPE",
+      "api\troot-shape\tacgncert-bundle/0/12\tREJECTED/INVALID_RECORD_SHAPE",
+      "api\troot-shape\tacgncert-bundle/2/12\tREJECTED/INVALID_RECORD_SHAPE",
+      "api\troot-shape\tacgncert-bundle/1/11\tREJECTED/INVALID_RECORD_SHAPE",
+      "api\tenvelope\tbad-magic\tREJECTED/BAD_MAGIC",
+      "api\tenvelope\tversion-2\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tenvelope\tbad-digest\tREJECTED/DIGEST_MISMATCH",
+      "boundary\tCodec.decode\thistorical\tDECODED_TREE_ONLY",
+      "boundary\tVerificationResult.verified\tfactory\tCALLER_CONSTRUCTED_DTO",
+      "boundary\tBundle.Metadata\tconstructor\tCALLER_CONSTRUCTED_DTO",
+      "api\tKERNEL\tv10\tVERIFIED/NONE",
+      "api\tCHECKPOINT\tv10\tVERIFIED/NONE",
+      "api\tCANONICAL\tv10\tVERIFIED/NONE",
+      "api\tUNFOLD\tv10\tVERIFIED/NONE",
+      "api\tFULL\tv10\tVERIFIED/NONE",
+      "api\tPAIR-left\tv10\tVERIFIED/NONE",
+      "api\tPAIR-right\tv10\tVERIFIED/NONE",
+      "api\tbundle-metadata\tv10\tOK",
+      "api\tinspect-call\tv10\tOK",
+      "api\tsource-metadata\tv10\tOK",
+      "api\tsource-FULL\tv10\tVERIFIED/NONE",
+      "api\tsource-PAIR-left\tv10\tVERIFIED/NONE",
+      "api\tsource-PAIR-right\tv10\tVERIFIED/NONE",
+      "source-tool\tmetadata\tv10\tEXIT_0/VALUE",
+      "source-tool\tPAIR-left\tv10\tEXIT_0/VERIFIED/NONE",
+      "source-tool\tPAIR-right\tv10\tEXIT_0/VERIFIED/NONE",
+      "built-jar\tKERNEL\tv10\tEXIT_0/VERIFIED/NONE",
+      "built-jar\tCHECKPOINT\tv10\tEXIT_0/VERIFIED/NONE",
+      "built-jar\tCANONICAL\tv10\tEXIT_0/VERIFIED/NONE",
+      "built-jar\tUNFOLD\tv10\tEXIT_0/VERIFIED/NONE",
+      "built-jar\tFULL\tv10\tEXIT_0/VERIFIED/NONE",
+      "built-jar\tPAIR-left\tv10\tEXIT_0/VERIFIED/NONE",
+      "built-jar\tPAIR-right\tv10\tEXIT_0/VERIFIED/NONE",
+      "built-jar\tinspect-call\tv10\tEXIT_0/VALUE",
+      "built-jar\tinspect-manifest\tv10\tEXIT_0/VALUE",
+      "tracked-jar\tKERNEL\tv10\tEXIT_0/VERIFIED/NONE",
+      "tracked-jar\tCHECKPOINT\tv10\tEXIT_0/VERIFIED/NONE",
+      "tracked-jar\tCANONICAL\tv10\tEXIT_0/VERIFIED/NONE",
+      "tracked-jar\tUNFOLD\tv10\tEXIT_0/VERIFIED/NONE",
+      "tracked-jar\tFULL\tv10\tEXIT_0/VERIFIED/NONE",
+      "tracked-jar\tPAIR-left\tv10\tEXIT_0/VERIFIED/NONE",
+      "tracked-jar\tPAIR-right\tv10\tEXIT_0/VERIFIED/NONE",
+      "tracked-jar\tinspect-call\tv10\tEXIT_0/VALUE",
+      "tracked-jar\tinspect-manifest\tv10\tEXIT_0/VALUE",
+      "api\tKERNEL\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCHECKPOINT\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCANONICAL\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tUNFOLD\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tFULL\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-left\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-right\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tbundle-metadata\tv5\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tinspect-call\tv5\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-metadata\tv5\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-FULL\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-left\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-right\tv5\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tmetadata\tv5\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "source-tool\tPAIR-left\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tPAIR-right\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tKERNEL\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCHECKPOINT\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCANONICAL\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tUNFOLD\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tFULL\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-left\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-right\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tinspect-call\tv5\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "built-jar\tinspect-manifest\tv5\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tKERNEL\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCHECKPOINT\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCANONICAL\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tUNFOLD\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tFULL\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-left\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-right\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tinspect-call\tv5\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tinspect-manifest\tv5\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "api\tKERNEL\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCHECKPOINT\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCANONICAL\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tUNFOLD\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tFULL\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-left\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-right\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tbundle-metadata\tv6\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tinspect-call\tv6\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-metadata\tv6\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-FULL\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-left\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-right\tv6\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tmetadata\tv6\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "source-tool\tPAIR-left\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tPAIR-right\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tKERNEL\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCHECKPOINT\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCANONICAL\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tUNFOLD\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tFULL\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-left\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-right\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tinspect-call\tv6\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "built-jar\tinspect-manifest\tv6\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tKERNEL\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCHECKPOINT\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCANONICAL\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tUNFOLD\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tFULL\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-left\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-right\tv6\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tinspect-call\tv6\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tinspect-manifest\tv6\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "api\tKERNEL\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCHECKPOINT\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCANONICAL\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tUNFOLD\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tFULL\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-left\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-right\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tbundle-metadata\tv7\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tinspect-call\tv7\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-metadata\tv7\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-FULL\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-left\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-right\tv7\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tmetadata\tv7\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "source-tool\tPAIR-left\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tPAIR-right\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tKERNEL\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCHECKPOINT\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCANONICAL\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tUNFOLD\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tFULL\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-left\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-right\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tinspect-call\tv7\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "built-jar\tinspect-manifest\tv7\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tKERNEL\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCHECKPOINT\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCANONICAL\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tUNFOLD\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tFULL\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-left\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-right\tv7\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tinspect-call\tv7\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tinspect-manifest\tv7\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "api\tKERNEL\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCHECKPOINT\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCANONICAL\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tUNFOLD\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tFULL\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-left\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-right\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tbundle-metadata\tv8\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tinspect-call\tv8\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-metadata\tv8\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-FULL\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-left\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-right\tv8\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tmetadata\tv8\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "source-tool\tPAIR-left\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tPAIR-right\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tKERNEL\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCHECKPOINT\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCANONICAL\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tUNFOLD\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tFULL\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-left\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-right\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tinspect-call\tv8\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "built-jar\tinspect-manifest\tv8\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tKERNEL\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCHECKPOINT\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCANONICAL\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tUNFOLD\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tFULL\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-left\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-right\tv8\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tinspect-call\tv8\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tinspect-manifest\tv8\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "api\tKERNEL\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCHECKPOINT\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCANONICAL\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tUNFOLD\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tFULL\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-left\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-right\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tbundle-metadata\tv9\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tinspect-call\tv9\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-metadata\tv9\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-FULL\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-left\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-right\tv9\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tmetadata\tv9\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "source-tool\tPAIR-left\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tPAIR-right\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tKERNEL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCHECKPOINT\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCANONICAL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tUNFOLD\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tFULL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-left\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-right\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tinspect-call\tv9\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "built-jar\tinspect-manifest\tv9\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tKERNEL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCHECKPOINT\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCANONICAL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tUNFOLD\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tFULL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-left\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-right\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tinspect-call\tv9\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tinspect-manifest\tv9\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "api\tKERNEL\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCHECKPOINT\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCANONICAL\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tUNFOLD\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tFULL\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-left\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-right\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tbundle-metadata\tv11\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tinspect-call\tv11\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-metadata\tv11\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-FULL\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-left\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-right\tv11\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tmetadata\tv11\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "source-tool\tPAIR-left\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tPAIR-right\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tKERNEL\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCHECKPOINT\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCANONICAL\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tUNFOLD\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tFULL\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-left\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-right\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tinspect-call\tv11\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "built-jar\tinspect-manifest\tv11\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tKERNEL\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCHECKPOINT\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCANONICAL\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tUNFOLD\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tFULL\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-left\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-right\tv11\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tinspect-call\tv11\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tinspect-manifest\tv11\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "api\tKERNEL\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCHECKPOINT\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCANONICAL\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tUNFOLD\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tFULL\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-left\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-right\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tbundle-metadata\tv010\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tinspect-call\tv010\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-metadata\tv010\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-FULL\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-left\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-right\tv010\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tmetadata\tv010\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "source-tool\tPAIR-left\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tPAIR-right\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tKERNEL\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCHECKPOINT\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCANONICAL\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tUNFOLD\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tFULL\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-left\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-right\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tinspect-call\tv010\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "built-jar\tinspect-manifest\tv010\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tKERNEL\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCHECKPOINT\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCANONICAL\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tUNFOLD\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tFULL\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-left\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-right\tv010\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tinspect-call\tv010\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tinspect-manifest\tv010\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "api\tKERNEL\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCHECKPOINT\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCANONICAL\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tUNFOLD\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tFULL\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-left\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-right\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tbundle-metadata\tempty\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tinspect-call\tempty\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-metadata\tempty\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-FULL\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-left\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-right\tempty\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tmetadata\tempty\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "source-tool\tPAIR-left\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tPAIR-right\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tKERNEL\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCHECKPOINT\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCANONICAL\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tUNFOLD\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tFULL\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-left\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-right\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tinspect-call\tempty\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "built-jar\tinspect-manifest\tempty\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tKERNEL\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCHECKPOINT\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCANONICAL\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tUNFOLD\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tFULL\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-left\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-right\tempty\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tinspect-call\tempty\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tinspect-manifest\tempty\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "api\tKERNEL\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCHECKPOINT\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tCANONICAL\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tUNFOLD\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tFULL\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-left\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tPAIR-right\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tbundle-metadata\tv１０\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tinspect-call\tv１０\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-metadata\tv１０\tTHROW/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-FULL\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-left\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "api\tsource-PAIR-right\tv１０\tREJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tmetadata\tv１０\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "source-tool\tPAIR-left\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "source-tool\tPAIR-right\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tKERNEL\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCHECKPOINT\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tCANONICAL\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tUNFOLD\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tFULL\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-left\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tPAIR-right\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "built-jar\tinspect-call\tv１０\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "built-jar\tinspect-manifest\tv１０\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tKERNEL\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCHECKPOINT\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tCANONICAL\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tUNFOLD\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tFULL\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-left\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tPAIR-right\tv１０\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION",
+      "tracked-jar\tinspect-call\tv１０\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "tracked-jar\tinspect-manifest\tv１０\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION",
+      "distribution\tmanifest\tmain-class\torg.acgn.cert.Main",
+      "distribution\tclass-census\t119\tfd3103ec269df79b83db265fdbebbc45a2a5d3089683b8748012b1b6ed611e30",
+      "distribution\tjar-bytes\tclean-vs-tracked\t760c72c9e2a2df4b06013fb6898c64016affed9fca12bee46594e07b10929d57"
+    ]
+  },
+  "originalReportFileSha256": "d362ac50cd19c5f65de48d12894469f6e6fe44ccddfe762e750880326c54a653",
+  "originalRowAssessments": {
+    "A2-23": {
+      "boundary": "For admitted finite correlated input families with fixed positive widths, distinct sorted product keys, consistent module/type evidence and representable indices, the outer left and inner right indices enumerate all products in canonical family order, preserving operand order and repeated source columns. Raw union branch listings are normalized before combination.",
+      "clauses": 2,
+      "decision": "VERIFIED"
+    },
+    "P1-15": {
+      "boundary": "The original statement concerns the authority for an imported callable’s arity. The producer accepts the independently fixed module/member/kind/arity tuple and binds it to the resolved declaration. An alternate library body can present that same admitted signature; this evidence does not authenticate arbitrary module bodies.",
+      "clauses": 2,
+      "decision": "VERIFIED"
+    },
+    "P4-11": {
+      "boundary": "UTF-8 framed owner and canonical term identifiers and bundle-wide observed histories in the public writer and checkpoint verifier. The Lean results allow an arbitrary digest and need no SHA-256 injectivity assumption.",
+      "clauses": 3,
+      "decision": "VERIFIED"
+    },
+    "P6-09": {
+      "boundary": "Every emitted or admitted binder-occurrence identity on the registered producer and verification routes is scoped to its enclosing root. The result does not require all input programs to be exportable; the witness records rejections for unsupported port forms and absent laws.",
+      "clauses": 2,
+      "decision": "VERIFIED"
+    },
+    "P6-11": {
+      "boundary": "Schema admission is a necessary precondition for the six-feature contract on the governed entry points. Independent feature validity still requires its own proof; inspection reports metadata rather than a full verification judgment.",
+      "clauses": 2,
+      "decision": "VERIFIED"
+    }
+  },
+  "parentClaimHashes": {
+    "A2-23": "88cd036c148f8baf6ed019c18205184021f9e037772881eb81e1c081ee9c7a2a",
+    "P1-15": "54d4d2121c0f1d04cc4fbfda65748f845b226da5cb8b89efc18491de910af381",
+    "P4-11": "4d40daa73cffd3cc30363c0ddb3f0a5467907489b67460490c28157b37b52fe6",
+    "P6-09": "6a274f121f2919d837dbc11d0f4e7aa20981d1512883b4ef1baa8a963e87e48a",
+    "P6-11": "e7ebd891d005c44dbaa58c5b4684fc9862849738159688111f38f8c1a7c09f8d"
+  },
+  "parentStatusChanges": [
+    {
+      "claimSha256": "e7ebd891d005c44dbaa58c5b4684fc9862849738159688111f38f8c1a7c09f8d",
+      "currentLedgerStatus": "PROVED/DIRECT",
+      "originalRowDecision": "VERIFIED",
+      "parent": "P6-11",
+      "previousLedgerStatus": "PROVED/PARTIAL"
+    },
+    {
+      "claimSha256": "54d4d2121c0f1d04cc4fbfda65748f845b226da5cb8b89efc18491de910af381",
+      "currentLedgerStatus": "PROVED/DIRECT",
+      "originalRowDecision": "VERIFIED",
+      "parent": "P1-15",
+      "previousLedgerStatus": "PARTIAL/DIRECT"
+    },
+    {
+      "claimSha256": "4d40daa73cffd3cc30363c0ddb3f0a5467907489b67460490c28157b37b52fe6",
+      "currentLedgerStatus": "PROVED/DIRECT",
+      "originalRowDecision": "VERIFIED",
+      "parent": "P4-11",
+      "previousLedgerStatus": "PARTIAL/DIRECT"
+    },
+    {
+      "claimSha256": "6a274f121f2919d837dbc11d0f4e7aa20981d1512883b4ef1baa8a963e87e48a",
+      "currentLedgerStatus": "PROVED/DIRECT",
+      "originalRowDecision": "VERIFIED",
+      "parent": "P6-09",
+      "previousLedgerStatus": "PROVED/PARTIAL"
+    },
+    {
+      "claimSha256": "88cd036c148f8baf6ed019c18205184021f9e037772881eb81e1c081ee9c7a2a",
+      "currentLedgerStatus": "PROVED/DIRECT",
+      "originalRowDecision": "VERIFIED",
+      "parent": "A2-23",
+      "previousLedgerStatus": "PARTIAL/DIRECT"
+    }
+  ],
+  "profile": "eighth-public-certification-v1",
+  "registeredInputs": {
+    "certificate-verifier/build/acgn-certificate-verifier.jar": "760c72c9e2a2df4b06013fb6898c64016affed9fca12bee46594e07b10929d57",
+    "docs/obligation-repair/eighth-five/qualification.json": "1c81d54797caf7fddb6269091ab3e45369de1ad3533accfd220e68bccc559474",
+    "docs/obligation-repair/eighth-five/verify_eighth.py": "a94cf5ab145c7ca4a248172e9bc9f8ae187b7de83ad2e4c71ba16bceac95eb6e",
+    "docs/section3-repair-audit/assurance-scope.tsv": "35af1f85302ac791de4ec1fa2136ee97f009123b330bf7c67c464f7a97670b58",
+    "docs/section3-repair-audit/claim-ledger.md": "619c0e452fd046e18d87a0e975bf96ff3894ca24e3308e63d79fbea4141b9fd9",
+    "docs/section3-repair-audit/requirements-traceability.tsv": "4518cb1d52786afc35085622b1c2416dc7d9dbe287ce5775e667b01557743a09",
+    "lean-toolchain": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+    "lib/dependencies.json": "f322366cf73dcd8ba1b65fe585c5748ae2007e65b893a75ee830bcf03be0a4a8",
+    "scripts/verify_sixth_obligation_repair.py": "80b3c82538e1ef0b094ba48050451358cf8e7380edc956c445838af38399b351"
+  },
+  "reproduction": {
+    "argv": [
+      "python3",
+      "-B",
+      "docs/obligation-repair/eighth-five/verify_eighth.py",
+      "<fresh-output-directory>",
+      "--external-volume",
+      "<external-mount>",
+      "<external-uuid>"
+    ],
+    "from": "repository root with the complete frozen inputs",
+    "network": "Offline; use the pinned Lean toolchain and release JDK specified below.",
+    "output": "New directory outside this checkout. The original run used a tmpfs output and a separately identified external evidence volume.",
+    "releaseJdk": {
+      "architecture": "x86_64",
+      "archiveReproduction": "Use this toolchain, the sorted entries and fixed timestamp from the build script. The jar tool writes a vendor/version-dependent Created-By field into the manifest, which affects the complete JAR digest.",
+      "buildScript": "scripts/build_certificate_verifier.sh",
+      "commandOutputReceipts": {
+        "java-version": {
+          "lines": [
+            "openjdk version \"17.0.21.1\" 2026-11-17",
+            "OpenJDK Runtime Environment (build 17.0.21.1+2-1-24.04.1-Ubuntu)",
+            "OpenJDK 64-Bit Server VM (build 17.0.21.1+2-1-24.04.1-Ubuntu, mixed mode, sharing)"
+          ],
+          "perBuildLogSha256": "1cda7f6f8a5d4b797aaacf251df2ea6490a4d824472916ebeb0bc6ea5d244c7c"
+        },
+        "javac-version": {
+          "lines": [
+            "javac 17.0.21.1"
+          ],
+          "perBuildLogSha256": "785311ab4e5a27bedf1ffec541d403f660832b61852266829b28ef8ef7427550"
+        }
+      },
+      "distributionManifestFields": {
+        "Created-By": "17.0.21.1 (Ubuntu)",
+        "Main-Class": "org.acgn.cert.Main",
+        "Manifest-Version": "1.0"
+      },
+      "distributionManifestSha256": "a43eccf62d337f58ca7b67c2850f360547af7a48f652c6419dc57d4123450374",
+      "installationReadback": {
+        "launcherSha256": {
+          "jar": "db0f3893a167bf7e2597e163d11c3f9851acd0688239a0d6eebced5f30dd2379",
+          "java": "9afe8ea3ee04af5464cd602079a9533f987c97ccfd14a98611367c78f575482a",
+          "javac": "02539e039840d7889d210bda336222d0869949c122c0c8c5e783520049fde4a3"
+        },
+        "ubuntuPackages": {
+          "openjdk-17-jdk-headless": {
+            "architecture": "amd64",
+            "version": "17.0.21.1+2-1~24.04.1"
+          },
+          "openjdk-17-jre-headless": {
+            "architecture": "amd64",
+            "version": "17.0.21.1+2-1~24.04.1"
+          }
+        }
+      },
+      "jarVersion": "jar 17.0.21.1",
+      "runtimeName": "OpenJDK Runtime Environment",
+      "runtimeVersion": "17.0.21.1+2-1-24.04.1-Ubuntu",
+      "vendor": "Ubuntu"
+    },
+    "resourceGates": {
+      "availableMemoryMinimumGiB": 6,
+      "cgroupV2": {
+        "memory.high": "10737418240",
+        "memory.max": "12884901888",
+        "memory.oom.group": "1",
+        "memory.swap.max": "0"
+      },
+      "internalDiskMinimumGiB": 10,
+      "verifiedExternalDiskMinimumGiB": 32
+    }
+  },
+  "schemaVersion": 1,
+  "section3Assessment": {
+    "environment": "Set LEAN_BIN to the pinned 4.35.0 executable. Set PATH so the augmentation verifier independently resolves its pinned 4.33.0 launcher. Make the selected tracked models and the imported historical snapshot available.",
+    "executedSteps": 118,
+    "failedExecutableSteps": 0,
+    "inputManifestSha256": "25449c4579c53b06fbf86c29ad4ee05784462f0a6f8ab643e43bf212e36f351d",
+    "openDiagnostics": 100,
+    "outcome": "INCOMPLETE",
+    "outputManifestSha256": "81296fd084dff3eec98be638424c7e2da6a3aed9b1bc8b072b378d523bbd29c6",
+    "proofToolchains": {
+      "augmentation": "Lean (version 4.33.0, x86_64-unknown-linux-gnu, commit d8b18978322de05a8f3dba51ef03cf5461676c17, Release)",
+      "governedProofs": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)"
+    },
+    "ready": 117,
+    "requirements": 191,
+    "script": "scripts/run_section3_assurance.sh",
+    "stepResultsSha256": "ab961f2409613c7b594483ec1a24e139157ff3cfddb16c4bf2ea9031b0f7ce2d",
+    "supportingFilesSha256": "54e5dd441fb96e924c738ced97623f868fa4ef03d6afb1532fbffef00477d3f4",
+    "supportingModelCount": 41,
+    "traceabilityReportSha256": "166271798207ec3f052cae8f722e7025b422db3c2ce326364d8b4ac86f5145d1",
+    "witnessAndLogArchiveSha256": "32d6fa6f925873231e187fa0749cf2d9e789f193d3b8ca80301a1e2361c476ff"
+  },
+  "sharedRegressions": {
+    "fifth": {
+      "builds": [
+        {
+          "artifactManifestSha256": "c8eb6b87d67f84c2c10f628ef37f8b920b552faa44a61453cba6bc1fccc5bef6",
+          "commandCount": 184,
+          "evidenceFileSha256": "49bca89bf92e1ff4243d9d14ecab12d80f7583a0e31776a885c929d81f6aec05",
+          "negativeControls": 96,
+          "number": 1,
+          "sourceMutationControls": 60,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "c8eb6b87d67f84c2c10f628ef37f8b920b552faa44a61453cba6bc1fccc5bef6",
+          "commandCount": 184,
+          "evidenceFileSha256": "932f3aa77be81d7b4b8f25e5642064e6522f47a9863a127e4a01de5f728883e2",
+          "negativeControls": 96,
+          "number": 2,
+          "sourceMutationControls": 60,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "17426cd0ac52a7ea3f5a92f9ceae8810cb5811172b6d485a57bbcf6caac254f6",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "38b98bd83ae16ba5d300d5db93d410e15e359e89e2e75669baaec9aeae145cae",
+      "inputRootHash": "81b864c4205249d4b7504651f6a52598e04955d932b069f4e2f76f0d9aca7de3",
+      "reportFileSha256": "c7ebada8c8ce870c8172485688d7eb89bebb23d9e33b3b6fa68c59088184f8d0",
+      "script": "scripts/run_fifth_obligation_repairs.py",
+      "totalCommands": 377
+    },
+    "fourth": {
+      "builds": [
+        {
+          "artifactManifestSha256": "c58233c1d8b85bf73928800d9f54d7a559dae6e300de7437fcb10f6b81083a64",
+          "commandCount": 105,
+          "evidenceFileSha256": "0a56ededd4cbfc5ed3f5a25105f4e94549bd42b776ab83fcbda9bb71e2ae5676",
+          "negativeControls": 36,
+          "number": 1,
+          "sourceMutationControls": 45,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "c58233c1d8b85bf73928800d9f54d7a559dae6e300de7437fcb10f6b81083a64",
+          "commandCount": 105,
+          "evidenceFileSha256": "568054a6594e03d81f0ce15d5e7d833d410c5ad6f5a1d7a8021a2e2db3ce8be3",
+          "negativeControls": 36,
+          "number": 2,
+          "sourceMutationControls": 45,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "fe2c1586913aaa7c1b115ca6df688fe6d14d1d7d19bbe5582d07884283b89276",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "14405864c79db3dc3761d9973233fb00ff5c75fa45fdce9ee8cafea94bb6b8ea",
+      "inputRootHash": "67c49e7638c6d8a19f1d1287c807073c0a0e88649ef546a91fdc622137b07cad",
+      "reportFileSha256": "2bdd3dd3e13471d6e0ad0a825014076eafacdb7edf452c5ddd5a4f45be4f4bdc",
+      "script": "scripts/run_fourth_obligation_repairs.py",
+      "totalCommands": 218
+    },
+    "next": {
+      "builds": [
+        {
+          "artifactManifestSha256": "cfc55195b9d0dd2e7209fe34683ad4a322b22a83e59f013291474865662d29be",
+          "commandCount": 49,
+          "evidenceFileSha256": "2fe8018c88207cd545b1ea7f6a9cbea17d41d787f5c1d2ff64dfa27f14c37800",
+          "negativeControls": 12,
+          "number": 1,
+          "sourceMutationControls": 11,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "cfc55195b9d0dd2e7209fe34683ad4a322b22a83e59f013291474865662d29be",
+          "commandCount": 49,
+          "evidenceFileSha256": "dd1f7134b02e1c480a8297133200e07925d4cf1e1e322b20bed6bb49f4515c82",
+          "negativeControls": 12,
+          "number": 2,
+          "sourceMutationControls": 11,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "5c71bc6048f9709c9fd65319b492afaf2a038c15efc620f15adb5c04e8ebd7bd",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "28671623ece9d36cf4f1e0fd1d516d131b79ffeb3434738d57ae03e6c5b85e12",
+      "inputRootHash": "97b2c58ab5fc62226e2862ee2196bb11ab737cf2729796c6d58af760778633d4",
+      "reportFileSha256": "268cd5f9280bdd67f603af33c3735e6e8d8caaa396cd608a60e1ce7d28e38919",
+      "script": "scripts/run_next_obligation_repairs.py",
+      "totalCommands": 103
+    },
+    "seventh": {
+      "archiveSha256": "16be081d0a61034a859c1067e07be19ffd457291af22206ca33672309189c043",
+      "claimCounts": {
+        "qualified": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandsPerBuild": [
+        31,
+        31
+      ],
+      "decision": "VERIFIED",
+      "decisionScope": "five registered finite proof and observation surfaces",
+      "deterministic": true,
+      "inputFiles": 870,
+      "inputManifestFileSha256": "7b68d6a07a1332fa12b9b7be6330932d5593aafa2ac76ef2365422ef85a91602",
+      "inputRootHash": "ae0eb510dc55a7bbd898d054c34d07a3f5805059e20fe7f1bbe26a5d5f2b6442",
+      "receiptFileSha256": "9758bda6c2a8ed076e52daeffa26861720d714ce36acc8d0ca7d2e35c0769515",
+      "reportFileSha256": "ccbb727b9c1b86f0988c40e0a6fbc5229d7e1538d4a704f7fa70432afde885d1",
+      "script": "docs/obligation-repair/seventh-five/verify_seventh.py",
+      "theorems": 39
+    },
+    "sixth": {
+      "archiveSha256": "515a46d95bc13d060c7ec49b34e9b06cfcaa01096add3e7c738789464f54eafa",
+      "claimCounts": {
+        "qualified": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandsPerBuild": [
+        30,
+        30
+      ],
+      "decision": "VERIFIED",
+      "decisionScope": "five registered finite proof and observation surfaces",
+      "deterministic": true,
+      "inputFiles": 844,
+      "inputManifestFileSha256": "1a109869952b2d389e1448b07797677a399d502cc50bc1fbfd885c06ff23c260",
+      "inputRootHash": "1453b41ecab07629506cd078ee9be4f5dd87eadb97018f1a279d6c6ea5a2a830",
+      "receiptFileSha256": "575e13ed0fa860e905e7c53504d971a77720b84ae61fd00801252aa936e6c1f0",
+      "reportFileSha256": "ba161d962f12fef859c2006de3be0a6c064d8987beaf71b37e64c0839372e5f7",
+      "script": "scripts/verify_sixth_obligation_repair.py",
+      "theorems": 48
+    },
+    "third": {
+      "builds": [
+        {
+          "artifactManifestSha256": "dccb408f5652e02022a5c9cd1137c72bc439b8219391ec4eeb347f2f9aee76af",
+          "commandCount": 83,
+          "evidenceFileSha256": "43496b88d770d28b9021db9971618054908c3609b47450d319e68a8a4521ac44",
+          "negativeControls": 28,
+          "number": 1,
+          "sourceMutationControls": 26,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "dccb408f5652e02022a5c9cd1137c72bc439b8219391ec4eeb347f2f9aee76af",
+          "commandCount": 83,
+          "evidenceFileSha256": "1a80b23d742032e6aad619bdbe35df4a204549ecd4ae47857685d45d0ba7474e",
+          "negativeControls": 28,
+          "number": 2,
+          "sourceMutationControls": 26,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "9a61e95f772adef815bd67daf890d67fd83e697b44d0a0c9b52d90bec071d559",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "2dc526e1afef1e1717f6906d09cd257b0a104303cce52d9a64bf73056c131ce1",
+      "inputRootHash": "ecb71949d66dc3848dfa771ff5975882c0ca28ae87df7d3291892a5aab110f7f",
+      "reportFileSha256": "107d7e107c4480438d5ea77cff0a0cad67233fb082bd3bbc446f416a01489bf8",
+      "script": "scripts/run_third_obligation_repairs.py",
+      "totalCommands": 174
+    }
+  },
+  "status": "VERIFIED",
+  "trusted": [
+    "Lean 4.35.0 kernel and standard library with the named proof assumptions audited at runtime (propext, Quot.sound and Classical.choice where reported)",
+    "JDK 17 javac, JVM, jar, Python, local Git, Linux and hardware",
+    "Alloy parser and library JARs bound in the input manifest",
+    "SHA-256 collision resistance and Java cryptographic provider behavior except where a witness explicitly injects a collision",
+    "registered source extractors, structural interpretation and executable witnesses for the stated implementation-to-proof correspondences",
+    "TEST_ONLY theory trust for the named writer fixtures and explicit caller-owned authority in the registered public controls"
+  ],
+  "verifierSetHash": "6c98691e2601caaa4e028749153a3ffcefbd9f54ae47c9356576d9015fa1c213"
+}

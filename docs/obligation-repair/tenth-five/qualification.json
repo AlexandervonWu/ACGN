@@ -1,0 +1,1372 @@
+{
+  "profile": "tenth-public-certification-v1",
+  "registrationState": "SEALED",
+  "trusted": [
+    "Lean 4.35.0 kernel and standard library, subject to each locally audited theorem’s printed assumptions",
+    "JDK 17 javac, JVM and reproducible vendor/version-specific jar; Python, Git, host OS and hardware",
+    "Hashed Alloy parser/library dependencies and registered compiler-to-model interpretations",
+    "SHA-256 collision resistance; explicit caller trust for the registered public-verifier fixtures"
+  ],
+  "excluded": [
+    "Claims or input grammars outside each original clause’s recorded scope",
+    "Qualification or promotion inferred from draft or focused observations",
+    "Release identity beyond the independently rebuilt and byte-matched tracked artifact"
+  ],
+  "javaSupport": [],
+  "leanModules": {
+    "A226SourceAgreement": {
+      "source": "docs/section3-repair-audit/formal/A226SourceAgreement.lean",
+      "audit": "local",
+      "imports": [],
+      "theorems": [
+        "A226.eligible_success",
+        "A226.mixed_representation_refused",
+        "A226.registered_source_agreement",
+        "A226.collected_from_source",
+        "A226.finish_checks_every_child",
+        "A226.recursive_parser_agreement",
+        "A226.collected_at_each_index",
+        "A226.every_accepted_set_child",
+        "A226.matched_empty_keeps_parser_arity",
+        "A226.genuine_disagreement_blocks",
+        "A226.recursive_occurrence_blocks",
+        "A226.typed_empty_keeps_width",
+        "A226.fixed_iff_unsupported_without_authority",
+        "A226.disagreement_has_no_fallback"
+      ]
+    },
+    "Membership": {
+      "source": "docs/obligation-repair/tenth-five/Membership.lean",
+      "audit": "local",
+      "imports": [
+        "P506SourceNonempty"
+      ],
+      "theorems": [
+        "ACGN.Tenth.Membership.compiled_polarities_choose_duals",
+        "ACGN.Tenth.Membership.parsed_decision_sound",
+        "ACGN.Tenth.Membership.positive_in_none_has_issuing_slot",
+        "ACGN.Tenth.Membership.nullable_branches_preserved",
+        "ACGN.Tenth.Membership.structural_sound",
+        "ACGN.Tenth.Membership.positive_lattice",
+        "ACGN.Tenth.Membership.negative_lattice",
+        "ACGN.Tenth.Membership.lattice_without_proved_pairs",
+        "ACGN.Tenth.Membership.parsed_results_are_semantic_duals",
+        "ACGN.Tenth.Membership.literal_polarity",
+        "ACGN.Tenth.Membership.exact_literal",
+        "ACGN.Tenth.Membership.empty_constant",
+        "ACGN.Tenth.Membership.left_constant",
+        "ACGN.Tenth.Membership.univ_constant",
+        "ACGN.Tenth.Membership.cardinality_correct"
+      ]
+    },
+    "MembershipReplay": {
+      "source": "docs/obligation-repair/tenth-five/MembershipReplay.lean",
+      "audit": "executable",
+      "imports": [
+        "MembershipStream"
+      ],
+      "theorems": []
+    },
+    "MembershipStream": {
+      "source": "docs/obligation-repair/tenth-five/MembershipStream.lean",
+      "audit": "local",
+      "imports": [
+        "Membership"
+      ],
+      "theorems": [
+        "ACGN.Tenth.Membership.registered_key",
+        "ACGN.Tenth.Membership.accepted_instructions",
+        "ACGN.Tenth.Membership.exact_observed_answer",
+        "ACGN.Tenth.Membership.engines",
+        "ACGN.Tenth.Membership.modes",
+        "ACGN.Tenth.Membership.heads",
+        "ACGN.Tenth.Membership.bits",
+        "ACGN.Tenth.Membership.read_result_roundtrip"
+      ]
+    },
+    "P408LiveOwnerIndex": {
+      "source": "docs/section3-repair-audit/formal/P408LiveOwnerIndex.lean",
+      "audit": "local",
+      "imports": [],
+      "theorems": [
+        "ACGN.Tenth.P408.completed_view",
+        "ACGN.Tenth.P408.every_completed_view_is_live",
+        "ACGN.Tenth.P408.expected_map_test",
+        "ACGN.Tenth.P408.restrict_blocks_observation",
+        "ACGN.Tenth.P408.restricted_rebuild_observation",
+        "ACGN.Tenth.P408.present_put",
+        "ACGN.Tenth.P408.owns_put",
+        "ACGN.Tenth.P408.present_shapes",
+        "ACGN.Tenth.P408.owns_shapes",
+        "ACGN.Tenth.P408.present_visit",
+        "ACGN.Tenth.P408.owns_visit",
+        "ACGN.Tenth.P408.present_fold",
+        "ACGN.Tenth.P408.owns_fold",
+        "ACGN.Tenth.P408.rebuilt_exact",
+        "ACGN.Tenth.P408.every_published_bucket_has_owner",
+        "ACGN.Tenth.P408.production_exact",
+        "ACGN.Tenth.P408.observed_owners_after_restriction",
+        "ACGN.Tenth.P408.missing_scan_cannot_publish",
+        "ACGN.Tenth.P408.absent_retired_shape",
+        "ACGN.Tenth.P408.source_program_publishes_exact"
+      ]
+    },
+    "P505ParsedMembership": {
+      "source": "docs/section3-repair-audit/formal/P505ParsedMembership.lean",
+      "audit": "local",
+      "imports": [
+        "MembershipStream"
+      ],
+      "theorems": [
+        "ACGN.Tenth.P505.observed_false_requires_source",
+        "ACGN.Tenth.P505.nullable_false_has_empty_countermodel"
+      ]
+    },
+    "P506SourceNonempty": {
+      "source": "docs/section3-repair-audit/formal/P506SourceNonempty.lean",
+      "audit": "local",
+      "imports": [
+        "Phase5SourceRules"
+      ],
+      "theorems": [
+        "P506SourceNonempty.issue_exact",
+        "P506SourceNonempty.lookup_visible",
+        "P506SourceNonempty.decision_exact",
+        "P506SourceNonempty.authorized_has_original",
+        "P506SourceNonempty.authorized_admitted_value_is_nonempty",
+        "P506SourceNonempty.missing_read_never_authorizes",
+        "P506SourceNonempty.shadow_blocks_outer",
+        "P506SourceNonempty.bare_nonunary_not_positive",
+        "P506SourceNonempty.every_observation_matches",
+        "P506SourceNonempty.changed_observation_blocks",
+        "P506SourceNonempty.current_authorized_value_is_nonempty"
+      ]
+    },
+    "P507MembershipDual": {
+      "source": "docs/section3-repair-audit/formal/P507MembershipDual.lean",
+      "audit": "local",
+      "imports": [
+        "MembershipStream"
+      ],
+      "theorems": [
+        "ACGN.Tenth.P507.observed_relational_duals",
+        "ACGN.Tenth.P507.shadowed_set",
+        "ACGN.Tenth.P507.shadowed_some"
+      ]
+    },
+    "P511LexicalReplay": {
+      "source": "docs/obligation-repair/tenth-five/P511LexicalReplay.lean",
+      "audit": "local",
+      "imports": [
+        "P511LexicalTransport"
+      ],
+      "theorems": [
+        "ACGN.Tenth.P511.Replay.accepted_trace_has_one_source",
+        "ACGN.Tenth.P511.Replay.decoded_frame_recovers_issuer"
+      ]
+    },
+    "P511LexicalTransport": {
+      "source": "docs/section3-repair-audit/formal/P511LexicalTransport.lean",
+      "audit": "local",
+      "imports": [
+        "P506SourceNonempty"
+      ],
+      "theorems": [
+        "ACGN.Tenth.P511.named_lookup",
+        "ACGN.Tenth.P511.resolved_member",
+        "ACGN.Tenth.P511.missing_coordinate",
+        "ACGN.Tenth.P511.lookup_coordinate",
+        "ACGN.Tenth.P511.free_lookup",
+        "ACGN.Tenth.P511.transport_lookup",
+        "ACGN.Tenth.P511.shadow_selects_inner",
+        "ACGN.Tenth.P511.nullable_shadow_blocks",
+        "ACGN.Tenth.P511.fresh_extension",
+        "ACGN.Tenth.P511.domain_precedes_shadow",
+        "ACGN.Tenth.P511.cross_engine_guard",
+        "ACGN.Tenth.P511.authorized_has_current_coordinate",
+        "ACGN.Tenth.P511.synthetic_label_has_no_authority",
+        "ACGN.Tenth.P511.transpose_twice",
+        "ACGN.Tenth.P511.permute_injective",
+        "ACGN.Tenth.P511.allocate_next",
+        "ACGN.Tenth.P511.generated_guard_has_current_coordinate",
+        "ACGN.Tenth.P511.checked_frontiers_share_guard",
+        "ACGN.Tenth.P511.checked_positive_same_original",
+        "ACGN.Tenth.P511.checked_nullable_or_positive_owner",
+        "ACGN.Tenth.P511.protected_prefix_keeps_lookup",
+        "ACGN.Tenth.P511.shadow_withholds_substitution",
+        "ACGN.Tenth.P511.substitution_transports_original"
+      ]
+    },
+    "Phase5SourceRules": {
+      "source": "docs/section3-repair-audit/formal/Phase5SourceRules.lean",
+      "audit": "legacy",
+      "imports": [],
+      "theorems": [
+        "relation_subset_reflexive",
+        "relation_equality_reflexive",
+        "relation_not_subset_self_is_false",
+        "relation_inequality_self_is_false",
+        "certified_equal_relations_subset",
+        "certified_equal_relations_compare_equal",
+        "certified_equal_relations_not_subset_is_false",
+        "certified_equal_relations_inequality_is_false",
+        "univ_requires_an_inhabitant_for_nonemptiness",
+        "empty_universe_is_not_nonempty",
+        "let_identity",
+        "operator_alias_preserves_denotation",
+        "typed_parser_head_matches_active_alias_table",
+        "canonical_parser_head_matches_active_alias_table",
+        "typed_parser_head_constructor_preserves_operator_family",
+        "typed_other_parser_head_constructor_is_unchanged",
+        "canonical_parser_head_preserves_operator_family",
+        "unlisted_parser_head_is_unchanged",
+        "noop_elimination",
+        "let_beta_reduction",
+        "implication_elimination",
+        "iff_elimination",
+        "formula_ite_elimination",
+        "double_negation_elimination",
+        "de_morgan_conjunction",
+        "de_morgan_disjunction",
+        "negated_true_is_false",
+        "negated_false_is_true",
+        "negated_equality_is_inequality",
+        "negated_inequality_is_equality",
+        "negated_int_gt_is_lte",
+        "negated_int_gte_is_lt",
+        "negated_int_lt_is_gte",
+        "negated_int_lte_is_gt",
+        "active_java_atomic_negation_dual_table_matches_model",
+        "active_java_negated_comparison_table_matches_model",
+        "active_java_egraph_comparison_dual_table_matches_model",
+        "explicit_negated_comparisons_are_outside_egraph_dual_table",
+        "int_comparison_negation_dual_sound",
+        "negated_not_gt_opcode_is_gt",
+        "negated_not_gte_opcode_is_gte",
+        "negated_not_lt_opcode_is_lt",
+        "negated_not_lte_opcode_is_lte",
+        "negated_subset_is_not_subset",
+        "negated_not_subset_is_subset",
+        "negated_some_is_no",
+        "negated_no_is_some",
+        "negated_one_is_notone",
+        "negated_lone_is_notlone",
+        "negated_notone_is_one",
+        "negated_notlone_is_lone",
+        "all_true_body",
+        "some_false_body_is_false",
+        "no_false_body_is_true",
+        "one_false_body_is_false",
+        "lone_false_body_is_true",
+        "notone_false_body_is_true",
+        "notlone_false_body_is_false",
+        "negated_always_is_eventually_not",
+        "negated_eventually_is_always_not",
+        "negated_historically_is_once_not",
+        "negated_once_is_historically_not",
+        "negated_until_is_release_not",
+        "negated_release_is_until_not",
+        "negated_since_is_triggered_not",
+        "negated_triggered_is_since_not",
+        "negated_forall_is_exists_not",
+        "negated_exists_is_forall_not",
+        "no_quantifier_is_all_not",
+        "negated_no_quantifier_is_some",
+        "safe_exists_conjunction_prenex",
+        "safe_forall_disjunction_prenex",
+        "boolean_and_associative",
+        "boolean_and_commutative",
+        "boolean_and_idempotent",
+        "boolean_or_associative",
+        "boolean_or_commutative",
+        "boolean_or_idempotent",
+        "integer_addition_associative",
+        "integer_addition_commutative",
+        "integer_multiplication_associative",
+        "integer_multiplication_commutative",
+        "equality_commutative",
+        "inequality_commutative",
+        "iff_commutative",
+        "implication_false_antecedent",
+        "implication_true_antecedent",
+        "implication_true_consequent",
+        "implication_false_consequent",
+        "universal_complex_domain_guard",
+        "existential_complex_domain_guard",
+        "no_complex_domain_guard",
+        "end_marker_elimination_preserves_payload",
+        "distinct_lexical_binder_survives_shadow",
+        "let_substitution_uses_lexical_identity",
+        "boolean_and_true_identity",
+        "boolean_or_false_identity",
+        "boolean_and_false_absorbs",
+        "boolean_or_true_absorbs",
+        "relation_metatype_named_true_is_not_boolean",
+        "relation_exact_type_named_false_is_not_boolean",
+        "relation_source_type_named_true_is_not_boolean",
+        "exact_boolean_true_is_recognized",
+        "exact_boolean_false_is_recognized",
+        "relation_container_cannot_apply_boolean_identity",
+        "contradictory_container_source_type_blocks_boolean_identity",
+        "validated_operator_container_can_apply_boolean_identity",
+        "generic_boolean_type_does_not_authorize_an_operator",
+        "internally_derived_boolean_operator_is_authorized",
+        "public_mutation_revokes_internal_boolean_authority",
+        "trusted_normalized_construction_retains_internal_boolean_authority",
+        "generic_bool_after_public_mutation_cannot_reuse_derived_authority",
+        "relation_operand_blocks_boolean_rewrite",
+        "all_boolean_operands_admit_boolean_rewrite",
+        "forged_boolean_join_is_not_a_formula_operand",
+        "forged_boolean_binding_is_not_a_formula_operand",
+        "relation_ite_is_retained_but_its_children_are_traversed",
+        "exact_boolean_ite_may_expand",
+        "incomplete_call_is_rejected_before_parent_rewrite",
+        "complete_call_reaches_rewrite_traversal",
+        "malformed_descendant_call_blocks_the_whole_rewrite_graph",
+        "every_descendant_is_checked_before_rewrite",
+        "malformed_union_alternative_blocks_component_admission",
+        "malformed_temporal_descendant_blocks_parent_rewrite",
+        "forged_temporal_reference_is_rejected",
+        "wrong_owner_temporal_reference_is_rejected",
+        "unbound_temporal_source_is_rejected",
+        "wrong_temporal_source_arity_is_rejected",
+        "wrong_temporal_source_visit_is_rejected",
+        "incomplete_temporal_edge_bucket_is_rejected",
+        "duplicate_temporal_edge_position_is_rejected",
+        "removed_temporal_child_vertex_is_rejected",
+        "removed_temporal_graph_root_is_rejected",
+        "mutated_temporal_source_graph_is_rejected",
+        "transplanted_temporal_authority_is_rejected",
+        "owner_bound_temporal_reference_is_admitted",
+        "unreferenced_temporal_child_is_rejected",
+        "exact_temporal_child_partition_is_admitted",
+        "overlapping_temporal_child_ranges_are_rejected",
+        "invalid_live_temporal_reference_cannot_be_sealed",
+        "valid_live_temporal_reference_can_be_sealed",
+        "sealed_temporal_reference_does_not_require_retained_parser_graph",
+        "sealed_temporal_reference_rejects_another_owner",
+        "temporal_evidence_is_not_reusable",
+        "successive_temporal_authorities_are_globally_distinct",
+        "foreign_arena_child_is_rejected",
+        "foreign_profile_child_is_rejected",
+        "snapshot_preserves_owning_arena_and_profile",
+        "frozen_snapshot_is_immutable",
+        "atomic_admission_and_freeze_has_no_mutable_success_state",
+        "mutation_rejects_after_atomic_certification_freeze",
+        "publishing_normal_form_before_arena_freeze_is_invalid",
+        "publishing_after_arena_freeze_is_valid",
+        "shared_frozen_descendant_blocks_other_parent_rewrite",
+        "all_mutable_reachable_nodes_admit_rewrite",
+        "failed_whole_graph_preflight_has_no_partial_result",
+        "generated_rewrite_node_inherits_source_arena",
+        "thread_local_rewrite_node_is_rejected_when_threads_differ",
+        "sealed_egraph_node_admission_is_trusted",
+        "overridable_egraph_node_admission_is_rejected",
+        "disconnected_registered_union_component_is_pruned",
+        "reachable_union_component_member_is_retained",
+        "registration_alone_does_not_imply_reachability",
+        "empty_root_closure_prunes_every_registered_class",
+        "all_null_root_list_has_empty_closure",
+        "rejected_child_replacement_preserves_prior_state",
+        "admitted_child_replacement_commits_once",
+        "a_pruned_eclass_handle_cannot_be_reused",
+        "a_retained_eclass_handle_remains_live",
+        "a_retired_eclass_fails_admission_before_traversal",
+        "retirement_releases_all_eclass_payload",
+        "failed_temporal_rewrite_preserves_operation_and_matrix",
+        "successful_temporal_rewrite_commits_operation_and_matrix_together",
+        "serialized_temporal_rewrite_and_freeze_has_only_atomic_outcomes",
+        "cross_arena_semantic_comparison_is_rejected",
+        "let_none_identity",
+        "none_and_univ_are_distinct_on_bool",
+        "exact_none_spelling_is_builtin",
+        "exact_univ_spelling_is_builtin",
+        "capitalized_none_is_a_user_signature",
+        "capitalized_univ_is_a_user_signature",
+        "every_nonreserved_name_is_a_user_signature",
+        "none_subset",
+        "none_in_every_same_arity_relation",
+        "none_not_in_same_arity_relation_is_false",
+        "subset_none_forces_none",
+        "empty_at_most_one",
+        "set_none_exactly_one_binding",
+        "lone_none_exactly_one_binding",
+        "some_none_has_no_binding",
+        "one_none_has_no_binding",
+        "exactly_none_has_the_none_binding",
+        "bare_declaration_defaults_to_one",
+        "explicit_declaration_overrides_default",
+        "empty_domain_all",
+        "empty_domain_not_some",
+        "empty_domain_no",
+        "empty_domain_not_one",
+        "empty_domain_lone",
+        "empty_domain_not_not_lone",
+        "pulling_all_across_and_has_an_empty_domain_counterexample",
+        "pulling_some_across_or_has_an_empty_domain_counterexample",
+        "pulling_lone_across_and_is_not_valid",
+        "some_set_none_equal_none",
+        "some_lone_none_equal_none",
+        "all_set_none_false_is_false",
+        "all_lone_none_false_is_false",
+        "none_in_none",
+        "arbitrary_in_none_is_not_false_without_evidence",
+        "nonempty_in_none_is_false",
+        "every_relation_in_univ",
+        "none_not_in_none_is_false",
+        "nonempty_not_in_none_is_true",
+        "no_relation_not_in_univ",
+        "boolean_and_absorbs_or",
+        "boolean_or_absorbs_and",
+        "boolean_and_absorption_preserves_context",
+        "boolean_or_absorption_preserves_context",
+        "boolean_and_distributes_over_or",
+        "boolean_or_distributes_over_and",
+        "relation_intersection_absorbs_union",
+        "relation_union_absorbs_intersection",
+        "relation_intersection_absorption_preserves_context",
+        "relation_union_absorption_preserves_context",
+        "relation_intersection_distributes_over_union",
+        "relation_union_distributes_over_intersection",
+        "empty_intersection_prefix_does_not_skip_foreign_authority",
+        "converse_involutive",
+        "converse_distributes_over_union",
+        "converse_distributes_over_intersection",
+        "relation_union_none_is_relation",
+        "relation_union_univ_is_univ",
+        "relation_union_idempotent",
+        "relation_union_commutative",
+        "relation_union_associative",
+        "abstract_direct_extension_cover",
+        "abstract_single_extension_cover",
+        "nested_abstract_extension_cover",
+        "complete_abstract_cover_absorbs_subrelation",
+        "union_with_outside_member_is_not_carrier",
+        "subset_transitive",
+        "subset_of_union_reaches_common_carrier",
+        "subset_of_union_does_not_prove_one_parent",
+        "missing_abstract_branch_does_not_cover_parent",
+        "authenticated_relational_widening_preserves_a_subrelation",
+        "subrelation_union_full_carrier_is_carrier",
+        "subrelation_intersection_full_carrier_is_subrelation",
+        "common_static_carrier_does_not_make_a_subrelation_full",
+        "nested_subsignature_union_carrier_is_carrier",
+        "subrelation_intersection_full_product_is_subrelation",
+        "relation_product_distributes_over_union_right",
+        "relation_product_distributes_over_union_left",
+        "bound_relation_slot_product_distributes_right",
+        "bound_relation_slot_product_distributes_left",
+        "abstract_cover_lifts_through_product_right",
+        "abstract_cover_lifts_through_product_left",
+        "abstract_cover_lifts_through_integer_set_coordinate",
+        "abstract_cover_lifts_with_integer_first_coordinate",
+        "relation_product3_distributes_over_union_third",
+        "abstract_cover_lifts_through_variadic_product",
+        "complete_two_coordinate_grid_is_product_of_unions",
+        "abstract_covers_lift_through_complete_product_grid",
+        "partial_product_grid_does_not_cover_full_product",
+        "diagonal_products_do_not_cover_full_product",
+        "empty_relation_product_left",
+        "empty_relation_product_right",
+        "empty_relation_join_left",
+        "empty_relation_join_right",
+        "two_subrelations_union_full_carrier_is_carrier",
+        "subrelation_absorbs_through_left_association",
+        "subrelation_absorbs_through_right_association",
+        "widened_relational_union_flattening",
+        "subtype_and_exact_int_alternatives_are_covered",
+        "reverse_subtype_widening_is_rejected",
+        "sibling_subtype_widening_is_rejected",
+        "relation_arity_change_is_not_a_widening",
+        "none_intersection_is_none",
+        "relation_intersection_none_is_none",
+        "relation_intersection_univ_is_relation",
+        "relation_intersection_idempotent",
+        "relation_intersection_commutative",
+        "relation_intersection_associative",
+        "positive_one_over_none_intersection_has_no_binding",
+        "subset_none_iff_no_members",
+        "not_subset_none_iff_some_member",
+        "subset_union_absorption",
+        "subset_intersection_absorption",
+        "difference_disjoint_from_removed_subrelation",
+        "difference_partition_recombines",
+        "difference_subrelation_partition_recombines",
+        "difference_of_superrelation_is_none",
+        "difference_intersection_removal",
+        "difference_of_difference_restores_intersection",
+        "no_difference_iff_subset",
+        "some_difference_iff_not_subset",
+        "singleton_subset",
+        "singleton_at_most_one",
+        "singleton_exactly_one",
+        "singleton_admitted_for_every_nonexact_multiplicity",
+        "admitted_nonexact_implies_subset",
+        "empty_relation_admitted_by_set",
+        "empty_relation_admitted_by_lone",
+        "all_admitted_positive_membership_iff_domain_subset",
+        "some_set_positive_membership_is_true",
+        "some_lone_positive_membership_is_true",
+        "some_some_positive_membership_iff_intersection_nonempty",
+        "some_one_positive_membership_iff_intersection_nonempty",
+        "no_set_positive_membership_is_false",
+        "no_lone_positive_membership_is_false",
+        "no_some_positive_membership_iff_intersection_empty",
+        "no_one_positive_membership_iff_intersection_empty",
+        "no_negative_membership_iff_domain_subset",
+        "some_negative_membership_iff_difference_nonempty",
+        "all_set_negative_membership_is_false",
+        "all_lone_negative_membership_is_false",
+        "all_some_negative_membership_iff_intersection_empty",
+        "all_one_negative_membership_iff_intersection_empty",
+        "subset_union_left",
+        "intersection_subset_left",
+        "difference_subset_left",
+        "union_subset_iff",
+        "subset_intersection_iff",
+        "union_not_subset_iff",
+        "not_subset_intersection_iff",
+        "union3_subset_iff",
+        "subset_intersection3_iff",
+        "subset_union_does_not_split_disjunctively",
+        "left_nested_difference_accumulates_union",
+        "right_nested_difference_is_not_left_nested",
+        "right_nested_difference_expands",
+        "intersection_extracts_difference",
+        "intersection_of_differences_accumulates_removed",
+        "intersection_of_three_differences_accumulates_removed",
+        "relation_product_difference_left_coordinate",
+        "relation_product_difference_right_coordinate",
+        "relation_product3_difference_middle_coordinate",
+        "relation_product_intersection_coordinatewise",
+        "three_relation_products_intersect_coordinatewise",
+        "relation_product3_intersection_coordinatewise",
+        "relation_product_respects_certified_operand_equalities",
+        "relation_join_respects_certified_operand_equalities",
+        "two_coordinate_product_difference_does_not_factor",
+        "difference_union_common_right",
+        "difference_intersection_common_right",
+        "difference_intersection_common_left",
+        "difference_union_common_left",
+        "relation_join_distributes_over_union_right",
+        "relation_join_distributes_over_union_left",
+        "nonempty_union_iff",
+        "no_union_iff",
+        "any_proposition_or_all_negated",
+        "all_propositions_excludes_any_negated",
+        "covered_dual_disjunction_with_extra_is_true",
+        "covered_dual_conjunction_with_extra_is_false",
+        "unary_and_binary_binding_profiles_are_distinct",
+        "converse_distributes_over_difference",
+        "relation_difference_itself_is_none",
+        "equivalent_relations_difference_is_none",
+        "none_difference_is_none",
+        "relation_difference_none_is_relation",
+        "relation_difference_univ_is_none",
+        "positive_one_over_self_difference_has_no_binding",
+        "positive_one_over_none_difference_has_no_binding",
+        "boolean_complement_or_is_true",
+        "boolean_complement_and_is_false",
+        "equivalent_boolean_complement_or_is_true",
+        "equivalent_boolean_complement_and_is_false",
+        "source_rewrite_before_snapshot_agrees",
+        "set_binding_does_not_prove_nonempty",
+        "lone_binding_does_not_prove_nonempty",
+        "some_binding_proves_nonempty",
+        "one_binding_proves_nonempty",
+        "exactly_binding_does_not_prove_nonempty",
+        "univ_without_inhabitant_witness_does_not_prove_nonempty",
+        "synthetic_label_never_proves_nonempty",
+        "in_unknown_none_stays_guarded",
+        "in_univ_none_without_inhabitant_stays_guarded",
+        "in_none_none_folds_true",
+        "in_proven_nonempty_none_folds_false",
+        "not_in_unknown_none_stays_guarded",
+        "not_in_univ_none_without_inhabitant_stays_guarded",
+        "not_in_none_none_folds_false",
+        "not_in_proven_nonempty_none_folds_true",
+        "snapshot_after_guard_agrees",
+        "ablation_mirror_counterexample_for_one_binding",
+        "ablation_mirror_counterexample_for_some_binding",
+        "existing_trace_kind_cannot_record_source_rewrite",
+        "translated_sat_has_solver_authority",
+        "translated_unsat_has_solver_authority",
+        "unsupported_has_only_parser_type_lowering_authority",
+        "every_command_has_exactly_one_authority_record",
+        "public_metadata_cannot_mint_builtin_set_authority",
+        "parser_factory_authorizes_builtin_set_constant",
+        "derived_rewrite_authorizes_builtin_set_constant",
+        "trusted_nullary_rebuild_preserves_builtin_set_authority",
+        "adding_a_child_revokes_builtin_set_authority",
+        "retired_node_semantic_payload_is_unreadable",
+        "retired_child_view_is_unreadable",
+        "exact_integer_plus_is_not_relational_union",
+        "exact_relation_plus_remains_relational_union",
+        "int_typed_surface_plus_remains_relational_union",
+        "int_typed_surface_minus_remains_relational_difference",
+        "integer_addition_is_not_idempotent_witness",
+        "exact_unary_int_classifier_iff",
+        "singleton_int_is_exact_unary_int",
+        "heterogeneous_int_signature_is_not_exact_unary_int",
+        "consecutive_nested_operator_occurrences_are_distinct",
+        "three_nested_ite_branch_occurrences_are_pairwise_distinct",
+        "distinct_equal_literal_occurrences_each_start_at_first_visit",
+        "swapped_equality_or_its_complement",
+        "enum_two_atom_cover",
+        "public_metadata_cannot_mint_builtin_identity",
+        "parser_factory_authorizes_builtin_identity",
+        "trusted_exact_clone_preserves_builtin_identity",
+        "identity_relation_join_left",
+        "identity_relation_join_right",
+        "transpose_identity_relation",
+        "transpose_relation_involutive",
+        "transpose_relation_product",
+        "converse_reverses_relation_join",
+        "domain_restriction_subset_relation",
+        "range_restriction_subset_relation",
+        "domain_restriction_relation_union",
+        "domain_restriction_relation_intersection",
+        "domain_restriction_relation_difference",
+        "domain_restriction_restrictor_union",
+        "domain_restriction_restrictor_intersection",
+        "domain_restriction_restrictor_difference",
+        "range_restriction_relation_union",
+        "range_restriction_relation_intersection",
+        "range_restriction_relation_difference",
+        "range_restriction_restrictor_union",
+        "range_restriction_restrictor_intersection",
+        "range_restriction_restrictor_difference",
+        "nested_domain_restrictions_intersect",
+        "nested_range_restrictions_intersect",
+        "domain_and_range_restrictions_commute",
+        "complete_restriction_union_grid_factors",
+        "diagonal_restriction_union_does_not_factor",
+        "two_coordinate_restriction_difference_does_not_factor",
+        "converse_join_same_order_is_not_general",
+        "positive_identity_path_implies_equality",
+        "transitive_closure_identity_relation",
+        "reflexive_transitive_closure_identity_relation",
+        "positive_path_transitive",
+        "reflexive_transitive_closure_transitive",
+        "path_of_reflexive_transitive_edges",
+        "transitive_closure_idempotent",
+        "transitive_of_reflexive_transitive_is_reflexive_transitive",
+        "reflexive_transitive_closure_idempotent",
+        "reflexive_of_transitive_is_reflexive_transitive",
+        "relation_join_associative",
+        "relation_join_distributes_over_union_middle_context",
+        "join_lifts_left_endpoint_domain_restriction",
+        "join_lifts_right_endpoint_range_restriction",
+        "join_transfers_internal_range_to_domain_restriction",
+        "unary_left_restriction_stays_on_join_boundary",
+        "unary_domain_and_range_restriction_coincide",
+        "binary_domain_and_range_restriction_do_not_generally_coincide",
+        "unary_right_range_or_domain_guard_has_same_join",
+        "unary_restrictions_are_intersection",
+        "unary_image_of_domain_restriction",
+        "static_all_commutes_with_always",
+        "changing_domain_blocks_all_always",
+        "next_observation_is_observation_of_prime",
+        "next_fixed_binding_observation",
+        "snapshot_membership_cannot_read_current_carrier",
+        "guarded_singleton_subdomain",
+        "guarded_difference_domain",
+        "historically_is_not_current_at_arbitrary_states",
+        "transpose_domain_restriction_is_range_restriction",
+        "transpose_range_restriction_is_domain_restriction",
+        "positive_path_prepend",
+        "converse_positive_path",
+        "converse_binary_involutive",
+        "converse_transitive_closure",
+        "converse_reflexive_transitive_closure",
+        "domain_restriction_univ_identity",
+        "range_restriction_univ_identity",
+        "domain_restriction_empty_restrictor",
+        "range_restriction_empty_restrictor",
+        "domain_restriction_empty_relation",
+        "range_restriction_empty_relation",
+        "converse_empty_binary_relation",
+        "no_positive_empty_path",
+        "transitive_closure_empty_relation",
+        "reflexive_transitive_closure_empty_relation"
+      ]
+    }
+  },
+  "phases": [
+    {
+      "parent": "P5-05",
+      "original": {
+        "statement": "`x in none -> false` requires a static proof that unary `x` is nonempty.",
+        "class": "U/I",
+        "sha256": "4252bf755653e6ab1d7954ae66372c23a5df58520d532a0dfef38b7d46ec0652"
+      },
+      "predecessorOriginals": [
+        "P5-06"
+      ],
+      "scope": "Type-correct relational operands, canonical and saturation branches, six raw configurations, the pinned attributed branch interpreter, and authentic ninth lexical-source evidence.",
+      "proof": "docs/section3-repair-audit/formal/P505ParsedMembership.lean",
+      "theorems": [
+        "ACGN.Tenth.P505.observed_false_requires_source",
+        "ACGN.Tenth.P505.nullable_false_has_empty_countermodel"
+      ],
+      "modules": [
+        "P505ParsedMembership",
+        "MembershipReplay"
+      ],
+      "executableProof": "MembershipReplay",
+      "witness": "docs/obligation-repair/tenth-five/java/MembershipDualTest.java",
+      "class": "is.fivefivefive.CanDis.MembershipDualTest",
+      "args": [
+        "P5-05",
+        "{source}",
+        "{results}"
+      ],
+      "requiredLines": [
+        "membership methods=27 sha256=9e02bc0537cf72f2c0b9ae90159b514375b1c5b2be88dd231abfb1805c35bdc7",
+        "membership instruction decisions=432",
+        "MembershipReplay verified 432 compiler decisions and four stale-trace controls",
+        "P5-05 membership verified: 24 observations, six raw configurations"
+      ],
+      "outputPins": {
+        "cases.tsv": "6ddb46c9221d071c8dd8ee99e120b733d2a9a2480bd4729459866cea02202603",
+        "instructions.tsv": "d073730ecad38191e30963e9889f2b75de831bd397571f9550fb8bc1a1c84fbc"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Type-correct relational operands, canonical and saturation branches, six raw configurations, the pinned attributed branch interpreter, and authentic ninth lexical-source evidence.",
+        "clauses": [
+          {
+            "claim": "`x in none -> false` requires a static proof that unary `x` is nonempty.",
+            "status": "DISCHARGED",
+            "boundary": "Requires an issuing visible ONE or SOME declaration and its unary, well-typed operand.",
+            "theorems": [
+              "ACGN.Tenth.P505.observed_false_requires_source",
+              "ACGN.Tenth.P505.nullable_false_has_empty_countermodel"
+            ],
+            "rows": [
+              {
+                "file": "cases.tsv",
+                "line": "explicitOne\tfalse\tfalse"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "positive\tfalse\tfalse"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "nullable\topen\topen"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "foreign-positive\tNOT_APPLICABLE\tGUARDED"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "stale-positive\tGUARDED\tGUARDED"
+              },
+              {
+                "file": "instructions.tsv",
+                "line": "R\tIN\t2\t0\t1\t0\t0\tK"
+              },
+              {
+                "file": "instructions.tsv",
+                "line": "R\tIN\t2\t0\t1\t1\t0\tF"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "parent": "P5-07",
+      "original": {
+        "statement": "`NOT_IN` uses exactly the relational duals and the same nonemptiness authority.",
+        "class": "U/I",
+        "sha256": "da74ebe0acd1ce6b63daadf6b3b6d1abd901208b31d3e9381134dc2b5130be83"
+      },
+      "predecessorOriginals": [
+        "P5-06"
+      ],
+      "scope": "Type-correct relational operands, canonical and saturation branches, six raw configurations, the pinned attributed branch interpreter, and authentic ninth lexical-source evidence.",
+      "proof": "docs/section3-repair-audit/formal/P507MembershipDual.lean",
+      "theorems": [
+        "ACGN.Tenth.P507.observed_relational_duals",
+        "ACGN.Tenth.P507.shadowed_set",
+        "ACGN.Tenth.P507.shadowed_some"
+      ],
+      "modules": [
+        "P507MembershipDual",
+        "MembershipReplay"
+      ],
+      "executableProof": "MembershipReplay",
+      "witness": "docs/obligation-repair/tenth-five/java/MembershipDualTest.java",
+      "class": "is.fivefivefive.CanDis.MembershipDualTest",
+      "args": [
+        "P5-07",
+        "{source}",
+        "{results}"
+      ],
+      "requiredLines": [
+        "membership methods=27 sha256=9e02bc0537cf72f2c0b9ae90159b514375b1c5b2be88dd231abfb1805c35bdc7",
+        "membership instruction decisions=432",
+        "MembershipReplay verified 432 compiler decisions and four stale-trace controls",
+        "P5-07 membership verified: 27 observations, six raw configurations"
+      ],
+      "outputPins": {
+        "cases.tsv": "ca5d0c3f56dc599d96b4ccf0652dcd67765e4c4ebd577ba6b88d0c1beb242995",
+        "instructions.tsv": "d073730ecad38191e30963e9889f2b75de831bd397571f9550fb8bc1a1c84fbc"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Type-correct relational operands, canonical and saturation branches, six raw configurations, the pinned attributed branch interpreter, and authentic ninth lexical-source evidence.",
+        "clauses": [
+          {
+            "claim": "`NOT_IN` uses exactly the relational duals",
+            "status": "DISCHARGED",
+            "boundary": "The theorem covers membership on its operands, including residual and cardinality forms. An enclosing quantifier may simplify independently.",
+            "theorems": [
+              "ACGN.Tenth.P507.observed_relational_duals",
+              "ACGN.Tenth.P507.shadowed_set",
+              "ACGN.Tenth.P507.shadowed_some"
+            ],
+            "rows": [
+              {
+                "file": "cases.tsv",
+                "line": "bothEmpty\ttrue/false\ttrue/false\ttrue"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "rightUniv\ttrue/false\ttrue/false\ttrue"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "self\ttrue/false\topen/open\ttrue"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "structural\ttrue/false\topen/open\ttrue"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "shadow\topen/false\topen/open\tfalse"
+              },
+              {
+                "file": "instructions.tsv",
+                "line": "N\tIN\t2\t0\t1\t1\t0\tF"
+              },
+              {
+                "file": "instructions.tsv",
+                "line": "N\tNOT_IN\t2\t0\t1\t1\t0\tT"
+              }
+            ]
+          },
+          {
+            "claim": "the same nonemptiness authority",
+            "status": "DISCHARGED",
+            "boundary": "Opposite polarities use the same typed, source-owned slot coordinates.",
+            "theorems": [
+              "ACGN.Tenth.P507.observed_relational_duals"
+            ],
+            "rows": [
+              {
+                "file": "cases.tsv",
+                "line": "positive\tfalse/true\tfalse/true\ttrue"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "nullable\topen/open\topen/open\tfalse"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "foreign-negative\tNOT_APPLICABLE\tGUARDED\tN/A"
+              },
+              {
+                "file": "cases.tsv",
+                "line": "stale-negative\tGUARDED\tGUARDED\tN/A"
+              },
+              {
+                "file": "instructions.tsv",
+                "line": "R\tIN\t2\t0\t1\t0\t0\tK"
+              },
+              {
+                "file": "instructions.tsv",
+                "line": "R\tNOT_IN\t2\t0\t1\t0\t0\tK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "parent": "P5-11",
+      "original": {
+        "statement": "Every ablation engine consumes declaration-derived scoped binding cardinality for guarded `IN`/`NOT_IN`; labels alone never confer authority.",
+        "class": "U/I",
+        "sha256": "d47927aa3fbf53685a9009de72bf8e38a3aa860736c74f22d75ebea29e9e7050"
+      },
+      "predecessorOriginals": [
+        "P5-06"
+      ],
+      "scope": "Current source issuer, scoped coordinates, all six configured ablation routes, public entry-points and capture-avoiding substitution. JDK and parser execution remain trusted.",
+      "proof": "docs/section3-repair-audit/formal/P511LexicalTransport.lean",
+      "theorems": [
+        "ACGN.Tenth.P511.named_lookup",
+        "ACGN.Tenth.P511.resolved_member",
+        "ACGN.Tenth.P511.missing_coordinate",
+        "ACGN.Tenth.P511.lookup_coordinate",
+        "ACGN.Tenth.P511.free_lookup",
+        "ACGN.Tenth.P511.transport_lookup",
+        "ACGN.Tenth.P511.shadow_selects_inner",
+        "ACGN.Tenth.P511.nullable_shadow_blocks",
+        "ACGN.Tenth.P511.fresh_extension",
+        "ACGN.Tenth.P511.domain_precedes_shadow",
+        "ACGN.Tenth.P511.cross_engine_guard",
+        "ACGN.Tenth.P511.authorized_has_current_coordinate",
+        "ACGN.Tenth.P511.synthetic_label_has_no_authority",
+        "ACGN.Tenth.P511.transpose_twice",
+        "ACGN.Tenth.P511.permute_injective",
+        "ACGN.Tenth.P511.allocate_next",
+        "ACGN.Tenth.P511.generated_guard_has_current_coordinate",
+        "ACGN.Tenth.P511.checked_frontiers_share_guard",
+        "ACGN.Tenth.P511.checked_positive_same_original",
+        "ACGN.Tenth.P511.checked_nullable_or_positive_owner",
+        "ACGN.Tenth.P511.protected_prefix_keeps_lookup",
+        "ACGN.Tenth.P511.shadow_withholds_substitution",
+        "ACGN.Tenth.P511.substitution_transports_original"
+      ],
+      "modules": [
+        "P511LexicalTransport",
+        "P511LexicalReplay"
+      ],
+      "executableProof": "P511LexicalReplay",
+      "witness": "docs/obligation-repair/tenth-five/java/P511LexicalTransportTest.java",
+      "class": "is.fivefivefive.CanDis.core.egraph.P511LexicalTransportTest",
+      "args": [
+        "{source}",
+        "{results}/p511.tsv"
+      ],
+      "requiredLines": [
+        "P511LexicalTransportTest PASS methods=6 cases=17 rows=145"
+      ],
+      "outputPins": {
+        "p511.tsv": "5b87be0341b8f5b8ba6440b8cd889313de9ef0e556f4be26d14913c244b40e33",
+        "p511-frontiers.tsv": "5df485f28d5fc9ec08c500295e993e1283d67593b17a877e9b883797ec5d01aa"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Current source issuer, scoped coordinates, all six configured ablation routes, public entry-points and capture-avoiding substitution. JDK and parser execution remain trusted.",
+        "clauses": [
+          {
+            "claim": "Every ablation engine consumes declaration-derived scoped binding cardinality for guarded `IN`/`NOT_IN`",
+            "status": "DISCHARGED",
+            "boundary": "Each configured route must preserve the issuer for both polarities; the separate Lean replay reads the decoded frontiers.",
+            "theorems": [
+              "ACGN.Tenth.P511.checked_frontiers_share_guard",
+              "ACGN.Tenth.P511.checked_nullable_or_positive_owner",
+              "ACGN.Tenth.P511.Replay.accepted_trace_has_one_source",
+              "ACGN.Tenth.P511.substitution_transports_original",
+              "ACGN.Tenth.P511.shadow_withholds_substitution"
+            ],
+            "rows": [
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "inone\tEGGLOG\tIN\tone,1,1\t1\t1\t1,1\t1\t1,1\ttrue"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "inone\tEGGLOG_DEBRUIJN\tIN\tone,1,1\t1\t1\t1,1\t1\t1,1\ttrue"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "inone\tRAW\tIN\tone,1,1\t1\t1\t1,1\t1\t1,1\ttrue"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "inone\tRAW_DEBRUIJN\tIN\tone,1,1\t1\t1\t1,1\t1\t1,1\ttrue"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "inone\tSLOTTED\tIN\tone,1,1\t1\t1\t1,1\t1\t1,1\ttrue"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "inone\tSLOTTED_TYPED\tIN\tone,1,1\t1\t1\t1,1\t1\t1,1\ttrue"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "notinlone\tEGGLOG\tNOT_IN\tlone,1,1\t1\t1\t1,1\t1\t1,1\tfalse"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "notinlone\tEGGLOG_DEBRUIJN\tNOT_IN\tlone,1,1\t1\t1\t1,1\t1\t1,1\tfalse"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "notinlone\tRAW\tNOT_IN\tlone,1,1\t1\t1\t1,1\t1\t1,1\tfalse"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "notinlone\tRAW_DEBRUIJN\tNOT_IN\tlone,1,1\t1\t1\t1,1\t1\t1,1\tfalse"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "notinlone\tSLOTTED\tNOT_IN\tlone,1,1\t1\t1\t1,1\t1\t1,1\tfalse"
+              },
+              {
+                "file": "p511-frontiers.tsv",
+                "line": "notinlone\tSLOTTED_TYPED\tNOT_IN\tlone,1,1\t1\t1\t1,1\t1\t1,1\tfalse"
+              },
+              {
+                "file": "p511.tsv",
+                "line": "letalias\tSLOTTED_TYPED\tRENAMED\tIN/0/false\tFOLD"
+              },
+              {
+                "file": "p511.tsv",
+                "line": "letshadow\tSLOTTED_TYPED\tRENAMED\tIN/0/false\tGUARDED"
+              }
+            ]
+          },
+          {
+            "claim": "labels alone never confer authority",
+            "status": "DISCHARGED",
+            "boundary": "A synthetic label and a foreign tree cannot supply an issuing declaration.",
+            "theorems": [
+              "ACGN.Tenth.P511.authorized_has_current_coordinate",
+              "ACGN.Tenth.P511.synthetic_label_has_no_authority"
+            ],
+            "rows": [
+              {
+                "file": "p511.tsv",
+                "line": "inone-label\tRAW\tSYNTHETIC\t-\tGUARDED"
+              },
+              {
+                "file": "p511.tsv",
+                "line": "notinsome-label\tRAW\tSYNTHETIC\t-\tGUARDED"
+              },
+              {
+                "file": "p511.tsv",
+                "line": "inone-owner\tRAW\tFOREIGN\t-\tGUARDED"
+              }
+            ]
+          }
+        ]
+      },
+      "replays": [
+        {
+          "id": "scoped-frontiers",
+          "module": "P511LexicalReplay",
+          "args": [
+            "{results}/p511-frontiers.tsv"
+          ],
+          "exit": 0,
+          "requiredLines": [
+            "P511LexicalReplay PASS frontiers=108 authorized=66 guarded=42 controls=3"
+          ]
+        }
+      ]
+    },
+    {
+      "parent": "A2-26",
+      "original": {
+        "statement": "For source UNION and INTERSECTION leaves, the independently derived dependent DAG must equal the parser's exact relation-family type; typed-empty results retain positive arity, disagreement fails closed, and unresolved cases receive only fixed-binary structure without equality authority.",
+        "class": "I/P",
+        "sha256": "2383859cecf4dbfa79f149e0308fde456c5fcb367993b813221961fbd99da6ad"
+      },
+      "predecessorOriginals": [
+        "A2-21",
+        "A2-22"
+      ],
+      "scope": "Patched source-to-adapter construction for ordinary parsed UNION and INTERSECTION leaves. Homogeneous primitive INT uses the existing unary lift. Mixed primitive/nominal cases lack independent typed ancestry and retain fixed binary structure without dependent equality authority. Separate guarded JOIN evidence has its own conditions.",
+      "proof": "docs/section3-repair-audit/formal/A226SourceAgreement.lean",
+      "theorems": [
+        "A226.eligible_success",
+        "A226.mixed_representation_refused",
+        "A226.registered_source_agreement",
+        "A226.collected_from_source",
+        "A226.finish_checks_every_child",
+        "A226.recursive_parser_agreement",
+        "A226.collected_at_each_index",
+        "A226.every_accepted_set_child",
+        "A226.matched_empty_keeps_parser_arity",
+        "A226.genuine_disagreement_blocks",
+        "A226.recursive_occurrence_blocks",
+        "A226.typed_empty_keeps_width",
+        "A226.fixed_iff_unsupported_without_authority",
+        "A226.disagreement_has_no_fallback"
+      ],
+      "modules": [
+        "A226SourceAgreement"
+      ],
+      "executableProof": "A226SourceAgreement",
+      "witness": "docs/obligation-repair/tenth-five/java/A226Qualification.java",
+      "class": "is.fivefivefive.CanDis.A226Qualification",
+      "args": [
+        "{source}",
+        "{results}"
+      ],
+      "requiredLines": [
+        "A226 qualification passed: 15 source methods, 6 compiler-program controls, 21 ordinary and unit observations"
+      ],
+      "outputPins": {
+        "a226-controls.tsv": "859a2530c73c7c4c65edfcac42ae7bc019bec11b2073c323db27ac16e71afa73",
+        "a226-methods.tsv": "9977cbb8d2f32585bac3f8f97fbc5d3380e8f0eef844817139cad9f027b086d4",
+        "a226-program.txt": "e6f4cfffcf7e945e6a3f897bf0793fe96f26dd3ae1bcd0a8fb49d8bf4509b5bc",
+        "a226-source.tsv": "105492314e56916f8400ba9459d86018fdf7914cb279629b72848cfbf7b42c13"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Patched source-to-adapter construction for ordinary parsed UNION and INTERSECTION leaves. Homogeneous primitive INT uses the existing unary lift. Mixed primitive/nominal cases lack independent typed ancestry and retain fixed binary structure without dependent equality authority. Separate guarded JOIN evidence has its own conditions.",
+        "clauses": [
+          {
+            "claim": "For source UNION and INTERSECTION leaves, the independently derived dependent DAG must equal the parser's exact relation-family type",
+            "status": "DISCHARGED",
+            "boundary": "Successful leaf evaluation checks every child and the complete occurrence; primitive-only integer set operations are recursively evaluated.",
+            "theorems": [
+              "A226.registered_source_agreement",
+              "A226.recursive_parser_agreement",
+              "A226.every_accepted_set_child",
+              "A226.eligible_success"
+            ],
+            "rows": [
+              {
+                "file": "a226-source.tsv",
+                "line": "union\tordinary-parse-and-adapt\tMATCHED\tPLUS(.,.) arity=2 products=1"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "intersection\tordinary-parse-and-adapt\tMATCHED\tINTERSECT(.,.) arity=2 products=1"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "correlated-union\tordinary-parse-and-adapt\tMATCHED\tPLUS(.,.) arity=2 products=2"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "integer-union\tordinary-parse-and-adapt\tMATCHED\tPLUS/PLUS(.,.)/Int->Rel(Int)/PRIMITIVE_SET_SINGLETON"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "integer-intersection\tordinary-parse-and-adapt\tMATCHED\tINTERSECT/INTERSECT(.,.)/Int->Rel(Int)/PRIMITIVE_SET_SINGLETON"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "integer-nested\tordinary-parse-and-adapt\tMATCHED\tINTERSECT/INTERSECT(.,PLUS(.,.))/Int->Rel(Int)/PRIMITIVE_SET_SINGLETON"
+              },
+              {
+                "file": "a226-controls.tsv",
+                "line": "omit-compare-complete-occurrence-evidence\tREJECTED"
+              },
+              {
+                "file": "a226-controls.tsv",
+                "line": "omit-return-derived\tREJECTED"
+              }
+            ]
+          },
+          {
+            "claim": "typed-empty results retain positive arity",
+            "status": "DISCHARGED",
+            "boundary": "Empty alternatives retain the positive parser arity at the selected source occurrence.",
+            "theorems": [
+              "A226.matched_empty_keeps_parser_arity",
+              "A226.typed_empty_keeps_width"
+            ],
+            "rows": [
+              {
+                "file": "a226-source.tsv",
+                "line": "positive-empty-unary\tordinary-parse-and-adapt\tMATCHED\tINTERSECT(.,.) arity=1 products=0"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "positive-empty-binary\tordinary-parse-and-adapt\tMATCHED\tINTERSECT(.,.) arity=2 products=0"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "all-empty-union-binary\tordinary-parse-and-adapt\tMATCHED\tPLUS(INTERSECT(.,.),INTERSECT(.,.)) arity=2 products=0"
+              }
+            ]
+          },
+          {
+            "claim": "disagreement fails closed",
+            "status": "DISCHARGED",
+            "boundary": "Concrete mismatches and recursive active-class reentry are rejected; a completed sibling is admissible.",
+            "theorems": [
+              "A226.genuine_disagreement_blocks",
+              "A226.disagreement_has_no_fallback",
+              "A226.recursive_occurrence_blocks"
+            ],
+            "rows": [
+              {
+                "file": "a226-source.tsv",
+                "line": "concrete-disagreement\tordinary-parse-and-adapt\tHARD_REJECTION\tIllegalStateException/set-type-DAG"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "active-ancestor\tunit/private-type-walk\tHARD_REJECTION\treal-set-node/reentered-eclass"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "completed-sibling\tunit/private-type-walk\tMATCHED\tno-leaked-active-classes"
+              },
+              {
+                "file": "a226-controls.tsv",
+                "line": "omit-guard-active-class\tREJECTED"
+              }
+            ]
+          },
+          {
+            "claim": "unresolved cases receive only fixed-binary structure without equality authority",
+            "status": "DISCHARGED",
+            "boundary": "Ordinary unresolved outer dependent occurrences remain fixed binary. A separately authenticated guarded JOIN has distinct authority.",
+            "theorems": [
+              "A226.fixed_iff_unsupported_without_authority",
+              "A226.mixed_representation_refused"
+            ],
+            "rows": [
+              {
+                "file": "a226-source.tsv",
+                "line": "mixed-relation-result\tordinary-parse-and-adapt\tFIXED_BINARY\tmixed-primitive-and-nominal-source/two-One-ports/no-outer-dependent-authority"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "mixed-integer-result\tordinary-parse-and-adapt\tFIXED_BINARY\tmixed-primitive-and-nominal-source/two-One-ports/no-outer-dependent-authority"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "mixed-empty-integer-result\tordinary-parse-and-adapt\tFIXED_BINARY\tmixed-primitive-and-nominal-source/two-One-ports/no-outer-dependent-authority"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "fixed-correlated-unary-interior\tordinary-parse-and-adapt\tFIXED_BINARY\ttwo-One-ports/outer-dependent=0/guarded=0/inner-dependent=1"
+              },
+              {
+                "file": "a226-source.tsv",
+                "line": "separate-guarded\tordinary-parse-and-adapt\tGUARDED_JOIN\touter-dependent=0/guarded=1"
+              },
+              {
+                "file": "a226-controls.tsv",
+                "line": "omit-no-optional-authority\tREJECTED"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "parent": "P4-08",
+      "original": {
+        "statement": "Hash index is rebuilt after interface changes.",
+        "class": "U/I",
+        "sha256": "9e9ffde2a03d7ad605388bba45460064d6106d4be38dbbafeff2fc2a049af8fe"
+      },
+      "predecessorOriginals": [],
+      "scope": "Successful completion of the ordinary synchronized rebuild over stable comparator keys. Dirty reads defer; failures can interrupt completion; diagnostic and reentrant trace callbacks are separate.",
+      "proof": "docs/section3-repair-audit/formal/P408LiveOwnerIndex.lean",
+      "theorems": [
+        "ACGN.Tenth.P408.completed_view",
+        "ACGN.Tenth.P408.every_completed_view_is_live",
+        "ACGN.Tenth.P408.expected_map_test",
+        "ACGN.Tenth.P408.restrict_blocks_observation",
+        "ACGN.Tenth.P408.restricted_rebuild_observation",
+        "ACGN.Tenth.P408.present_put",
+        "ACGN.Tenth.P408.owns_put",
+        "ACGN.Tenth.P408.present_shapes",
+        "ACGN.Tenth.P408.owns_shapes",
+        "ACGN.Tenth.P408.present_visit",
+        "ACGN.Tenth.P408.owns_visit",
+        "ACGN.Tenth.P408.present_fold",
+        "ACGN.Tenth.P408.owns_fold",
+        "ACGN.Tenth.P408.rebuilt_exact",
+        "ACGN.Tenth.P408.every_published_bucket_has_owner",
+        "ACGN.Tenth.P408.production_exact",
+        "ACGN.Tenth.P408.observed_owners_after_restriction",
+        "ACGN.Tenth.P408.missing_scan_cannot_publish",
+        "ACGN.Tenth.P408.absent_retired_shape",
+        "ACGN.Tenth.P408.source_program_publishes_exact"
+      ],
+      "modules": [
+        "P408LiveOwnerIndex"
+      ],
+      "executableProof": "P408LiveOwnerIndex",
+      "witness": "docs/obligation-repair/tenth-five/java/P408OwnerRestorationTest.java",
+      "class": "is.fivefivefive.CanDis.theory.P408OwnerRestorationTest",
+      "args": [
+        "{source}",
+        "{results}/p408-restoration.tsv"
+      ],
+      "requiredLines": [
+        "P408OwnerRestorationTest passed: rows=8"
+      ],
+      "outputPins": {
+        "p408-restoration.tsv": "88542d7dfe86cdcfaba10656b127f44c1978e8f65115bd026de95646d625fcde",
+        "p408-live-owner-program.txt": "b7f67a3cec5586420deabbb9d0b686c581c76e3ef3f1293bbddb2fb8102269cb",
+        "p408-owner-observations.tsv": "04d3c03325bd5a413016cb024f90fc02d82dd3270899dae8f64e66ebb73710ea"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Successful completion of the ordinary synchronized rebuild over stable comparator keys. Dirty reads defer; failures can interrupt completion; diagnostic and reentrant trace callbacks are separate.",
+        "clauses": [
+          {
+            "claim": "Hash index is rebuilt after interface changes.",
+            "status": "DISCHARGED",
+            "boundary": "Every successful completion replaces the index from its final live records and leaders.",
+            "theorems": [
+              "ACGN.Tenth.P408.restricted_rebuild_observation",
+              "ACGN.Tenth.P408.missing_scan_cannot_publish",
+              "ACGN.Tenth.P408.source_program_publishes_exact"
+            ],
+            "rows": [
+              {
+                "file": "p408-restoration.tsv",
+                "line": "interface-width-1\told-key-absent,new-owner-present,unrelated-preserved"
+              },
+              {
+                "file": "p408-restoration.tsv",
+                "line": "interface-width-0\told-key-absent,new-owner-present,unrelated-preserved"
+              },
+              {
+                "file": "p408-restoration.tsv",
+                "line": "deferred-parent-restriction\tDIRTY-until-factorization"
+              },
+              {
+                "file": "p408-restoration.tsv",
+                "line": "coalesced-owner\tfiltered-from-every-bucket"
+              },
+              {
+                "file": "p408-restoration.tsv",
+                "line": "omitted-reconstruction\tREJECTED"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "verifierInputs": {
+    "docs/obligation-repair/tenth-five/Membership.lean": "8549041fe68eefd174f46dd59ee427ac5463fba9a169357206f2598888a0977f",
+    "docs/obligation-repair/tenth-five/MembershipReplay.lean": "bcd9ed21a22a0673c0fbdb643dfc2483598f1621836515c58581b8a7fb776952",
+    "docs/obligation-repair/tenth-five/MembershipStream.lean": "c7b29a46d5d8ebee0b7d8c52e1b33bd4aa9312264f6519e0e139c8c6a5bd7720",
+    "docs/obligation-repair/tenth-five/P511LexicalReplay.lean": "e7583e6d83d12f06d9dc0feea58573b44678d2f67bc41c428d2fde0173d62f7d",
+    "docs/obligation-repair/tenth-five/java/A226CompilerContract.java": "5e3aabbe775213b1b929cc2ea805bba281c75f5d908ddcc9a58d5a5986fe7c1b",
+    "docs/obligation-repair/tenth-five/java/A226Qualification.java": "9bfc7cf26fa0ddf197206a19509d9bbc34ecddf8b7c84e403441ca3251ef7424",
+    "docs/obligation-repair/tenth-five/java/A226SourceAgreementTest.java": "1f5960f534a5cbb4945cb4465a9c6ee3af40b82c0186bf4880e0745ead6e33d3",
+    "docs/obligation-repair/tenth-five/java/MembershipDualTest.java": "c923b6ed9b8595eecd845b608ea74a7d9906173978c39b83e5a2938826b516a6",
+    "docs/obligation-repair/tenth-five/java/MembershipInstructions.java": "c24f8f6902c6e7aa9b459d4c7e6aae26a9eab6745d996127a9cadae0547ab7f3",
+    "docs/obligation-repair/tenth-five/java/P408CompilerContract.java": "9ca12d9d74e8d66e01600d285f4581297b0262b206b5c4bdfc147b38df9eb3bd",
+    "docs/obligation-repair/tenth-five/java/P408OwnerRestorationTest.java": "d0d0856d07e3985cd2907626292aac96e40d643f61052d94ea9c5037e28269e1",
+    "docs/obligation-repair/tenth-five/java/P511Coordinates.java": "dd84750e996f73b4c5a5d4e02119df89cbc48ef477bc69502190497def5a40be",
+    "docs/obligation-repair/tenth-five/java/P511Entrypoints.java": "ecbc97ea0906d55c42a6de6444a590362dfc366599b9e689556f11b05805d1ac",
+    "docs/obligation-repair/tenth-five/java/P511LexicalTransportTest.java": "c2cd2c3623edd55cb954933855e0c7a3874351035177aab0af73700b5c61bb55",
+    "docs/obligation-repair/tenth-five/java/P511SourceScope.java": "5e538ddfcf5a9b2838468ba62ab9913480f9719bc053a225c603a8dbe5e7bb40",
+    "docs/section3-repair-audit/formal/A226SourceAgreement.lean": "f63a442ebc42ec748a784dda5425fb0b5e1cbc346d5d9ac5aed6b6cb63d2418e",
+    "docs/section3-repair-audit/formal/P408LiveOwnerIndex.lean": "34c64945457a4af5661b073f04e6b5d4ed8a57b896a2e739b0ada511c1088a94",
+    "docs/section3-repair-audit/formal/P505ParsedMembership.lean": "4ae5c2d78e63ca30a54e698b6bf99696a7b4cf96babc66433c98d366fa74f0e9",
+    "docs/section3-repair-audit/formal/P506SourceNonempty.lean": "03c21f17a4ce8937e5a5c3606da7c90c61f6c6079175485ed6eb3ad9fc74c9a6",
+    "docs/section3-repair-audit/formal/P507MembershipDual.lean": "05a9c40276114132a3968571be22dc49946548e4ada414a9ab6d06f6fa4b5311",
+    "docs/section3-repair-audit/formal/P511LexicalTransport.lean": "18f00a2d62c6f7d2c2024ed0d36e5bb1d0e8bde48d0dc87553701149247f1081",
+    "docs/section3-repair-audit/formal/Phase5SourceRules.lean": "3f2195eb0d116569cc052b61b7ad437e9fea33a80f7368c75390fb295d052f12",
+    "src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java": "4b28a5b29e8c626a2692b46eaa7dd36dfbf69df054986d81b8a9df1233819226"
+  },
+  "witnessInputs": [
+    "src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java"
+  ]
+}

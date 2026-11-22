@@ -18,8 +18,8 @@ public final class CanonicalWireTablesExtractor {
             "Codec", "org.acgn.cert.Codec",
             "Wire", "org.acgn.cert.Wire");
     private static final Map<String, String> EXPECTED = Map.of(
-            "CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46 0807ef1b7acdba3a1c72c6f339a02ede7d8beebc969500c4e66de3c5983b1d21",
-            "Bundle", "ff78efef7d57a6ddc37bc35609a758d3ae1d5c7b453f75ae1851540d8dc11131 6d2831b66e4cb1a1741ae5a8131914dad3c9ac1f3da953d36fb6bc67f0851e88",
+            "CertificateBundleWriter", "0c7358f17cbc534336696dec1d885130976602d2de0d520bea4ab3705cb812dd e69aff29b43f39f894de79e0470eb93e7d0bd5427a37f62ba9c4e1cbf23ba15e",
+            "Bundle", "b5ab7ad78b5ae92241ca41a0289bc50627d2a61147373b5bbb53cfeb5a256844 14faf8f16f685d2d728a031f4a60445144f6dd3702a48bac25abe1609a67659f",
             "Codec", "c0869254cca18a781b4952ae50e4c752d015f3734347dc877c2d60f62bafb1ec 099694a8e4863290df0dbe1ef62e69237d728b92d2cfef1c5826cc5c28b1d77b",
             "Wire", "5f62baead2c72f173aad5319a4c84a46d5e757f91c1b973e021e37b707a37e84 46015d7ca07b6ba13eb1b1fdebccb382f7492ee90d2827d9539bdde8853ad86e");
 

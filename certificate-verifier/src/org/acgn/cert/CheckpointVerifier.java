@@ -86,6 +86,7 @@ final class CheckpointVerifier {
     private final KernelModel model;
     private final KernelVerifier kernel;
     private final Map<String, Snapshot> snapshots;
+    private final Map<String, Wire.Node> shapePreimages = new LinkedHashMap<>();
 
     CheckpointVerifier(KernelModel model, KernelVerifier kernel) {
         this.model = Objects.requireNonNull(model, "model");
@@ -1703,9 +1704,15 @@ final class CheckpointVerifier {
         return inverse;
     }
 
-    private static String shapeId(String owner, String termId) {
-        return "shape/" + Wire.contentId(Wire.leaf(
-                "producer-shape-id", owner, termId));
+    private String shapeId(String owner, String termId) {
+        Wire.Node preimage = Wire.leaf("producer-shape-id", owner, termId);
+        String id = "shape/" + Wire.contentId(preimage);
+        Wire.Node prior = shapePreimages.putIfAbsent(id, preimage);
+        if (prior != null && !prior.equals(preimage)) {
+            throw new FormatException(FailureCode.DUPLICATE_ID,
+                    "Shape ID collision between distinct owner and term preimages: " + id);
+        }
+        return id;
     }
 
     private static void requireSection(Wire.Node node, String tag) {

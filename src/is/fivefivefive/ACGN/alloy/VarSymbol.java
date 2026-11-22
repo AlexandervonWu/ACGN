@@ -1,4 +1,6 @@
 package is.fivefivefive.ACGN.alloy;
+
+import parser.ast.nodes.ResolvedBindingOrigins;
 /* 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,6 +8,15 @@ import java.util.Set;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 
 public class VarSymbol extends AbstractSymbol {
+    private ResolvedBindingOrigins.Slot parserBinding;
+    public final ResolvedBindingOrigins.Slot parserBinding() { return parserBinding; }
+
+    public VarSymbol(String sig, String name, String lexicalId, int treeId, AugmentedNode domain,
+            ResolvedBindingOrigins.Slot slot) {
+        this(sig, name, lexicalId, treeId, domain);
+        if (slot != null && slot.named(name)) parserBinding = slot;
+    }
+
     private String type; // signature that the variable is an element of 
     private String varName; // the name of the variable
     private int treeIdScope; // 0 for global symbols;

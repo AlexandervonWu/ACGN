@@ -37,6 +37,33 @@ The [v3.1 full-corpus report](https://github.com/AlexandervonWu/ACGN/blob/v3.1/d
 - **Per-invariant reduction:** [Figure, explanation and all 181 rows](https://github.com/AlexandervonWu/ACGN/tree/7e3f41355d5968d93f70f42039921ab3267a400c/docs/experimental-results/2026-11-21-studies). The same 4,496 correct ASTs produced 2,074 canonical forms in v3 and 2,028 in v3.1: **54.89% fewer than raw ASTs**. Twenty-nine pools improved; none lost a reduction.
 - **[v3.1 supplemental studies](https://github.com/AlexandervonWu/ACGN/tree/7e3f41355d5968d93f70f42039921ab3267a400c/docs/experimental-results/2026-11-21-studies#supplemental-measurements):** all 20 stages completed. Both canonical paths found 4,413 natural zero pairs (+239 vs v3, none lost) and recovered all 5,500 capability pairs. Natural slot typing preserved 2,228 zero pairs with 45.1% less engine CPU. At 300 s, typed slots finished 530/540 synthetic predicates versus 442/540 untyped; on the 442 both finished, median elapsed time was 0.200 s typed versus 0.864 s untyped (4.31×). [Per-arm results and evidence](https://github.com/AlexandervonWu/ACGN/tree/7e3f41355d5968d93f70f42039921ab3267a400c/docs/experimental-results/2026-11-21-studies/measurements). General public certification remains blocked.
 
+### Historical v3 Research Release
+
+The [v3 release record](docs/release-v3.md) summarizes the completed November
+15-16 experiments: the full natural corpus and reference-pool evaluation,
+ablation and capability studies, and synthetic typed-slot runtime grid.
+See [Headline Results](#headline-results) below, the
+[complete report](docs/experimental-results/2026-11-16/README.md), and the
+[machine-readable data](docs/experimental-results/2026-11-16/headlines.json).
+
+### Retained Experimental Results (2026-11-07)
+
+The [final natural-corpus report](docs/experimental-results/2026-11-07/README.md)
+retains the completed 66,080-file evaluation and all original evidence. The
+[bounded synthetic slot-typing report](docs/experimental-results/2026-11-07/synthetic-grid/RESULTS.md)
+covers every 2..10-variable / 1..N-type combination with balanced, seeded type
+assignments, eight workers, and five-minute deadlines. It includes measured
+log-speedup surfaces, success rates, median/P95 runtimes, timeout coverage, and
+the documented resource-guard continuation. These reports are separate from
+historical release measurements below.
+
+The subsequent [distance-parity audit](docs/distance-parity-20261107/README.md)
+identifies per-instance disagreements in both directions. Fast comparison now
+includes exact result types in node-update costs and removes the documented
+ACI/local-binder presentation mismatches. These are post-run changes, not new
+full-corpus measurements. Common representation coverage and minimum-distance
+parity remain explicit implementation targets.
+
 ### Assurance status
 
 This repository establishes no general assurance of implementation correctness
@@ -128,12 +155,60 @@ The [v2.17 assurance package](docs/release-v2.17.md) implements those tasks
 with 85 general Lean theorems and 538 replay propositions over 700 finite
 Java observations. Its [two-build closure](docs/obligation-repair/fifth-five/README.md)
 requires complete records, independent expected censuses, strict rejection
-controls, source bindings and deterministic evidence. The matrix is now
+controls, source bindings and deterministic evidence. The v2.17 matrix reported
 **112 ready requirements and 105 diagnostics**, with bounded direct conformance,
 not universal Java/parser refinement. Independent reviews and the retained
 integration failures are documented. All 898 existing experimental JAR classes
 remain byte-identical; this proof/test-only release retains the empirical
 snapshot below and the separate v2.16 validation run.
+
+The eighth, ninth, tenth and eleventh public certification packages each verified five
+original requirements in two clean builds. The current Section 3 assessment has **132 of 191 requirements ready** and **84 open diagnostics**. All 151 bounded executable steps passed. The overall result is `INCOMPLETE`.
+[Assurance status](docs/obligation-repair/README.md) · [Eighth](docs/obligation-repair/eighth-five-results.json) · [Ninth](docs/obligation-repair/ninth-five-results.json) · [Tenth](docs/obligation-repair/tenth-five-results.json) · [Eleventh verification results](docs/obligation-repair/eleventh-five-results.json)
+
+## Headline Results
+
+For the latest natural-corpus results, see the [v3.1 report](docs/experimental-results/2026-11-21/README.md). The previous full study suite ran on November 15-16, 2026, using commit
+`2d70f89ab67241cd071387ecedd3b2f432821921`. The
+[v3 report](docs/experimental-results/2026-11-16/README.md) includes the
+full paired corpus, full-reference Augmenter, seven ablation and capability
+arms, natural slot typing, and all 1,080 synthetic runtime trials.
+
+- Native replay: **61,598/61,598 eligible pair comparisons matched**, with zero
+  unchecked, invalid, discrepant or error outcomes. All 66,080 source files are
+  accounted for; the original 4,482 AST-identical paired rows remain separate.
+- Capability: **5,500/5,500** equivalences recovered by both Fast Rewrite and
+  Certificate-Integrated IR on the unchanged generated cohort. The shared
+  normalization-order regression that reduced both to 5,160 is repaired.
+- Natural canonical zeroes: **4,174** distinct-AST student/oracle pairs in each
+  canonical path; no incorrect paired zeroes and no lost old canonical zeroes.
+- Full-reference ranking: **42,386** incorrect predicates, **1,894,168** recorded
+  comparisons, no recorded Fast/certified distance discrepancies, and **11,607**
+  unordered distinct-AST zero pairs in each correct truth pool calculation.
+  Mean nearest raw-AST distance is **12.267140**, versus **11.505686** for either
+  canonical path.
+- Natural-study maximum measured file time: **0.357 s Fast Rewrite**, **4.115 s
+  Certificate-Integrated**. Both complete all eligible files below 60 seconds
+  in this study; this is not a retrospective whole-file timing claim for the
+  separate CanonicalBatch or Augmenter runners.
+- Synthetic typed slots: **530/540 successes**, versus **442/540 untyped**;
+  **10/98** respective timeouts are retained. All ten typed timeouts are at
+  **10 bindings / one type**, where type partitioning offers no reduction of
+  the slot-permutation space. All **450/450 multi-type typed trials complete**.
+  These are expected synthetic scaling limits, not invalid-replay results.
+  On the same 442 jointly successful
+  predicates, the ratios of untyped/typed medians are **26.62x engine elapsed**
+  and **5.12x total elapsed**. These are not CPU-time or timeout-inclusive ratios.
+
+These are revision-bound empirical results, not public certification. The
+AST-identical predicates are not semantic exemptions, and the remaining
+source-wire and cross-reference native-action obligations stay open. The
+[evidence index](docs/experimental-results/2026-11-16/evidence-index.json) binds
+the reports to their candidate, execution receipts and retained bulk evidence.
+Here, **public certification** means the separate end-to-end, independently
+checkable source/implementation/proof claim, not permission to publish research
+results or a software release. Its unresolved scope is explained in the
+[v3 assurance boundary](docs/release-v3.md#assurance-boundary).
 
 ## Historical Results (September 2026)
 
@@ -456,8 +531,8 @@ polarity determine which quantifiers can be moved safely:
 6. Eliminate implication, IFF, and formula ITE before prenexing.
 7. Push explicit and implicit negations to NNF, including quantifier and
    temporal duals.
-8. Prenex only within the current temporal phase; quantifiers never cross a
-   temporal boundary.
+8. Prenex within a temporal phase. A separate source rule commutes `all` with
+   `always` only when its domain is statically invariant and the binding is safe to move.
 9. Store each binding as a primitive carrier, quantifier/cardinality,
    disjointness class, and canonical slot. Move only non-primitive domain
    constraints into the matrix.

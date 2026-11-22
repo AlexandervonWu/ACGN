@@ -8,17 +8,24 @@ import java.util.Set;
 public record VerificationPolicy(
         Set<String> trustedTheoryDigests,
         Limits limits,
-        Map<String, String> trustedCallOccurrenceDigests) {
+        Map<String, String> trustedCallOccurrenceDigests,
+        Map<String, String> trustedArrowSourceDigests) {
     public VerificationPolicy {
         trustedTheoryDigests = Set.copyOf(trustedTheoryDigests);
         Objects.requireNonNull(limits, "limits");
         trustedCallOccurrenceDigests = Map.copyOf(trustedCallOccurrenceDigests);
+        trustedArrowSourceDigests = Map.copyOf(trustedArrowSourceDigests);
+        trustedArrowSourceDigests.forEach(ArrowSourceCommitment::new);
         if (trustedTheoryDigests.isEmpty()) {
             throw new IllegalArgumentException("At least one trusted theory digest is required");
         }
         for (Map.Entry<String, String> entry : trustedCallOccurrenceDigests.entrySet()) {
             new CallOccurrenceCommitment(entry.getKey(), entry.getValue());
         }
+    }
+
+    public VerificationPolicy(Set<String> trustedTheoryDigests, Limits limits, Map<String,String> callPins) {
+        this(trustedTheoryDigests, limits, callPins, Map.of());
     }
 
     public VerificationPolicy(Set<String> trustedTheoryDigests, Limits limits) {
@@ -40,6 +47,6 @@ public record VerificationPolicy(
             throw new IllegalArgumentException(
                     "Conflicting CALL occurrence commitments for one input hash");
         }
-        return new VerificationPolicy(trustedTheoryDigests, limits, next);
+        return new VerificationPolicy(trustedTheoryDigests, limits, next, trustedArrowSourceDigests);
     }
 }

@@ -94,6 +94,23 @@ CHAIN_MODELS = {
 }
 
 
+# The independent chain replay checks exact leaf proof spellings and external
+# source authority. Reject stale or mixed source/binding pairs before Lean replay.
+_CHAIN_VERIFIER = "org.acgn.cert.SemanticEvidenceVerifier.SemanticReplay"
+CHAIN_REPLAY_OBJECTS = {
+    "adapter-barrier": ("is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.Builder", "dependentChainInput", "7",
+                        "c90cc7354bb910cafe1298406bb1061b9530115c733a0b0b73de57baacf58830",
+                        "3bf71ec4f6e4ec545f68daa851d156d8421bfaabe66f46025f6e666d5c89d2d5"),
+    "replay-source": (_CHAIN_VERIFIER, "dependentChainInput", "3",
+                      "e1686f501e5c82e70ce08f08c43e92aa710c403596ba7c15c9895482a6b4ea5a",
+                      "a85bc662b6151a52491ae727ba84fc6bca7082d00d8273435e7e1b80927aca2c"),
+    "replay-certificate": (_CHAIN_VERIFIER, "verifyDependentChain", "1",
+                           "92b8dc6a2f9e2d3f704a83495510e0342d5750e689e559ad5a25448884b013d0",
+                           "4627e6b16efd5f9aaf08590f733d36c337d06b191edcc423b27db6bddf8959d0"),
+}
+CHAIN_REPLAY_FIELDS = ("owner", "method", "arity", "shapeSha256", "bindingsSha256")
+
+
 def chain_program(observed, extracted):
     if len(extracted) != len(CHAIN_MODELS) or {row["object"] for row in extracted} != set(CHAIN_MODELS):
         raise Blocked("incomplete chain source object census")
@@ -102,6 +119,9 @@ def chain_program(observed, extracted):
                 for key in ("shapeSha256", "bindingsSha256")):
             raise Blocked("unregistered chain correspondence")
         natural(row["arity"])
+        pin = CHAIN_REPLAY_OBJECTS.get(row["object"])
+        if pin is not None and tuple(row[k] for k in CHAIN_REPLAY_FIELDS) != pin:
+            raise Blocked("unregistered chain replay source: " + row["object"])
     expected = set()
     for profile, kind in product(("FORBID", "MODULAR"), ("JOIN", "ARROW")):
         for length in (2, 3, 4):
@@ -300,6 +320,7 @@ def negatives(build, formal):
 
 def source_mutations():
     base = "src/is/fivefivefive/CanDis/theory/"
+    semantic = "certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java"
     return [
         ("flat-omitted-type-guard", base + "OperatorDeclaration.java",
          "|| !((OnePortSchema) element).type().equals(outputType)", "",
@@ -316,6 +337,12 @@ def source_mutations():
         ("call-omitted-early-return", "src/is/fivefivefive/CanDis/ir/IRAgent.java",
          "return validateCallDownlinks(node, tov, downlinks);", "validateCallDownlinks(node, tov, downlinks);",
          "CallValidationExtractor"),
+        ("chain-exact-proof-tag", semantic,
+         'if (typeProof.tag().equals("dependent-chain-leaf-type-proof-v2")',
+         'if (typeProof.tag().equals("dependent-chain-leaf-type-proof-v2-stale")', "ChainSequenceExtractor"),
+        ("chain-pinned-source-path", semantic,
+         "pinnedArrowPath = sourceOccurrenceCommitment.scalars().get(0);",
+         'pinnedArrowPath = sourceOccurrenceCommitment.scalars().get(0) + "/child/0";', "ChainSequenceExtractor"),
         ("chain-shared-instance-state", base + "InstantiatedOperator.java",
          "private final List<PortSchema> portSchemas;", "private static List<PortSchema> portSchemas;",
          "ChainSequenceExtractor"),

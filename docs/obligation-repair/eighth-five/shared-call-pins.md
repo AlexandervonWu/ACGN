@@ -1,0 +1,24 @@
+# Third-obligation CALL source pins
+
+Two methods in the third-obligation CALL source census changed with imported-call admission. The comparison uses the clean checkout at `7aa4d5029f7b4078b40f581d949d5f8ffe1ce4d2` and the eighth candidate, with the same tracked dependency JARs and JDK 17.0.21.1. Both versions of `CallAuthorityTransitionsExtractor` were freshly compiled with their corresponding `JoinGuardExtractor`. They analyze the sorted production Java sources under `src/` with `--release 17`, UTF-8, annotation processing and implicit compilation disabled, and the sorted JARs in `lib/` on the compiler classpath.
+
+* `declaration-resolve` selects `is.fivefivefive.ACGN.visitor.MASGVisitor`’s private `CallableDescriptor resolveCallable(Call call, CallSymbol.Kind kind, int observedArity)`. The import branch now calls `requireResolvedImport` after the fixed ledger lookup. The helper checks the wrapper against its sealed parser-issued `ExprCall`, including the selected function or predicate, argument counts and membership in the resolved open with the expected filename and module arguments. A second check in the local branch rejects an original imported function relabelled as local. The added statements and their resolved helper, origin-table, and module calls change both method fingerprints.
+* `ledger-key` selects `is.fivefivefive.ACGN.alloy.AlloyLibraryCallableLedger`’s private static `String key(String module, String member, CallSymbol.Kind kind, int arity)`. It now checks the member for null and rejects a slash within it before constructing the same serialized key for valid tuples. This prevents a slash in a member from shifting the boundary with the module path. The new predicate and exception path change the AST and bound symbol sequence.
+
+The extractor hashes length-prefixed UTF-8 tokens for the normalized tree with retained string literals and for the ordered javac resolution entries. The exact observed values follow. Both rows retain the same object, owner, method, arity and `resolve` model. The other 41 rows match byte for byte.
+
+| Object and field | Published SHA-256 | Candidate SHA-256 |
+| --- | --- | --- |
+| declaration-resolve shape | `7c60f840f187c4ddf540075a02fe9f1222bf38cf3bf25a43f9be64b1528df13e` | `3ae6831e931b38dd7f205dda28102014642496a8c30fb5cb6e77eeeaa42f167c` |
+| declaration-resolve bindings | `c943c1ea8f86971372c218ca4e29277126531288406f86100cbae6aad2d7c479` | `47d6448999a56126123c092f002f7b2e7b0a915c8eec4a78aa1ca5bef634409d` |
+| ledger-key shape | `1a6bca531c66367bf3d68dcdcd6cd173ff4638408cbbb9a90ce5365390b1ca54` | `b46b033ca735f113e8ce2f86b199c8700d456bab9519802977bfd21898b11b6f` |
+| ledger-key bindings | `cc7de580c69bbb4b90bd293eb9d2463bc0cf93fef8a7c97f1cce37d2afab8844` | `7cf352d2b6ba49fe72d5dfdf78f0097c2885ffc3e9a1a875c0fc2df949e650cf` |
+
+## Focused reproduction
+
+1. The published extractor on the published sources exited 0, with 43 rows and TSV SHA-256 `4912be1d8d27287f5d01fc971eee7e1003b49e76c1090b47ae13958910f1e6a4`. On the candidate source it exited 1 with `UNMODELED_SOURCE`, reported exactly the two observed candidate pairs above and produced no TSV.
+2. The refreshed extractor on the candidate exited 0. The 43 distinct, ordered real source rows passed `third_call_replays.validate_source`; TSV SHA-256 is `9d15692b2768cd10650fe05011e4e9e666d78898455b7cb6729c6f66cf835208`.
+3. Independently compiled copies of the unchanged `CallValidationExtractor` produced byte-identical three-row TSVs on the two source sets, SHA-256 `d793cc0135cef5bb7b9860e3e2115a19b2f151a91511243595995c02799f6177`. For `(start, endOffset, step)`, the CALL early return in `IRAgent.downlinksFor` retains `(0,0,0)`, IR argument validation in `IRAgent.validateCallDownlinks` retains `(1,1,1)`, and producer argument validation in `MASGVisitor.validateCompletedCallVisit` retains `(2,0,1)`. The unchanged standalone JOIN guard extractor also matched on both roots. Both producer and verifier emitted `(minimumInteriorArity, start, endOffset) = (2,1,1)`, TSV SHA-256 `7024e39310ce0aa3828a4f2e89a2aa4ced7e2144af35b8351bcdba9e2c5dbcde`.
+4. `python3 -B -m unittest -v test_third_call_replays` from `scripts/` passed 19 tests. Six stale-input subcases restore the published shape alone, binding alone and pair for each changed method. The encoder rejects every substitution. The earlier IR-build binding rejection also remains exercised.
+
+The shared 43-object grammar checks selected Java members individually. Its binding entry for a helper call names the resolved method without hashing its body. The private origin table, helper implementation, imported declaration population and mutable-wrapper controls are covered separately in [P1-15 imported-call admission](P115ImportedCallAdmission.md). The focused extractor and encoder results measure source correspondence within those boundaries. The shared multi-build closure has its own evidence.

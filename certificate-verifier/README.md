@@ -36,9 +36,8 @@ reassociation with more than two source operands is licensed only when each
 alternative of each interior operand has at least two relation columns; a unary interior keeps the
 source fixed binary because JOIN is not associative in that case. Subtype
 evidence never replaces an endpoint with an invented `univ`, and synthetic union/common-
-ancestor nodes never enter the nominal parent ledger. Because the standalone verifier does not
-reparse the Alloy source and has no independently pinned signature-hierarchy
-authority, a structurally valid nonexact subtype or disjoint-branch proof ends as
+ancestor nodes never enter the nominal parent ledger. For dependent JOINs the standalone verifier has no independent source-hierarchy
+authority. A structurally valid nonexact subtype or disjoint-branch proof ends as
 `UNCHECKABLE / MISSING_EVIDENCE`; it never yields `VERIFIED`. Malformed,
 conflicting, cyclic, reversed, truncated, incomplete-matrix, or unrelated evidence is
 `REJECTED`. Exact-boundary chains do not need that external authority.
@@ -111,6 +110,15 @@ reviews it against the intended source scope. Feeding a producer bundle's own
 inspection result directly back into verification is circular and does not
 establish raw-source completeness. The current MVP does not include an
 independent Alloy parser inside the `java.base`-only verifier.
+
+For one closed `some` over a plain binary ARROW tree of immutable local primitive
+signatures, add `--arrow-source-commitment <subject-sha256>=<origin-sha256>`.
+Derive both the ARROW assignment and the empty CALL assignment for this fragment with
+`org.acgn.cert.RawArrowSourcePin SOURCE MODULE/PREDICATE`. FULL checks the
+published operand, every ordered leaf address and declaration, and the complete
+direct-parent paths. Supplying ARROW pins requires a matching subject for each
+verified bundle. The separate CALL and theory pins still apply.
+[Source scope and framing](../docs/obligation-repair/seventh-five/G08-source-to-wire.md)
 
 Pair mode takes two independently exported bundles:
 

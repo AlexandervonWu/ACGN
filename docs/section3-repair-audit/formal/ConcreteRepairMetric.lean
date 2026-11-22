@@ -438,18 +438,18 @@ def vectors : List Vector := [
 theorem boundedVectorExpectations :
     vectors.all (fun vector => decide (evaluate vector.left vector.right =
       vector.expected)) = true := by
-  native_decide
+  cbv
 
 theorem profileMismatchIsFirst :
     evaluate
       (observation .overflowForbidding baseTemporal [] (.atom .a) 0)
       (observation .modular baseTemporal [] (.atom .c) 0) =
       .rejected .profileMismatch := by
-  native_decide
+  decide
 
 theorem temporalQuantifierMatrixCompositionIsAdditive :
     evaluate additiveLeft additiveRight = accepted 3 1 1 1 1 := by
-  native_decide
+  cbv
 
 theorem quantifierTupleReplacementIsOneUnit :
     sequenceDistance [allS] [changedTuple] = 1 := by
@@ -477,7 +477,7 @@ theorem setUsesMinimumAssignmentAfterDeduplication :
 
 theorem matrixOperandDeletionRemovesTheWholeSubtree :
     matrixDistance (.container 99 .sequence [.a]) (.atom .a) = (2, 1) := by
-  native_decide
+  decide
 
 theorem alphaUsesAllMaximumCardinalityMappings :
     alphaDistance 3 1

@@ -1,0 +1,45 @@
+{
+  "reviewerId": "01a1b7ca-e043-7ad0-8162-0de59a5feda6",
+  "decision": "ACCEPT",
+  "submissionSha256": "9a6a6af56b3699d2c93f5444dfbf5ce73585f35e11ee828367ad676386a31a3e",
+  "authorizedStages": [
+    "natural-raw-egraph",
+    "natural-raw-egraph-debruijn",
+    "natural-java-egglog",
+    "natural-java-egglog-debruijn",
+    "natural-slotted-egraph",
+    "natural-canonical",
+    "natural-typed-slotted-port-egraph",
+    "natural-report-and-soundness",
+    "capability-raw-egraph",
+    "capability-raw-egraph-debruijn",
+    "capability-java-egglog",
+    "capability-java-egglog-debruijn",
+    "capability-slotted-egraph",
+    "capability-canonical",
+    "capability-typed-slotted-port-egraph",
+    "capability-report",
+    "slot-typing-slotted-egraph",
+    "slot-typing-slotted-egraph-typed",
+    "slot-typing-report",
+    "synthetic-slot-runtime"
+  ],
+  "findings": [
+    {
+      "id": "SUPERVISOR-V4-1",
+      "disposition": "ADDRESSED",
+      "detail": "The capability report plan no longer copies the historical soundness JSON or CSV into its private workspace. Both paths must be absent immediately before the tagged capability reporter runs, so the historical checks cannot be incorporated through those inputs."
+    },
+    {
+      "id": "V4B-BINDINGS",
+      "disposition": "VERIFIED_READ_ONLY",
+      "detail": "The request digest, all 71 bound entries and 6,495 input-inventory entries matched the inspected host files. The 20 revised plans match the prior plans with the intended path, binding, predecessor and capability-report corrections. Each predecessor list matches the ordered preceding plans."
+    },
+    {
+      "id": "V4B-SCOPE-TEXT",
+      "disposition": "LIMITATION",
+      "detail": "The request retains an older scope string naming coordinate.mjs. This acceptance is expressly limited to coordinate-v4b.mjs, as identified by the request's coordinator binding and the user's instruction."
+    }
+  ],
+  "scope": "Prospective authorization only for coordinate-v4b.mjs and the 20 stages listed above. Acceptance explicitly binds every request.bound item through the exact submission digest, under the stated trusted-owner, systemd and in-memory coordinator boundary. No measurement was run and no file was changed during this review. Successful execution, semantic correctness, publication and public certification require separate assessment."
+}

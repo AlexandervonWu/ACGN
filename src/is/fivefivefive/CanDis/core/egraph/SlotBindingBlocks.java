@@ -10,7 +10,7 @@ final class SlotBindingBlocks {
     static AlloyTerm normalize(AlloyTerm scoped) {
         List<AlloyTerm> children = new ArrayList<>();
         for (AlloyTerm child : scoped.children()) children.add(normalize(child));
-        AlloyTerm term = scoped.withChildren(children);
+        AlloyTerm term = scoped.rewrittenChildren(children);
         if (!isExchangeBlock(term)) return term;
         List<AlloyTerm> declarations = new ArrayList<>();
         AlloyTerm current = term;
@@ -20,7 +20,7 @@ final class SlotBindingBlocks {
                 AlloyTerm declaration = current.children().get(i);
                 AlloyTerm domain = canonicalDomain(declaration.children().get(declaration.children().size() - 1));
                 for (int j = 0; j < declaration.children().size() - 1; j++) {
-                    declarations.add(declaration.withChildren(List.of(declaration.children().get(j), domain)));
+                    declarations.add(declaration.rewrittenChildren(List.of(declaration.children().get(j), domain)));
                 }
             }
             body = current.children().get(current.children().size() - 1);
@@ -32,7 +32,7 @@ final class SlotBindingBlocks {
             current = nested;
         }
         declarations.add(body);
-        return term.withChildren(declarations);
+        return term.rewrittenChildren(declarations);
     }
 
     static boolean isExchangeBlock(AlloyTerm term) {
@@ -64,7 +64,7 @@ final class SlotBindingBlocks {
             while (signature.head().equals("UE/NOOP") && signature.children().size() == 1) {
                 signature = signature.children().get(0);
             }
-            return domain.withChildren(List.of(signature));
+            return domain.rewrittenChildren(List.of(signature));
         }
         return domain;
     }

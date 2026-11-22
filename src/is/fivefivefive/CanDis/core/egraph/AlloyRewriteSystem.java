@@ -1,5 +1,7 @@
 package is.fivefivefive.CanDis.core.egraph;
 
+import parser.ast.nodes.ResolvedBindingOrigins;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,7 +86,7 @@ final class AlloyRewriteSystem {
             AlloyTerm input,
             Counter counter,
             ArityMode arityMode,
-            Map<String, Boolean> positiveBindings) {
+            Map<String, ResolvedBindingOrigins.Slot> positiveBindings) {
         if (isScopedBinder(input)) {
             return rewriteScopedTree(input, counter, arityMode, positiveBindings);
         }
@@ -92,12 +94,22 @@ final class AlloyRewriteSystem {
         List<AlloyTerm> rewrittenChildren = new ArrayList<>(children.size());
         boolean childChanged = false;
         for (AlloyTerm child : children) {
+            int committedChanges = counter.changes;
             AlloyTerm rewritten = rewriteTree(
                     child, counter, arityMode, positiveBindings);
+            // A bare declaration applies its default multiplicity before rewriting.
+            // Reducing an arbitrary-width relation to the raw unary literal none
+            // would turn a nullable tuple-set declaration into a mandatory one.
+            if (isDeclaration(input) && rewrittenChildren.size() == children.size() - 1
+                    && isConstant(rewritten, "none") && !isConstant(child, "none")
+                    && !isAuthenticatedUnaryDeclaration(input)) {
+                rewritten = child;
+                counter.changes = committedChanges;
+            }
             rewrittenChildren.add(rewritten);
             childChanged |= rewritten != child;
         }
-        AlloyTerm current = childChanged ? input.withChildren(rewrittenChildren) : input;
+        AlloyTerm current = childChanged ? input.rewrittenChildren(rewrittenChildren) : input;
         AlloyTerm rewritten = rewriteNode(current, arityMode, positiveBindings, counter.slotOrdering);
         if (!rewritten.equals(current)) {
             counter.changes++;
@@ -110,8 +122,8 @@ final class AlloyRewriteSystem {
             AlloyTerm input,
             Counter counter,
             ArityMode arityMode,
-            Map<String, Boolean> outerBindings) {
-        Map<String, Boolean> scopedBindings = new HashMap<>(outerBindings);
+            Map<String, ResolvedBindingOrigins.Slot> outerBindings) {
+        Map<String, ResolvedBindingOrigins.Slot> scopedBindings = new HashMap<>(outerBindings);
         List<AlloyTerm> rewrittenChildren = new ArrayList<>(input.children().size());
         boolean childChanged = false;
         for (AlloyTerm child : input.children()) {
@@ -124,7 +136,7 @@ final class AlloyRewriteSystem {
             }
         }
         AlloyTerm current = childChanged
-                ? input.withChildren(rewrittenChildren)
+                ? input.rewrittenChildren(rewrittenChildren)
                 : input;
         AlloyTerm rewritten = rewriteNode(current, arityMode, outerBindings, counter.slotOrdering);
         if (!rewritten.equals(current)) {
@@ -140,13 +152,21 @@ final class AlloyRewriteSystem {
                 || term.head().startsWith("QE/");
     }
 
+    private static boolean isAuthenticatedUnaryDeclaration(AlloyTerm declaration) {
+        List<AlloyTerm> children = declaration.children();
+        if (children.size() < 2) return false;
+        AlloyTerm variable = children.get(0);
+        var slot = variable.binding();
+        return variable.isVariable() && declaration.owns(slot) && slot.implicitOne();
+    }
+
     private static boolean isDeclaration(AlloyTerm term) {
         return term.head().startsWith("DECL/");
     }
 
     private static void addDeclarationBindings(
             AlloyTerm declaration,
-            Map<String, Boolean> target) {
+            Map<String, ResolvedBindingOrigins.Slot> target) {
         List<AlloyTerm> children = declaration.children();
         int variableCount = 0;
         while (variableCount < children.size()
@@ -156,26 +176,26 @@ final class AlloyRewriteSystem {
         if (variableCount == 0 || variableCount == children.size()) {
             return;
         }
-        boolean positive = isPositiveBindingDomain(
-                children.get(children.size() - 1));
+        AlloyTerm domain = children.get(children.size() - 1);
         for (int index = 0; index < variableCount; index++) {
-            target.put(children.get(index).atom(), positive);
+            AlloyTerm binder = children.get(index);
+            var slot = binder.binding();
+            boolean admitted = declaration.owns(slot) && isPositiveBindingDomain(domain, slot);
+            target.put(binder.atom(), admitted ? slot : null);
         }
     }
 
-    private static boolean isPositiveBindingDomain(AlloyTerm domain) {
+    private static boolean isPositiveBindingDomain(AlloyTerm domain, ResolvedBindingOrigins.Slot slot) {
         AlloyTerm current = domain;
         while ("UE/NOOP".equals(canonicalHead(current.head()))
                 && current.children().size() == 1) {
             current = current.children().get(0);
         }
         String head = canonicalHead(current.head());
-        if ("UE/SETOF".equals(head) || "UE/LONE".equals(head)) {
-            return false;
-        }
-        return "UE/SOME".equals(head)
-                || "UE/ONE".equals(head)
-                || !head.startsWith("UE/");
+        if ("UE/SOME".equals(head)) return current.children().size() == 1 && slot.authorizesSome();
+        if ("UE/ONE".equals(head)) return current.children().size() == 1 && slot.authorizesOne();
+        return slot.implicitOne() && !java.util.Set.of("UE/SETOF", "UE/LONE", "UE/EXACTLYOF",
+                "UE/EXACTLY").contains(head);
     }
 
     @LeanVerifiedRewrite({
@@ -188,7 +208,7 @@ final class AlloyRewriteSystem {
     private static AlloyTerm rewriteNode(
             AlloyTerm input,
             ArityMode arityMode,
-            Map<String, Boolean> positiveBindings,
+            Map<String, ResolvedBindingOrigins.Slot> positiveBindings,
             boolean slotOrdering) {
         String canonicalHead = canonicalHead(input.head());
         AlloyTerm current = canonicalHead.equals(input.head())
@@ -295,11 +315,11 @@ final class AlloyRewriteSystem {
             List<AlloyTerm> sorted = new ArrayList<>(current.children());
             if (slotOrdering) SlotCanonicalizer.sortOperands(sorted);
             else Collections.sort(sorted);
-            current = current.withChildren(sorted);
+            current = current.rewrittenChildren(sorted);
         }
         if (ACI.contains(current.head())) {
             List<AlloyTerm> unique = deduplicate(current.children());
-            current = current.withChildren(unique);
+            current = current.rewrittenChildren(unique);
         }
         if ("REL/PLUS".equals(current.head())) {
             List<AlloyTerm> kept = withoutConstant(current.children(), "none");
@@ -309,7 +329,7 @@ final class AlloyRewriteSystem {
             if (kept.size() == 1) {
                 return kept.get(0);
             }
-            current = current.withChildren(kept);
+            current = current.rewrittenChildren(kept);
         }
         if ("REL/INTERSECT".equals(current.head()) && containsConstant(current.children(), "none")) {
             return constant("none");
@@ -483,7 +503,8 @@ final class AlloyRewriteSystem {
     private static AlloyTerm emptyDomainResult(AlloyTerm quantifier) {
         boolean empty = false;
         for (AlloyTerm child : quantifier.children()) {
-            if (child.head().startsWith("DECL/") && !child.children().isEmpty()
+            if (isDeclaration(child) && child.children().size() >= 2
+                    && child.children().subList(0, child.children().size() - 1).stream().allMatch(AlloyTerm::isVariable)
                     && isEmptyDomain(child.children().get(child.children().size() - 1))) {
                 empty = true;
                 break;
@@ -555,9 +576,9 @@ final class AlloyRewriteSystem {
 
     private static boolean isStaticallyNonempty(
             AlloyTerm term,
-            Map<String, Boolean> positiveBindings) {
+            Map<String, ResolvedBindingOrigins.Slot> positiveBindings) {
         return term.isVariable()
-                && Boolean.TRUE.equals(positiveBindings.get(term.atom()));
+                && term.binding() != null && term.binding() == positiveBindings.get(term.atom());
     }
 
     private static AlloyTerm substitute(AlloyTerm term, String variable, AlloyTerm replacement) {
@@ -615,7 +636,7 @@ final class AlloyRewriteSystem {
                 children.add(substitute(term.children().get(i), variable, replacement,
                         replacementNames, usedNames, localRenames, bodyVisible, nextFresh));
             }
-            return term.withChildren(children);
+            return term.rewrittenChildren(children);
         }
         if (isBinder(term)) {
             List<AlloyTerm> children = new ArrayList<>(term.children().size());
@@ -651,16 +672,16 @@ final class AlloyRewriteSystem {
                     }
                 }
                 renamedVariables.addAll(declaration);
-                children.add(child.withChildren(renamedVariables));
+                children.add(child.rewrittenChildren(renamedVariables));
             }
-            return term.withChildren(children);
+            return term.rewrittenChildren(children);
         }
         List<AlloyTerm> children = new ArrayList<>(term.children().size());
         for (AlloyTerm child : term.children()) {
             children.add(substitute(child, variable, replacement, replacementNames,
                     usedNames, renames, substitutionVisible, nextFresh));
         }
-        return term.withChildren(children);
+        return term.rewrittenChildren(children);
     }
 
     private static boolean isBinder(AlloyTerm term) {

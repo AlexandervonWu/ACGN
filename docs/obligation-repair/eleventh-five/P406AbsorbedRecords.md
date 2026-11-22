@@ -1,0 +1,25 @@
+# P4-06 absorbed records
+
+Every absorbed live record is rehomed with rebuilt e-class proof or explicitly retired with evidence. This is the original `U/P` row, with statement SHA-256 `f2cfca69464ef3a1113b9efa31d2eaa5d82f65d4221e5ea1c920cb2c17791f2a`.
+
+## Producer correspondence
+
+A strict graph absorbs a child by installing a certified directed parent edge. The attributed Java census finds three callers of `unionCertifiedInternal` in source insertion, explicit certified union and collision resolution. The latter is shared by fixed-batch admission and rebuild. Of the two graph calls to `TypedRenamedUnionFind.linkRoots`, the additional Phase D route requires structural-fixture mode. The registered original covers the ordinary strict route.
+
+The compiler extracts the child shape-key snapshot and its single traversal. Each child record is identified by the child and canonical shape. The replacement has the same shape and the parent owner. The evolving parent table decides the branch. An absent shape receives its transported witness and checked equation. An existing shape keeps its witness and equation. Its retirement binds the complete old record, transferred candidate, actual surviving record and installed parent edge. The loop admits no early return, break, continue or exception handler. The class writes and directed edge installation occur after the loop. The source and resolved method-binding digest covers 50 methods, 5 call routes and the 16-operation projection.
+
+The Lean fold accepts arbitrary finite shape keys and arbitrary old and retained record values. `exact_ordered_sources` and `no_double_disposition` identify the source sequence and the unique key disposition. `exact_final_disposition` proves the post-table and retirement entry for every input using a frame theorem for all other keys. The proof term first renames the directed edge into the original support, composes it with the oriented source equation and renames the result. `rebuilt_proof_exists` and `checked_sound` establish the typed derivation and its interpretation under the declared certificate rules. The producer checks the resulting shape and owner endpoints. The runtime witness independently recovers the transport from the two occurrence witnesses and compares the complete recomposed proof structural key.
+
+A strict valid pre-state has no old retirement at a currently live child key. An owner-union retirement requires a nonleader owner. A rebuild-duplicate retirement requires an absent record. The projected result concerns records of an installed absorption. The public refusal on a previously absorbed child preserves the old state. An observable exception from the trace sink can follow a successful installation; its already-transferred records and exact proofs remain present. General rollback for exceptions before an absorption is a separate contract.
+
+## Witness and replay
+
+`P406AbsorbedRecordsTest` builds ten genuine directed unions using public graph calls. The explicitly supplied input equations model Boolean operators interpreted as constant true, including along a proper two-slot to one-slot embedding. Direct calls, insertion collision and rebuild collision cover both dispositions. One single absorbed owner has two records with different outcomes, one uniquely rehomed and one retired. For every event the witness compares the complete owner-qualified live map and retirement ledger with the event’s actual post-snapshot, verifies the original and replacement proof identities, and calls the ordinary snapshot replay. A registered Lean invocation checks each actual ownership projection through the compiled transfer program. Removing the retirement instruction or omitting a genuinely predicted record rejects the replay.
+
+`p406-program.tsv` contains compiler-emitted operations. `p406-project.tsv` contains the precise input and output shape identifiers for each event. `p406-transfers.tsv` records the counts and the interface widths. The registry binds each original clause to named declarations and exact observations. All 14 registered declarations print their checked axiom inventories.
+
+## Certificate boundary and trust
+
+The producer constructs retirement evidence even when a caller uses a disabled trace sink. Retirements belong to its graph ledger. On the independent wire route, `CheckpointVerifier.requireExactUnionTransfer` checks the before/after record and retirement sets for representable union transitions. The ordinary writer currently declines checkpoints containing retired collision records. An end-to-end exported retirement is therefore outside this producer claim. The public verifier retains its separate schema and fixture checks.
+
+Trust includes the registered Java compiler and runtime, the pinned Lean kernel, stable shape and owner comparison/equality, certificate verification, the declared meaning of the input equations, and the machine/runtime assumptions of the qualification. Source-binding and dynamic checks cover the registered producer methods and normal input fragment. The complete eleventh two-build report determines public qualification.

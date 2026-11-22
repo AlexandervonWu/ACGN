@@ -2,6 +2,7 @@
 
 import copy
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 
@@ -64,6 +65,42 @@ class ChainReplayTests(unittest.TestCase):
     def setUpClass(cls):
         cls.observed = synthetic_rows()
         cls.extracted = sources()
+
+    def test_lean_rejects_superseded_verifier_and_writer_pins(self):
+        # The chain encoder leaves digest equality to Lean and uses its own binding grammar.
+        def submit(extracted):
+            lean = r.Lean()
+            r.source_rows(extracted, lean)
+            return subprocess.run(
+                ["lean", "--stdin"], input="\n".join(lean.proofs), text=True, capture_output=True,
+                cwd=Path(__file__).resolve().parents[1], timeout=30)
+
+        accepted = submit(sources())
+        self.assertEqual(accepted.returncode, 0, accepted.stdout + accepted.stderr)
+        for name, shape, binding in (
+                ("DependentTypeDag", "b6c18c3ca66eba2bdaba5385211ab9f557419ac6dc6f807659fef0c33acb5c4e",
+                 "b52e7b1c6925e177d91e6202f01cd5ceb4786d0ce26d9c01ec8bf2972be90c42"),
+                ("SemanticEvidenceVerifier", "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc",
+                 "a96e5e846bc4901abe3350c51da5a02ba7650677d50a176ab88b8390e0660177"),
+                ("SemanticEvidenceVerifier", "454ab4a9ae622571b4b1f5fc690cddddc50a811fb24c9806ac472b9a696302d6",
+                 "c3eca7cea4ea918b262f8b03b132b90e5c83dc356e436cfc4b09f937ec95c26f"),
+                ("SemanticEvidenceVerifier", "b5112361b564655f391d9f9ce264bed924f79a9b3fcbd8b6f2039cc2ad24aa01",
+                 "3279c660456f16d9b160c97f2e0a859d5bad57a9c0239c6e50856e0349676ab8"),
+                ("CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46",
+                 "dd7a20c04d4be208e9abacd5d37d4dee374ebadab21d8c3326251d9e5c708a8c")):
+            for stale in ({"shapeSha256": shape}, {"bindingsSha256": binding},
+                          {"shapeSha256": shape, "bindingsSha256": binding}):
+                changed = sources()
+                next(row for row in changed if row["object"] == name).update(stale)
+                with self.subTest(owner=name, fields=tuple(stale)):
+                    failed = submit(changed)
+                    diagnostic = failed.stdout + failed.stderr
+                    self.assertEqual(failed.returncode, 1, diagnostic)
+                    self.assertEqual(diagnostic.count(": error:"), 1, diagnostic)
+                    self.assertIn("Tactic `decide` proved that the proposition", diagnostic)
+                    for value in stale.values():
+                        self.assertIn(value, diagnostic)
+                    self.assertIn("is false", diagnostic)
 
     def test_fixed_census_and_audits(self):
         source, count = r.program(self.observed, self.extracted)
