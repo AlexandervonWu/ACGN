@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,7 @@ import is.fivefivefive.ACGN.alloy.ConstSymbol;
 import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.CanDis.canonical.CanonicalObservation;
 import is.fivefivefive.CanDis.core.CanonicalDistance;
 import is.fivefivefive.CanDis.core.EGraphNode;
 import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
@@ -3096,9 +3098,31 @@ public final class CanonicalAlloyPipelineTest {
                                 && method.getParameterCount() == 3),
                 "repair projection must expose no caller-supplied authority field");
 
-        RepairView view = RepairProjection.project(result, List.of(form));
+        // A caller-owned collection may change after validation. Every subsequent read
+        // of a phase must come from the private snapshot used for the identity check.
+        List<NormalForm> callerPhases = new AbstractList<>() {
+            private int reads;
+
+            @Override
+            public int size() {
+                return 1;
+            }
+
+            @Override
+            public NormalForm get(int index) {
+                java.util.Objects.checkIndex(index, size());
+                if (++reads != 1) {
+                    throw new AssertionError("projection reread the caller's phase list");
+                }
+                return form;
+            }
+        };
+        RepairView view = RepairProjection.project(result, callerPhases);
         check("true".equals(view.phases().get(0).matrix().payload()),
                 "projection must retain the frozen certified source payload");
+        check(view.producerObservationDigest().equals(
+                        new CanonicalObservation(result.canonicalKey()).digest()),
+                "projection digest must be derived from the adapter result's key");
     }
 
     private static void checkEmptyRelationArity(CompModule module) throws Exception {

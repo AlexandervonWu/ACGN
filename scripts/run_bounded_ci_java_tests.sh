@@ -23,11 +23,13 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
   is.fivefivefive.CanDis.RewriteRuleTraceabilityTest "$ROOT"
 
 tests=(
+  is.fivefivefive.CanDis.CapabilitySourceSchedulingTest
   is.fivefivefive.CanDis.UnusedBindingDescopeTest
   is.fivefivefive.CanDis.UnusedBindingD8Test
   is.fivefivefive.CanDis.core.UnusedBindingEvidenceTest
   is.fivefivefive.CanDis.PerformanceRegressionTest
   is.fivefivefive.CanDis.core.PreparedOrbitCacheTest
+  is.fivefivefive.CanDis.PreparedMetadataConcurrencyTest
   is.fivefivefive.CanDis.PrefixBinderPlanTest
   is.fivefivefive.CanDis.core.FastPrefixSourceTest
   is.fivefivefive.CanDis.theory.CertificateVerificationScopeTest
@@ -93,7 +95,14 @@ tests=(
 "${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/AstWrapperErasure.lean"
 "${LEAN_BIN:-lean}" "$ROOT/docs/section3-repair-audit/formal/PositiveVerificationMemo.lean"
 "${LEAN_BIN:-lean}" "$ROOT/docs/distance-parity-20261107/FastPrefixExchange.lean"
-"${LEAN_BIN:-lean}" "$ROOT/docs/section3-repair-audit/formal/UnusedGroupedBindings.lean"
+"${LEAN_BIN:-lean}" -o "$work/UnusedGroupedBindings.olean" \
+  "$ROOT/docs/section3-repair-audit/formal/UnusedGroupedBindings.lean"
+"${LEAN_BIN:-lean}" -o "$work/Phase5SourceRules.olean" \
+  "$ROOT/docs/section3-repair-audit/formal/Phase5SourceRules.lean"
+"${LEAN_BIN:-lean}" -o "$work/TemporalPhaseLocalBinding.olean" \
+  "$ROOT/docs/section3-repair-audit/formal/TemporalPhaseLocalBinding.lean"
+LEAN_PATH="$work${LEAN_PATH:+:$LEAN_PATH}" "${LEAN_BIN:-lean}" \
+  "$ROOT/docs/distance-parity-20261107/CapabilitySourceScheduling.lean"
 
 for test_class in "${tests[@]}"; do
   printf 'Running %s\n' "$test_class"

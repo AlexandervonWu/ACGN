@@ -1,0 +1,504 @@
+{
+  "experimentCommit": "2d70f89ab67241cd071387ecedd3b2f432821921",
+  "executions": [
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-capability-repair-20261115-v4/runs/canonical-batch/receipt.json",
+        "sha256": "43fe2b87f6b11d6a6ce84b624746914f6ccc9855856315177156eb0f80f7c73f"
+      },
+      "start": "2026-11-15T22:49:51.374Z",
+      "end": "2026-11-15T23:13:16.436Z",
+      "elapsedSeconds": 1405.062
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-capability-repair-20261115-v4/runs/alloy4fun-augmenter/receipt.json",
+        "sha256": "75d6fe1343aa3f2cf5f96becee399e3ecf97ab3a6b49187313b782f33d82d48e"
+      },
+      "start": "2026-11-15T23:24:26.284Z",
+      "end": "2026-11-15T23:35:05.206Z",
+      "elapsedSeconds": 638.922
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/natural-raw-egraph/receipt.json",
+        "sha256": "49624ad840f7c7a78a4252937ea629a6f3604f0befe33879fc603aa1910c1a70"
+      },
+      "start": "2026-11-15T23:50:20.008Z",
+      "end": "2026-11-15T23:50:41.471Z",
+      "elapsedSeconds": 21.463
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/natural-raw-egraph-debruijn/receipt.json",
+        "sha256": "c2cbf277389e2bb185620f55b72fe4f585d65acc5264c1f3c2e12a1885717f77"
+      },
+      "start": "2026-11-15T23:50:41.699Z",
+      "end": "2026-11-15T23:51:03.184Z",
+      "elapsedSeconds": 21.485
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/natural-java-egglog/receipt.json",
+        "sha256": "ce642a396980e7f34b0d2b21d465d0625887be548eb1b4b6298ba4d5f59afc6e"
+      },
+      "start": "2026-11-15T23:51:03.407Z",
+      "end": "2026-11-15T23:51:24.886Z",
+      "elapsedSeconds": 21.479
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/natural-java-egglog-debruijn/receipt.json",
+        "sha256": "5594ee5e91b123d0b986c8978a9d5eb5fa068c5358bad6350be86f01f213eeed"
+      },
+      "start": "2026-11-15T23:51:25.106Z",
+      "end": "2026-11-15T23:51:46.656Z",
+      "elapsedSeconds": 21.55
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/natural-slotted-egraph/receipt.json",
+        "sha256": "e89d614d22da9a101ebdbac9cf8f053eefc5eb8a24d952cd9e18995a69cd2490"
+      },
+      "start": "2026-11-15T23:51:46.873Z",
+      "end": "2026-11-15T23:52:08.400Z",
+      "elapsedSeconds": 21.527
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/natural-canonical/receipt.json",
+        "sha256": "3c3cfb1c35080776fae16e7b97a84ad877bb7195d5c05bfb63e0aed4b1e441a1"
+      },
+      "start": "2026-11-15T23:52:08.630Z",
+      "end": "2026-11-15T23:52:37.868Z",
+      "elapsedSeconds": 29.238
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/natural-typed-slotted-port-egraph/receipt.json",
+        "sha256": "9855b9b3c5c4653bf98a1aa7842df90ba89ef4cc8fe95285903399bf4c720d13"
+      },
+      "start": "2026-11-15T23:52:38.093Z",
+      "end": "2026-11-15T23:59:29.029Z",
+      "elapsedSeconds": 410.936
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/natural-report-and-soundness/receipt.json",
+        "sha256": "946c39533f66fa33942934b0bd70582a22f44613568065d243e83c5df8b4879d"
+      },
+      "start": "2026-11-15T23:59:29.258Z",
+      "end": "2026-11-15T23:59:49.840Z",
+      "elapsedSeconds": 20.582
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/capability-raw-egraph/receipt.json",
+        "sha256": "99dec5890597bc8e48eea3f3efce0bfc44c089148f27442f0f5b6b9ddd385b2e"
+      },
+      "start": "2026-11-16T00:12:28.437Z",
+      "end": "2026-11-16T00:12:34.153Z",
+      "elapsedSeconds": 5.716
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/capability-raw-egraph-debruijn/receipt.json",
+        "sha256": "db7ec49304376d17ec78f3854905e9af69b7e653922e0a7a692ba72504a8603a"
+      },
+      "start": "2026-11-16T00:12:34.398Z",
+      "end": "2026-11-16T00:12:40.117Z",
+      "elapsedSeconds": 5.719
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/capability-java-egglog/receipt.json",
+        "sha256": "fc01229fed1d2ceb9262d359063e0e887d5a362ede51ae0db97bd6f8ce219c8a"
+      },
+      "start": "2026-11-16T00:12:40.363Z",
+      "end": "2026-11-16T00:12:46.102Z",
+      "elapsedSeconds": 5.739
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/capability-java-egglog-debruijn/receipt.json",
+        "sha256": "a10e0fe01e576ba328573bb23ae77511fdaa15e1c89a62eb5969040388f3c333"
+      },
+      "start": "2026-11-16T00:12:46.374Z",
+      "end": "2026-11-16T00:12:52.141Z",
+      "elapsedSeconds": 5.767
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/capability-slotted-egraph/receipt.json",
+        "sha256": "b36f91576a8a2de09d82a6398ba2a2c7d1b3726deabe4ad20c1b28f16777a1c7"
+      },
+      "start": "2026-11-16T00:12:52.411Z",
+      "end": "2026-11-16T00:12:58.181Z",
+      "elapsedSeconds": 5.77
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/capability-canonical/receipt.json",
+        "sha256": "6c057cf0ddb8858131d9f9f538e3051200ad31372b6274e8b3255e6e18b93572"
+      },
+      "start": "2026-11-16T00:12:58.430Z",
+      "end": "2026-11-16T00:13:05.261Z",
+      "elapsedSeconds": 6.831
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/capability-typed-slotted-port-egraph/receipt.json",
+        "sha256": "a1e7f1bf45d273d54b9f019f43effbea738af46059d1afe59f48eb1dfe21afa6"
+      },
+      "start": "2026-11-16T00:13:05.519Z",
+      "end": "2026-11-16T00:13:49.214Z",
+      "elapsedSeconds": 43.695
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/capability-report/receipt.json",
+        "sha256": "3c62676105f0f942357dbc3329ed8885026f26c0265397e02a990a1cbd205e02"
+      },
+      "start": "2026-11-16T00:13:49.467Z",
+      "end": "2026-11-16T00:13:54.140Z",
+      "elapsedSeconds": 4.673
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/slot-typing-slotted-egraph/receipt.json",
+        "sha256": "3e8333e2a91e76124641a5ea5f27755e1ffcb5a3e0747fa69a245b3f69863a5c"
+      },
+      "start": "2026-11-16T00:13:54.405Z",
+      "end": "2026-11-16T00:14:18.178Z",
+      "elapsedSeconds": 23.773
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/slot-typing-slotted-egraph-typed/receipt.json",
+        "sha256": "11c015ae07c609e3d53336d8ec604f9e8c8c0ed06c9ea3a8eb260df075c42fe0"
+      },
+      "start": "2026-11-16T00:14:18.426Z",
+      "end": "2026-11-16T00:14:42.140Z",
+      "elapsedSeconds": 23.714
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/slot-typing-report/receipt.json",
+        "sha256": "8acb7f0366053aeec75206a318df4a7b4434312be36bcbbfc32d4cb2f3fba0b4"
+      },
+      "start": "2026-11-16T00:14:42.393Z",
+      "end": "2026-11-16T00:14:45.976Z",
+      "elapsedSeconds": 3.583
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/synthetic-slot-runtime/receipt.json",
+        "sha256": "fafbbc44063353fcf197c1781c72d3e1e0a4b89735a7b3c594b3ad42285c54be"
+      },
+      "start": "2026-11-16T00:14:46.229Z",
+      "end": "2026-11-16T01:34:29.035Z",
+      "elapsedSeconds": 4782.806
+    },
+    {
+      "receipt": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/runs/capability-generation/receipt.json",
+        "sha256": "67f3a20fd26e951c4c477086a0f8cee8cddd3029e8a883f3716a7a849b2812c1"
+      },
+      "start": "2026-11-16T00:04:53.823Z",
+      "end": "2026-11-16T00:05:06.852Z",
+      "elapsedSeconds": 13.029
+    }
+  ],
+  "copied": [
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-capability-repair-20261115-v4/canonical-batch/diagnostic-operations-summary.md",
+        "sha256": "077c7756e9a66fc149ed9c31f1c3e66486d13c54b1853c2d242a07bd7b056300"
+      },
+      "relativePath": "paired/summary.md",
+      "sha256": "077c7756e9a66fc149ed9c31f1c3e66486d13c54b1853c2d242a07bd7b056300"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-capability-repair-20261115-v4/alloy4fun-augmented/summary.md",
+        "sha256": "de2fbc4f18ed9ec60182b92d7a8bc9a83a6edbcc9d53f15c138cdb456a4441e6"
+      },
+      "relativePath": "augmenter/summary.md",
+      "sha256": "de2fbc4f18ed9ec60182b92d7a8bc9a83a6edbcc9d53f15c138cdb456a4441e6"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/summary.md",
+        "sha256": "b43f896102301e43ab8e0171fc8daf42009a1d49b41cbb4c5eedc1268f091b84"
+      },
+      "relativePath": "natural-ablation/summary.md",
+      "sha256": "b43f896102301e43ab8e0171fc8daf42009a1d49b41cbb4c5eedc1268f091b84"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/comparison.json",
+        "sha256": "7f01fa6c9af65430a799cc60460fec9a588e3f6620c01cfb1d3b04cfb5fdb25f"
+      },
+      "relativePath": "natural-ablation/comparison.json",
+      "sha256": "7f01fa6c9af65430a799cc60460fec9a588e3f6620c01cfb1d3b04cfb5fdb25f"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/semantic_soundness.md",
+        "sha256": "b564fc428c8363fce34e8b3499d4355c0eed756426ad0409512bc844779fb292"
+      },
+      "relativePath": "natural-ablation/semantic_soundness.md",
+      "sha256": "b564fc428c8363fce34e8b3499d4355c0eed756426ad0409512bc844779fb292"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/semantic_soundness.json",
+        "sha256": "e9ded2a34c03dbb34d7944e651bfa10b21413ce2cd2c0fc54d102220bf1a5b8c"
+      },
+      "relativePath": "natural-ablation/semantic_soundness.json",
+      "sha256": "e9ded2a34c03dbb34d7944e651bfa10b21413ce2cd2c0fc54d102220bf1a5b8c"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/equivalence_disagreements.csv",
+        "sha256": "95c4e2d1a1ecb826da1a632b5aaf48675950b710bc3de4a8bc4bd77d2b22fd9d"
+      },
+      "relativePath": "natural-ablation/equivalence_disagreements.csv",
+      "sha256": "95c4e2d1a1ecb826da1a632b5aaf48675950b710bc3de4a8bc4bd77d2b22fd9d"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/REPORT.md",
+        "sha256": "faf7a007d614d7343be3e8c72870f3dd2f458ade32691b25108af6d75c597113"
+      },
+      "relativePath": "capability/REPORT.md",
+      "sha256": "faf7a007d614d7343be3e8c72870f3dd2f458ade32691b25108af6d75c597113"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/SOUNDNESS.md",
+        "sha256": "6d21321e74f0dd15028d880656ff5422d4fd766f239420360206271e55f6de77"
+      },
+      "relativePath": "capability/SOUNDNESS.md",
+      "sha256": "6d21321e74f0dd15028d880656ff5422d4fd766f239420360206271e55f6de77"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/results.json",
+        "sha256": "1744e9d6bf82118908bbcf65d161e0e3641f9ea4c4843dbd81a915f72a18498d"
+      },
+      "relativePath": "capability/results.json",
+      "sha256": "1744e9d6bf82118908bbcf65d161e0e3641f9ea4c4843dbd81a915f72a18498d"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/results.csv",
+        "sha256": "a0937b9add8e60f10416b307073b722fbca0ba53df46a870af7ef8676d87e29f"
+      },
+      "relativePath": "capability/results.csv",
+      "sha256": "a0937b9add8e60f10416b307073b722fbca0ba53df46a870af7ef8676d87e29f"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/soundness.json",
+        "sha256": "5d0acbc34726671a9035722a0c73573bedb4a04d479f9765ad8b69818fdf7c7c"
+      },
+      "relativePath": "capability/soundness.json",
+      "sha256": "5d0acbc34726671a9035722a0c73573bedb4a04d479f9765ad8b69818fdf7c7c"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/unexpected_failures.csv",
+        "sha256": "bf72a61b56cf53f45545c54734fe5f50157d5ad68bc7e7b83b92073d054513ff"
+      },
+      "relativePath": "capability/unexpected_failures.csv",
+      "sha256": "bf72a61b56cf53f45545c54734fe5f50157d5ad68bc7e7b83b92073d054513ff"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-slot-typing/summary.md",
+        "sha256": "c6f8abd827796e97918273f3e36674ca09f920931417ae88c6d77646c4876361"
+      },
+      "relativePath": "natural-slot-typing/summary.md",
+      "sha256": "c6f8abd827796e97918273f3e36674ca09f920931417ae88c6d77646c4876361"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-slot-typing/comparison.json",
+        "sha256": "1ffd962fe44707438561ef26f6b8794fe293134c4b1d6a1ae488ac0913bed904"
+      },
+      "relativePath": "natural-slot-typing/comparison.json",
+      "sha256": "1ffd962fe44707438561ef26f6b8794fe293134c4b1d6a1ae488ac0913bed904"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-run/summary.md",
+        "sha256": "2cca95791fe1fa2091c09af0c508010ed8d4edeada52aba4af692be2a441e318"
+      },
+      "relativePath": "synthetic/summary.md",
+      "sha256": "2cca95791fe1fa2091c09af0c508010ed8d4edeada52aba4af692be2a441e318"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-run/summary.json",
+        "sha256": "289ade617fb05993d1497b72b41ff1bc4c2049352e13f0c96f195af378751245"
+      },
+      "relativePath": "synthetic/summary.json",
+      "sha256": "289ade617fb05993d1497b72b41ff1bc4c2049352e13f0c96f195af378751245"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-run/audit.json",
+        "sha256": "eef90233cf9bc90e9bc2a0f0d5b4f642db8c3afd582e3cbc71a55260b36c6087"
+      },
+      "relativePath": "synthetic/audit.json",
+      "sha256": "eef90233cf9bc90e9bc2a0f0d5b4f642db8c3afd582e3cbc71a55260b36c6087"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-run/trials.jsonl",
+        "sha256": "f1ee772dcf0668059bed2b4ebccc877603d0b53fb8507a2f5ade536e51861256"
+      },
+      "relativePath": "synthetic/trials.jsonl",
+      "sha256": "f1ee772dcf0668059bed2b4ebccc877603d0b53fb8507a2f5ade536e51861256"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-run/predicates.csv",
+        "sha256": "bda2746ab06f1b71d83f9d325800d1484bc4325083aeeed957a5b594719c0f0e"
+      },
+      "relativePath": "synthetic/predicates.csv",
+      "sha256": "bda2746ab06f1b71d83f9d325800d1484bc4325083aeeed957a5b594719c0f0e"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-run/validation.json",
+        "sha256": "cc2005c359d2cbd7d661980d2f940852d04c823923f8f139c51a88aa35d1f5c6"
+      },
+      "relativePath": "synthetic/validation.json",
+      "sha256": "cc2005c359d2cbd7d661980d2f940852d04c823923f8f139c51a88aa35d1f5c6"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-plots/cells.csv",
+        "sha256": "5184e01689a1ad5cdf9b9cc991c9850c9129896f90169e3891e66b9cb695d2c2"
+      },
+      "relativePath": "synthetic/plots/cells.csv",
+      "sha256": "5184e01689a1ad5cdf9b9cc991c9850c9129896f90169e3891e66b9cb695d2c2"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-plots/completion-grid.pdf",
+        "sha256": "ef20b06e5eaacc46d7208a8cc92a20fd04aa2c70aa99326ffa1dfdf2fabae9e8"
+      },
+      "relativePath": "synthetic/plots/completion-grid.pdf",
+      "sha256": "ef20b06e5eaacc46d7208a8cc92a20fd04aa2c70aa99326ffa1dfdf2fabae9e8"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-plots/completion-grid.png",
+        "sha256": "d86fba00c94fd9fee6e41fc8c89e2db34e98404160c7db418cc745a7644415de"
+      },
+      "relativePath": "synthetic/plots/completion-grid.png",
+      "sha256": "d86fba00c94fd9fee6e41fc8c89e2db34e98404160c7db418cc745a7644415de"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-plots/engine-speedup-surface.pdf",
+        "sha256": "c2c17270b826a5f09f6a71ce310999bcadec40fc4bfc8a5e2c928b323c88a718"
+      },
+      "relativePath": "synthetic/plots/engine-speedup-surface.pdf",
+      "sha256": "c2c17270b826a5f09f6a71ce310999bcadec40fc4bfc8a5e2c928b323c88a718"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-plots/engine-speedup-surface.png",
+        "sha256": "08955db8e2ea41545a620da9f82724b94f6306acccf9e2ea6ccfaa3d522983f3"
+      },
+      "relativePath": "synthetic/plots/engine-speedup-surface.png",
+      "sha256": "08955db8e2ea41545a620da9f82724b94f6306acccf9e2ea6ccfaa3d522983f3"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-plots/README.md",
+        "sha256": "b4f033ab64435fbb9bcdbfb139dd6f7060d63e072d7543ba3e3bc64edd41acd2"
+      },
+      "relativePath": "synthetic/plots/README.md",
+      "sha256": "b4f033ab64435fbb9bcdbfb139dd6f7060d63e072d7543ba3e3bc64edd41acd2"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-plots/surface-data.json",
+        "sha256": "b2d135bfafef2f4f2125342b2256e7be964aa312045884018fdd169eb55455f2"
+      },
+      "relativePath": "synthetic/plots/surface-data.json",
+      "sha256": "b2d135bfafef2f4f2125342b2256e7be964aa312045884018fdd169eb55455f2"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-plots/wall-speedup-surface.pdf",
+        "sha256": "1fe91ad750d0e42d4f381f653f9109b3a4d7970b27daadf97474c08de7062e9b"
+      },
+      "relativePath": "synthetic/plots/wall-speedup-surface.pdf",
+      "sha256": "1fe91ad750d0e42d4f381f653f9109b3a4d7970b27daadf97474c08de7062e9b"
+    },
+    {
+      "source": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/synthetic-plots/wall-speedup-surface.png",
+        "sha256": "c4b57b90d66df2147c6ff76f5f8022d2b709dbd8cef33a8409e140943131482b"
+      },
+      "relativePath": "synthetic/plots/wall-speedup-surface.png",
+      "sha256": "c4b57b90d66df2147c6ff76f5f8022d2b709dbd8cef33a8409e140943131482b"
+    }
+  ],
+  "nearestSource": {
+    "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-capability-repair-20261115-v4/alloy4fun-augmented/canonical_reward_points.csv",
+    "sha256": "fa3f9f3d462c6b36794e6ff8de7c349e3b1feb66fcc5f202c7751bb4df16ca6e"
+  },
+  "summary": {
+    "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-capability-repair-20261115-v4/completion-summary.json",
+    "sha256": "d7297ef2a7f8cd0e5a918800c090f934e3286883eb05fea4bb9e480dc2412b24"
+  },
+  "candidate": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/capability-repair-v1/java-k/inputs.json",
+    "sha256": "6ee8f1f69fc5f9cbd80e0ca17ef06e4070158a279fb2d5f06e0567d729c4d7a9"
+  },
+  "integrationReview": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/capability-repair-v1/followup-integration-review.json",
+    "sha256": "33f0bc89f30eba4389bc731593e08e57b1a720753191a9f75f25807697f6a58b"
+  },
+  "leanDeterminism": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/capability-repair-v1/lean-determinism-v2.json",
+    "sha256": "57aac64e95993e3fed2061320700643f8692f477757c084d6ea330a8b61d584c"
+  },
+  "sourceAudit": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/capability-repair-v1/source-audit-v4.json",
+    "sha256": "f11cd44c48067d80381a31c246ba205c3e4e962412f32a08900c2058d3341c3f"
+  },
+  "fixed4072": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/capability-repair-v1/written4072-c/accounting.json",
+    "sha256": "7389b4cbafff27174d1a04cecbe01817ae9d95f5112fd868a043aba2a3d40e63"
+  },
+  "fixed2464": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/capability-repair-v1/regression2464-b/accounting.json",
+    "sha256": "7b26f67ffdef77645d830f9afe9fcc049e9aebcfb047629e362e68d9df36cb08"
+  },
+  "zeroPreservation": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/capability-repair-v1/natural-comparison-v2.json",
+    "sha256": "792c405487fc017b5efb40d076180adad31b140f576ab6b3dc2d5ae0d8dc2f78"
+  },
+  "newZeroValidation": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/capability-repair-v1/natural-gains-k/accounting.json",
+    "sha256": "8935ecd6255d33c83b971777433fc7a5c3063b9edc01cf6b66af21744e5f61cd"
+  },
+  "capabilityReproduction": {
+    "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability-generation-reproduction.json",
+    "sha256": "cc67ce87dedded05cb15f9059fe76edbfc04e3103553cd8b9f4d910bff7f5e2d"
+  },
+  "exporter": {
+    "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/export-publication.mjs",
+    "sha256": "c3f598446e16d7c13024d0e66526c8b3274a7ea0b757f9e3a33aa943f8b9927f"
+  },
+  "bulkEvidence": "Retained externally at receipt paths; not embedded in Git.",
+  "publicCertification": "BLOCKED"
+}

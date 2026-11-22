@@ -1,0 +1,1300 @@
+{
+  "profile": "eleventh-public-certification-v1",
+  "registrationState": "SEALED",
+  "trusted": [
+    "Pinned Lean kernel and standard library with individually inventoried theorem assumptions",
+    "JDK 17, registered library bytes, parser and JVM execution, Python, Git, host OS and SHA-256",
+    "Caller-pinned standalone verifier inputs and claim-specific compiler-to-model correspondence"
+  ],
+  "excluded": [
+    "Unregistered claims and source grammars",
+    "Promotion inferred from draft or focused observations"
+  ],
+  "leanModules": {
+    "P404InstalledParent": {
+      "source": "docs/section3-repair-audit/formal/P404InstalledParent.lean",
+      "audit": "local",
+      "imports": [],
+      "theorems": [
+        "ACGN.Eleventh.P404.typed_identity",
+        "ACGN.Eleventh.P404.typed_composition",
+        "ACGN.Eleventh.P404.orient_exact",
+        "ACGN.Eleventh.P404.identity_exact",
+        "ACGN.Eleventh.P404.concatenate_exact",
+        "ACGN.Eleventh.P404.path_exact",
+        "ACGN.Eleventh.P404.historical_find_exact",
+        "ACGN.Eleventh.P404.certification_excludes_structural_write",
+        "ACGN.Eleventh.P404.every_certifying_write_exact",
+        "ACGN.Eleventh.P404.installed_parent_has_exact_certificate",
+        "ACGN.Eleventh.P404.replacement_commit_preserves_history",
+        "ACGN.Eleventh.P404.decoded_program_is_complete",
+        "ACGN.Eleventh.P404.prepared_writes_have_derivations",
+        "ACGN.Eleventh.P404.execution_preserves_both_stores",
+        "ACGN.Eleventh.P404.decoded_installation_exact"
+      ]
+    },
+    "P404WriteReplay": {
+      "source": "docs/obligation-repair/eleventh-five/P404WriteReplay.lean",
+      "audit": "executable",
+      "imports": [
+        "P404InstalledParent"
+      ],
+      "theorems": []
+    },
+    "Phase5SourceRules": {
+      "source": "docs/section3-repair-audit/formal/Phase5SourceRules.lean",
+      "audit": "legacy",
+      "imports": [],
+      "theorems": [
+        "relation_subset_reflexive",
+        "relation_equality_reflexive",
+        "relation_not_subset_self_is_false",
+        "relation_inequality_self_is_false",
+        "certified_equal_relations_subset",
+        "certified_equal_relations_compare_equal",
+        "certified_equal_relations_not_subset_is_false",
+        "certified_equal_relations_inequality_is_false",
+        "univ_requires_an_inhabitant_for_nonemptiness",
+        "empty_universe_is_not_nonempty",
+        "let_identity",
+        "operator_alias_preserves_denotation",
+        "typed_parser_head_matches_active_alias_table",
+        "canonical_parser_head_matches_active_alias_table",
+        "typed_parser_head_constructor_preserves_operator_family",
+        "typed_other_parser_head_constructor_is_unchanged",
+        "canonical_parser_head_preserves_operator_family",
+        "unlisted_parser_head_is_unchanged",
+        "noop_elimination",
+        "let_beta_reduction",
+        "implication_elimination",
+        "iff_elimination",
+        "formula_ite_elimination",
+        "double_negation_elimination",
+        "de_morgan_conjunction",
+        "de_morgan_disjunction",
+        "negated_true_is_false",
+        "negated_false_is_true",
+        "negated_equality_is_inequality",
+        "negated_inequality_is_equality",
+        "negated_int_gt_is_lte",
+        "negated_int_gte_is_lt",
+        "negated_int_lt_is_gte",
+        "negated_int_lte_is_gt",
+        "active_java_atomic_negation_dual_table_matches_model",
+        "active_java_negated_comparison_table_matches_model",
+        "active_java_egraph_comparison_dual_table_matches_model",
+        "explicit_negated_comparisons_are_outside_egraph_dual_table",
+        "int_comparison_negation_dual_sound",
+        "negated_not_gt_opcode_is_gt",
+        "negated_not_gte_opcode_is_gte",
+        "negated_not_lt_opcode_is_lt",
+        "negated_not_lte_opcode_is_lte",
+        "negated_subset_is_not_subset",
+        "negated_not_subset_is_subset",
+        "negated_some_is_no",
+        "negated_no_is_some",
+        "negated_one_is_notone",
+        "negated_lone_is_notlone",
+        "negated_notone_is_one",
+        "negated_notlone_is_lone",
+        "all_true_body",
+        "some_false_body_is_false",
+        "no_false_body_is_true",
+        "one_false_body_is_false",
+        "lone_false_body_is_true",
+        "notone_false_body_is_true",
+        "notlone_false_body_is_false",
+        "negated_always_is_eventually_not",
+        "negated_eventually_is_always_not",
+        "negated_historically_is_once_not",
+        "negated_once_is_historically_not",
+        "negated_until_is_release_not",
+        "negated_release_is_until_not",
+        "negated_since_is_triggered_not",
+        "negated_triggered_is_since_not",
+        "negated_forall_is_exists_not",
+        "negated_exists_is_forall_not",
+        "no_quantifier_is_all_not",
+        "negated_no_quantifier_is_some",
+        "safe_exists_conjunction_prenex",
+        "safe_forall_disjunction_prenex",
+        "boolean_and_associative",
+        "boolean_and_commutative",
+        "boolean_and_idempotent",
+        "boolean_or_associative",
+        "boolean_or_commutative",
+        "boolean_or_idempotent",
+        "integer_addition_associative",
+        "integer_addition_commutative",
+        "integer_multiplication_associative",
+        "integer_multiplication_commutative",
+        "equality_commutative",
+        "inequality_commutative",
+        "iff_commutative",
+        "implication_false_antecedent",
+        "implication_true_antecedent",
+        "implication_true_consequent",
+        "implication_false_consequent",
+        "universal_complex_domain_guard",
+        "existential_complex_domain_guard",
+        "no_complex_domain_guard",
+        "end_marker_elimination_preserves_payload",
+        "distinct_lexical_binder_survives_shadow",
+        "let_substitution_uses_lexical_identity",
+        "boolean_and_true_identity",
+        "boolean_or_false_identity",
+        "boolean_and_false_absorbs",
+        "boolean_or_true_absorbs",
+        "relation_metatype_named_true_is_not_boolean",
+        "relation_exact_type_named_false_is_not_boolean",
+        "relation_source_type_named_true_is_not_boolean",
+        "exact_boolean_true_is_recognized",
+        "exact_boolean_false_is_recognized",
+        "relation_container_cannot_apply_boolean_identity",
+        "contradictory_container_source_type_blocks_boolean_identity",
+        "validated_operator_container_can_apply_boolean_identity",
+        "generic_boolean_type_does_not_authorize_an_operator",
+        "internally_derived_boolean_operator_is_authorized",
+        "public_mutation_revokes_internal_boolean_authority",
+        "trusted_normalized_construction_retains_internal_boolean_authority",
+        "generic_bool_after_public_mutation_cannot_reuse_derived_authority",
+        "relation_operand_blocks_boolean_rewrite",
+        "all_boolean_operands_admit_boolean_rewrite",
+        "forged_boolean_join_is_not_a_formula_operand",
+        "forged_boolean_binding_is_not_a_formula_operand",
+        "relation_ite_is_retained_but_its_children_are_traversed",
+        "exact_boolean_ite_may_expand",
+        "incomplete_call_is_rejected_before_parent_rewrite",
+        "complete_call_reaches_rewrite_traversal",
+        "malformed_descendant_call_blocks_the_whole_rewrite_graph",
+        "every_descendant_is_checked_before_rewrite",
+        "malformed_union_alternative_blocks_component_admission",
+        "malformed_temporal_descendant_blocks_parent_rewrite",
+        "forged_temporal_reference_is_rejected",
+        "wrong_owner_temporal_reference_is_rejected",
+        "unbound_temporal_source_is_rejected",
+        "wrong_temporal_source_arity_is_rejected",
+        "wrong_temporal_source_visit_is_rejected",
+        "incomplete_temporal_edge_bucket_is_rejected",
+        "duplicate_temporal_edge_position_is_rejected",
+        "removed_temporal_child_vertex_is_rejected",
+        "removed_temporal_graph_root_is_rejected",
+        "mutated_temporal_source_graph_is_rejected",
+        "transplanted_temporal_authority_is_rejected",
+        "owner_bound_temporal_reference_is_admitted",
+        "unreferenced_temporal_child_is_rejected",
+        "exact_temporal_child_partition_is_admitted",
+        "overlapping_temporal_child_ranges_are_rejected",
+        "invalid_live_temporal_reference_cannot_be_sealed",
+        "valid_live_temporal_reference_can_be_sealed",
+        "sealed_temporal_reference_does_not_require_retained_parser_graph",
+        "sealed_temporal_reference_rejects_another_owner",
+        "temporal_evidence_is_not_reusable",
+        "successive_temporal_authorities_are_globally_distinct",
+        "foreign_arena_child_is_rejected",
+        "foreign_profile_child_is_rejected",
+        "snapshot_preserves_owning_arena_and_profile",
+        "frozen_snapshot_is_immutable",
+        "atomic_admission_and_freeze_has_no_mutable_success_state",
+        "mutation_rejects_after_atomic_certification_freeze",
+        "publishing_normal_form_before_arena_freeze_is_invalid",
+        "publishing_after_arena_freeze_is_valid",
+        "shared_frozen_descendant_blocks_other_parent_rewrite",
+        "all_mutable_reachable_nodes_admit_rewrite",
+        "failed_whole_graph_preflight_has_no_partial_result",
+        "generated_rewrite_node_inherits_source_arena",
+        "thread_local_rewrite_node_is_rejected_when_threads_differ",
+        "sealed_egraph_node_admission_is_trusted",
+        "overridable_egraph_node_admission_is_rejected",
+        "disconnected_registered_union_component_is_pruned",
+        "reachable_union_component_member_is_retained",
+        "registration_alone_does_not_imply_reachability",
+        "empty_root_closure_prunes_every_registered_class",
+        "all_null_root_list_has_empty_closure",
+        "rejected_child_replacement_preserves_prior_state",
+        "admitted_child_replacement_commits_once",
+        "a_pruned_eclass_handle_cannot_be_reused",
+        "a_retained_eclass_handle_remains_live",
+        "a_retired_eclass_fails_admission_before_traversal",
+        "retirement_releases_all_eclass_payload",
+        "failed_temporal_rewrite_preserves_operation_and_matrix",
+        "successful_temporal_rewrite_commits_operation_and_matrix_together",
+        "serialized_temporal_rewrite_and_freeze_has_only_atomic_outcomes",
+        "cross_arena_semantic_comparison_is_rejected",
+        "let_none_identity",
+        "none_and_univ_are_distinct_on_bool",
+        "exact_none_spelling_is_builtin",
+        "exact_univ_spelling_is_builtin",
+        "capitalized_none_is_a_user_signature",
+        "capitalized_univ_is_a_user_signature",
+        "every_nonreserved_name_is_a_user_signature",
+        "none_subset",
+        "none_in_every_same_arity_relation",
+        "none_not_in_same_arity_relation_is_false",
+        "subset_none_forces_none",
+        "empty_at_most_one",
+        "set_none_exactly_one_binding",
+        "lone_none_exactly_one_binding",
+        "some_none_has_no_binding",
+        "one_none_has_no_binding",
+        "exactly_none_has_the_none_binding",
+        "bare_declaration_defaults_to_one",
+        "explicit_declaration_overrides_default",
+        "empty_domain_all",
+        "empty_domain_not_some",
+        "empty_domain_no",
+        "empty_domain_not_one",
+        "empty_domain_lone",
+        "empty_domain_not_not_lone",
+        "pulling_all_across_and_has_an_empty_domain_counterexample",
+        "pulling_some_across_or_has_an_empty_domain_counterexample",
+        "pulling_lone_across_and_is_not_valid",
+        "some_set_none_equal_none",
+        "some_lone_none_equal_none",
+        "all_set_none_false_is_false",
+        "all_lone_none_false_is_false",
+        "none_in_none",
+        "arbitrary_in_none_is_not_false_without_evidence",
+        "nonempty_in_none_is_false",
+        "every_relation_in_univ",
+        "none_not_in_none_is_false",
+        "nonempty_not_in_none_is_true",
+        "no_relation_not_in_univ",
+        "boolean_and_absorbs_or",
+        "boolean_or_absorbs_and",
+        "boolean_and_absorption_preserves_context",
+        "boolean_or_absorption_preserves_context",
+        "boolean_and_distributes_over_or",
+        "boolean_or_distributes_over_and",
+        "relation_intersection_absorbs_union",
+        "relation_union_absorbs_intersection",
+        "relation_intersection_absorption_preserves_context",
+        "relation_union_absorption_preserves_context",
+        "relation_intersection_distributes_over_union",
+        "relation_union_distributes_over_intersection",
+        "empty_intersection_prefix_does_not_skip_foreign_authority",
+        "converse_involutive",
+        "converse_distributes_over_union",
+        "converse_distributes_over_intersection",
+        "relation_union_none_is_relation",
+        "relation_union_univ_is_univ",
+        "relation_union_idempotent",
+        "relation_union_commutative",
+        "relation_union_associative",
+        "abstract_direct_extension_cover",
+        "abstract_single_extension_cover",
+        "nested_abstract_extension_cover",
+        "complete_abstract_cover_absorbs_subrelation",
+        "union_with_outside_member_is_not_carrier",
+        "subset_transitive",
+        "subset_of_union_reaches_common_carrier",
+        "subset_of_union_does_not_prove_one_parent",
+        "missing_abstract_branch_does_not_cover_parent",
+        "authenticated_relational_widening_preserves_a_subrelation",
+        "subrelation_union_full_carrier_is_carrier",
+        "subrelation_intersection_full_carrier_is_subrelation",
+        "common_static_carrier_does_not_make_a_subrelation_full",
+        "nested_subsignature_union_carrier_is_carrier",
+        "subrelation_intersection_full_product_is_subrelation",
+        "relation_product_distributes_over_union_right",
+        "relation_product_distributes_over_union_left",
+        "bound_relation_slot_product_distributes_right",
+        "bound_relation_slot_product_distributes_left",
+        "abstract_cover_lifts_through_product_right",
+        "abstract_cover_lifts_through_product_left",
+        "abstract_cover_lifts_through_integer_set_coordinate",
+        "abstract_cover_lifts_with_integer_first_coordinate",
+        "relation_product3_distributes_over_union_third",
+        "abstract_cover_lifts_through_variadic_product",
+        "complete_two_coordinate_grid_is_product_of_unions",
+        "abstract_covers_lift_through_complete_product_grid",
+        "partial_product_grid_does_not_cover_full_product",
+        "diagonal_products_do_not_cover_full_product",
+        "empty_relation_product_left",
+        "empty_relation_product_right",
+        "empty_relation_join_left",
+        "empty_relation_join_right",
+        "two_subrelations_union_full_carrier_is_carrier",
+        "subrelation_absorbs_through_left_association",
+        "subrelation_absorbs_through_right_association",
+        "widened_relational_union_flattening",
+        "subtype_and_exact_int_alternatives_are_covered",
+        "reverse_subtype_widening_is_rejected",
+        "sibling_subtype_widening_is_rejected",
+        "relation_arity_change_is_not_a_widening",
+        "none_intersection_is_none",
+        "relation_intersection_none_is_none",
+        "relation_intersection_univ_is_relation",
+        "relation_intersection_idempotent",
+        "relation_intersection_commutative",
+        "relation_intersection_associative",
+        "positive_one_over_none_intersection_has_no_binding",
+        "subset_none_iff_no_members",
+        "not_subset_none_iff_some_member",
+        "subset_union_absorption",
+        "subset_intersection_absorption",
+        "difference_disjoint_from_removed_subrelation",
+        "difference_partition_recombines",
+        "difference_subrelation_partition_recombines",
+        "difference_of_superrelation_is_none",
+        "difference_intersection_removal",
+        "difference_of_difference_restores_intersection",
+        "no_difference_iff_subset",
+        "some_difference_iff_not_subset",
+        "singleton_subset",
+        "singleton_at_most_one",
+        "singleton_exactly_one",
+        "singleton_admitted_for_every_nonexact_multiplicity",
+        "admitted_nonexact_implies_subset",
+        "empty_relation_admitted_by_set",
+        "empty_relation_admitted_by_lone",
+        "all_admitted_positive_membership_iff_domain_subset",
+        "some_set_positive_membership_is_true",
+        "some_lone_positive_membership_is_true",
+        "some_some_positive_membership_iff_intersection_nonempty",
+        "some_one_positive_membership_iff_intersection_nonempty",
+        "no_set_positive_membership_is_false",
+        "no_lone_positive_membership_is_false",
+        "no_some_positive_membership_iff_intersection_empty",
+        "no_one_positive_membership_iff_intersection_empty",
+        "no_negative_membership_iff_domain_subset",
+        "some_negative_membership_iff_difference_nonempty",
+        "all_set_negative_membership_is_false",
+        "all_lone_negative_membership_is_false",
+        "all_some_negative_membership_iff_intersection_empty",
+        "all_one_negative_membership_iff_intersection_empty",
+        "subset_union_left",
+        "intersection_subset_left",
+        "difference_subset_left",
+        "union_subset_iff",
+        "subset_intersection_iff",
+        "union_not_subset_iff",
+        "not_subset_intersection_iff",
+        "union3_subset_iff",
+        "subset_intersection3_iff",
+        "subset_union_does_not_split_disjunctively",
+        "left_nested_difference_accumulates_union",
+        "right_nested_difference_is_not_left_nested",
+        "right_nested_difference_expands",
+        "intersection_extracts_difference",
+        "intersection_of_differences_accumulates_removed",
+        "intersection_of_three_differences_accumulates_removed",
+        "relation_product_difference_left_coordinate",
+        "relation_product_difference_right_coordinate",
+        "relation_product3_difference_middle_coordinate",
+        "relation_product_intersection_coordinatewise",
+        "three_relation_products_intersect_coordinatewise",
+        "relation_product3_intersection_coordinatewise",
+        "relation_product_respects_certified_operand_equalities",
+        "relation_join_respects_certified_operand_equalities",
+        "two_coordinate_product_difference_does_not_factor",
+        "difference_union_common_right",
+        "difference_intersection_common_right",
+        "difference_intersection_common_left",
+        "difference_union_common_left",
+        "relation_join_distributes_over_union_right",
+        "relation_join_distributes_over_union_left",
+        "nonempty_union_iff",
+        "no_union_iff",
+        "any_proposition_or_all_negated",
+        "all_propositions_excludes_any_negated",
+        "covered_dual_disjunction_with_extra_is_true",
+        "covered_dual_conjunction_with_extra_is_false",
+        "unary_and_binary_binding_profiles_are_distinct",
+        "converse_distributes_over_difference",
+        "relation_difference_itself_is_none",
+        "equivalent_relations_difference_is_none",
+        "none_difference_is_none",
+        "relation_difference_none_is_relation",
+        "relation_difference_univ_is_none",
+        "positive_one_over_self_difference_has_no_binding",
+        "positive_one_over_none_difference_has_no_binding",
+        "boolean_complement_or_is_true",
+        "boolean_complement_and_is_false",
+        "equivalent_boolean_complement_or_is_true",
+        "equivalent_boolean_complement_and_is_false",
+        "source_rewrite_before_snapshot_agrees",
+        "set_binding_does_not_prove_nonempty",
+        "lone_binding_does_not_prove_nonempty",
+        "some_binding_proves_nonempty",
+        "one_binding_proves_nonempty",
+        "exactly_binding_does_not_prove_nonempty",
+        "univ_without_inhabitant_witness_does_not_prove_nonempty",
+        "synthetic_label_never_proves_nonempty",
+        "in_unknown_none_stays_guarded",
+        "in_univ_none_without_inhabitant_stays_guarded",
+        "in_none_none_folds_true",
+        "in_proven_nonempty_none_folds_false",
+        "not_in_unknown_none_stays_guarded",
+        "not_in_univ_none_without_inhabitant_stays_guarded",
+        "not_in_none_none_folds_false",
+        "not_in_proven_nonempty_none_folds_true",
+        "snapshot_after_guard_agrees",
+        "ablation_mirror_counterexample_for_one_binding",
+        "ablation_mirror_counterexample_for_some_binding",
+        "existing_trace_kind_cannot_record_source_rewrite",
+        "translated_sat_has_solver_authority",
+        "translated_unsat_has_solver_authority",
+        "unsupported_has_only_parser_type_lowering_authority",
+        "every_command_has_exactly_one_authority_record",
+        "public_metadata_cannot_mint_builtin_set_authority",
+        "parser_factory_authorizes_builtin_set_constant",
+        "derived_rewrite_authorizes_builtin_set_constant",
+        "trusted_nullary_rebuild_preserves_builtin_set_authority",
+        "adding_a_child_revokes_builtin_set_authority",
+        "retired_node_semantic_payload_is_unreadable",
+        "retired_child_view_is_unreadable",
+        "exact_integer_plus_is_not_relational_union",
+        "exact_relation_plus_remains_relational_union",
+        "int_typed_surface_plus_remains_relational_union",
+        "int_typed_surface_minus_remains_relational_difference",
+        "integer_addition_is_not_idempotent_witness",
+        "exact_unary_int_classifier_iff",
+        "singleton_int_is_exact_unary_int",
+        "heterogeneous_int_signature_is_not_exact_unary_int",
+        "consecutive_nested_operator_occurrences_are_distinct",
+        "three_nested_ite_branch_occurrences_are_pairwise_distinct",
+        "distinct_equal_literal_occurrences_each_start_at_first_visit",
+        "swapped_equality_or_its_complement",
+        "enum_two_atom_cover",
+        "public_metadata_cannot_mint_builtin_identity",
+        "parser_factory_authorizes_builtin_identity",
+        "trusted_exact_clone_preserves_builtin_identity",
+        "identity_relation_join_left",
+        "identity_relation_join_right",
+        "transpose_identity_relation",
+        "transpose_relation_involutive",
+        "transpose_relation_product",
+        "converse_reverses_relation_join",
+        "domain_restriction_subset_relation",
+        "range_restriction_subset_relation",
+        "domain_restriction_relation_union",
+        "domain_restriction_relation_intersection",
+        "domain_restriction_relation_difference",
+        "domain_restriction_restrictor_union",
+        "domain_restriction_restrictor_intersection",
+        "domain_restriction_restrictor_difference",
+        "range_restriction_relation_union",
+        "range_restriction_relation_intersection",
+        "range_restriction_relation_difference",
+        "range_restriction_restrictor_union",
+        "range_restriction_restrictor_intersection",
+        "range_restriction_restrictor_difference",
+        "nested_domain_restrictions_intersect",
+        "nested_range_restrictions_intersect",
+        "domain_and_range_restrictions_commute",
+        "complete_restriction_union_grid_factors",
+        "diagonal_restriction_union_does_not_factor",
+        "two_coordinate_restriction_difference_does_not_factor",
+        "converse_join_same_order_is_not_general",
+        "positive_identity_path_implies_equality",
+        "transitive_closure_identity_relation",
+        "reflexive_transitive_closure_identity_relation",
+        "positive_path_transitive",
+        "reflexive_transitive_closure_transitive",
+        "path_of_reflexive_transitive_edges",
+        "transitive_closure_idempotent",
+        "transitive_of_reflexive_transitive_is_reflexive_transitive",
+        "reflexive_transitive_closure_idempotent",
+        "reflexive_of_transitive_is_reflexive_transitive",
+        "relation_join_associative",
+        "relation_join_distributes_over_union_middle_context",
+        "join_lifts_left_endpoint_domain_restriction",
+        "join_lifts_right_endpoint_range_restriction",
+        "join_transfers_internal_range_to_domain_restriction",
+        "unary_left_restriction_stays_on_join_boundary",
+        "unary_domain_and_range_restriction_coincide",
+        "binary_domain_and_range_restriction_do_not_generally_coincide",
+        "unary_right_range_or_domain_guard_has_same_join",
+        "unary_restrictions_are_intersection",
+        "unary_image_of_domain_restriction",
+        "static_all_commutes_with_always",
+        "changing_domain_blocks_all_always",
+        "next_observation_is_observation_of_prime",
+        "next_fixed_binding_observation",
+        "snapshot_membership_cannot_read_current_carrier",
+        "guarded_singleton_subdomain",
+        "guarded_difference_domain",
+        "historically_is_not_current_at_arbitrary_states",
+        "transpose_domain_restriction_is_range_restriction",
+        "transpose_range_restriction_is_domain_restriction",
+        "positive_path_prepend",
+        "converse_positive_path",
+        "converse_binary_involutive",
+        "converse_transitive_closure",
+        "converse_reflexive_transitive_closure",
+        "domain_restriction_univ_identity",
+        "range_restriction_univ_identity",
+        "domain_restriction_empty_restrictor",
+        "range_restriction_empty_restrictor",
+        "domain_restriction_empty_relation",
+        "range_restriction_empty_relation",
+        "converse_empty_binary_relation",
+        "no_positive_empty_path",
+        "transitive_closure_empty_relation",
+        "reflexive_transitive_closure_empty_relation"
+      ]
+    },
+    "P506SourceNonempty": {
+      "source": "docs/section3-repair-audit/formal/P506SourceNonempty.lean",
+      "audit": "local",
+      "imports": [
+        "Phase5SourceRules"
+      ],
+      "theorems": [
+        "P506SourceNonempty.issue_exact",
+        "P506SourceNonempty.lookup_visible",
+        "P506SourceNonempty.decision_exact",
+        "P506SourceNonempty.authorized_has_original",
+        "P506SourceNonempty.authorized_admitted_value_is_nonempty",
+        "P506SourceNonempty.missing_read_never_authorizes",
+        "P506SourceNonempty.shadow_blocks_outer",
+        "P506SourceNonempty.bare_nonunary_not_positive",
+        "P506SourceNonempty.every_observation_matches",
+        "P506SourceNonempty.changed_observation_blocks",
+        "P506SourceNonempty.current_authorized_value_is_nonempty"
+      ]
+    },
+    "P411ShapeIdentity": {
+      "source": "docs/section3-repair-audit/formal/P411ShapeIdentity.lean",
+      "audit": "local",
+      "imports": [],
+      "theorems": [
+        "ACGN.Eighth.P411.read32_u32",
+        "ACGN.Eighth.P411.readFrame_frame",
+        "ACGN.Eighth.P411.shape_roundtrip",
+        "ACGN.Eighth.P411.shape_frame_injective",
+        "ACGN.Eighth.P411.accepted_entry",
+        "ACGN.Eighth.P411.accepted_preserves",
+        "ACGN.Eighth.P411.run_preserves",
+        "ACGN.Eighth.P411.run_contains_every_pair",
+        "ACGN.Eighth.P411.observed_digest_nonaliasing",
+        "ACGN.Eighth.P411.repeated_pair_idempotent",
+        "ACGN.Eighth.P411.observed_collision_rejects"
+      ]
+    },
+    "P407QualifiedUses": {
+      "source": "docs/section3-repair-audit/formal/P407QualifiedUses.lean",
+      "audit": "local",
+      "imports": [
+        "P411ShapeIdentity"
+      ],
+      "theorems": [
+        "ACGN.Eleventh.P407.replayed_wire_reverse_use_iff",
+        "ACGN.Eleventh.P407.hash_and_reverse_edits_commute",
+        "ACGN.Eleventh.P407.compiled_pair_operations",
+        "ACGN.Eleventh.P407.compiled_trace_exact",
+        "ACGN.Eleventh.P407.accepted_wire_id_separates_owners",
+        "ACGN.Eleventh.P407.collect_exact",
+        "ACGN.Eleventh.P407.updateUses_lookup",
+        "ACGN.Eleventh.P407.write_key_exact",
+        "ACGN.Eleventh.P407.same_shape_other_owner_untouched",
+        "ACGN.Eleventh.P407.initial_exact",
+        "ACGN.Eleventh.P407.finite_updates_exact",
+        "ACGN.Eleventh.P407.stored_buckets_and_reverse_uses",
+        "ACGN.Eleventh.P407.two_owners_visible",
+        "ACGN.Eleventh.P407.retiring_one_owner",
+        "ACGN.Eleventh.P407.distinct_owner_distinct_wire_preimage"
+      ]
+    },
+    "P407Replay": {
+      "source": "docs/obligation-repair/eleventh-five/P407Replay.lean",
+      "audit": "local",
+      "imports": [
+        "P407QualifiedUses"
+      ],
+      "theorems": [
+        "ACGN.Eleventh.P407.Replay.flattened_invocation_membership"
+      ]
+    },
+    "P508EmptyBinding": {
+      "source": "docs/section3-repair-audit/formal/P508EmptyBinding.lean",
+      "audit": "local",
+      "imports": [
+        "P506SourceNonempty"
+      ],
+      "theorems": [
+        "P508EmptyBinding.derived_empty",
+        "P508EmptyBinding.no_value_iff_positive",
+        "P508EmptyBinding.bare_width_decides",
+        "P508EmptyBinding.shadow_reads_nearest",
+        "P508EmptyBinding.unrelated_coordinate_retains_domain",
+        "P508EmptyBinding.blocked_slot",
+        "P508EmptyBinding.any_blocked_excludes_assignments",
+        "P508EmptyBinding.nullable_value",
+        "P508EmptyBinding.all_nullable_zero_admit_empty_choices",
+        "P508EmptyBinding.nonempty_group_blocked",
+        "P508EmptyBinding.group_nullable_keeps_empty_tuple",
+        "P508EmptyBinding.quantifier_truth_at_blocked",
+        "P508EmptyBinding.grouped_dependent_fold_requires_no_assignment",
+        "P508EmptyBinding.no_slot_cannot_block",
+        "P508EmptyBinding.nullable_empty_semantics_in_any_width",
+        "P508EmptyBinding.replacing_wide_declaration_with_unary_none_changes_some"
+      ]
+    },
+    "A216Fallback": {
+      "source": "docs/section3-repair-audit/formal/A216Fallback.lean",
+      "audit": "local",
+      "imports": [],
+      "theorems": [
+        "A216.census_source_inverse",
+        "A216.registered_site_fallback",
+        "A216.census_iff",
+        "A216.admitted_key_unique",
+        "A216.duplicate_refused",
+        "A216.pristine_cached_fallback",
+        "A216.checked_program",
+        "A216.fixed_iff",
+        "A216.exact_order",
+        "A216.distinct_swap_detected",
+        "A216.fixed_without_root_authority",
+        "A216.hard_no_fallback",
+        "A216.separately_licensed_guard",
+        "A216.plain_arrow_ignores_guard",
+        "A216.pristine_key_injective",
+        "A216.visit_preserves",
+        "A216.arbitrary_history_sound",
+        "A216.hit_observes_cold",
+        "A216.unchecked_arity_refused",
+        "A216.checked_dispatch_fallback"
+      ]
+    },
+    "P406AbsorbedRecords": {
+      "source": "docs/section3-repair-audit/formal/P406AbsorbedRecords.lean",
+      "audit": "local",
+      "imports": [],
+      "theorems": [
+        "P406.rebuilt_proof_exists",
+        "P406.checked_sound",
+        "P406.step_source",
+        "P406.exact_ordered_sources",
+        "P406.no_silent_loss",
+        "P406.no_double_disposition",
+        "P406.exact_disposition_count",
+        "P406.step_other",
+        "P406.all_other_records",
+        "P406.exact_final_disposition",
+        "P406.rehomed_proof_and_identity",
+        "P406.duplicate_keeps_proof_and_ledger",
+        "P406.strict_live_key_has_no_prior_retirement",
+        "P406.installation_implies_completed_partition"
+      ]
+    }
+  },
+  "javaSupport": [],
+  "verifierInputs": {
+    "docs/obligation-repair/eleventh-five/P404WriteReplay.lean": "87faaac82565202d903aecc5d450613216a6f45591ed7c7654cc68db17dfb5dc",
+    "docs/section3-repair-audit/formal/P404InstalledParent.lean": "32e33394440b8493d52f677d6148bfc48f560809b444e62f39505da8ea324725",
+    "docs/obligation-repair/eleventh-five/java/P404ParentAssignmentTest.java": "ad696a549f1b98025a15553741ebba89a8f5bdcaaf2223e3f86821fedf36471b",
+    "docs/obligation-repair/eleventh-five/java/P404ParentWrites.java": "ee044cae705904f49bd3c77283e7344c5401811409cd8faccfa8b3238d05bfd0",
+    "docs/section3-repair-audit/formal/Phase5SourceRules.lean": "3f2195eb0d116569cc052b61b7ad437e9fea33a80f7368c75390fb295d052f12",
+    "docs/section3-repair-audit/formal/P506SourceNonempty.lean": "03c21f17a4ce8937e5a5c3606da7c90c61f6c6079175485ed6eb3ad9fc74c9a6",
+    "docs/section3-repair-audit/formal/P411ShapeIdentity.lean": "288ee17a65ed750019529e17505ed49386cbd648f32523400c0a84f57cdd8492",
+    "docs/section3-repair-audit/formal/P407QualifiedUses.lean": "067c5e04edbad5a162e0463ac927aa398fb5db791081e4fc2ac206a5272cd7de",
+    "docs/obligation-repair/eleventh-five/P407Replay.lean": "19755008d89ecb0ebcc255ae1874fadc78f61caf3f919ed3f002572eeb53331f",
+    "docs/obligation-repair/eleventh-five/java/P407QualifiedUsesTest.java": "d9940362a2b486830e322949cb900fc67d2629b1f4fcf352bb4cf363f706f997",
+    "docs/obligation-repair/eleventh-five/java/P407SourceContract.java": "e371fe47d50666596e420f0f89a17051fbd6da05753ab73d94714c3a6d67dd68",
+    "docs/obligation-repair/eleventh-five/java/P407WireOwnerView.java": "540a5f1de47eb568aa528545cc8dd2e7f9b7762cd8ab2e90c65cdeaff8da793a",
+    "docs/section3-repair-audit/formal/P508EmptyBinding.lean": "2b022dc1ee1c6e197fbb528630498c4a41639d54e040fb09df9d8964cfaa3218",
+    "docs/obligation-repair/eleventh-five/java/P508EmptyBindingTest.java": "2b1c910035a2ca0b31fa4273c87af79a161d4bde3f4a03f1ec61e6b50659cff1",
+    "docs/obligation-repair/eleventh-five/java/P508CompilerContract.java": "166a0afecd8747f68bb7f41b5e1455559abdd92b9595ad9beef7374202f5342b",
+    "docs/section3-repair-audit/formal/A216Fallback.lean": "fc4538af473690442acd07c79eebe392061557379235fb8b5bd8d1f6551377a4",
+    "docs/obligation-repair/eleventh-five/java/A216CompilerContract.java": "5ee5fc6871a042324b3b563b25fb4a5e08752e2aca75a580932c8f955a53e89a",
+    "docs/obligation-repair/eleventh-five/java/A216Qualification.java": "8d21a3c197dc9bee0a2e6345c76183d8aea59ebfe99a10ef7df833506a9af8c0",
+    "docs/obligation-repair/eleventh-five/java/A216SourceCases.java": "bbb487b1df1f0cf9cd024986158f33138ed3de4ab0a09d8f4d40d8723783dc90",
+    "docs/section3-repair-audit/formal/P406AbsorbedRecords.lean": "4730f827aff9c834bf4fb6b71f0357d7ede63f6ce439199bcfcddc750662b51f",
+    "docs/obligation-repair/eleventh-five/java/P406TransferProgram.java": "ad40313aa1c5351381b964b3ffb56457e76ba875411f9d6eb7862b3f6f33ba33",
+    "docs/obligation-repair/eleventh-five/java/P406AbsorbedRecordsTest.java": "167499635c8233b972a61036bc2945f540c888d53ddbe5754d45b5a8c5e7ac86"
+  },
+  "witnessInputs": [],
+  "phases": [
+    {
+      "parent": "P5-08",
+      "original": {
+        "class": "U/I",
+        "statement": "Empty-domain quantifier simplification fires only after proving the admissible binding set empty.",
+        "sha256": "7b2c8c1094ecd7448db125f0a836fbd21a155b902aee0750477deb109113262f"
+      },
+      "scope": "Quantifier simplification on an empty admissible binding domain in the canonical and ablation paths.",
+      "proof": "docs/section3-repair-audit/formal/P508EmptyBinding.lean",
+      "witness": "docs/obligation-repair/eleventh-five/java/P508EmptyBindingTest.java",
+      "class": "is.fivefivefive.CanDis.P508EmptyBindingTest",
+      "args": [
+        "{source}",
+        "{results}/empty-binding.tsv"
+      ],
+      "modules": [
+        "P508EmptyBinding"
+      ],
+      "predecessorOriginals": [
+        "P5-06"
+      ],
+      "theorems": [
+        "P508EmptyBinding.derived_empty",
+        "P508EmptyBinding.no_value_iff_positive",
+        "P508EmptyBinding.bare_width_decides",
+        "P508EmptyBinding.shadow_reads_nearest",
+        "P508EmptyBinding.unrelated_coordinate_retains_domain",
+        "P508EmptyBinding.blocked_slot",
+        "P508EmptyBinding.any_blocked_excludes_assignments",
+        "P508EmptyBinding.nullable_value",
+        "P508EmptyBinding.all_nullable_zero_admit_empty_choices",
+        "P508EmptyBinding.nonempty_group_blocked",
+        "P508EmptyBinding.group_nullable_keeps_empty_tuple",
+        "P508EmptyBinding.quantifier_truth_at_blocked",
+        "P508EmptyBinding.grouped_dependent_fold_requires_no_assignment",
+        "P508EmptyBinding.no_slot_cannot_block",
+        "P508EmptyBinding.nullable_empty_semantics_in_any_width",
+        "P508EmptyBinding.replacing_wide_declaration_with_unary_none_changes_some"
+      ],
+      "requiredLines": [
+        "P5-08 PASS cases=24 routes=7 observations=168 folded=92 retained=76 discardedApplications=0 compiler=32/888/4b53160d4eec36b975fa3e3099518a2a0602232852e49dc0ae1c9726f1fc89d0"
+      ],
+      "outputPins": {
+        "empty-binding.tsv": "90a60841ae17614155c0a057cf7c292627337c88070069ba6381d73b0ec12965",
+        "empty-binding-source.tsv": "4b53160d4eec36b975fa3e3099518a2a0602232852e49dc0ae1c9726f1fc89d0"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Empty-domain simplification on parsed binding groups, under the registered operator, multiplicity, width and scope interpretation. The kernel proves that the admitted fold requires absence of an assignment; 168 observations compare all seven ordinary routes.",
+        "clauses": [
+          {
+            "claim": "Empty-domain quantifier simplification requires proof that the admissible binding set is empty.",
+            "status": "DISCHARGED",
+            "theorems": [
+              "P508EmptyBinding.derived_empty",
+              "P508EmptyBinding.grouped_dependent_fold_requires_no_assignment",
+              "P508EmptyBinding.any_blocked_excludes_assignments",
+              "P508EmptyBinding.nullable_empty_semantics_in_any_width",
+              "P508EmptyBinding.quantifier_truth_at_blocked",
+              "P508EmptyBinding.replacing_wide_declaration_with_unary_none_changes_some"
+            ],
+            "rows": [
+              {
+                "file": "empty-binding.tsv",
+                "line": "some\tCANONICAL\t1x1:some\tfalse\tfalse"
+              },
+              {
+                "file": "empty-binding.tsv",
+                "line": "empty-binary-type\tCANONICAL\t1x2:set\ttrue\ttrue"
+              },
+              {
+                "file": "empty-binding.tsv",
+                "line": "shared-nullable\tCANONICAL\t2x2:set\ttrue\ttrue"
+              },
+              {
+                "file": "empty-binding.tsv",
+                "line": "dependent-positive\tCANONICAL\t1x1:one;1x1:one\tfalse\tfalse"
+              },
+              {
+                "file": "empty-binding.tsv",
+                "line": "inner-shadow-nullable\tCANONICAL\t1x1:one;1x1:set\ttrue\tretained"
+              },
+              {
+                "file": "empty-binding.tsv",
+                "line": "not-one-empty\tCANONICAL\t1x1:one\ttrue\ttrue"
+              },
+              {
+                "file": "empty-binding.tsv",
+                "line": "set\tRAW\t1x1:set\ttrue\tretained"
+              }
+            ],
+            "boundary": "Parsed binding domains, multiplicity, tuple width, sharing and lexical scope across seven ordinary execution paths. Both emitted truth constants and retained nullable cases are checked against the declared quantifier semantics."
+          }
+        ]
+      },
+      "executableProof": "P508EmptyBinding"
+    },
+    {
+      "parent": "A2-16",
+      "original": {
+        "class": "I",
+        "statement": "Unsupported chains fall back to exact fixed-binary structure and receive no equality authority.",
+        "sha256": "71a9d475059d53bdac10e484990b7e089460598f1f8ad9ceb043117f8b06e968"
+      },
+      "scope": "Unsupported dependent chains preserve fixed-binary structure and acquire no equality authority.",
+      "proof": "docs/section3-repair-audit/formal/A216Fallback.lean",
+      "witness": "docs/obligation-repair/eleventh-five/java/A216Qualification.java",
+      "class": "is.fivefivefive.CanDis.A216Qualification",
+      "args": [
+        "{source}",
+        "{results}"
+      ],
+      "modules": [
+        "A216Fallback"
+      ],
+      "predecessorOriginals": [
+        "A2-26"
+      ],
+      "theorems": [
+        "A216.census_source_inverse",
+        "A216.registered_site_fallback",
+        "A216.census_iff",
+        "A216.admitted_key_unique",
+        "A216.duplicate_refused",
+        "A216.pristine_cached_fallback",
+        "A216.checked_program",
+        "A216.fixed_iff",
+        "A216.exact_order",
+        "A216.distinct_swap_detected",
+        "A216.fixed_without_root_authority",
+        "A216.hard_no_fallback",
+        "A216.separately_licensed_guard",
+        "A216.plain_arrow_ignores_guard",
+        "A216.pristine_key_injective",
+        "A216.visit_preserves",
+        "A216.arbitrary_history_sound",
+        "A216.hit_observes_cold",
+        "A216.unchecked_arity_refused",
+        "A216.checked_dispatch_fallback"
+      ],
+      "requiredLines": [
+        "A216 qualification passed: 36 source methods, 13 proof controls, 28 source and unit observations"
+      ],
+      "outputPins": {
+        "a216-methods.tsv": "c6e997f35aeb68eab4acb0f38bc43ba88b1f36139095aaaf5ef52da0b211139a",
+        "a216-cases.tsv": "c159e8f94e816c2c5aa9cea82af8511576832c20bbdf2893137bbfcbf6507ec8",
+        "a216-program.txt": "2e988565258b4ffd2b7a0411088d976ee6fd4137d5a8e84de941add5ae0b7a88",
+        "a216-controls.tsv": "d3ab1c65c523f2545ab409020f8207247d9b66dbe0322735ce21b48182a3a7e1"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "The normal public adapter, its pristine class-ID census and ordered fixed-binary fallback. Genuine certificates or separately licensed guards can authorize other outcomes. Unsupported cases receive no new equality authority from fallback.",
+        "clauses": [
+          {
+            "claim": "Fallback preserves exact fixed-binary structure.",
+            "status": "DISCHARGED",
+            "theorems": [
+              "A216.registered_site_fallback",
+              "A216.exact_order",
+              "A216.distinct_swap_detected",
+              "A216.checked_dispatch_fallback",
+              "A216.unchecked_arity_refused"
+            ],
+            "rows": [
+              {
+                "file": "a216-cases.tsv",
+                "line": "equal-type-left-first\tordinary prepared adapter\tfixed-ARROW\tALLOY/PLUS | ALLOY/PLUS; dependent-children=0; projected=PLUS,PLUS; literals=1,2"
+              },
+              {
+                "file": "a216-cases.tsv",
+                "line": "equal-type-right-first\tordinary prepared adapter\tfixed-ARROW\tALLOY/PLUS | ALLOY/PLUS; dependent-children=0; projected=PLUS,PLUS; literals=2,1"
+              },
+              {
+                "file": "a216-cases.tsv",
+                "line": "join-ordered-dependent-children\tordinary prepared adapter\tfixed-JOIN\tALLOY/DEPENDENT-CHAIN/JOIN | ALLOY/DEPENDENT-CHAIN/ARROW; dependent-children=4; projected=JOIN,ARROW"
+              },
+              {
+                "file": "a216-cases.tsv",
+                "line": "join-ordered-typed-empty\tordinary prepared adapter\tfixed-JOIN\tALLOY/DEPENDENT-CHAIN/JOIN | ALLOY/PLUS; dependent-children=4; projected=JOIN,PLUS; empty-arity=1"
+              }
+            ],
+            "boundary": "Unlicensed dependent adaptation with two ordered operands uses the fixed-binary path; malformed arity and type disagreements fail the enclosing operation."
+          },
+          {
+            "claim": "Unsupported chains receive no equality authority.",
+            "status": "DISCHARGED",
+            "theorems": [
+              "A216.fixed_without_root_authority",
+              "A216.separately_licensed_guard",
+              "A216.hard_no_fallback",
+              "A216.pristine_key_injective",
+              "A216.registered_site_fallback"
+            ],
+            "rows": [
+              {
+                "file": "a216-controls.tsv",
+                "line": "omit-fixed-empty-laws\tREJECTED"
+              },
+              {
+                "file": "a216-controls.tsv",
+                "line": "omit-project-only-occurrence-bound-authority\tREJECTED"
+              },
+              {
+                "file": "a216-controls.tsv",
+                "line": "duplicate-ids\tREJECTED"
+              },
+              {
+                "file": "a216-cases.tsv",
+                "line": "hard-arrow\tordinary prepared adapter\thard disagreement\tno returned artifact"
+              },
+              {
+                "file": "a216-cases.tsv",
+                "line": "separate-guard\tordinary prepared adapter\tGUARDED-JOIN\tphase/0/matrix/child/0/child/0"
+              },
+              {
+                "file": "a216-cases.tsv",
+                "line": "exact-historical-binder\tordinary parsed binderAll\tdependent-JOIN\tphase/0/matrix/child/0/child/1/JOIN; leaves=[PRIMITIVE_SET_SINGLETON@AlloyCarrier(S), EXACT_RELATION@Rel(AlloySig:univ,AlloySig:univ)]; result=Rel(AlloySig:univ); boundary=LEFT_SUBTYPE_OF_RIGHT"
+              }
+            ],
+            "boundary": "No dependent or equality authority is introduced by fallback. A separately registered guard or an independently proved dependent chain has its own evidence."
+          }
+        ]
+      },
+      "executableProof": "A216Fallback"
+    },
+    {
+      "parent": "P4-07",
+      "original": {
+        "class": "U/I",
+        "statement": "Hash ownership and reverse uses are owner-qualified; no shape-only alias remains.",
+        "sha256": "0bd822921ae2c9f39329fd0cc21480548965c0e02e22a6470e479b1d93ed0a99"
+      },
+      "scope": "Hash ownership and reverse-use identity in owner-qualified graph and public certificate observations.",
+      "proof": "docs/section3-repair-audit/formal/P407QualifiedUses.lean",
+      "witness": "docs/obligation-repair/eleventh-five/java/P407QualifiedUsesTest.java",
+      "class": "is.fivefivefive.CanDis.theory.P407QualifiedUsesTest",
+      "args": [
+        "{source}",
+        "{fixtures}",
+        "{verifierJar}",
+        "{results}/p407.tsv"
+      ],
+      "modules": [
+        "P407QualifiedUses",
+        "P407Replay"
+      ],
+      "predecessorOriginals": [
+        "P4-11",
+        "P4-08"
+      ],
+      "theorems": [
+        "ACGN.Eleventh.P407.replayed_wire_reverse_use_iff",
+        "ACGN.Eleventh.P407.hash_and_reverse_edits_commute",
+        "ACGN.Eleventh.P407.compiled_pair_operations",
+        "ACGN.Eleventh.P407.compiled_trace_exact",
+        "ACGN.Eleventh.P407.accepted_wire_id_separates_owners",
+        "ACGN.Eleventh.P407.collect_exact",
+        "ACGN.Eleventh.P407.updateUses_lookup",
+        "ACGN.Eleventh.P407.write_key_exact",
+        "ACGN.Eleventh.P407.same_shape_other_owner_untouched",
+        "ACGN.Eleventh.P407.initial_exact",
+        "ACGN.Eleventh.P407.finite_updates_exact",
+        "ACGN.Eleventh.P407.stored_buckets_and_reverse_uses",
+        "ACGN.Eleventh.P407.two_owners_visible",
+        "ACGN.Eleventh.P407.retiring_one_owner",
+        "ACGN.Eleventh.P407.distinct_owner_distinct_wire_preimage"
+      ],
+      "requiredLines": [
+        "P407QualifiedUsesTest passed: rows=13 snapshots=4"
+      ],
+      "outputPins": {
+        "p407.tsv": "fe1361694cb26b80e8147ac4bb6d037c4955fdd43d711998d8b493ca8cf93416",
+        "p407-program.txt": "a122f68b312101a4a3bc447c7a3ed3538d011f7fb9d22b40da6d19c136b4f548",
+        "p407-observations.tsv": "d0acd60efc2370f625e64f6aa91e28b748bade47d56eb9b06de37703e6d24b87"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Finite reachable owner-qualified graph bucket and reverse-use updates. The ordinary graph exhibits two distinct owners sharing a shape and child; the standalone FULL fixture independently exhibits the checked shape preimage and a reverse use.",
+        "clauses": [
+          {
+            "claim": "Hash ownership and reverse uses both carry owner identity.",
+            "status": "DISCHARGED",
+            "theorems": [
+              "ACGN.Eleventh.P407.stored_buckets_and_reverse_uses",
+              "ACGN.Eleventh.P407.compiled_trace_exact",
+              "ACGN.Eleventh.P407.replayed_wire_reverse_use_iff",
+              "ACGN.Eleventh.P407.hash_and_reverse_edits_commute"
+            ],
+            "rows": [
+              {
+                "file": "p407.tsv",
+                "line": "shared-child-qualified-uses\t2"
+              },
+              {
+                "file": "p407.tsv",
+                "line": "surviving-qualified-uses\t1"
+              },
+              {
+                "file": "p407.tsv",
+                "line": "incomplete-reverse-observation\tREJECTED"
+              },
+              {
+                "file": "p407.tsv",
+                "line": "wire-reverse-uses\t1"
+              }
+            ],
+            "boundary": "Finite reachable owner-qualified graph bucket and reverse-use updates. The ordinary graph exhibits two distinct owners sharing a shape and child; the standalone FULL fixture independently exhibits the checked shape preimage and a reverse use."
+          },
+          {
+            "claim": "A shared shape cannot alias across owners.",
+            "status": "DISCHARGED",
+            "theorems": [
+              "ACGN.Eleventh.P407.same_shape_other_owner_untouched",
+              "ACGN.Eleventh.P407.two_owners_visible",
+              "ACGN.Eleventh.P407.retiring_one_owner",
+              "ACGN.Eleventh.P407.accepted_wire_id_separates_owners"
+            ],
+            "rows": [
+              {
+                "file": "p407.tsv",
+                "line": "shared-shape-owners\t2"
+              },
+              {
+                "file": "p407.tsv",
+                "line": "surviving-shape-owners\t1"
+              },
+              {
+                "file": "p407.tsv",
+                "line": "wire-owner-pairs\t4"
+              },
+              {
+                "file": "p407.tsv",
+                "line": "wire-shared-terms-across-history\t1"
+              }
+            ],
+            "boundary": "Finite reachable owner-qualified graph bucket and reverse-use updates. The ordinary graph exhibits two distinct owners sharing a shape and child; the standalone FULL fixture independently exhibits the checked shape preimage and a reverse use."
+          }
+        ]
+      },
+      "executableProof": "P407Replay"
+    },
+    {
+      "parent": "P4-04",
+      "original": {
+        "class": "U/P",
+        "statement": "A parent is installed only with a typed embedding and exact directed parent-certificate endpoint.",
+        "sha256": "ab47c5a21bf9acba434c49c0796b183d63d1a40b8d08fb61c120d67e948d4624"
+      },
+      "scope": "Typed embedding and oriented proof endpoint are necessary for installing every certifying parent edge.",
+      "proof": "docs/section3-repair-audit/formal/P404InstalledParent.lean",
+      "witness": "docs/obligation-repair/eleventh-five/java/P404ParentAssignmentTest.java",
+      "class": "is.fivefivefive.CanDis.theory.P404ParentAssignmentTest",
+      "args": [
+        "{source}",
+        "{results}"
+      ],
+      "modules": [
+        "P404InstalledParent",
+        "P404WriteReplay"
+      ],
+      "predecessorOriginals": [],
+      "theorems": [
+        "ACGN.Eleventh.P404.typed_identity",
+        "ACGN.Eleventh.P404.typed_composition",
+        "ACGN.Eleventh.P404.orient_exact",
+        "ACGN.Eleventh.P404.identity_exact",
+        "ACGN.Eleventh.P404.concatenate_exact",
+        "ACGN.Eleventh.P404.path_exact",
+        "ACGN.Eleventh.P404.historical_find_exact",
+        "ACGN.Eleventh.P404.certification_excludes_structural_write",
+        "ACGN.Eleventh.P404.every_certifying_write_exact",
+        "ACGN.Eleventh.P404.installed_parent_has_exact_certificate",
+        "ACGN.Eleventh.P404.replacement_commit_preserves_history",
+        "ACGN.Eleventh.P404.decoded_program_is_complete",
+        "ACGN.Eleventh.P404.prepared_writes_have_derivations",
+        "ACGN.Eleventh.P404.execution_preserves_both_stores",
+        "ACGN.Eleventh.P404.decoded_installation_exact"
+      ],
+      "requiredLines": [
+        "P404 compiler methods=106 privateReceivers=36 mapUses=9 writes=6 graphRoutes=9 sha256=b36c208fc0d2849b91835ccf4b745e13e27e8056af0a81dc7f182bfb45b8af6a",
+        "P404 replay accepted six compiled stores and rejected four altered write streams",
+        "P404 checked 18 assignment observations and existing unit controls"
+      ],
+      "outputPins": {
+        "parent-writes.tsv": "945ee3bdd662c6f438c5ea20dcab2302a511428eb560371b694fb58d56a04ade",
+        "parent-observations.tsv": "1e405b99a12380c206d627f078c516706b0846973190bc71867590c43977163b"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "All public certificate-enforcing graph constructors and their parent assignment stores, including compression and restriction. The package-only structural fixture separately permits uncertified test links.",
+        "clauses": [
+          {
+            "claim": "Parent installation requires a typed embedding.",
+            "status": "DISCHARGED",
+            "theorems": [
+              "ACGN.Eleventh.P404.typed_identity",
+              "ACGN.Eleventh.P404.typed_composition",
+              "ACGN.Eleventh.P404.decoded_installation_exact"
+            ],
+            "rows": [
+              {
+                "file": "parent-observations.tsv",
+                "line": "direct\t1\t2\t$s21:Int=$s12:Int,$s20:Bool=$s11:Bool\t1"
+              },
+              {
+                "file": "parent-writes.tsv",
+                "line": "register\tassignments.put(eclass.id(),ParentAssignment.root(eclass))"
+              }
+            ],
+            "boundary": "All public certificate-enforcing graph constructors and their parent assignment stores, including compression and restriction. The package-only structural fixture separately permits uncertified test links."
+          },
+          {
+            "claim": "Parent installation requires an exact directed parent-certificate endpoint.",
+            "status": "DISCHARGED",
+            "theorems": [
+              "ACGN.Eleventh.P404.orient_exact",
+              "ACGN.Eleventh.P404.path_exact",
+              "ACGN.Eleventh.P404.installed_parent_has_exact_certificate",
+              "ACGN.Eleventh.P404.decoded_installation_exact"
+            ],
+            "rows": [
+              {
+                "file": "parent-observations.tsv",
+                "line": "reversed-input-oriented\t2\t3\t$s31:Int=$s21:Int,$s30:Bool=$s20:Bool\t1"
+              },
+              {
+                "file": "parent-observations.tsv",
+                "line": "compressed\t1\t3\t$s31:Int=$s12:Int,$s30:Bool=$s11:Bool\t2"
+              },
+              {
+                "file": "parent-observations.tsv",
+                "line": "REQUIRED-raw-denied\t50\t51\tunchanged\t0"
+              },
+              {
+                "file": "parent-writes.tsv",
+                "line": "pathToRoot\tassignments.put(id,ParentAssignment.compressed(full))"
+              },
+              {
+                "file": "parent-observations.tsv",
+                "line": "TEST_ONLY-raw-denied\t50\t51\tunchanged\t0"
+              },
+              {
+                "file": "parent-observations.tsv",
+                "line": "structural-only\t50\t51\tuncertified\t1"
+              }
+            ],
+            "boundary": "All public graph constructors require certificates; TEST_ONLY rejects unproved links. The package-private structural fixture records an uncertified comparison."
+          }
+        ]
+      },
+      "executableProof": "P404WriteReplay"
+    },
+    {
+      "parent": "P4-06",
+      "original": {
+        "statement": "Every absorbed live record is rehomed with rebuilt e-class proof or explicitly retired with evidence.",
+        "class": "U/P",
+        "sha256": "f2cfca69464ef3a1113b9efa31d2eaa5d82f65d4221e5ea1c920cb2c17791f2a"
+      },
+      "scope": "Every installed parent edge on the ordinary strict graph has processed the full distinct key set of the absorbed child leader, including unions nested in insertion or rebuild. For each key it installs a checked owner-proof rehome or preserves the exact live duplicate and adds a certified retirement. The independent checkpoint verifier checks the wire fragment it admits. Writer export of collision retirements, open-ended JVM behavior and transaction rollback before edge installation lie outside the assertion.",
+      "proof": "docs/section3-repair-audit/formal/P406AbsorbedRecords.lean",
+      "witness": "docs/obligation-repair/eleventh-five/java/P406AbsorbedRecordsTest.java",
+      "class": "is.fivefivefive.CanDis.theory.P406AbsorbedRecordsTest",
+      "args": [
+        "{source}",
+        "{results}/p406-transfers.tsv"
+      ],
+      "modules": [
+        "P406AbsorbedRecords"
+      ],
+      "predecessorOriginals": [],
+      "theorems": [
+        "P406.rebuilt_proof_exists",
+        "P406.checked_sound",
+        "P406.step_source",
+        "P406.exact_ordered_sources",
+        "P406.no_silent_loss",
+        "P406.no_double_disposition",
+        "P406.exact_disposition_count",
+        "P406.step_other",
+        "P406.all_other_records",
+        "P406.exact_final_disposition",
+        "P406.rehomed_proof_and_identity",
+        "P406.duplicate_keeps_proof_and_ledger",
+        "P406.strict_live_key_has_no_prior_retirement",
+        "P406.installation_implies_completed_partition"
+      ],
+      "requiredLines": [
+        "P406TransferProgram: 50 methods, 5 bound call routes, 16 operations, sha256=d78c01b6b6ddb992fcf0fd141ad5757d74ae097958b1a20cc686a8df1accd27b",
+        "P406AbsorbedRecordsTest passed: 10 certified unions, two omission controls"
+      ],
+      "outputPins": {
+        "p406-transfers.tsv": "1045d3b297dff9a57ae4dd62bbde72ed45c2b256b970272bec37b736c2b5db48",
+        "p406-project.tsv": "d9df350db3cea68ee36baab043bed3b5b89979ad2ac243edad44c9c43bb78dc1",
+        "p406-program.tsv": "db152b1aa1c60216c00858cf482822756a68e4584d6de5a8d6b0ea458c4bc6fe"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Every installed parent edge on the ordinary strict graph has processed the full distinct key set of the absorbed child leader, including unions nested in insertion or rebuild. For each key it installs a checked owner-proof rehome or preserves the exact live duplicate and adds a certified retirement. The independent checkpoint verifier checks the wire fragment it admits. Writer export of collision retirements, open-ended JVM behavior and transaction rollback before edge installation lie outside the assertion.",
+        "clauses": [
+          {
+            "claim": "An installed absorption accounts exactly once for every previously live child-owned record.",
+            "status": "DISCHARGED",
+            "boundary": "Arbitrary finite distinct source keys of the strict child record. JDK-attributed traversal, checked branches and complete post-state precede the installed edge.",
+            "theorems": [
+              "P406.exact_ordered_sources",
+              "P406.no_silent_loss",
+              "P406.no_double_disposition",
+              "P406.exact_disposition_count",
+              "P406.all_other_records",
+              "P406.installation_implies_completed_partition"
+            ],
+            "rows": [
+              {
+                "file": "p406-project.tsv",
+                "line": "mixed-REBUILD_RECORD-2\t0,1\t1\t0\t1\t0,1\t1"
+              },
+              {
+                "file": "p406-transfers.tsv",
+                "line": "ordinary-UNION-1\t2\t2\t0\t0\t0"
+              },
+              {
+                "file": "p406-program.tsv",
+                "line": "install-directed-edge"
+              },
+              {
+                "file": "p406-transfers.tsv",
+                "line": "observer-UNION-0\t1\t1\t0\t0\t0"
+              }
+            ]
+          },
+          {
+            "claim": "A missing parent key receives the same shape, transported witness and rebuilt equation to the new owner.",
+            "status": "DISCHARGED",
+            "boundary": "The oriented source equation is composed with the included parent edge and renamed over the entire proof. The public witness reconstructs the renaming from the two independent occurrence witnesses and checks the exact resulting proof key.",
+            "theorems": [
+              "P406.rebuilt_proof_exists",
+              "P406.checked_sound",
+              "P406.exact_final_disposition",
+              "P406.rehomed_proof_and_identity"
+            ],
+            "rows": [
+              {
+                "file": "p406-transfers.tsv",
+                "line": "relabel-UNION-0\t1\t1\t0\t2\t1"
+              },
+              {
+                "file": "p406-program.tsv",
+                "line": "proof-orient-rename-edge-trans-rename-orient"
+              },
+              {
+                "file": "p406-program.tsv",
+                "line": "fresh-install-candidate-and-rehome"
+              }
+            ]
+          },
+          {
+            "claim": "An existing parent duplicate retains its own equation and receives explicit evidence for the absorbed record.",
+            "status": "DISCHARGED",
+            "boundary": "Both incoming and kept witnesses/equations are bound to the same parent shape along the installed edge. The child-qualified ledger binds the exact old record, derived candidate and existing retained record.",
+            "theorems": [
+              "P406.exact_final_disposition",
+              "P406.duplicate_keeps_proof_and_ledger",
+              "P406.strict_live_key_has_no_prior_retirement"
+            ],
+            "rows": [
+              {
+                "file": "p406-transfers.tsv",
+                "line": "ordinary-INSERT_COLLISION-2\t1\t0\t1\t0\t0"
+              },
+              {
+                "file": "p406-transfers.tsv",
+                "line": "rebuild-REBUILD_RECORD-1\t1\t0\t1\t0\t0"
+              },
+              {
+                "file": "p406-transfers.tsv",
+                "line": "mixed-REBUILD_RECORD-2\t2\t1\t1\t0\t0"
+              },
+              {
+                "file": "p406-program.tsv",
+                "line": "duplicate-keep-add-retirement"
+              }
+            ]
+          }
+        ]
+      },
+      "executableProof": "P406AbsorbedRecords"
+    }
+  ]
+}

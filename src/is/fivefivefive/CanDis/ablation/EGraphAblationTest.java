@@ -1,6 +1,15 @@
 package is.fivefivefive.CanDis.ablation;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import edu.mit.csail.sdg.alloy4.A4Reporter;
+import edu.mit.csail.sdg.parser.CompUtil;
+import parser.ast.nodes.ModelUnit;
+import parser.ast.nodes.Predicate;
+
+import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
 
 import is.fivefivefive.CanDis.core.egraph.AblationEngine;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
@@ -16,7 +25,7 @@ public final class EGraphAblationTest {
     private EGraphAblationTest() {
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         AlloyTerm a = AlloyTerm.atom("VAR", "a");
         AlloyTerm b = AlloyTerm.atom("VAR", "b");
         AlloyTerm andAB = AlloyTerm.node("BF/AND", a, b);
@@ -126,66 +135,73 @@ public final class EGraphAblationTest {
         checkAllEquivalent("union with none",
                 AlloyTerm.node("BE/PLUS", a, noneTerm), a);
 
-        AlloyTerm parsedNone = AlloyTerm.node(
+        AlloyTerm syntheticNone = AlloyTerm.node(
                 "UE/NOOP", AlloyTerm.atom("CONST", "none"));
-        AlloyTerm parsedCarrier = AlloyTerm.node(
+        AlloyTerm syntheticCarrier = AlloyTerm.node(
                 "UE/NOOP", AlloyTerm.atom("SIG", "A"));
         AlloyTerm boundX = AlloyTerm.atom("VAR", "x");
-        AlloyTerm falseBody = AlloyTerm.node("UF/SOME", parsedNone);
-        AlloyTerm trueBody = AlloyTerm.node("UF/NO", parsedNone);
-        checkAllEquivalent(
-                "bare-one parameter authority",
+        AlloyTerm falseBody = AlloyTerm.node("UF/SOME", syntheticNone);
+        AlloyTerm trueBody = AlloyTerm.node("UF/NO", syntheticNone);
+        checkUnownedBinding(
+                "synthetic bare-one parameter",
                 predicateWithDomain(
                         "x",
-                        parsedCarrier,
-                        AlloyTerm.node("BF/IN", boundX, parsedNone)),
-                predicateWithDomain("x", parsedCarrier, falseBody));
-        checkAllEquivalent(
-                "bare-one parameter authority under not-in",
+                        syntheticCarrier,
+                        AlloyTerm.node("BF/IN", boundX, syntheticNone)),
+                predicateWithDomain("x", syntheticCarrier, falseBody));
+        checkUnownedBinding(
+                "synthetic bare-one parameter under not-in",
                 predicateWithDomain(
                         "x",
-                        parsedCarrier,
-                        AlloyTerm.node("BF/NOT_IN", boundX, parsedNone)),
-                predicateWithDomain("x", parsedCarrier, trueBody));
-        AlloyTerm someCarrierDomain = AlloyTerm.node("UE/SOME", parsedCarrier);
-        checkAllEquivalent(
-                "some parameter authority",
+                        syntheticCarrier,
+                        AlloyTerm.node("BF/NOT_IN", boundX, syntheticNone)),
+                predicateWithDomain("x", syntheticCarrier, trueBody));
+        AlloyTerm someCarrierDomain = AlloyTerm.node("UE/SOME", syntheticCarrier);
+        checkUnownedBinding(
+                "synthetic some parameter",
                 predicateWithDomain(
                         "x",
                         someCarrierDomain,
-                        AlloyTerm.node("BF/IN", boundX, parsedNone)),
+                        AlloyTerm.node("BF/IN", boundX, syntheticNone)),
                 predicateWithDomain("x", someCarrierDomain, falseBody));
-        checkAllEquivalent(
-                "some parameter authority under not-in",
+        checkUnownedBinding(
+                "synthetic some parameter under not-in",
                 predicateWithDomain(
                         "x",
                         someCarrierDomain,
-                        AlloyTerm.node("BF/NOT_IN", boundX, parsedNone)),
+                        AlloyTerm.node("BF/NOT_IN", boundX, syntheticNone)),
                 predicateWithDomain("x", someCarrierDomain, trueBody));
         for (String multiplicity : List.of("UE/SETOF", "UE/LONE")) {
-            AlloyTerm nullableDomain = AlloyTerm.node(multiplicity, parsedCarrier);
+            AlloyTerm nullableDomain = AlloyTerm.node(multiplicity, syntheticCarrier);
             checkAllDistinct(
                     multiplicity + " parameter does not prove nonemptiness",
                     predicateWithDomain(
                             "x",
                             nullableDomain,
-                            AlloyTerm.node("BF/IN", boundX, parsedNone)),
+                            AlloyTerm.node("BF/IN", boundX, syntheticNone)),
                     predicateWithDomain("x", nullableDomain, falseBody));
         }
         AlloyTerm shadowedSet = quantifiedWithDomain(
                 "QF/ALL",
                 "x",
-                AlloyTerm.node("UE/SETOF", parsedCarrier),
-                AlloyTerm.node("BF/IN", boundX, parsedNone));
+                AlloyTerm.node("UE/SETOF", syntheticCarrier),
+                AlloyTerm.node("BF/IN", boundX, syntheticNone));
         AlloyTerm shadowedFalse = quantifiedWithDomain(
                 "QF/ALL",
                 "x",
-                AlloyTerm.node("UE/SETOF", parsedCarrier),
+                AlloyTerm.node("UE/SETOF", syntheticCarrier),
                 falseBody);
         checkAllDistinct(
                 "inner nullable binding shadows an outer positive parameter",
-                predicateWithDomain("x", parsedCarrier, shadowedSet),
-                predicateWithDomain("x", parsedCarrier, shadowedFalse));
+                predicateWithDomain("x", syntheticCarrier, shadowedSet),
+                predicateWithDomain("x", syntheticCarrier, shadowedFalse));
+
+        checkParsedBinding("A", "", true);
+        checkParsedBinding("one A", "", true);
+        checkParsedBinding("some A", "", true);
+        checkParsedBinding("set A", "", false);
+        checkParsedBinding("lone A", "", false);
+        checkParsedBinding("some A", "all x: set A | ", false);
 
         AlloyTerm iff = AlloyTerm.node("BF/IFF", a, b);
         AlloyTerm iffExpansion = AlloyTerm.node("BF/AND",
@@ -379,6 +395,49 @@ public final class EGraphAblationTest {
                 "slot-redundancy elimination must be observable in the statistics");
 
         System.out.println("EGraph ablation tests passed.");
+    }
+
+    private static void checkParsedBinding(String domain, String prefix, boolean positive) throws Exception {
+        String source = "sig A {}\n"
+                + "pred included[x: " + domain + "] { " + prefix + "x in none }\n"
+                + "pred excluded[x: " + domain + "] { " + prefix + "x not in none }\n"
+                + "pred falsehood[x: " + domain + "] { " + prefix + "some none }\n"
+                + "pred truth[x: " + domain + "] { " + prefix + "no none }\n";
+        ModelUnit model = new ModelUnit(null, CompUtil.parseEverything_fromString(A4Reporter.NOP, source));
+        Map<String, Predicate> predicates = new HashMap<>();
+        for (Predicate predicate : model.getPredDeclList()) {
+            predicates.put(predicate.getName(), predicate);
+        }
+        for (String name : List.of("included", "excluded")) {
+            Predicate guard = predicates.get(name);
+            Predicate reference = predicates.get(name.equals("included") ? "falsehood" : "truth");
+            String description = "parsed " + domain + " " + prefix + name;
+            AlloyTerm left = AlloyAstTermAdapter.fromPredicate(guard, false);
+            AlloyTerm right = AlloyAstTermAdapter.fromPredicate(reference, false);
+            if (positive) {
+                checkAllEquivalent(description, left, right);
+            } else {
+                checkAllDistinct(description, left, right);
+            }
+            check(new SlottedEGraph(true).compare(
+                    AlloyAstTermAdapter.fromPredicate(guard, true),
+                    AlloyAstTermAdapter.fromPredicate(reference, true)).equivalent == positive,
+                    "typed slotted binding decision for " + description);
+        }
+    }
+
+    private static AlloyTerm withSyntheticSlotTypes(AlloyTerm term) {
+        if (term.isVariable()) {
+            return AlloyTerm.typedVariable(term.atom(), "A");
+        }
+        return AlloyTerm.of(term.head(), term.atom(), term.children().stream()
+                .map(EGraphAblationTest::withSyntheticSlotTypes).toList());
+    }
+
+    private static void checkUnownedBinding(String description, AlloyTerm left, AlloyTerm right) {
+        checkAllDistinct(description, left, right);
+        check(!new SlottedEGraph(true).compare(withSyntheticSlotTypes(left), withSyntheticSlotTypes(right)).equivalent,
+                "typed slotted e-graph must preserve " + description);
     }
 
     private static void checkAllEquivalent(String rule, AlloyTerm left, AlloyTerm right) {

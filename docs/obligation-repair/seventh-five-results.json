@@ -1,0 +1,1012 @@
+{
+  "baseCommit": "69c72235d414edebd272095c2475654fb36177e5",
+  "builds": [
+    {
+      "commands": [
+        {
+          "argvSha256": "9d3554e88e721123f7517b6358fd0ec51d6ea18894acfe55106823a83280716c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "javac-version",
+          "logSha256": "785311ab4e5a27bedf1ffec541d403f660832b61852266829b28ef8ef7427550"
+        },
+        {
+          "argvSha256": "de5a0d6f5a14f5b86c07d0898ecca04584eb7a5c0d67574526b438ff74a44ac6",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "java-version",
+          "logSha256": "1cda7f6f8a5d4b797aaacf251df2ea6490a4d824472916ebeb0bc6ea5d244c7c"
+        },
+        {
+          "argvSha256": "083c572932ffac59a7c7a8a7005cb25ca5e72d606badfcd45beab1196c9594a3",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "lean-version",
+          "logSha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a"
+        },
+        {
+          "argvSha256": "429445e0ddc9c1b0f391120c858e701e7ac59cd2eef61812eeed2aa930df6a12",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-init",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "824fd8f0e0e9d08266b95e371a82feff7f830bf60042a842d0e765567f311b61",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-add",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "1014843a006005b094dbe5ea7c8a2ab712aedfc6f2c7f7221ccfcee125c8fa06",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-commit",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "1c9c02b540314470f457962d1d84c8b1a5591b6e3e62fd4d2852cdfee22d4b1a",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-sha",
+          "logSha256": "3c51e26b14b5616685031d648db2211313aec39c81351a044cc2f89ad74861f5"
+        },
+        {
+          "argvSha256": "f4828891e3e88dd4bc676a66e6fb2af9b4d414dd77d9aa08cf57a42a34dcbebf",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "qualification-guard-controls",
+          "logSha256": "a86056eb03e31d447e3df993faf9e2df99da551cdbe87eb3c1590af779b171dc"
+        },
+        {
+          "argvSha256": "0aa7fd276cfe9d661bfa69d2af67dff81730bbf79a838f47e3f516eeca90f367",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "producer",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "1c5f9dbc0b1536399dcab634c55bf578db2bc917dbd69c954428fc7760545dce",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "3f465d886c2bd0f3275f69e67b4da61f73c39093b8cc6479b1b1598257219d8a",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier-tests",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "d949d2db0f7c50dc86d1af918528de8262bad5005b2e45d8f19ac237aa57f0d0",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "producer-jar",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "44dde6730d6dda53eff50ee279ac1e23c59659642473d46641029a07911e0c12",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier-jar",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "eb1419970cc64e25954e2676b9b7240ac1fa6101a0830e95eb98ff81e99e658d",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "writer",
+          "logSha256": "9a0966c38039fda816f9dade4129aa802fe8226fd1a2c3c87fca87159a6671b0"
+        },
+        {
+          "argvSha256": "d2cc94585b8e18b0ce25f3b831cad8d56419835bef4a808c6814cf02a6ec2256",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-inspect",
+          "logSha256": "3c853180ab58f58874eca799a49c51ff5797f242036324dc4f9d1a2da1d75bb6"
+        },
+        {
+          "argvSha256": "78f37dbd3b131909865f7bbb2e20505206a6cd231df035a5d0fe79b01c84da25",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "public-accepted",
+          "logSha256": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760"
+        },
+        {
+          "argvSha256": "68a91f64b402156dd280630f2becfd5875c58e0a9ca7953630c862d3ec356f33",
+          "exit": 3,
+          "expectedExit": 3,
+          "id": "public-no-authority",
+          "logSha256": "b564c3c29fb3e1da33fb834fc934e033c6d6ea57ffe3737829c5199f5192bf3f"
+        },
+        {
+          "argvSha256": "7e115b59e7752ad3c320c15072764ff9a0a91504c12ad5d54b7fc2f0ed8ed5e5",
+          "exit": 2,
+          "expectedExit": 2,
+          "id": "public-foreign-theory",
+          "logSha256": "3287aa469e1aded645ece522579c1999d2a733947da406d90474ff99f602f4b9"
+        },
+        {
+          "argvSha256": "c3d232e1ae35b00bc63fea2e243c1f2c255c6d37c74a1fec8154639ac44d5602",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "public-byte-mutations",
+          "logSha256": "6e10bec6a1245f0e19079b3a8d19b9b1d32067d9a66cb5e6108b28c2cb688748"
+        },
+        {
+          "argvSha256": "cf57eeb1087f60ed1af5e83880c3b229717311370e953f32654519a0f3da6c5c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "source-authority-probes",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "3f5a1fe998cc6f472707288a56802e3e25e60d4f4f3ed294e7fc69d2ac4dd03c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-15-lean",
+          "logSha256": "799a9965ea0df76926d108eb33d141dd4f36d59bef1d52ab21fa0a823aa5e16a"
+        },
+        {
+          "argvSha256": "9787d2e3e107d8202572bf3525776d26560b58341dc397b2716ab18020fb1f3a",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-15-witness",
+          "logSha256": "87c1889b35df65297bab25b8b4ce2162932bf12fbab3c8d4e1071a33ced68f04"
+        },
+        {
+          "argvSha256": "9aa80edc0c758d6fcd9726e5b7ebf101429b3ed77193ef78fbbda353683f1351",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-08-lean",
+          "logSha256": "365a61a337348ff754299e331efb9a49bc5bf864c909b6b7fb4a29494e00d5fa"
+        },
+        {
+          "argvSha256": "fe416ff8cf8c3d9e86b247a6dbf8e4b067f275a719996fed8dc2731a67b4e417",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-08-witness",
+          "logSha256": "85a20f20bbb6e361c81c7dd273358cad5c052ad10d6b12118ddebe2c124003fd"
+        },
+        {
+          "argvSha256": "d9de76672fbbe52ad112448200a34875c0b049753e585819095e0595e7162fb8",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-17-lean",
+          "logSha256": "1c145a509beed25d6d3ed7d630ac84ce6c61809361040592faee65d768b1d09b"
+        },
+        {
+          "argvSha256": "4bc9aced5e3daa8ce31e964c508a81062a8bf7c127703a67c27ef1d38e478aad",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-17-witness",
+          "logSha256": "69764262d34d0362d9a8918e181ff87f31630604fe854e3b434e958a489fc53f"
+        },
+        {
+          "argvSha256": "7884ccb2adab0096f9a7fb96ad240e1c184bfdb7473d9932015b2f67c7f41c62",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-13-lean",
+          "logSha256": "7ffaa4a9f82694903df6417a6e3adfaf107df43567fea546e904baabc5e0563e"
+        },
+        {
+          "argvSha256": "dde7ef6d52f8730d0ddb3c6a6aa597c61d4b7dd6af2c47271b01cb0a48637ac6",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-13-witness",
+          "logSha256": "9abcde45e3c72f355504323335a668244ee1d02fb4f62c1fe342e6ac595b8a63"
+        },
+        {
+          "argvSha256": "7806a70e46f494f122b2273276258b811e80e3a87c8e952257028777bfab9729",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-07-lean",
+          "logSha256": "f4efec5ac149736416abd931a84158cc4b02a58fdb915990b3076037dbb7c280"
+        },
+        {
+          "argvSha256": "f6338e09aa34db47a67d86c2205463324a8c3a5ca51cf3b45922a346cfe6dca4",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-07-witness",
+          "logSha256": "ee10af6d1706ba6e9a918a363329551a1c1cb7f95af0d7fa136d7cf214edace1"
+        },
+        {
+          "argvSha256": "7802b510fa29982fcf0d3882b8332af4fb50dc6a278b8084959df3bd4077202c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-07-P6-13-witness",
+          "logSha256": "846a7e3352963ea06bb25b01521fd1dfcd8c92d23847bfa08c26ac261aab4629"
+        }
+      ],
+      "evidenceHash": "f96b347bd49bd198c9136b42049362d42e83263474016308b9bc03aabee1e545",
+      "number": 1,
+      "status": "PASS"
+    },
+    {
+      "commands": [
+        {
+          "argvSha256": "38784bbb3a0149408cc0d1b6f487a500c7f1bd1bd18deff4bee80d9772eeacfe",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "javac-version",
+          "logSha256": "785311ab4e5a27bedf1ffec541d403f660832b61852266829b28ef8ef7427550"
+        },
+        {
+          "argvSha256": "98677ff666d59c08a747b73e9e72867b07e66142ea2330bddc1c155139c2149b",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "java-version",
+          "logSha256": "1cda7f6f8a5d4b797aaacf251df2ea6490a4d824472916ebeb0bc6ea5d244c7c"
+        },
+        {
+          "argvSha256": "083c572932ffac59a7c7a8a7005cb25ca5e72d606badfcd45beab1196c9594a3",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "lean-version",
+          "logSha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a"
+        },
+        {
+          "argvSha256": "429445e0ddc9c1b0f391120c858e701e7ac59cd2eef61812eeed2aa930df6a12",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-init",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "824fd8f0e0e9d08266b95e371a82feff7f830bf60042a842d0e765567f311b61",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-add",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "1014843a006005b094dbe5ea7c8a2ab712aedfc6f2c7f7221ccfcee125c8fa06",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-commit",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "1c9c02b540314470f457962d1d84c8b1a5591b6e3e62fd4d2852cdfee22d4b1a",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-git-sha",
+          "logSha256": "3c51e26b14b5616685031d648db2211313aec39c81351a044cc2f89ad74861f5"
+        },
+        {
+          "argvSha256": "f64f6c61bbd0b38f762ac0cb9622b71563e2af55034363eed29930d058ee8687",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "qualification-guard-controls",
+          "logSha256": "a86056eb03e31d447e3df993faf9e2df99da551cdbe87eb3c1590af779b171dc"
+        },
+        {
+          "argvSha256": "924950245d8782500ceda020b57fd6a36890dd071a96e0b56546aa9e8a30c1a6",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "producer",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "62a92368036ea9629ef10e94f5f673a22b7b135b3ee8b45bb0e2c79b1eb7345e",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "fd9ace7380afdf25e114fe3550b0ac8c08ecbc8a566aaa97ebc9e9db4bece5fb",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier-tests",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "4cb1de61ae887f57089b8e463a7d23210e8ac2be50b2dfb29a35470843e4c8ef",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "producer-jar",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "096181553734e5a62c6aea648e5a1c16a037ce38387f7588d337bfc86cd24313",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "verifier-jar",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "02ec194e42f5cbf180b8889a8b9d65fda250d8960eef140c75cd94b2cc682b77",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "writer",
+          "logSha256": "e55be27253e46964c928516342cf092d29c4387a0a347b0b297dd708e070d54a"
+        },
+        {
+          "argvSha256": "40df96e04fce3f308474b25043df97921b3fe99b4050d7e4a2b5068514da26ca",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "fixture-inspect",
+          "logSha256": "3c853180ab58f58874eca799a49c51ff5797f242036324dc4f9d1a2da1d75bb6"
+        },
+        {
+          "argvSha256": "518475fdd618c5a9361778bd1338fe569bdd0010d529439cb93bd9feb4994373",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "public-accepted",
+          "logSha256": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760"
+        },
+        {
+          "argvSha256": "44688fcfa361646565f4ca4b21977c0bc03f311b09abdc14b14718a839b09728",
+          "exit": 3,
+          "expectedExit": 3,
+          "id": "public-no-authority",
+          "logSha256": "b564c3c29fb3e1da33fb834fc934e033c6d6ea57ffe3737829c5199f5192bf3f"
+        },
+        {
+          "argvSha256": "2843f75c01a3ddf70400445d1ed5c8af3abb56488bc8e763665027b1231f2737",
+          "exit": 2,
+          "expectedExit": 2,
+          "id": "public-foreign-theory",
+          "logSha256": "3287aa469e1aded645ece522579c1999d2a733947da406d90474ff99f602f4b9"
+        },
+        {
+          "argvSha256": "4ae8e8f695bed1915b98b1b19aff9929424396a7db66bd80d84306b4c0a0e2d6",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "public-byte-mutations",
+          "logSha256": "6e10bec6a1245f0e19079b3a8d19b9b1d32067d9a66cb5e6108b28c2cb688748"
+        },
+        {
+          "argvSha256": "01706304ccb14226b3f68418f0b89590fe0a14817676e310e7b13726731691d2",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "source-authority-probes",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "argvSha256": "3f5a1fe998cc6f472707288a56802e3e25e60d4f4f3ed294e7fc69d2ac4dd03c",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-15-lean",
+          "logSha256": "799a9965ea0df76926d108eb33d141dd4f36d59bef1d52ab21fa0a823aa5e16a"
+        },
+        {
+          "argvSha256": "d6e0527d69f793e43e0dda0bab4f43868f010bb0b4a7daa44132829f0ad7628e",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-15-witness",
+          "logSha256": "87c1889b35df65297bab25b8b4ce2162932bf12fbab3c8d4e1071a33ced68f04"
+        },
+        {
+          "argvSha256": "9aa80edc0c758d6fcd9726e5b7ebf101429b3ed77193ef78fbbda353683f1351",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-08-lean",
+          "logSha256": "365a61a337348ff754299e331efb9a49bc5bf864c909b6b7fb4a29494e00d5fa"
+        },
+        {
+          "argvSha256": "2c77ddf0ed3cf6e6c9a2e89fc5394e3917de3b0b8e703cf51d413d99d12f41a9",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-08-witness",
+          "logSha256": "85a20f20bbb6e361c81c7dd273358cad5c052ad10d6b12118ddebe2c124003fd"
+        },
+        {
+          "argvSha256": "d9de76672fbbe52ad112448200a34875c0b049753e585819095e0595e7162fb8",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-17-lean",
+          "logSha256": "1c145a509beed25d6d3ed7d630ac84ce6c61809361040592faee65d768b1d09b"
+        },
+        {
+          "argvSha256": "7c26b465b0fda529eb292d227af324b3b378ba292680048ba778d3a5fcb1f9cd",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "A2-17-witness",
+          "logSha256": "69764262d34d0362d9a8918e181ff87f31630604fe854e3b434e958a489fc53f"
+        },
+        {
+          "argvSha256": "7884ccb2adab0096f9a7fb96ad240e1c184bfdb7473d9932015b2f67c7f41c62",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-13-lean",
+          "logSha256": "7ffaa4a9f82694903df6417a6e3adfaf107df43567fea546e904baabc5e0563e"
+        },
+        {
+          "argvSha256": "76666dd051547478379115623b17b8310433863b0573c6f75f6b85e03e1c6f70",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "P6-13-witness",
+          "logSha256": "9abcde45e3c72f355504323335a668244ee1d02fb4f62c1fe342e6ac595b8a63"
+        },
+        {
+          "argvSha256": "7806a70e46f494f122b2273276258b811e80e3a87c8e952257028777bfab9729",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-07-lean",
+          "logSha256": "f4efec5ac149736416abd931a84158cc4b02a58fdb915990b3076037dbb7c280"
+        },
+        {
+          "argvSha256": "21f31f5843eef78e244de7574abb10e132f1fece28f6e2ac6f81ac283ec85e41",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-07-witness",
+          "logSha256": "ee10af6d1706ba6e9a918a363329551a1c1cb7f95af0d7fa136d7cf214edace1"
+        },
+        {
+          "argvSha256": "0cfaba55051dda62652914d4f2c8e7f0820a2d975ce6ecb4a91f767d8afc2b4f",
+          "exit": 0,
+          "expectedExit": 0,
+          "id": "G-07-P6-13-witness",
+          "logSha256": "846a7e3352963ea06bb25b01521fd1dfcd8c92d23847bfa08c26ac261aab4629"
+        }
+      ],
+      "evidenceHash": "f96b347bd49bd198c9136b42049362d42e83263474016308b9bc03aabee1e545",
+      "number": 2,
+      "status": "PASS"
+    }
+  ],
+  "closureId": "seventh-public-certification-v1-cc98674e9fe78ab3",
+  "commonEvidence": {
+    "claims": {
+      "A2-15": {
+        "observations": [
+          "A2-15\ttwo-same-type-arrows\tACCEPT 2 paths, 4 typed field leaves, 2 ledger keys",
+          "A2-15\treversed-predicate\tACCEPT independently selected reverse order",
+          "A2-15\tmissing-ledger-row\tREJECT different construction ledger multiset",
+          "A2-15\tcoordinated-omission\tREJECT different retained construction multiset",
+          "A2-15\textra-ledger-count\tREJECT different construction ledger multiset",
+          "A2-15\tcoordinated-extra\tREJECT different retained construction multiset",
+          "A2-15\tsame-size-coordinated-substitution\tREJECT different retained construction multiset",
+          "A2-15\tforeign-retained-matrix\tREJECT different selected predicate",
+          "A2-15\tsame-root-typed-operand-swap\tREJECT different ordered typed ARROW leaves",
+          "A2-15\tforeign-selected-predicate\tREJECT different source bytes or selected predicate",
+          "A2-15\tdifferent-original-bytes\tREJECT different source bytes or selected predicate",
+          "A2-15\tnested-repeated-leaves\tACCEPT 2 distinct associations, 6 typed field leaves",
+          "A2-15\tsome-signature-product\tACCEPT 1 path, 3 typed signature leaves",
+          "A2-15\tunsupported-body\tREJECT unsupported predicate body",
+          "RawArrowCensusTest: PASS (14 cases)"
+        ],
+        "outputSha256": {},
+        "proof": "docs/obligation-repair/seventh-five/RawArrowOccurrenceCensus.lean",
+        "proofAuditSha256": "799a9965ea0df76926d108eb33d141dd4f36d59bef1d52ab21fa0a823aa5e16a",
+        "scope": "Recorded ARROW applications in the independently decoded selected-predicate fragment and their admitted concrete construction evidence.",
+        "sourceSha256": "67ca7a5fee4cc57ff4fb0b0f937f90a24c0263ab8a9947f0ce28b74c4099be6f",
+        "theorems": [
+          "ACGN.Seventh.RawArrowOccurrenceCensus.frontier_resolves",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.owner_at_path_unique",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.frontier_cardinality",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.frontier_typed_order",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.census_addresses",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.accepted_ledger_resolves",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.accepted_counts",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.included_roles_distinct",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.coordinated_omission_rejected",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.extra_occurrence_rejected",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.equal_size_substitution_rejected",
+          "ACGN.Seventh.RawArrowOccurrenceCensus.foreign_subject_rejected"
+        ],
+        "witness": "docs/obligation-repair/seventh-five/java/RawArrowCensusTest.java"
+      },
+      "A2-17": {
+        "observations": [
+          "A217ProjectionTest passed: observations=21"
+        ],
+        "outputSha256": {
+          "projection.tsv": "31d5bfcf8c4f9efdf815782f766633bee053151e201d57d63194f74ac5b923fd"
+        },
+        "proof": "docs/obligation-repair/seventh-five/A217Projection.lean",
+        "proofAuditSha256": "1c145a509beed25d6d3ed7d630ac84ce6c61809361040592faee65d768b1d09b",
+        "scope": "Projection and per-index validation for an admitted immutable occurrence binding and registered detached, foreign and changed source controls.",
+        "sourceSha256": "313a4d426066a36a85e420cb6b328317e1a43f5847a9f59f6b628a338730622e",
+        "theorems": [
+          "ACGN.Seventh.A217.flatten_length",
+          "ACGN.Seventh.A217.select_agrees",
+          "ACGN.Seventh.A217.select_recovers_ordinal",
+          "ACGN.Seventh.A217.repeated_values_keep_distinct_addresses",
+          "ACGN.Seventh.A217.accepted_index",
+          "ACGN.Seventh.A217.mismatched_index_rejected"
+        ],
+        "witness": "docs/obligation-repair/seventh-five/java/A217ProjectionTest.java"
+      },
+      "G-07": {
+        "observations": [
+          "BoundedAssignmentMinimumTest passed: cases=23"
+        ],
+        "outputSha256": {
+          "operations.tsv": "46ff5831fe68a2714dac2bb85779c7019535f9f46fe127d1e6eb9bf88c214bfb"
+        },
+        "proof": "docs/obligation-repair/seventh-five/BoundedAssignmentMinimum.lean",
+        "proofAuditSha256": "f4efec5ac149736416abd931a84158cc4b02a58fdb915990b3076037dbb7c280",
+        "scope": "Faithfully identified admissible alignments and fast/certified operation costs on the registered closed two-child assignment fragment.",
+        "sourceSha256": "1cec37271d467e2cec99227ea96cadbfc061c06bf933be233f0310d42fceab1f",
+        "theorems": [
+          "ACGN.Seventh.BoundedAssignment.maps_exact",
+          "ACGN.Seventh.BoundedAssignment.maps_once",
+          "ACGN.Seventh.BoundedAssignment.padded_maps_exact",
+          "ACGN.Seventh.BoundedAssignment.minimum_over_all_admissible",
+          "ACGN.Seventh.BoundedAssignment.accepts_exact",
+          "ACGN.Seventh.BoundedAssignment.foreign_owner_rejected",
+          "ACGN.Seventh.BoundedAssignment.incomplete_or_foreign_actions_rejected",
+          "ACGN.Seventh.BoundedAssignment.suboptimal_rejected"
+        ],
+        "witness": "docs/obligation-repair/seventh-five/java/BoundedAssignmentMinimumTest.java"
+      },
+      "G-08": {
+        "observations": [
+          "ArrowSourceWireRegressionTest passed: cases=14"
+        ],
+        "outputSha256": {
+          "occurrences.tsv": "e2a83d200b72ad31bd0b3ddd5bc34a5d36ca0dca160b9b33b30170de13e2f708"
+        },
+        "proof": "docs/obligation-repair/seventh-five/G08ArrowSourceWire.lean",
+        "proofAuditSha256": "365a61a337348ff754299e331efb9a49bc5bf864c909b6b7fb4a29494e00d5fa",
+        "scope": "Source-selected occurrence identities, producer ownership, supported transfers and independent public-wire obligations on registered typed ARROW cases.",
+        "sourceSha256": "d79ee125e20f90766f2437061c90c6294196c403a53954179b81b25d1b9342f1",
+        "theorems": [
+          "Seventh.G08.census_lookup",
+          "Seventh.G08.lookup_ext",
+          "Seventh.G08.census_determines_source",
+          "Seventh.G08.verified_preserves_origin",
+          "Seventh.G08.missing_or_other_trust_blocks"
+        ],
+        "witness": "docs/obligation-repair/seventh-five/java/ArrowSourceWireRegressionTest.java"
+      },
+      "P6-13": {
+        "observations": [
+          "P613SourcePairTest passed: cases=18 owners=4"
+        ],
+        "outputSha256": {
+          "pair/p613-cases.tsv": "696b6d3ea397385f8004f417435c0815c9a32d0577e40caed77457e75a62508e",
+          "pair/p613-owners.tsv": "d30de93619fdcf003f008afb9ec8d247f836c925153c6edb3f99bcd33618de58"
+        },
+        "proof": "docs/obligation-repair/seventh-five/P613PairComposition.lean",
+        "proofAuditSha256": "7ffaa4a9f82694903df6417a6e3adfaf107df43567fea546e904baabc5e0563e",
+        "scope": "Separate verified side derivations and exact common endpoint for retained source-pinned PAIR fixtures, including the registered mismatched and missing authority controls.",
+        "sourceSha256": "e3f2cccb38a4b1c90696824d766637090d54a62bae01f8e8954cea510e0b3e03",
+        "theorems": [
+          "ACGN.Seventh.P613.wrong_middle_refused",
+          "ACGN.Seventh.P613.foreign_subject_refused",
+          "ACGN.Seventh.P613.same_declaration_separate_bytes",
+          "ACGN.Seventh.P613.minima_of_same_orbit",
+          "ACGN.Seventh.P613.sort_mismatch_refused",
+          "ACGN.Seventh.P613.unshared_vocabulary_refused",
+          "ACGN.Seventh.P613.side_preserves",
+          "ACGN.Seventh.P613.pair_composition"
+        ],
+        "witness": "docs/obligation-repair/seventh-five/java/P613SourcePairTest.java"
+      }
+    },
+    "fixtureFiles": {
+      "nullary-a.acgncert": "b2153844f05d6195ddf31919b86f543527c6e0d0ddedbc840c44b62f8c1bb4d5",
+      "nullary-b.acgncert": "b2153844f05d6195ddf31919b86f543527c6e0d0ddedbc840c44b62f8c1bb4d5",
+      "pair-equivalent-left.acgncert": "81a305ed50b261fbe9c235a25a7eaec8351ca504898db8b2abb7a630cfeeac1f",
+      "pair-equivalent-right.acgncert": "c9aa0084e4418af60d460ddcf7400cf8215a6e0bab69c8637a628664f5163184",
+      "pair-non-equivalent.acgncert": "63148eaa6336e5a9e8e08eb67fce608810915ba5ca5b7b9a90bddc6558fc64a6",
+      "parent-path-a.acgncert": "585cd05f3ee2f5a66fae5dd7c17b431c7056247562113beade10b80af1a3ff31",
+      "parent-path-b.acgncert": "585cd05f3ee2f5a66fae5dd7c17b431c7056247562113beade10b80af1a3ff31",
+      "schema-v8-coverage/bind-a.acgncert": "b59d32d74dfac7cb6405e8fb4ab297eb99268c62d18530fae5f463d6361dd35e",
+      "schema-v8-coverage/bind-b.acgncert": "b59d32d74dfac7cb6405e8fb4ab297eb99268c62d18530fae5f463d6361dd35e",
+      "schema-v8-coverage/bind-block-a.acgncert": "100949f7b0ba7daf8daf362a6498309bafea04893822fae3057138a3bcc83ca7",
+      "schema-v8-coverage/bind-block-b.acgncert": "100949f7b0ba7daf8daf362a6498309bafea04893822fae3057138a3bcc83ca7",
+      "schema-v8-coverage/bind-block-dual-a.acgncert": "b2a263a40ad8c1513bf9f26dd24e009426c39f1fc9fd1de1b85e179bda6aa140",
+      "schema-v8-coverage/bind-block-dual-b.acgncert": "b2a263a40ad8c1513bf9f26dd24e009426c39f1fc9fd1de1b85e179bda6aa140",
+      "schema-v8-coverage/bind-block-nested-same-descriptor-a.acgncert": "f584d8b3429bc13bd9878b56de8b4567740e7dc07adde30d166e98eeb5947109",
+      "schema-v8-coverage/bind-block-nested-same-descriptor-b.acgncert": "f584d8b3429bc13bd9878b56de8b4567740e7dc07adde30d166e98eeb5947109",
+      "schema-v8-coverage/bind-block-symmetric-a.acgncert": "037412f29fe84b88418beddd6ca0fa2756979abe84fb4dcb4f986d5dfdb7d463",
+      "schema-v8-coverage/bind-block-symmetric-b.acgncert": "037412f29fe84b88418beddd6ca0fa2756979abe84fb4dcb4f986d5dfdb7d463",
+      "schema-v8-coverage/call-occurrence-a.acgncert": "979484dc88234dea6d69494a5d295305d51ecc9ecf44e95cc85d5352197a52cf",
+      "schema-v8-coverage/call-occurrence-b.acgncert": "979484dc88234dea6d69494a5d295305d51ecc9ecf44e95cc85d5352197a52cf",
+      "schema-v8-coverage/call-occurrence-nested-a.acgncert": "f96d36a12eefed8a9da36f700c5b4c4b3a886b5a86506e5e4543fb5323e961da",
+      "schema-v8-coverage/call-occurrence-nested-b.acgncert": "f96d36a12eefed8a9da36f700c5b4c4b3a886b5a86506e5e4543fb5323e961da",
+      "schema-v8-coverage/container-equals-a.acgncert": "f7bb183a88bd0ee51e672b835b34b6b6dd357a61d595cdef16c135211ce90663",
+      "schema-v8-coverage/container-equals-b.acgncert": "f7bb183a88bd0ee51e672b835b34b6b6dd357a61d595cdef16c135211ce90663",
+      "schema-v8-coverage/flat-and-a.acgncert": "2a351e27b33e946baa5bc9d4c609b1db729ce74a4e9f511f71f07a12afb0ece9",
+      "schema-v8-coverage/flat-and-alt-a.acgncert": "cafd0a8108327a1a722bfff1fcf69438cd9f960412654c30beb467f674cb4d73",
+      "schema-v8-coverage/flat-and-alt-b.acgncert": "cafd0a8108327a1a722bfff1fcf69438cd9f960412654c30beb467f674cb4d73",
+      "schema-v8-coverage/flat-and-b.acgncert": "2a351e27b33e946baa5bc9d4c609b1db729ce74a4e9f511f71f07a12afb0ece9",
+      "schema-v8-coverage/relation-columns-a.acgncert": "e78423701d39885ad3357997b55df2c7cb98281bcf8687e40eb1e9e5d3ae59a2",
+      "schema-v8-coverage/relation-columns-b.acgncert": "e78423701d39885ad3357997b55df2c7cb98281bcf8687e40eb1e9e5d3ae59a2",
+      "schema-v8-coverage/relation-empty-a.acgncert": "959b2b471319c7233ffd49f58dc1afbd49e527afaf472173f40b217b994b60cc",
+      "schema-v8-coverage/relation-empty-b.acgncert": "959b2b471319c7233ffd49f58dc1afbd49e527afaf472173f40b217b994b60cc",
+      "schema-v8-coverage/relation-empty-interior-a.acgncert": "edac6a82392fc4a8446250ae16ab0db13581888c6451730d37f803fd14cfebfb",
+      "schema-v8-coverage/relation-empty-interior-b.acgncert": "edac6a82392fc4a8446250ae16ab0db13581888c6451730d37f803fd14cfebfb",
+      "schema-v8-coverage/relation-family-a.acgncert": "6446bca09e4977fcf6380c33e36b847c06cc9bf2386dfccff44fb48456f2a187",
+      "schema-v8-coverage/relation-family-b.acgncert": "6446bca09e4977fcf6380c33e36b847c06cc9bf2386dfccff44fb48456f2a187",
+      "schema-v8-coverage/repeated-same-type-slot-a.acgncert": "f25e619749f3858fcc6b0b8616463acc0ad6bc738cb67473a7dfafb14645c3cf",
+      "schema-v8-coverage/repeated-same-type-slot-b.acgncert": "f25e619749f3858fcc6b0b8616463acc0ad6bc738cb67473a7dfafb14645c3cf",
+      "slot-only-a.acgncert": "886511111c0b053631f2c2327e834998580960b2b15aaa459b86012c15d0daa5",
+      "slot-only-b.acgncert": "886511111c0b053631f2c2327e834998580960b2b15aaa459b86012c15d0daa5"
+    },
+    "producerJar": "db733b141b39be5873a89370334948785a0c92542ae10f465803dac10e03d3b4",
+    "publicByteMutationCount": 135,
+    "publicFixtureControls": {
+      "accepted": {
+        "code": "NONE",
+        "detail": "full profile independently verified",
+        "outcome": "VERIFIED"
+      },
+      "foreign-theory": {
+        "code": "UNTRUSTED_THEORY",
+        "detail": "Theory digest is not pinned by the verifier caller",
+        "outcome": "REJECTED"
+      },
+      "no-authority": {
+        "code": "MISSING_EVIDENCE",
+        "detail": "CALL occurrence completeness requires a caller-pinned commitment for input scope 938a5ba52b00b062ab8f00cb86063e300c9fa93e7ac875c1d5c19d4f76b8bdac (source eb8fbb5390478c57ecf750be79793ef713534150049aa783d4069f371c747887)",
+        "outcome": "UNCHECKABLE"
+      }
+    },
+    "supplements": {
+      "G-07-P6-13": {
+        "evidenceType": "EXECUTED_JAVA",
+        "observations": [
+          "UnaryCallSequenceTest passed: cases=23"
+        ],
+        "outputSha256": {
+          "cross.tsv": "36f052257e4cec6f5cf32cec238535049e3e7de199523913ec63eeebf2e05174"
+        },
+        "parents": [
+          "G-07",
+          "P6-13"
+        ],
+        "scope": "Source-derived unary CALL edit sequences, independently verified FULL sides, and the separately interpreted PAIR outcome for the same registered bytes.",
+        "sourceSha256": "ed4e27c9a6020d0eca6562b58f86998559371108188e35df4dc0e6ddcd5dcff1",
+        "witness": "docs/obligation-repair/seventh-five/java/UnaryCallSequenceTest.java"
+      }
+    },
+    "tools": {
+      "java": "openjdk version \"17.0.21.1\" 2026-11-17",
+      "javac": "javac 17.0.21.1",
+      "lean": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)"
+    },
+    "verifierJar": "eeb42651aad475254f76191ae573c719efafaa3dcaa1d5995a3be82b46cfd98f",
+    "verifierTests": {
+      "org/acgn/cert/DecodedBinderCoverageTest$1.class": "2682f0a1b705efbab52d8e8b78438af0f83f259a5cd118e2642aab4d032234e7",
+      "org/acgn/cert/DecodedBinderCoverageTest$Construction.class": "e1a892db050910a5dbb204596c4b2634349d54deb274e3cd5871992be79c4464",
+      "org/acgn/cert/DecodedBinderCoverageTest$Coordinate.class": "f3c8e8e245ee8e5e9a952f2118212046f6db7667b738a1d7f4f44c96734a31a3",
+      "org/acgn/cert/DecodedBinderCoverageTest$Occurrence.class": "6b8578cad663c25a8178634c35102662c0eb6bec92c0394693a90f18822658cd",
+      "org/acgn/cert/DecodedBinderCoverageTest.class": "31e835a605be6f2e302ed90a39a265f81b263dd2822bf7c8cb1785dd06197977",
+      "org/acgn/cert/ParsedSourcePairInspectionTest.class": "50e0bd79ad6d2a5b602622d2979b621f425c96ba99aed2f5e76cb97f6f58f35d",
+      "org/acgn/cert/Phase6SemanticOrderVerifierRegressionTest.class": "e58976e42971f15b62c8e92058b74daeb4b2d984dd0427aae77e2f8321138ee4",
+      "org/acgn/cert/ProducerBundleInspectionTest.class": "5a4479b6b2723410d9ec9b949055a7602f6cf52d10f0121c3b1d164ad5e01ac2",
+      "org/acgn/cert/ProducerSemanticEvidenceMutationTest$ReplayMutation.class": "7659b882ab688640bc16601210ab48de0fc98b89b66c550fc3799b8082dc4775",
+      "org/acgn/cert/ProducerSemanticEvidenceMutationTest.class": "fe58884da24f306c395ebbe099d18d8b430f8f15e65c73a1463f78e2bf076579",
+      "org/acgn/cert/TestBundleBuilder$Encoded.class": "403d169ce7988b7f7a78c7a7af3341740ff7223467b4181d25d63cb9a7b16578",
+      "org/acgn/cert/TestBundleBuilder.class": "459d130ed73b3754191ef8b0a8771ec7f6c175cfd75c2db14bb72ac1a5831f2d",
+      "org/acgn/cert/TrustedTheoryPinsTest$Pin.class": "10c43f846b02038832bd050d54111d6c81e914ed2a08fbf8c7765a05e38b341a",
+      "org/acgn/cert/TrustedTheoryPinsTest.class": "38404c393b1dcbb1037bb5ecc65cc5d1460c7042db781615c487df7c88914f7d",
+      "org/acgn/cert/VerifierTest$1.class": "a2ed46f2a2e59f56c6e3ab00a7a59abab75e2d83d862cb69882c1f9a86724412",
+      "org/acgn/cert/VerifierTest$BaseOptions.class": "4c78083a19b16c2a4223425efdf069bcb97e43961f43f96ce7fa5bbd82de784e",
+      "org/acgn/cert/VerifierTest$BuilderSetup.class": "42b80cb7ad77170102d976c246b869626a361ef06617d0a3f0974debbae2ec03",
+      "org/acgn/cert/VerifierTest$ClassWitness.class": "59c407a0d3be43eb5e52803a365a6f09ec8ee447095f1597c1edae88189f5d3f",
+      "org/acgn/cert/VerifierTest$CollisionEdge.class": "18591c491f77d1bef7a0e6c1cdad15b1febf5e169e0e2aba64baf0d1ab6bb05e",
+      "org/acgn/cert/VerifierTest$ContainerTerms.class": "14f4ed362f157f1a48b83e6c0eb00872a0534f26e61e7aafd38ca2fd30eae8e6",
+      "org/acgn/cert/VerifierTest$ContractionMutation.class": "d8e71eff2fa4447d71abd7529291fbc691c48ff81e1685e5675012f6b1c63b7d",
+      "org/acgn/cert/VerifierTest$FixtureExtension.class": "8fa03d6d64d03098f19b01b575f654ab9d64f567ea4743706bffff44778d5206",
+      "org/acgn/cert/VerifierTest$FixtureParts.class": "93a078a4ca2a97e79d08a0d0fd1b9aeef8c9733c77c9dd98199a81cc19d87457",
+      "org/acgn/cert/VerifierTest$FreshBox.class": "05081fc95ed2b01984e473892ee458262788f6ef50709b0f7f0d96a95cc61fd5",
+      "org/acgn/cert/VerifierTest$FreshNullary.class": "8d436ac716ace2ae83c32474987739ca2e59c3136841a1b65ee1dd4bbae44a2e",
+      "org/acgn/cert/VerifierTest$WitnessUnfoldMutation.class": "01d0e7ef5624a132bcd7abf99ad78ef7d0e62d39df44cd9f5f0d67162f3116e4",
+      "org/acgn/cert/VerifierTest.class": "cc5eed2cd7dab3502a372b80ad57fbb75e8c3c05e08e3dc84b73fc5e3052392e"
+    },
+    "witnessFiles": {
+      "A2-15": {},
+      "A2-17": {
+        "projection.tsv": "31d5bfcf8c4f9efdf815782f766633bee053151e201d57d63194f74ac5b923fd"
+      },
+      "G-07": {
+        "operations.tsv": "46ff5831fe68a2714dac2bb85779c7019535f9f46fe127d1e6eb9bf88c214bfb"
+      },
+      "G-07-P6-13": {
+        "cross.tsv": "36f052257e4cec6f5cf32cec238535049e3e7de199523913ec63eeebf2e05174",
+        "unary-inputs/alternate.acgncert": "94708fa8bdac0432041ba3f039b8196f204b0b7168ef9dc35e463a398a979c87",
+        "unary-inputs/alternate.als": "2ae2d89bbbd6abc1d5d300a40a290eddeefa7f9a97aeb8ec9b7ebbbcaef4e067",
+        "unary-inputs/changed-outer.acgncert": "0fba9abb39a05a05a9c198cac6968c14d80ed8348124e67e1ca61d5b60f96114",
+        "unary-inputs/changed-outer.als": "6462c8646e3e26b14112fa564da8c90d5201a64888ad5901575240b866343830",
+        "unary-inputs/left.acgncert": "d0d3552d267a4ee87386153adbc9e46a0ab5c92e1f83db8d96950b7977b498b4",
+        "unary-inputs/left.als": "89106aecf03fca15a668e81e6dc473bb71e2684c87c14037239fc75458b4920b",
+        "unary-inputs/native-inner-edit.json": "d9055159b48e35ef73e623b1f1e745d7cac64df227b46c6c329eb192d2fb230f",
+        "unary-inputs/native-outer-edit.json": "9b5f2225f31b77b5120924977e38700caf0107edf63fb9b4bacb5c41efe1d8f8",
+        "unary-inputs/native-reverse-edit.json": "951e9cffddbff3196a8a16c0fc591e958aa4ad3a3ef506e26b314e0e8803c8cd",
+        "unary-inputs/other-function.acgncert": "09ee2a4b5c08c0263e59ddced93343d1cd6d7f5b41d5dd988da1285b9527222d",
+        "unary-inputs/other-function.als": "07152ece7f40c694bca61ac41bca2af5cf7780fc51ba7f8d2de6e187f10fc83a",
+        "unary-inputs/right.acgncert": "593548b9962753cb1e0eb3266fde7241efa0f6c1481a9442942b0f87d593b090",
+        "unary-inputs/right.als": "72b645c9396cc4f32324a9cb2aec9891c6acebd9ff06814acfef60fbb6b6e9a4",
+        "unary-inputs/short.acgncert": "7f9a7dfff33a0566185297beb726f8e5ead4e313413026ccc8b518d6193b3bf9",
+        "unary-inputs/short.als": "a4932232277173406f9ad047a09d42217e3300d139d16214d05748caa9f396b4"
+      },
+      "G-08": {
+        "occurrences.tsv": "e2a83d200b72ad31bd0b3ddd5bc34a5d36ca0dca160b9b33b30170de13e2f708"
+      },
+      "P6-13": {
+        "pair/equivalent.log": "b4a7be0862eec56845acf725ef9a79dde47988cefb2ee674028d3cdc45f3ad4c",
+        "pair/foreign-right-owner.log": "f05ebc83d4d89ecf33bd6acc70fd21528bbd5d40d81f48c7b521d32b96309f8b",
+        "pair/foreign-theory.log": "e6a00df38413f34e5603e8269694a2ea37331481946be0c9ba9b61bdb9289a5e",
+        "pair/full-left.log": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760",
+        "pair/full-right.log": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760",
+        "pair/full-same-name.log": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760",
+        "pair/full-unequal.log": "a375c07874c411bd631b04f35c1a4096e25cbb6446b4a74c7c9d0d06e84ed760",
+        "pair/identical-source.log": "b4a7be0862eec56845acf725ef9a79dde47988cefb2ee674028d3cdc45f3ad4c",
+        "pair/left.acgncert": "9e32a4e355a74b570a1f37f5ff8714f47a30e1b71ecaf404c47c7bd4e3f1f4ca",
+        "pair/left.als": "2bf65e33eabeda235efada32aab615c7e164e5d8098f4afa4b53f340857c0f0b",
+        "pair/p613-cases.tsv": "696b6d3ea397385f8004f417435c0815c9a32d0577e40caed77457e75a62508e",
+        "pair/p613-owners.tsv": "d30de93619fdcf003f008afb9ec8d247f836c925153c6edb3f99bcd33618de58",
+        "pair/reversed.log": "b4a7be0862eec56845acf725ef9a79dde47988cefb2ee674028d3cdc45f3ad4c",
+        "pair/right.acgncert": "5f9dff2e37bfb10c7c1f47600a570a0494784d996d7b76177a2277f768c21834",
+        "pair/right.als": "9f3197cd4d44bb0fd08bbb7613d83f177520e4eccd9b7dd18a97cd23671ab9c3",
+        "pair/same-name-distinct-bytes.log": "b4a7be0862eec56845acf725ef9a79dde47988cefb2ee674028d3cdc45f3ad4c",
+        "pair/same-name-foreign-bytes.log": "f05ebc83d4d89ecf33bd6acc70fd21528bbd5d40d81f48c7b521d32b96309f8b",
+        "pair/same-name.acgncert": "c7698c36534e0f6b33015d291ec1f429d9a95d74effff6c198440ae2d8cb4d4d",
+        "pair/same-name.als": "5cc304134ca1e9c71c738db365f28fb059468c02e67ea8324cf471d06543d259",
+        "pair/unequal.acgncert": "62bab2b0621050c14c3e389b44631ace3c6a8f29abcf4a1a99dd6bb8a79c36bd",
+        "pair/unequal.als": "f5dea86471e4734f32c06886fd9fa609e56d9f598c44a3d357cb91f304ebff31",
+        "pair/unequal.log": "918ca0923e728a080f4e10f9a401defbaeb48aef38bb5de1850ae95a5c318fa7",
+        "pair/wire-equivalent.log": "7701ce1fba91e98abcb82960d5ca6a27345b6bf0d57d99e1384fe5df4a11830e",
+        "pair/wire-foreign-pin.log": "8118e28fc6c6f9c78d0b2c1138b584f35fa874ed141b1557c07bb23993413657",
+        "pair/wire-unequal.log": "34597a02461030bdb670bdbd25ee17bd4286548045d385a3048c646b0181b213"
+      }
+    }
+  },
+  "commonEvidenceFileSha256": "dc273dc960c35a5dc080d2f9d43db401d2724ef54e74fe1545e20e5ba7e2ae83",
+  "decisionScope": "five registered finite proof and observation surfaces",
+  "deterministic": true,
+  "excluded": [
+    "general raw Alloy, parser or JVM refinement",
+    "independent authority for unregistered source forms or missing PAIR sides",
+    "faithfulness or optimality outside the registered admissible edit fragment",
+    "broader original claim status, empirical results, production certificates and release provenance"
+  ],
+  "inputManifestFileSha256": "eb693a2ebe6656f101fc23b413d7ff36b1a93de9ab7c4aaada869b8cc03ed9f4",
+  "inputRootHash": "cc98674e9fe78ab397eecc1377ce5585af6b152c2d6bdb2e653e92e41fd6d0db",
+  "observations": {
+    "A2-17/projection.tsv": [
+      "fixture\tcheck\tchain\tindex\tsource_address\tfield\tresult",
+      "binary\tprojected\tphase/0/matrix/child/0/child/0\t0\tphase/0/matrix/child/0/child/0/child/0\tr\tRel(AlloySig:A,AlloySig:A)",
+      "binary\tprojected\tphase/0/matrix/child/0/child/0\t1\tphase/0/matrix/child/0/child/0/child/1\ts\tRel(AlloySig:A,AlloySig:A)",
+      "binary\tequal-type-projected-swap\t-\t-\t-\t-\tPROJECTED_LEAF",
+      "binary\tsibling-binding\t-\t-\t-\t-\tA dependent certificate was attached to another source lineage",
+      "binary\tprojected\tphase/0/matrix/child/0/child/1\t0\tphase/0/matrix/child/0/child/1/child/0\ts\tRel(AlloySig:A,AlloySig:A)",
+      "binary\tprojected\tphase/0/matrix/child/0/child/1\t1\tphase/0/matrix/child/0/child/1/child/1\tr\tRel(AlloySig:A,AlloySig:A)",
+      "binary\tdetached-phase\t-\t-\t-\t-\tRepair projection source identity differs at phase 0",
+      "opposite-association\tprojected\tphase/0/matrix/child/0/child/0\t0\tphase/0/matrix/child/0/child/0/child/0/child/0\tr\tRel(AlloySig:A,AlloySig:A)",
+      "opposite-association\tprojected\tphase/0/matrix/child/0/child/0\t1\tphase/0/matrix/child/0/child/0/child/0/child/1\ts\tRel(AlloySig:A,AlloySig:A)",
+      "opposite-association\tprojected\tphase/0/matrix/child/0/child/0\t2\tphase/0/matrix/child/0/child/0/child/1\tr\tRel(AlloySig:A,AlloySig:A)",
+      "opposite-association\tequal-type-projected-swap\t-\t-\t-\t-\tPROJECTED_LEAF",
+      "opposite-association\tequal-name-source-index-swap\t-\t-\t-\t-\tSOURCE_ADDRESS",
+      "opposite-association\tsibling-binding\t-\t-\t-\t-\tA dependent certificate was attached to another source lineage",
+      "opposite-association\tprojected\tphase/0/matrix/child/0/child/1\t0\tphase/0/matrix/child/0/child/1/child/0\tr\tRel(AlloySig:A,AlloySig:A)",
+      "opposite-association\tprojected\tphase/0/matrix/child/0/child/1\t1\tphase/0/matrix/child/0/child/1/child/1/child/0\ts\tRel(AlloySig:A,AlloySig:A)",
+      "opposite-association\tprojected\tphase/0/matrix/child/0/child/1\t2\tphase/0/matrix/child/0/child/1/child/1/child/1\tr\tRel(AlloySig:A,AlloySig:A)",
+      "opposite-association\tdetached-phase\t-\t-\t-\t-\tRepair projection source identity differs at phase 0",
+      "single\tprojected\tphase/0/matrix/child/0/child/0\t0\tphase/0/matrix/child/0/child/0/child/0\tr\tRel(AlloySig:A,AlloySig:A)",
+      "single\tprojected\tphase/0/matrix/child/0/child/0\t1\tphase/0/matrix/child/0/child/0/child/1\ts\tRel(AlloySig:A,AlloySig:A)",
+      "single\tequal-type-projected-swap\t-\t-\t-\t-\tPROJECTED_LEAF",
+      "single\tdetached-phase\t-\t-\t-\t-\tRepair projection source identity differs at phase 0"
+    ],
+    "G-07-P6-13/cross.tsv": [
+      "case\toutcome\tcode",
+      "native-inner-edit\tVERIFIED\tNONE",
+      "native-outer-edit\tVERIFIED\tNONE",
+      "native-reverse-edit\tVERIFIED\tNONE",
+      "distance\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "extra-key\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "fractional-cost\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "omitted-free-step\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "surplus-step\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "reordered-steps\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "misplaced-unit-cost\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "wrong-target-address\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "foreign-cert-digest\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "other-raw-source\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "reversed-owners\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "foreign-certificate\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "trailing-data\tREJECTED\tINVALID_RECORD_SHAPE",
+      "malformed\tREJECTED\tINVALID_RECORD_SHAPE",
+      "wrong-theory\tREJECTED\tUNTRUSTED_THEORY",
+      "zero-edits\tUNCHECKABLE\tMISSING_EVIDENCE",
+      "two-edits\tUNCHECKABLE\tMISSING_EVIDENCE",
+      "different-depth\tUNCHECKABLE\tMISSING_EVIDENCE",
+      "unsupported-function-body\tUNCHECKABLE\tMISSING_EVIDENCE",
+      "receipt-cap\tUNCHECKABLE\tRESOURCE_LIMIT"
+    ],
+    "G-07/operations.tsv": [
+      "case\toutcome\tvalue",
+      "left-full\tVERIFIED\tNONE",
+      "right-full\tVERIFIED\tNONE",
+      "direct-full\tVERIFIED\tNONE",
+      "nonzero-pair\tREJECTED\tTHEORY_MISMATCH",
+      "left-right-scores\tCHECKED\t[1, 3, 4, 5, 5, 6, 8]",
+      "left-right-fast-certified\tCHECKED\t1",
+      "left-right-owner-actions\tCHECKED\t7",
+      "left-right-selected-map\tCHECKED\t[1, 0]",
+      "valid-suboptimal\tREJECTED\tNONMINIMUM_ALIGNMENT",
+      "missing-free-action\tREJECTED\tINCOMPLETE_OR_FOREIGN_ACTION",
+      "foreign-operation-address\tREJECTED\tINCOMPLETE_OR_FOREIGN_ACTION",
+      "redistributed-charge\tREJECTED\tINCOMPLETE_OR_FOREIGN_ACTION",
+      "foreign-target-owner\tREJECTED\tFOREIGN_OWNER",
+      "left-direct-scores\tCHECKED\t[1, 3, 4, 5, 5, 6, 8]",
+      "left-direct-fast-certified\tCHECKED\t1",
+      "left-direct-owner-actions\tCHECKED\t7",
+      "left-direct-selected-map\tCHECKED\t[0, 1]",
+      "right-left-scores\tCHECKED\t[1, 3, 4, 5, 5, 6, 8]",
+      "right-left-fast-certified\tCHECKED\t1",
+      "right-left-owner-actions\tCHECKED\t7",
+      "right-left-selected-map\tCHECKED\t[1, 0]",
+      "foreign-export-selection\tREJECTED\tFOREIGN_EXPORT_OWNER",
+      "foreign-export-bytes\tREJECTED\tFOREIGN_EXPORT_OWNER"
+    ],
+    "G-08/occurrences.tsv": [
+      "case\toutcome\tcode",
+      "left-transfer\tMATCHED\tSOURCE_WIRE_OWNER",
+      "right-transfer\tMATCHED\tSOURCE_WIRE_OWNER",
+      "left-full\tVERIFIED\tNONE",
+      "right-full\tVERIFIED\tNONE",
+      "missing-arrow-pin\tUNCHECKABLE\tMISSING_EVIDENCE",
+      "different-root\tUNCHECKABLE\tMISSING_EVIDENCE",
+      "missing-call-pin\tUNCHECKABLE\tMISSING_EVIDENCE",
+      "association-swap\tREJECTED\tMISSING_EVIDENCE",
+      "operand-swap\tREJECTED\tMISSING_EVIDENCE",
+      "skipped-parent\tREJECTED\tMISSING_EVIDENCE",
+      "fabricated-parser-type\tREJECTED\tTHEORY_MISMATCH",
+      "foreign-leaf-dag\tREJECTED\tTHEORY_MISMATCH",
+      "singleton-unpinned\tUNCHECKABLE\tMISSING_EVIDENCE",
+      "retired-collision\tUNCHECKABLE\tPRODUCER_NO_EXPORT"
+    ],
+    "P6-13/pair/p613-cases.tsv": [
+      "case\toutcome\tcode",
+      "full-left\tVERIFIED\tNONE",
+      "full-right\tVERIFIED\tNONE",
+      "full-unequal\tVERIFIED\tNONE",
+      "full-same-name\tVERIFIED\tNONE",
+      "equivalent\tVERIFIED\tNONE",
+      "reversed\tVERIFIED\tNONE",
+      "same-name-distinct-bytes\tVERIFIED\tNONE",
+      "identical-source\tVERIFIED\tNONE",
+      "unequal\tUNCHECKABLE\tMISSING_PAIR_DERIVATION",
+      "foreign-right-owner\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "same-name-foreign-bytes\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "foreign-theory\tREJECTED\tUNTRUSTED_THEORY",
+      "wire-equivalent\tVERIFIED\tNONE",
+      "wire-unequal\tUNCHECKABLE\tMISSING_PAIR_DERIVATION",
+      "wire-foreign-pin\tUNCHECKABLE\tMISSING_EVIDENCE",
+      "source-full\tVERIFIED\tNONE",
+      "source-full-foreign-owner\tREJECTED\tENDPOINT_CLAIM_MISMATCH",
+      "source-full-absent-selector\tUNCHECKABLE\tMISSING_EVIDENCE"
+    ],
+    "P6-13/pair/p613-owners.tsv": [
+      "case\tselector\tsourceSha256\tsubject\troot\treplayProof\tkernel\torbitProof\trepresentative\tsort\tshapeSha256\torbitCount",
+      "left\tpaircalls/first\t2bf65e33eabeda235efada32aab615c7e164e5d8098f4afa4b53f340857c0f0b\t4ad255b05b482e6b16b178f1d7f8f6ac50f5c96d39a6c79d4ad7fd0e2b2205b7\ta9633281387f8916d7edb0c472c01616d316f3e6afc6be5815627e182729a24e\tb84eb7da2b4d14379ec4d61771000c70a7efb649bd8be5c194102e9d314f500d\ta9633281387f8916d7edb0c472c01616d316f3e6afc6be5815627e182729a24e\tf1746a20ad9c66212566ffa193229a49fcfeb30fc2af2ba7520baf82447cc259\ta9633281387f8916d7edb0c472c01616d316f3e6afc6be5815627e182729a24e\tTERM/Bool\t775fb40a91c97cf597ff020ce270b138b935b939a22fc346f18032d8eed28d9c\t1",
+      "right\tpaircalls/second\t9f3197cd4d44bb0fd08bbb7613d83f177520e4eccd9b7dd18a97cd23671ab9c3\t3c792cc68c1770db9b9d7e5756993e64f10b34be1413519e349394ee4a04a552\ta9633281387f8916d7edb0c472c01616d316f3e6afc6be5815627e182729a24e\tb84eb7da2b4d14379ec4d61771000c70a7efb649bd8be5c194102e9d314f500d\ta9633281387f8916d7edb0c472c01616d316f3e6afc6be5815627e182729a24e\tf1746a20ad9c66212566ffa193229a49fcfeb30fc2af2ba7520baf82447cc259\ta9633281387f8916d7edb0c472c01616d316f3e6afc6be5815627e182729a24e\tTERM/Bool\t775fb40a91c97cf597ff020ce270b138b935b939a22fc346f18032d8eed28d9c\t1",
+      "unequal\tpaircalls/first\tf5dea86471e4734f32c06886fd9fa609e56d9f598c44a3d357cb91f304ebff31\t342b082a9f3117efce58c7944b4daf76c8d3d6eda9a916f465240c7630647f08\t7323b914a9788afd28655657441354016b85460815e0666aeab808eeda004927\tf44638fcbd2d491702e9f95e19d9e24e8cc28ce8d776f1d748dfe7a0f2979265\t7323b914a9788afd28655657441354016b85460815e0666aeab808eeda004927\tb768527c0a0e9e25d685c2351287a86d0d8ac40dd5bfc6cccb5bc6c031f9282c\t7323b914a9788afd28655657441354016b85460815e0666aeab808eeda004927\tTERM/Bool\t1810c381db03a9837caeb1dadecb127de47588f90ef2282b3b4d868845794f36\t1",
+      "same-name\tpaircalls/first\t5cc304134ca1e9c71c738db365f28fb059468c02e67ea8324cf471d06543d259\tf2aba11c293cc347d8cf4a5104685822b6d25dbcfdfaebf0743846522e3c5ff6\ta9633281387f8916d7edb0c472c01616d316f3e6afc6be5815627e182729a24e\tb84eb7da2b4d14379ec4d61771000c70a7efb649bd8be5c194102e9d314f500d\ta9633281387f8916d7edb0c472c01616d316f3e6afc6be5815627e182729a24e\tf1746a20ad9c66212566ffa193229a49fcfeb30fc2af2ba7520baf82447cc259\ta9633281387f8916d7edb0c472c01616d316f3e6afc6be5815627e182729a24e\tTERM/Bool\t775fb40a91c97cf597ff020ce270b138b935b939a22fc346f18032d8eed28d9c\t1"
+    ]
+  },
+  "originalReportFileSha256": "309cb22b7b6068a99b5ef9affbf85b40127b7e7133027887677b7eb775356c46",
+  "parentClaimHashes": {
+    "A2-15": "b862e84d7ff5369124ec35570dd1c4eec6878b31c213210ffd13fb553e75b81c",
+    "A2-17": "1424fff8c9cd0a2b823fe7b322e13dee255ff94422964be6992567a63b6b842b",
+    "G-07": "a000debcc2bee801aeed70d648ed615c822c199c59be0ee05685a249532edf66",
+    "G-08": "cbb5463a905bc30a1f410de31a1c22accca867e38ca185545b8e547d22ac7f10",
+    "P6-13": "8a84a56322463d2907cad93c9d40a45df948b23fbdb49071c19c3de9a52bb849"
+  },
+  "parentStatusChanges": [],
+  "profile": "seventh-public-certification-v1",
+  "schemaVersion": 1,
+  "sharedRegressions": {
+    "fifth": {
+      "builds": [
+        {
+          "artifacts": 1677,
+          "evidenceSha256": "7f62cba7ad0f2997d23a7b23599c521aaefeeaff977815d77d5284c2ce910186",
+          "negativeControls": 96,
+          "number": 1,
+          "sourceMutations": 60,
+          "status": "PASS"
+        },
+        {
+          "artifacts": 1677,
+          "evidenceSha256": "3aa4d407011967f6f71845c2dd3b874cf425cce577325f8e831460fd830a28e4",
+          "negativeControls": 96,
+          "number": 2,
+          "sourceMutations": 60,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "closureId": "fifth-five-v1-22342cdef205780c",
+      "commandCounts": [
+        184,
+        184
+      ],
+      "deterministic": true,
+      "inputManifestSha256": "7ec54668841d9af11357a672f4af668a2992ee79c28a37a888458f6d8efaf496",
+      "inputRootHash": "22342cdef205780c28870fd1a8f7a46d4a50cb8cd26142e2b5cf595f6cb9aaa0",
+      "reportFileSha256": "068617467b69c751d615ba8587fe05e1c425db1a730495a33578c4e88dae42bf",
+      "status": "VERIFIED"
+    },
+    "fourth": {
+      "builds": [
+        {
+          "artifacts": 1671,
+          "evidenceSha256": "c6fc2d1df1da04a8ebf276f0be84f992c6ff58381e671928fe29bdc386d00cee",
+          "negativeControls": 36,
+          "number": 1,
+          "sourceMutations": 45,
+          "status": "PASS"
+        },
+        {
+          "artifacts": 1671,
+          "evidenceSha256": "962da2a7fbe077f9c383dbc57a26a916301d211bbda24a467b42cbc257dd54eb",
+          "negativeControls": 36,
+          "number": 2,
+          "sourceMutations": 45,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "closureId": "fourth-five-v1-6a1cb6ad2dcd6e20",
+      "commandCounts": [
+        105,
+        105
+      ],
+      "deterministic": true,
+      "inputManifestSha256": "e25e1c456af3fbeeda44b13d0ed98a5e5192cde30e0b144e0a76e4d308ca9655",
+      "inputRootHash": "6a1cb6ad2dcd6e20dcf3992d36bcd1692ac1541b8318c53a3ef5bf471bc7f441",
+      "reportFileSha256": "38f335e7351e7ffeacccaf07eba4f76c1c32ad626b590d0952d9bfdc14accd9a",
+      "status": "VERIFIED"
+    },
+    "sixth": {
+      "builds": [
+        {
+          "evidenceHash": "8da8df8b0a619afe7d6a23f8232f8e43eee3d90f81d915e67edfa856880ef18f",
+          "evidenceSha256": "6cccef0b62f09ee169bce1c62aa8a2904db673bb9a7fcc061afc6e23a1adc4d6",
+          "number": 1,
+          "status": "PASS"
+        },
+        {
+          "evidenceHash": "8da8df8b0a619afe7d6a23f8232f8e43eee3d90f81d915e67edfa856880ef18f",
+          "evidenceSha256": "6cccef0b62f09ee169bce1c62aa8a2904db673bb9a7fcc061afc6e23a1adc4d6",
+          "number": 2,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "qualified": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "closureId": "sixth-public-certification-v1-69619036854613fb",
+      "commandCounts": [
+        30,
+        30
+      ],
+      "deterministic": true,
+      "inputManifestSha256": "42f25a0d65c111411029121fc9ea58bb1ecb1ada110f2c727667615105d9ea85",
+      "inputRootHash": "69619036854613fb2354b3a5394fd5d07ce303ed403c50506c3e8617caa984da",
+      "reportFileSha256": "53c3e046e99d9acf84daac3180e784f5f2dcf39a89609225fd71c227d94b9d20",
+      "status": "VERIFIED"
+    }
+  },
+  "status": "VERIFIED",
+  "trusted": [
+    "Lean 4.35.0 kernel and standard library under propext, Quot.sound and Classical.choice",
+    "JDK 17 javac, JVM and jar, Python, Git, Linux and hardware",
+    "Alloy parser and libraries in the frozen checkout",
+    "SHA-256 collision resistance",
+    "registered finite source extractors, compiled witness programs and dependent CALL authority",
+    "TEST_ONLY theory pins for the stated public fixtures"
+  ]
+}

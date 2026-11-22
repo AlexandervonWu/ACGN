@@ -1,0 +1,4 @@
+# The evidence manifest covers the producer's bytes, including CSV line endings.
+measurements/** -text
+measurements/synthetic/predicates.csv whitespace=trailing-space,space-before-tab,cr-at-eol
+measurements/synthetic/plots/cells.csv whitespace=trailing-space,space-before-tab,cr-at-eol

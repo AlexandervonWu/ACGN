@@ -47,7 +47,7 @@ public final class DeBruijnVariables {
                 children.add(encode(child, scope));
             }
         }
-        return term.withChildren(children);
+        return term.rewrittenChildren(children);
     }
 
     private static EncodedDeclaration encodeDeclaration(AlloyTerm term, List<String> scope) {
@@ -63,7 +63,7 @@ public final class DeBruijnVariables {
         for (int i = variableCount; i < original.size(); i++) {
             children.add(encode(original.get(i), scope));
         }
-        return new EncodedDeclaration(term.withChildren(children), boundNames);
+        return new EncodedDeclaration(term.rewrittenChildren(children), boundNames);
     }
 
     private static AlloyTerm encodeLet(AlloyTerm term, List<String> scope) {
@@ -79,7 +79,7 @@ public final class DeBruijnVariables {
         for (int i = 2; i < term.children().size(); i++) {
             children.add(encode(term.children().get(i), bodyScope));
         }
-        return term.withChildren(children);
+        return term.rewrittenChildren(children);
     }
 
     private static AlloyTerm encodeChildren(AlloyTerm term, List<String> scope) {
@@ -90,7 +90,7 @@ public final class DeBruijnVariables {
         for (AlloyTerm child : term.children()) {
             children.add(encode(child, scope));
         }
-        return term.withChildren(children);
+        return term.rewrittenChildren(children);
     }
 
     private static int indexOf(List<String> scope, String name) {

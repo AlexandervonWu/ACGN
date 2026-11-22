@@ -94,8 +94,13 @@ public final class CertificateVerificationScopeTest {
                 if(prior==null)System.clearProperty("acgn.maxGroupElements");else System.setProperty("acgn.maxGroupElements",prior);
             }
             check(scope.verified().isEmpty(),"restored policy does not resurrect old entries");
-            for(int i=0;i<CertificateVerificationScope.CAPACITY+1;i++)CertificateVerifier.verify(leaf(10+i));
-            check(scope.verified().size()<CertificateVerificationScope.CAPACITY,"bounded memo falls back to rechecking");
+            CertificateVerifier.verify(proof);
+            for(int i=0;i<10000;i++)CertificateVerifier.verify(leaf(10+i));
+            check(scope.verified().size()==10001&&scope.verified().contains(proof),
+                    "completed proofs survive the former 8192-entry cliff");
+            var largeInvalid=leaf(10020);origin.set(largeInvalid,CertificateOrigin.containerLaw("bad","invalid",0));
+            reject(()->CertificateVerifier.verify(largeInvalid),"invalid proof after old cache limit");
+            check(!scope.verified().contains(largeInvalid)&&scope.visiting.isEmpty(),"large memo retains only successes");
             reject(()->CertificateVerifier.requirePermittedUnionDerivation(
                     EqualityCertificates.reflexive(proof.leftEndpoint())),"wrapper admission not bypassed");
         }

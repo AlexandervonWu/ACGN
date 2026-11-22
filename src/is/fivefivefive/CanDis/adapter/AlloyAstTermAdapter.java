@@ -1,5 +1,7 @@
 package is.fivefivefive.CanDis.adapter;
 
+import parser.ast.nodes.ResolvedBindingOrigins;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,21 @@ import parser.util.AlloyUtil;
 
 /** Converts parser AST nodes into the parser-independent e-graph term model. */
 public final class AlloyAstTermAdapter {
+    public static final class ParsedDeclaration {
+        private final String head;
+        private final List<AlloyTerm> children;
+        private final List<ResolvedBindingOrigins.Slot> slots;
+        private ParsedDeclaration(RelDecl original, List<AlloyTerm> children) {
+            this.head = "DECL/" + original.getClass().getSimpleName()
+                    + "/disj=" + original.isDisjoint() + "/var=" + original.isVariable();
+            this.children = List.copyOf(children);
+            this.slots = ResolvedBindingOrigins.declaration(original);
+        }
+        public String head() { return head; }
+        public List<AlloyTerm> children() { return children; }
+        public List<ResolvedBindingOrigins.Slot> slots() { return slots; }
+    }
+
     private AlloyAstTermAdapter() {
     }
 
@@ -71,9 +88,7 @@ public final class AlloyAstTermAdapter {
             if (declaration.getExpr() != null) {
                 children.add(fromAst(declaration.getExpr(), typedSlots));
             }
-            return AlloyTerm.node("DECL/" + node.getClass().getSimpleName()
-                    + "/disj=" + declaration.isDisjoint()
-                    + "/var=" + declaration.isVariable(), children);
+            return AlloyTerm.parsedDeclaration(new ParsedDeclaration(declaration, children));
         }
         List<AlloyTerm> children = new ArrayList<>();
         List<Node> astChildren = node.getChildren();
@@ -91,9 +106,9 @@ public final class AlloyAstTermAdapter {
                 if (type.kind() == ExactAlloyType.Kind.UNKNOWN) {
                     throw new IllegalArgumentException("Missing exact slot type: " + variable.getName());
                 }
-                return AlloyTerm.typedVariable(variable.getName(), type.toString());
+                return AlloyTerm.parsedVariable(variable, type.toString());
             }
-            return AlloyTerm.atom("VAR", variable.getName());
+            return AlloyTerm.parsedVariable(variable, "");
         }
         if (node instanceof SigExpr) {
             String name = ((SigExpr) node).getName();

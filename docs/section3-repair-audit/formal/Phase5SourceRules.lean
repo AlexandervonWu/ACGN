@@ -4786,6 +4786,68 @@ theorem unary_right_range_or_domain_guard_has_same_join
       unaryRightJoin left (unaryDomainRestriction restrictor right) := by
   rw [unary_domain_and_range_restriction_coincide]
 
+theorem unary_restrictions_are_intersection (s r : Rel α) :
+    unaryDomainRestriction s r = intersection s r ∧
+    unaryRangeRestriction r s = intersection s r :=
+  ⟨rfl, unary_domain_and_range_restriction_coincide s r⟩
+
+theorem unary_image_of_domain_restriction (r s : Rel β) (field : BinaryRel β γ) :
+    unaryLeftJoin r (domainRestrictionBinary s field) =
+      unaryLeftJoin (intersection s r) field :=
+  (unary_left_restriction_stays_on_join_boundary s r field).symm
+
+/-- The binding is held fixed when the body is evaluated at a future instant.
+    The carrier may be empty; all other free variables keep their environment. -/
+theorem static_all_commutes_with_always (domain : Rel α)
+    (body : α → Nat → Prop) (now : Nat) :
+    (∀ x, domain x → futureAlways (body x) now) ↔
+      futureAlways (fun i => ∀ x, domain x → body x i) now :=
+  ⟨fun h i hi x hx => h x hx i hi, fun h x hx i hi => h i hi x hx⟩
+
+theorem changing_domain_blocks_all_always :
+    let domain := fun (i : Nat) (_ : Unit) => i = 0
+    ¬ ((∀ x, domain 0 x → futureAlways (fun i => domain i x) 0) ↔
+       futureAlways (fun i => ∀ x, domain i x → domain i x) 0) := by
+  dsimp only
+  intro h
+  exact Nat.noConfusion (h.mpr (fun _ _ _ hx => hx) () rfl 1 (by decide))
+
+/-- A relational observation has no state beyond the relation it is given.
+    Alloy traces are infinite: even the last displayed lasso state has a successor. -/
+theorem next_observation_is_observation_of_prime
+    (relation : Nat → Rel α) (observe : Rel α → Prop) (now : Nat) :
+    (fun i => observe (relation i)) (now + 1) ↔
+      observe ((fun i => relation (i + 1)) now) := Iff.rfl
+
+/-- Alloy quantification captures the value, not a recipe to enumerate it
+    again at the next instant. Only the carrier of the membership test moves. -/
+theorem next_fixed_binding_observation
+    (captured : Rel α) (carrier : Nat → Rel α) (now : Nat) :
+    (fun i => ∀ x, captured x → carrier i x) (now + 1) ↔
+      ∀ x, captured x → (fun i => carrier (i + 1)) now x :=
+  next_observation_is_observation_of_prime carrier (fun r => ∀ x, captured x → r x) now
+
+theorem snapshot_membership_cannot_read_current_carrier :
+    ∃ r : Nat → Rel Unit, r 0 () ∧ ¬ r 1 () :=
+  ⟨fun t _ => t = 0, rfl, by decide⟩
+
+/-- Both domain tests are made at the binding instant, even if the
+    observation uses a later carrier. No time-invariance of either set is needed. -/
+theorem guarded_singleton_subdomain (outer inner : Rel α) (h : subset inner outer)
+    (observe : α → Prop) :
+    (∀ x, outer x → inner x → observe x) ↔ (∀ x, inner x → observe x) :=
+  ⟨fun all x hx => all x (h x hx) hx, fun all x _ hx => all x hx⟩
+
+theorem guarded_difference_domain (outer removed : Rel α) (observe : α → Prop) :
+    (∀ x, outer x → difference outer removed x → observe x) ↔
+      (∀ x, difference outer removed x → observe x) :=
+  guarded_singleton_subdomain outer _ (difference_subset_left outer removed) observe
+
+theorem historically_is_not_current_at_arbitrary_states :
+    ¬ (∀ p : Nat → Prop, ∀ now, pastHistorically p now ↔ p now) := by
+  intro h
+  exact Nat.noConfusion ((h (fun i => i = 1) 1).mpr rfl 0 (by decide))
+
 /- Converse is a coordinate permutation.  It therefore swaps restriction
    sides and commutes with both reachability closures. -/
 theorem transpose_domain_restriction_is_range_restriction

@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "results": [
+    "positive guarded completion",
+    "replaced child",
+    "replaced receipt",
+    "changed pair output",
+    "wrong approval",
+    "missing predecessor",
+    "wrong service challenge",
+    "duplicate completion"
+  ],
+  "terminal": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/cgroup-observations-nUgzWiqu/terminal.json",
+    "sha256": "97e40b508592b1d63897aebd8e009ed03aa0d21fc46b2b185739cdfae7bcc3a6"
+  },
+  "pin": {
+    "receipt": {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/seal-fixture/receipt.json",
+      "sha256": "a9fe6540b752fe70d478f80e2352dacc87b5383eaa1c6b529f4de24c59d8d5eb"
+    },
+    "plan": {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/seal-fixture/plan.json",
+      "sha256": "a59e0bfa8d6af5229f9feec4f832e47929d3751b15f6af838a356dd1d7b74e71"
+    },
+    "witness": {
+      "unit": "acgn-focused-5888b35f-e519-4fd7-9660-c5d971aa2669.service",
+      "nonce": "d90d26ce-24c6-4b21-add5-874402417a1f",
+      "child": "47816522ee77ebb7acbbbbb13f76843932ce6bd098d2e0aa72f88013e5ff4a68",
+      "authority": "37256315dbee81510818c53ec9310c7b2d9e8e4f3089b959b123c70a15ef11a0"
+    }
+  }
+}

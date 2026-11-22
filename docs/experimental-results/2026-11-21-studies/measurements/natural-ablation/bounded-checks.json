@@ -1,0 +1,117 @@
+{
+  "checkedUniquePairs": 4423,
+  "arms": [
+    {
+      "engine": "raw-egraph",
+      "claims": 820,
+      "counterexamples": 0,
+      "noCounterexample": 820,
+      "errors": 0
+    },
+    {
+      "engine": "raw-egraph-debruijn",
+      "claims": 2160,
+      "counterexamples": 0,
+      "noCounterexample": 2160,
+      "errors": 0
+    },
+    {
+      "engine": "java-egglog",
+      "claims": 820,
+      "counterexamples": 0,
+      "noCounterexample": 820,
+      "errors": 0
+    },
+    {
+      "engine": "java-egglog-debruijn",
+      "claims": 2160,
+      "counterexamples": 0,
+      "noCounterexample": 2160,
+      "errors": 0
+    },
+    {
+      "engine": "slotted-egraph",
+      "claims": 2228,
+      "counterexamples": 0,
+      "noCounterexample": 2228,
+      "errors": 0
+    },
+    {
+      "engine": "canonical",
+      "claims": 4413,
+      "counterexamples": 0,
+      "noCounterexample": 4413,
+      "errors": 0
+    },
+    {
+      "engine": "typed-slotted-port-egraph",
+      "claims": 4413,
+      "counterexamples": 0,
+      "noCounterexample": 4413,
+      "errors": 0
+    }
+  ],
+  "targetedProbes": [
+    {
+      "path": "src/is/fivefivefive/CanDis/ablation/soundness/comprehension_order_inv2.als",
+      "alloyCounterexample": true,
+      "mergedByEngine": {
+        "java-egglog-debruijn": false,
+        "typed-slotted-port-egraph": false,
+        "java-egglog": false,
+        "canonical": false,
+        "raw-egraph-debruijn": false,
+        "raw-egraph": false,
+        "slotted-egraph": false
+      },
+      "name": "comprehension_order_inv2",
+      "error": ""
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/ablation/soundness/let_shadow_inv1.als",
+      "alloyCounterexample": true,
+      "mergedByEngine": {
+        "java-egglog-debruijn": false,
+        "typed-slotted-port-egraph": false,
+        "java-egglog": false,
+        "canonical": false,
+        "raw-egraph-debruijn": false,
+        "raw-egraph": false,
+        "slotted-egraph": false
+      },
+      "name": "let_shadow_inv1",
+      "error": ""
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/ablation/soundness/signature_shadow_inv3.als",
+      "alloyCounterexample": true,
+      "mergedByEngine": {
+        "java-egglog-debruijn": false,
+        "typed-slotted-port-egraph": false,
+        "java-egglog": false,
+        "canonical": false,
+        "raw-egraph-debruijn": false,
+        "raw-egraph": false,
+        "slotted-egraph": false
+      },
+      "name": "signature_shadow_inv3",
+      "error": ""
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/ablation/soundness/temporal_implication_inv4.als",
+      "alloyCounterexample": true,
+      "mergedByEngine": {
+        "java-egglog-debruijn": false,
+        "typed-slotted-port-egraph": false,
+        "java-egglog": false,
+        "canonical": false,
+        "raw-egraph-debruijn": false,
+        "raw-egraph": false,
+        "slotted-egraph": false
+      },
+      "name": "temporal_implication_inv4",
+      "error": ""
+    }
+  ],
+  "claimSourceGitSha": "d71cd1c2343b9fdb61d311331feafbe14bea2925"
+}

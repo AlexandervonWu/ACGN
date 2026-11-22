@@ -35,11 +35,31 @@ P3-12 and A2-12 with complete law/flat/container records, canonical wire tables
 and retained-source occurrence commitments. It separates general structural
 contracts from finite Java correspondence and retains every original claim hash.
 
-The current assessment reports **112 ready requirements and 105 diagnostics**.
-Twenty-eight original diagnostics are absent; their evidence belongs to the
-five separate five-claim packages. The original queue has 104 remaining diagnostics,
-plus the explicitly exposed A-01 missing-registry diagnostic. The full assurance
-matrix remains `INCOMPLETE`; its original 132-entry baseline is not rewritten.
+The sixth and seventh packages each qualified five bounded claims against their
+frozen inputs. [Sixth qualification](sixth-five-results.json) · [Seventh qualification](seventh-five-results.json)
+
+The eighth package verified five original rows in two independent builds.
+They cover exact schema-v10 admission, imported callable arity, shape-ID
+collisions, rooted binder occurrences and ordered dependent ARROW products.
+[Eighth batch and ranking](eighth-five/README.md) · [Verification results](eighth-five-results.json)
+
+The ninth package verified five original requirements in two clean builds.
+They cover normalization of correlated alternatives, componentwise intersection,
+the JOIN decision matrix and typed emptiness, schema-v10 wire commitments,
+and parser-issued evidence for binding nonemptiness.
+[Ninth batch and ranking](ninth-five/README.md) · [Verification results](ninth-five-results.json)
+
+The tenth package verified five original requirements in two clean builds.
+They cover unary membership in the empty relation, the corresponding negative
+membership rule, lexical binding authority across the evaluator configurations,
+recursive agreement for set-operation sources, and owner-index restoration
+after interface changes.
+[Tenth batch and ranking](tenth-five/README.md) · [Verification results](tenth-five-results.json)
+
+The eleventh package verified P5-08, A2-16, P4-07, P4-04 and P4-06 in two clean builds. The two builds agreed on all 14 retained witness files.
+[Eleventh batch and ranking](eleventh-five/README.md) · [Verification results](eleventh-five-results.json)
+
+The current assessment reports **132 of 191 requirements ready**. All 151 executable steps passed. The overall result is `INCOMPLETE` with 84 open diagnostics. Of these, 83 remain in the original queue and one records the missing A-01 low-level registry. [Current assessment](current.md)
 
 The [v2.14 candidate list](next-candidates-v2.14.md) records the original scope
 of that continuation; the [v2.16 list](next-candidates-v2.16.md) records the

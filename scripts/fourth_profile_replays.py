@@ -18,9 +18,9 @@ SOURCE_FIELDS = "object owner shapeSha256 bindingsSha256".split()
 P = "is.fivefivefive.CanDis.theory."
 SOURCES = {
     "AlloySemanticProfileFactory": (P + "AlloySemanticProfileFactory", "d9821e2209abefbbc39e5ca2ef3b44fb82a0720b0f89c824b5bde13b28bdafc2", "e980db5ae20141c0f80954196610a284d59da5ef586ba0d4bd13108c4338cebd"),
-    "CertificateBundleWriter": (P + "CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46", "0807ef1b7acdba3a1c72c6f339a02ede7d8beebc969500c4e66de3c5983b1d21"),
+    "CertificateBundleWriter": (P + "CertificateBundleWriter", "0c7358f17cbc534336696dec1d885130976602d2de0d520bea4ab3705cb812dd", "e69aff29b43f39f894de79e0470eb93e7d0bd5427a37f62ba9c4e1cbf23ba15e"),
     "Codec": ("org.acgn.cert.Codec", "c0869254cca18a781b4952ae50e4c752d015f3734347dc877c2d60f62bafb1ec", "099694a8e4863290df0dbe1ef62e69237d728b92d2cfef1c5826cc5c28b1d77b"),
-    "SemanticEvidenceVerifier": ("org.acgn.cert.SemanticEvidenceVerifier", "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc", "cd2fe91218d45a6eaebc03233f04d8119c8a23064ab520a3f7657e3ee54755cd"),
+    "SemanticEvidenceVerifier": ("org.acgn.cert.SemanticEvidenceVerifier", "85f06b745f3974245747abc0cb30b749864c54d716212132e53d0a4cf0502d95", "800f352adbfef4646c7bd58e37f2a8b7b239653ef1ebd87358df0154c38decc4"),
     "SemanticProfile": (P + "SemanticProfile", "2e7f3ce494388bbd2d7d983b2bee30f1a25a38c9fcd7c7dfa148b038ebe3c65c", "3bb8166269c04aa1cb967873088cfdeaefc3bafdbc3399c01122f12e1b99334b"),
     "StructuralKey": (P + "StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96", "63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f"),
     "Wire": ("org.acgn.cert.Wire", "5f62baead2c72f173aad5319a4c84a46d5e757f91c1b973e021e37b707a37e84", "46015d7ca07b6ba13eb1b1fdebccb382f7492ee90d2827d9539bdde8853ad86e"),
@@ -73,8 +73,8 @@ def text(value):
     return "(ofCodepoints [" + ", ".join(str(ord(c)) for c in value) + "])"
 
 
-def strings(values):
-    return "[" + ", ".join(map(text, values)) + "]"
+def strings(values, encode_text=text):
+    return "[" + ", ".join(map(encode_text, values)) + "]"
 
 
 def source_fields(width, mode, version=CONTEXT_VERSION):
@@ -156,7 +156,7 @@ def validate_sources(extracted):
             raise Blocked("unregistered profile source pin")
 
 
-def program(observed, extracted):
+def program(observed, extracted, *, share_literals=False):
     validate_sources(extracted)
     expected = census()
     if len(expected) != 272 or len(observed) != len(expected):
@@ -164,6 +164,16 @@ def program(observed, extracted):
     output = ["import SemanticProfileWire", "namespace ACGN.FourthFive.ProfileReplay",
               "open ACGN.FourthFive.SemanticProfileWire", "set_option maxRecDepth 8192",
               "set_option maxHeartbeats 2000000"]
+    header_end = len(output)
+    aliases = {}
+    literal = text
+    if share_literals:
+        def intern(value):
+            if value not in aliases:
+                aliases[value] = f"profileText{len(aliases)}"
+            return aliases[value]
+        literal = intern
+
     for i, (row, (key, spec)) in enumerate(zip(observed, expected.items())):
         if set(row) != set(FIELDS) or row["case"] != str(i) or tuple(row[k] for k in ("surface", "fixture", "mutation")) != key:
             raise Blocked("unregistered/duplicate/reordered profile observation")
@@ -179,14 +189,14 @@ def program(observed, extracted):
         expected_digest = sha(profile_key(fields if key[2].startswith("rehashed-") or key[2] in VERSION_CONTROLS else original))
         if key[2] == "digest":
             expected_digest = "0" * 64
-        p = "(Profile.mk " + " ".join(map(text, fields)) + ")"
+        p = "(Profile.mk " + " ".join(map(literal, fields)) + ")"
         outcome, detail = expected_outcome(key[0], authority, key[2])
-        checks = [f"encode {p} = {text(decoded(row['producerKey']))}",
-                  f"{text(decoded(row['producerKey']))} = {text(decoded(row['independentKey']))}"]
-        checks += [f"verifierEncoding {strings(fields)} = some (encode {p})",
-                   f"reconstruct {strings(fields)} = some {p}",
-                   f"{text(row['digest'])} = {text(expected_digest)}",
-                   f"{text(row['outcome'])} = {text(outcome)}", f"{text(decoded(row['detail']))} = {text(detail)}"]
+        checks = [f"encode {p} = {literal(decoded(row['producerKey']))}",
+                  f"{literal(decoded(row['producerKey']))} = {literal(decoded(row['independentKey']))}"]
+        checks += [f"verifierEncoding {strings(fields, literal)} = some (encode {p})",
+                   f"reconstruct {strings(fields, literal)} = some {p}",
+                   f"{literal(row['digest'])} = {literal(expected_digest)}",
+                   f"{literal(row['outcome'])} = {literal(outcome)}", f"{literal(decoded(row['detail']))} = {literal(detail)}"]
         if key[0] == "serialization":
             if row["writer"] != "-":
                 raise Blocked("invented custom writer output")
@@ -195,13 +205,13 @@ def program(observed, extracted):
             if len(packed) != 8:
                 raise Blocked("writer scalar arity changed")
             written = list(map(decoded, packed))
-            checks.append(f"({strings(written)} : List Text) = {strings(original + [sha(profile_key(original)), REGISTRY, REGISTRY_DIGEST])}")
+            checks.append(f"({strings(written, literal)} : List Text) = {strings(original + [sha(profile_key(original)), REGISTRY, REGISTRY_DIGEST], literal)}")
             if key[2].startswith(("stale-", "rehashed-")) or key[2] in VERSION_CONTROLS:
-                original_p = "(Profile.mk " + " ".join(map(text, original)) + ")"
-                checks.append(f"exact {original_p} {strings(fields)} = false")
+                original_p = "(Profile.mk " + " ".join(map(literal, original)) + ")"
+                checks.append(f"exact {original_p} {strings(fields, literal)} = false")
             if key[1].startswith("source:"):
                 version = VERSION_CONTROLS.get(key[2], CONTEXT_VERSION)
-                checks.append(f"contextVersionAllowed {text(version)} = {str(key[2] not in VERSION_CONTROLS).lower()}")
+                checks.append(f"contextVersionAllowed {literal(version)} = {str(key[2] not in VERSION_CONTROLS).lower()}")
         checks.append(f"exportAllowed .{authority} {str(test_only).lower()} = "
                       + str(authority == "source" or authority == "compatibility" and test_only).lower())
         # Reuse the general reconstruction lemmas instead of repeatedly reducing
@@ -218,13 +228,20 @@ def program(observed, extracted):
                 proof.append("  · first | rfl | decide +kernel")
         output += [f"theorem observation{i} : " + " ∧\n    ".join(checks) + " := " + "\n".join(proof),
                    f"#print axioms observation{i}"]
+    # Ordinary transparent definitions preserve both the literal and its type.
+    # Every occurrence, including an independently supplied RHS, is interned by
+    # its full scalar sequence. Input comparisons and proof tactics stay intact.
+    if share_literals:
+        output[header_end:header_end] = [
+            f"private def {name} : Text := {text(value)}" for value, name in aliases.items()
+        ]
     output.append("end ACGN.FourthFive.ProfileReplay")
     return "\n".join(output) + "\n", len(expected)
 
 
 def generate(build, formal):
     code, count = program(rows(Path(build) / "semantic-profile-wire.tsv", FIELDS),
-                          rows(Path(build) / "semantic-profile-wire-source.tsv", SOURCE_FIELDS))
+                          rows(Path(build) / "semantic-profile-wire-source.tsv", SOURCE_FIELDS), share_literals=True)
     return [("SemanticProfileWireReplay.lean", code, count)]
 
 

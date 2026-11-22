@@ -1,6 +1,6 @@
 # Ordered Obligation Repair Status
 
-Current diagnostics: **105**. Original diagnostics: **132**.
+Current diagnostics: **84**. Original diagnostics: **132**.
 
 Absence of a diagnostic is not proof of repair; verified evidence is required.
 
@@ -45,7 +45,7 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 37 | P1-08 | P1-08 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 38 | P1-09 | P1-09 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 39 | P1-10 | P1-10 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 40 | P1-15 | P1-15 formal_status is PARTIAL | OPEN |
+| 40 | P1-15 | P1-15 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 41 | P1-16 | P1-16 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 42 | P1-19 | P1-19 formal_status is PARTIAL | OPEN |
 | 43 | A2-01 | A2-01 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
@@ -61,17 +61,17 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 53 | A2-12 | A2-12 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 54 | A2-14 | A2-14 formal_status is PARTIAL | OPEN |
 | 55 | A2-15 | A2-15 formal_status is PARTIAL | OPEN |
-| 56 | A2-16 | A2-16 formal_status is PARTIAL | OPEN |
-| 57 | A2-16 | A2-16 conformance_status is PARTIAL | OPEN |
+| 56 | A2-16 | A2-16 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 57 | A2-16 | A2-16 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 58 | A2-17 | A2-17 formal_status is PARTIAL | OPEN |
 | 59 | A2-19 | A2-19 formal_status is PARTIAL | OPEN |
 | 60 | A2-20 | A2-20 formal_status is PARTIAL | OPEN |
-| 61 | A2-21 | A2-21 formal_status is PARTIAL | OPEN |
-| 62 | A2-22 | A2-22 formal_status is PARTIAL | OPEN |
-| 63 | A2-23 | A2-23 formal_status is PARTIAL | OPEN |
-| 64 | A2-24 | A2-24 formal_status is PARTIAL | OPEN |
-| 65 | A2-25 | A2-25 formal_status is PARTIAL | OPEN |
-| 66 | A2-26 | A2-26 formal_status is PARTIAL | OPEN |
+| 61 | A2-21 | A2-21 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 62 | A2-22 | A2-22 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 63 | A2-23 | A2-23 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 64 | A2-24 | A2-24 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 65 | A2-25 | A2-25 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 66 | A2-26 | A2-26 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 67 | A2-27 | A2-27 formal_status is PARTIAL | OPEN |
 | 68 | P2-02 | P2-02 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 69 | P2-05 | P2-05 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
@@ -96,17 +96,17 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 88 | P3-15 | P3-15 conformance_status is PARTIAL | OPEN |
 | 89 | P4-01 | P4-01 formal_status is PARTIAL | OPEN |
 | 90 | P4-01 | P4-01 conformance_status is PARTIAL | OPEN |
-| 91 | P4-04 | P4-04 formal_status is PARTIAL | OPEN |
-| 92 | P4-06 | P4-06 formal_status is PARTIAL | OPEN |
-| 93 | P4-07 | P4-07 formal_status is PARTIAL | OPEN |
-| 94 | P4-08 | P4-08 formal_status is PARTIAL | OPEN |
-| 95 | P4-11 | P4-11 formal_status is PARTIAL | OPEN |
-| 96 | P5-05 | P5-05 conformance_status is PARTIAL | OPEN |
-| 97 | P5-06 | P5-06 conformance_status is PARTIAL | OPEN |
-| 98 | P5-07 | P5-07 conformance_status is PARTIAL | OPEN |
-| 99 | P5-08 | P5-08 conformance_status is PARTIAL | OPEN |
+| 91 | P4-04 | P4-04 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 92 | P4-06 | P4-06 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 93 | P4-07 | P4-07 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 94 | P4-08 | P4-08 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 95 | P4-11 | P4-11 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 96 | P5-05 | P5-05 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 97 | P5-06 | P5-06 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 98 | P5-07 | P5-07 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 99 | P5-08 | P5-08 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 100 | P5-09 | P5-09 formal_status is PARTIAL | OPEN |
-| 101 | P5-11 | P5-11 formal_status is PARTIAL | OPEN |
+| 101 | P5-11 | P5-11 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 102 | P5-12 | P5-12 conformance_status is PARTIAL | OPEN |
 | 103 | P5-13 | P5-13 formal_status is PARTIAL | OPEN |
 | 104 | P5-14 | P5-14 formal_status is PARTIAL | OPEN |
@@ -123,9 +123,9 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 115 | P6-07 | P6-07 formal_status is PARTIAL | OPEN |
 | 116 | P6-07 | P6-07 conformance_status is PARTIAL | OPEN |
 | 117 | P6-08 | P6-08 formal_status is PARTIAL | OPEN |
-| 118 | P6-09 | P6-09 conformance_status is PARTIAL | OPEN |
+| 118 | P6-09 | P6-09 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 119 | P6-10 | P6-10 formal_status is PARTIAL | OPEN |
-| 120 | P6-11 | P6-11 conformance_status is PARTIAL | OPEN |
+| 120 | P6-11 | P6-11 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 121 | P6-12 | P6-12 formal_status is PARTIAL | OPEN |
 | 122 | P6-12 | P6-12 conformance_status is PARTIAL | OPEN |
 | 123 | P6-13 | P6-13 formal_status is PARTIAL | OPEN |

@@ -1,0 +1,31 @@
+{
+  "reviewerId": "01a1b7ca-e043-7ad0-8162-0de59a5feda6",
+  "decision": "BLOCKED",
+  "submissionSha256": "a8eaa1d53e1dc0e280e92af7fe2dad289340a9eb3396487115a6e734a281beff",
+  "authorizedStages": [],
+  "findings": [
+    {
+      "id": "SUPERVISOR-V4-1",
+      "severity": "blocking",
+      "location": "prepare.mjs capability-report; CapabilityBenchmark.java writeReportJson() and appendSoundnessSummary()",
+      "detail": "The capability-report stage copies the historical v3 soundness.json and soundness.csv into its new private report workspace. The tagged reporter then embeds the JSON as boundedSoundness in the new results.json and includes an unqualified bounded-soundness summary in REPORT.md. The generated report does not identify those checks as historical input evidence, contrary to the request's stated boundary.",
+      "requiredAction": "Keep the historical checks outside the new reporter's soundness input paths, or make the generated JSON and report explicitly identify them as historical input evidence. Rebind and review the changed plans and artifacts."
+    },
+    {
+      "id": "SUPERVISOR-V4-SEAL",
+      "severity": "addressed at supplied trust boundary",
+      "detail": "The inspected service computes the child digest from the serialized record and emits it through the reserved guarded stdout channel. The coordinator retains receipt and witness pins in memory and rechecks predecessor receipts and sealed output inventories. The retained fixture reports successful real-guard completion and mutation controls; its referenced terminal hash matched."
+    },
+    {
+      "id": "SUPERVISOR-V4-REPORTS",
+      "severity": "addressed at supplied scope",
+      "detail": "The fail-fast adapter delegates selection, solver tasks, probes and writers to the tagged implementation while using a bounded work window and stopping on a disallowed result. Report jobs use fresh private output roots and check intended targets before each writer. Synthetic timeout observations remain censored rather than treated as successful trials."
+    },
+    {
+      "id": "SUPERVISOR-V4-INPUTS",
+      "severity": "informational",
+      "detail": "The request digest, all 47 bound entries and 6,495 input-inventory entries matched the inspected host files. The retained control results were inspected, not rerun."
+    }
+  ],
+  "scope": "Read-only prospective review of the 20 proposed study stages under the stated trusted-supervisor and systemd boundary. No files were written and no tests or experiments were launched. The inherited negative-probe checks do not themselves prove universal semantic correctness. No stage execution, publication or public certification is authorized."
+}

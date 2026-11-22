@@ -351,13 +351,13 @@ theorem missing_swap_from_generated_closure_rejects :
     acceptsBinderReplay2
       ⟨[.swap], [.identity]⟩
       ⟨[.identity], [[.identity]]⟩ = false := by
-  native_decide
+  decide
 
 theorem missing_occurrence_conjugation_rejects :
     acceptsBinderReplay2
       ⟨[.swap], [.identity, .swap]⟩
       ⟨[.identity, .swap], [[.identity, .swap]]⟩ = false := by
-  native_decide
+  decide
 
 inductive ConstructionKind where
   | none

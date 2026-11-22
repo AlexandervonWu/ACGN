@@ -140,6 +140,7 @@ final class SemanticEvidenceVerifier {
     private final Limits limits;
     private final VerificationPolicy policy;
     private long parsedKeyNodes;
+    private final String expectedArrowDigest;
 
     SemanticEvidenceVerifier(
             Bundle bundle,
@@ -149,6 +150,8 @@ final class SemanticEvidenceVerifier {
         this.model = Objects.requireNonNull(model, "model");
         this.policy = Objects.requireNonNull(policy, "policy");
         this.limits = policy.limits();
+        expectedArrowDigest = policy.trustedArrowSourceDigests().get(ArrowSourceCommitment.subject(
+                bundle.metadata().inputIdentifier(), bundle.metadata().inputSha256()));
     }
 
     Authorization verify() {
@@ -161,8 +164,15 @@ final class SemanticEvidenceVerifier {
         requireSection(evidence.child(4), "exact-types");
         requireSection(evidence.child(5), "call-occurrences");
 
+        if (!policy.trustedArrowSourceDigests().isEmpty() && expectedArrowDigest == null) {
+            throw new UncheckableException(FailureCode.MISSING_EVIDENCE,
+                    "No caller-pinned ARROW source commitment for this input scope");
+        }
         if (bundle.metadata().mode().equals("TEST_ONLY")
                 && isExactEmptyTestFixture(evidence)) {
+            if (expectedArrowDigest != null) throw new UncheckableException(FailureCode.MISSING_EVIDENCE,
+                    "Empty test fixture contains no ARROW source evidence");
+            requireNoEmptyFixtureBinderClaims(bundle.proofs().values(), model);
             return Authorization.testOnlyFixture();
         }
 
@@ -418,6 +428,36 @@ final class SemanticEvidenceVerifier {
         section.requireTag(tag);
         if (!section.scalars().isEmpty()) {
             throw malformed(tag + " section carries scalars");
+        }
+    }
+
+    /** The synthetic empty evidence envelope supplies no rooted binder records.
+     * Generic alpha proofs over ports remain available when no orbit claims an occurrence. */
+    static void requireNoEmptyFixtureBinderClaims(Iterable<Wire.Node> proofs, KernelModel model) {
+        var roots = new ArrayDeque<String>();
+        for (Wire.Node proof : proofs) {
+            proof.requireShape("proof", 7, 2);
+            if (!proof.scalar(1).equals("CANONICAL_ORBIT")) continue;
+            Wire.Node orbit = proof.child(1).requireShape("canonical-orbit", 6, 4);
+            Wire.Node refs = orbit.child(3).requireTag("binder-occurrence-refs");
+            if (!refs.scalars().isEmpty() || !refs.children().isEmpty()) {
+                throw new FormatException(FailureCode.MISSING_EVIDENCE,
+                        "Empty test fixture cannot supply a referenced binder occurrence");
+            }
+            roots.add(orbit.scalar(1));
+        }
+        // Only existence matters in the empty case. Shared subterms need one visit.
+        Set<String> seen = new HashSet<>();
+        while (!roots.isEmpty()) {
+            String id = roots.removeFirst();
+            if (!seen.add(id)) continue;
+            KernelModel.Term term = model.term(id);
+            if (term.kind() == KernelModel.TermKind.BIND_BLOCK
+                    && !model.binder(model.schema(term.sort().value()).value()).generators().isEmpty()) {
+                throw new FormatException(FailureCode.MISSING_EVIDENCE,
+                        "Empty test fixture lacks a binder occurrence required by an orbit base");
+            }
+            roots.addAll(term.children());
         }
     }
 
@@ -1305,6 +1345,11 @@ final class SemanticEvidenceVerifier {
         private final Map<String, StableKey> orbitRepresentativeKeys = new HashMap<>();
         private long orbitWork;
         private boolean hasUntrustedSubtypeHierarchy;
+        private boolean hasNontrivialAncestry;
+        private boolean requiresArrowSourceForExactV2;
+        private boolean requiresJoinSourceForExactV2;
+        private final Map<String, List<String>> arrowAncestry = new HashMap<>();
+        private String pinnedArrowPath;
 
         private SemanticReplay(
                 ProfileEvidence profile,
@@ -1340,11 +1385,20 @@ final class SemanticEvidenceVerifier {
                 verifyBinderOccurrence(record);
             }
             verifyEvidenceCoverage();
-            if (hasUntrustedSubtypeHierarchy) {
+            if (expectedArrowDigest != null) checkArrowSource(flat);
+            if (requiresArrowSourceForExactV2 && expectedArrowDigest == null) {
+                throw new UncheckableException(FailureCode.MISSING_EVIDENCE,
+                        "Exact v2 dependent-chain leaf requires a caller-pinned ARROW source commitment");
+            }
+            if (hasUntrustedSubtypeHierarchy || (hasNontrivialAncestry && expectedArrowDigest == null)) {
                 throw new UncheckableException(
                         FailureCode.MISSING_EVIDENCE,
                         "Subtype JOIN ancestry is internally consistent but lacks "
                                 + "an independently pinned source-hierarchy authority");
+            }
+            if (requiresJoinSourceForExactV2) {
+                throw new UncheckableException(FailureCode.MISSING_EVIDENCE,
+                        "Exact v2 JOIN leaf requires independently pinned JOIN source evidence");
             }
         }
 
@@ -1773,6 +1827,7 @@ final class SemanticEvidenceVerifier {
                     record.scalar(10), "dependent-chain source occurrence commitment");
             requireDependentChainSourceOccurrenceCommitment(
                     sourceOccurrenceCommitment, source.key());
+            if (expectedArrowDigest != null) pinnedArrowPath = sourceOccurrenceCommitment.scalars().get(0);
             StableKey left = endpointDependentChain(
                     source, sourceOccurrenceCommitment);
             StableKey right = endpointNode(target);
@@ -1810,6 +1865,77 @@ final class SemanticEvidenceVerifier {
                         FailureCode.DUPLICATE_ID,
                         "Duplicate dependent-chain construction evidence key");
             }
+        }
+
+        private UncheckableException outsideArrowSourceScope() {
+            return new UncheckableException(FailureCode.MISSING_EVIDENCE,
+                    "Caller-pinned ARROW source requires one closed SOME over a primitive-signature ARROW tree");
+        }
+
+        private void checkArrowSource(Wire.Node constructions) {
+            if (constructions.children().size() != 1 || pinnedArrowPath == null) throw outsideArrowSourceScope();
+            Wire.Node record = constructions.child(0);
+            if (!record.tag().equals("dependent-chain-construction") || !record.scalar(2).equals("ARROW")) {
+                throw outsideArrowSourceScope();
+            }
+            var root = model.term(bundle.publication().requireShape("publication", 5, 5).scalar(2));
+            if (root.kind() != KernelModel.TermKind.APP || !root.context().slots().isEmpty()
+                    || !model.operator(root.symbol()).semanticIdentity().equals("ALLOY/SOME")
+                    || !type(root.sort().value(), "SOME output").is(TypeKind.BOOL)
+                    || root.children().size() != 1) throw outsideArrowSourceScope();
+            var target = arrowSourceDefinition(root.children().get(0));
+            if (!target.id().equals(record.scalar(3)) || !pinnedArrowPath.equals("phase/0/matrix/child/0/child/0")) {
+                throw theory("ARROW construction differs from selected SOME operand or occurrence path");
+            }
+            List<ArrowSourceCommitment.Leaf> leaves = new ArrayList<>();
+            collectArrowRoles(record.child(0), pinnedArrowPath, leaves);
+            var observed = ArrowSourceCommitment.from(bundle.metadata().inputIdentifier(),
+                    bundle.metadata().inputSha256(), leaves, arrowAncestry);
+            if (!observed.digest().equals(expectedArrowDigest)) {
+                throw new FormatException(FailureCode.MISSING_EVIDENCE,
+                        "ARROW roles or complete ancestry differ from the caller-pinned source");
+            }
+        }
+
+        private KernelModel.Term arrowSourceDefinition(String portId) {
+            var port = model.term(portId);
+            if (port.kind() != KernelModel.TermKind.ONE_TERM || !port.context().slots().isEmpty()
+                    || port.children().size() != 1) throw outsideArrowSourceScope();
+            var invocation = model.term(port.children().get(0));
+            if (invocation.kind() != KernelModel.TermKind.INVOKE || !invocation.context().slots().isEmpty()) {
+                throw outsideArrowSourceScope();
+            }
+            return model.witness(invocation.symbol()).definition();
+        }
+
+        private void collectArrowRoles(Wire.Node input, String path, List<ArrowSourceCommitment.Leaf> leaves) {
+            if (input.tag().equals("dependent-chain-application")) {
+                collectArrowRoles(input.child(0), path + "/child/0", leaves);
+                collectArrowRoles(input.child(1), path + "/child/1", leaves);
+                return;
+            }
+            Wire.Node leaf = input.requireShape("dependent-chain-leaf", 5, 1);
+            KernelModel.Term term = arrowSourceDefinition(leaf.scalar(0));
+            if (!leaf.scalar(2).equals("EXACT_RELATION") || term.kind() != KernelModel.TermKind.APP
+                    || !term.context().slots().isEmpty() || !term.children().isEmpty()) throw outsideArrowSourceScope();
+            String prefix = "ALLOY/GLOBALBINDING/alloy/signature/";
+            String operator = model.operator(term.symbol()).semanticIdentity();
+            if (!operator.startsWith(prefix)) throw outsideArrowSourceScope();
+            String name = operator.substring(prefix.length());
+            ExactType relation = type(leaf.scalar(1), "pinned ARROW leaf");
+            if (!name.matches("[A-Za-z_][A-Za-z0-9_]*") || !relation.is(TypeKind.RELATION)
+                    || relation.arguments().size() != 1 || !("AlloySig:" + name).equals(relation.arguments().get(0).symbol())
+                    || !type(term.sort().value(), "pinned ARROW signature").key().equals(relation.key())) {
+                throw outsideArrowSourceScope();
+            }
+            leaves.add(new ArrowSourceCommitment.Leaf(path, name));
+        }
+
+        private String arrowColumn(ExactType column) {
+            if (!column.is(TypeKind.CONSTRUCTOR) || !column.symbol().startsWith("AlloySig:")) {
+                throw outsideArrowSourceScope();
+            }
+            return column.symbol().substring("AlloySig:".length());
         }
 
         private void requireSoundDependentFlattening(
@@ -1919,12 +2045,43 @@ final class SemanticEvidenceVerifier {
                     if (rule != expected) {
                         throw theory("Dependent-chain leaf names another typing rule");
                     }
-                    typeProof = StableKey.of(
+                    typeProof = parseStableKey(node.scalar(4), "dependent-chain leaf type proof");
+                    StableKey expectedProof = StableKey.of(
                             "dependent-chain-leaf-type-proof-v1",
                             List.of(rule.name()),
                             List.of(stored.key(), output.key()));
-                    requireKey(node.scalar(4), typeProof,
-                            "dependent-chain leaf type proof");
+                    if (typeProof.tag().equals("dependent-chain-leaf-type-proof-v2")
+                            && rule == LeafTypeRule.EXACT_RELATION
+                            && !dag.alternatives().isEmpty()
+                            && (expectedKind == ChainKind.JOIN || dag.alternatives().size() == 1)
+                            && dag.alternatives().stream().flatMap(List::stream).allMatch(column ->
+                                    column.exact().is(TypeKind.CONSTRUCTOR)
+                                            && column.exact().symbol().startsWith("AlloySig:"))) {
+                        if (expectedKind == ChainKind.JOIN) {
+                            requiresJoinSourceForExactV2 = true;
+                        } else {
+                            requiresArrowSourceForExactV2 = true;
+                        }
+                        // The parser sorts whole products by their length-prefixed spelling.
+                        List<String> products = new ArrayList<>();
+                        for (List<ChainColumn> product : dag.alternatives()) {
+                            StringBuilder tuple = new StringBuilder();
+                            for (ChainColumn column : product) {
+                                String label = column.exact().symbol().substring("AlloySig:".length());
+                                tuple.append(label.length()).append(':').append(label);
+                            }
+                            products.add(tuple.toString());
+                        }
+                        products.sort(String::compareTo);
+                        String source = "RELATION[" + String.join("][", products) + "]";
+                        expectedProof = StableKey.of(
+                                "dependent-chain-leaf-type-proof-v2",
+                                List.of(rule.name(), source),
+                                List.of(stored.key(), dag.key()));
+                    }
+                    if (!typeProof.equals(expectedProof)) {
+                        throw theory("Dependent-chain leaf type proof does not independently reconstruct");
+                    }
                 }
                 StableKey key = StableKey.of(
                         "dependent-chain-leaf-v4",
@@ -2131,8 +2288,12 @@ final class SemanticEvidenceVerifier {
             List<StableKey> path = column.ancestry().stream()
                     .map(ExactType::key)
                     .toList();
-            if (path.size() > 1) {
-                hasUntrustedSubtypeHierarchy = true;
+            if (path.size() > 1) hasNontrivialAncestry = true;
+            if (expectedArrowDigest != null) {
+                String name = arrowColumn(column.exact());
+                List<String> hierarchy = column.ancestry().stream().map(this::arrowColumn).toList();
+                List<String> prior = arrowAncestry.putIfAbsent(name, hierarchy);
+                if (prior != null && !prior.equals(hierarchy)) throw theory("Conflicting pinned ARROW ancestry");
             }
             try {
                 chainSubtypeStacks.register(column.exact().key(), path);

@@ -27,7 +27,9 @@ fi
 mkdir -p "$OUTPUT/logs" "$OUTPUT/classes" "$OUTPUT/verifier-classes" \
   "$OUTPUT/verifier-test-classes" "$OUTPUT/certificate-fixtures" \
   "$OUTPUT/certificate-fixtures-replay" \
-  "$OUTPUT/phase6-semantic-order"
+  "$OUTPUT/phase6-semantic-order" "$OUTPUT/eighth-witness-classes" "$OUTPUT/eighth-witnesses"
+OUTPUT="$(cd "$OUTPUT" && pwd)"
+cd "$ROOT" || exit 3
 
 failures=0
 steps=0
@@ -69,6 +71,16 @@ printf 'step\tresult\tdetail\n' >"$OUTPUT/step-results.tsv"
 input_roots=(
   .github/workflows/bounded-ci.yml
   certificate-verifier
+  docs/obligation-repair/eighth-five
+  docs/obligation-repair/ninth-five
+  docs/obligation-repair/tenth-five
+  docs/obligation-repair/eleventh-five
+  docs/obligation-repair/sixth-five/qualification.json
+  docs/obligation-repair/sixth-five/DecodedEvidenceCoverage.lean
+  docs/obligation-repair/sixth-five/java/RawCallSourceAuthority.java
+  docs/obligation-repair/seventh-five/java/P613SourcePair.java
+  docs/obligation-repair/seventh-five/java/RawArrowOccurrenceAuthority.java
+  docs/obligation-repair/seventh-five/java/RawArrowSourcePin.java
   docs/section3-assurance-claims.md
   docs/section3-repair-audit
   lean-toolchain
@@ -139,8 +151,8 @@ run_step compile-verifier-tests "$JAVA_TIMEOUT" \
 run_step package-producer "$JAVA_TIMEOUT" \
   jar --create --file "$OUTPUT/acgn-producer.jar" -C "$OUTPUT/classes" .
 run_step package-verifier "$JAVA_TIMEOUT" \
-  jar --create --file "$OUTPUT/acgn-certificate-verifier.jar" \
-  --main-class org.acgn.cert.Main -C "$OUTPUT/verifier-classes" .
+  "$ROOT/scripts/package_certificate_verifier_classes.sh" \
+  "$OUTPUT/verifier-classes" "$OUTPUT/acgn-certificate-verifier.jar"
 
 run_step rewrite-rule-traceability "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" -cp "$OUTPUT/classes:$ROOT/lib/*" \
@@ -229,6 +241,93 @@ run_step producer-certificate-fixtures-deterministic "$JAVA_TIMEOUT" \
     done
   ' certificate-determinism "$OUTPUT/certificate-fixtures" \
     "$OUTPUT/certificate-fixtures-replay"
+eighth_package="$ROOT/docs/obligation-repair/eighth-five"
+eighth_output="$OUTPUT/eighth-witnesses"
+eighth_classes="$OUTPUT/eighth-witness-classes"
+eighth_dependencies="$OUTPUT/classes:$ROOT/lib/*:$OUTPUT/verifier-classes:$OUTPUT/verifier-test-classes"
+mapfile -t eighth_sources < <(find "$eighth_package/java" -type f -name '*.java' | sort)
+run_step compile-eighth-witnesses "$JAVA_TIMEOUT" \
+  javac --release 17 -encoding UTF-8 -cp "$eighth_dependencies" -d "$eighth_classes" \
+  "$ROOT/docs/obligation-repair/sixth-five/java/RawCallSourceAuthority.java" \
+  "$ROOT/docs/obligation-repair/seventh-five/java/P613SourcePair.java" "${eighth_sources[@]}"
+
+eighth_java=(java -ea -Xmx"$JAVA_HEAP" "${provenance_options[@]}" -cp "$eighth_classes:$eighth_dependencies")
+fresh_verifier="$OUTPUT/acgn-certificate-verifier.jar"
+fixtures="$OUTPUT/certificate-fixtures"
+run_step java-P611SchemaAdmissionTest "$JAVA_TIMEOUT" \
+  "${eighth_java[@]}" org.acgn.cert.P611SchemaAdmissionTest \
+  "$ROOT" "$fixtures" "$fresh_verifier" "$eighth_output/schema.tsv"
+run_step java-P115ImportedCallAdmissionTest "$JAVA_TIMEOUT" \
+  "${eighth_java[@]}" is.fivefivefive.CanDis.P115ImportedCallAdmissionTest
+run_step java-P411ShapeIdentityTest "$JAVA_TIMEOUT" \
+  "${eighth_java[@]}" org.acgn.cert.P411ShapeIdentityTest "$eighth_output/shape-identities.tsv" "$fresh_verifier"
+run_step java-P609RootedBinderTest "$JAVA_TIMEOUT" \
+  "${eighth_java[@]}" org.acgn.cert.P609RootedBinderTest "$ROOT" \
+  "$fixtures/schema-v8-coverage/bind-block-dual-a.acgncert" \
+  "$fixtures/schema-v8-coverage/bind-block-nested-same-descriptor-a.acgncert" "$eighth_output/p609.tsv"
+run_step java-A223ArrowFamiliesTest "$JAVA_TIMEOUT" \
+  env ACGN_EIGHTH_LEAN="$LEAN_BIN" ACGN_EIGHTH_PROOF="$ROOT/docs/section3-repair-audit/formal/A223ArrowFamilies.lean" \
+  "${eighth_java[@]}" is.fivefivefive.CanDis.theory.A223ArrowFamiliesTest "$eighth_output/arrow-families.tsv"
+
+ninth_package="$ROOT/docs/obligation-repair/ninth-five"
+ninth_classes="$OUTPUT/ninth-witness-classes"
+mkdir -p "$ninth_classes"
+mapfile -t ninth_sources < <(find "$ninth_package/java" -type f -name '*.java' | sort)
+run_step compile-ninth-witnesses "$JAVA_TIMEOUT" \
+  javac --release 17 -encoding UTF-8 -cp "$eighth_dependencies" -d "$ninth_classes" \
+  "$ROOT/docs/obligation-repair/seventh-five/java/RawArrowOccurrenceAuthority.java" \
+  "$ROOT/docs/obligation-repair/seventh-five/java/RawArrowSourcePin.java" "${ninth_sources[@]}"
+
+run_ninth_witness() {
+  local parent="$1" main="$2"
+  run_step "java-${main##*.}" "$JAVA_TIMEOUT" \
+    python3 -B "$ROOT/scripts/audit_lean_assumptions.py" ninth-phase "$parent" "$main" \
+    "$ROOT" "$OUTPUT" "$LEAN_BIN" "$ninth_classes:$eighth_dependencies" "$JAVA_HEAP" "${provenance_options[@]}"
+}
+run_ninth_witness A2-21 is.fivefivefive.CanDis.theory.A221NormalizationTest
+run_ninth_witness A2-22 is.fivefivefive.CanDis.theory.A222IntersectionTest
+run_ninth_witness A2-24 org.acgn.cert.A224Qualification
+run_ninth_witness A2-25 org.acgn.cert.A225WireCommitmentTest
+run_ninth_witness P5-06 is.fivefivefive.CanDis.P506SourceBindingTest
+
+tenth_package="$ROOT/docs/obligation-repair/tenth-five"
+tenth_classes="$OUTPUT/tenth-witness-classes"
+mkdir -p "$tenth_classes"
+mapfile -t tenth_sources < <(find "$tenth_package/java" -type f -name '*.java' | sort)
+run_step compile-tenth-witnesses "$JAVA_TIMEOUT" \
+  javac --release 17 -encoding UTF-8 -cp "$eighth_dependencies" -d "$tenth_classes" "${tenth_sources[@]}"
+
+run_tenth_witness() {
+  local parent="$1" main="$2"
+  run_step "java-$parent-${main##*.}" "$JAVA_TIMEOUT" \
+    python3 -B "$ROOT/scripts/audit_lean_assumptions.py" tenth-phase "$parent" "$main" \
+    "$ROOT" "$OUTPUT" "$LEAN_BIN" "$tenth_classes:$eighth_dependencies" "$JAVA_HEAP" "${provenance_options[@]}"
+}
+run_tenth_witness P5-05 is.fivefivefive.CanDis.MembershipDualTest
+run_tenth_witness P5-07 is.fivefivefive.CanDis.MembershipDualTest
+run_tenth_witness P5-11 is.fivefivefive.CanDis.core.egraph.P511LexicalTransportTest
+run_tenth_witness A2-26 is.fivefivefive.CanDis.A226Qualification
+run_tenth_witness P4-08 is.fivefivefive.CanDis.theory.P408OwnerRestorationTest
+
+eleventh_package="$ROOT/docs/obligation-repair/eleventh-five"
+eleventh_classes="$OUTPUT/eleventh-witness-classes"
+mkdir -p "$eleventh_classes"
+mapfile -t eleventh_sources < <(find "$eleventh_package/java" -type f -name '*.java' | sort)
+run_step compile-eleventh-witnesses "$JAVA_TIMEOUT" \
+  javac --release 17 -encoding UTF-8 -cp "$eighth_dependencies" -d "$eleventh_classes" "${eleventh_sources[@]}"
+
+run_eleventh_witness() {
+  local parent="$1" main="$2"
+  run_step "java-$parent-${main##*.}" "$JAVA_TIMEOUT" \
+    python3 -B "$ROOT/scripts/audit_lean_assumptions.py" eleventh-phase "$parent" "$main" \
+    "$ROOT" "$OUTPUT" "$LEAN_BIN" "$eleventh_classes:$eighth_dependencies" "$JAVA_HEAP" "${provenance_options[@]}"
+}
+run_eleventh_witness P5-08 is.fivefivefive.CanDis.P508EmptyBindingTest
+run_eleventh_witness A2-16 is.fivefivefive.CanDis.A216Qualification
+run_eleventh_witness P4-07 is.fivefivefive.CanDis.theory.P407QualifiedUsesTest
+run_eleventh_witness P4-04 is.fivefivefive.CanDis.theory.P404ParentAssignmentTest
+run_eleventh_witness P4-06 is.fivefivefive.CanDis.theory.P406AbsorbedRecordsTest
+
 run_step producer-Phase6SemanticOrderProducerRegressionTest "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" "${provenance_options[@]}" \
   -cp "$OUTPUT/classes:$ROOT/lib/*" \
@@ -290,16 +389,33 @@ run_step publication-manifest-contracts "$JAVA_TIMEOUT" \
 run_step imported-publication-snapshot "$JAVA_TIMEOUT" \
   "$ROOT/scripts/verify_imported_publication_snapshot.sh"
 
-mapfile -t mapped_lean_files < <(
-  awk -F '\t' 'NR > 1 && $3 != "" && $3 != "MISSING" { print $3 }' \
-    "$ROOT/docs/section3-repair-audit/requirements-traceability.tsv" | sort -u
-)
-printf '%s\n' "${mapped_lean_files[@]}" >"$OUTPUT/mapped-lean-files.txt"
+run_step lean-governed-inventory "$LEAN_TIMEOUT" \
+  python3 -B "$ROOT/scripts/audit_lean_assumptions.py" --root "$ROOT" --list-formal-files
+cp "$OUTPUT/logs/lean-governed-inventory.log" "$OUTPUT/mapped-lean-files.txt"
+mapfile -t mapped_lean_files <"$OUTPUT/mapped-lean-files.txt"
 find "$ROOT/docs/section3-repair-audit/formal" -maxdepth 1 \
-  -type f -name '*.lean' -printf 'docs/section3-repair-audit/formal/%f\n' \
+  \( -type f -o -type l \) -name '*.lean' -printf 'docs/section3-repair-audit/formal/%f\n' \
   | sort >"$OUTPUT/discovered-lean-files.txt"
 run_step lean-mapping-exact "$LEAN_TIMEOUT" \
   cmp "$OUTPUT/discovered-lean-files.txt" "$OUTPUT/mapped-lean-files.txt"
+# Compile local imports into a fresh directory. No ambient project .oleans
+# participate in either the mapped proof checks or the generated axiom audits.
+lean_imports="$OUTPUT/lean-imports"
+mkdir -p "$lean_imports"
+import_sources=(
+  docs/obligation-repair/sixth-five/DecodedEvidenceCoverage.lean
+  docs/section3-repair-audit/formal/DependentChainSequence.lean
+  docs/section3-repair-audit/formal/DependentJoinGuard.lean
+  docs/section3-repair-audit/formal/PhaseA2DependentChains.lean
+  docs/section3-repair-audit/formal/ContainerReplay.lean
+  docs/section3-repair-audit/formal/Phase2VariadicLaws.lean
+)
+for relative in "${import_sources[@]}"; do
+  module="$(basename "$relative" .lean)"
+  run_step "lean-import-$module" "$LEAN_TIMEOUT" \
+    env LEAN_PATH="$lean_imports" bash -c 'cd "$1" && exec "$2" -o "$3/$4.olean" "$4.lean"' \
+    assurance-import "$ROOT/$(dirname "$relative")" "$LEAN_BIN" "$lean_imports" "$module"
+done
 for relative_lean_file in "${mapped_lean_files[@]}"; do
   if [[ "$relative_lean_file" != docs/section3-repair-audit/formal/*.lean ]]; then
     printf 'mapped Lean file is outside the governed directory: %s\n' \
@@ -309,7 +425,19 @@ for relative_lean_file in "${mapped_lean_files[@]}"; do
   fi
   lean_file="$ROOT/$relative_lean_file"
   name="$(basename "$lean_file" .lean)"
-  run_step "lean-$name" "$LEAN_TIMEOUT" "$LEAN_BIN" "$lean_file"
+  imports="$lean_imports"
+  for phase_cache in "$OUTPUT/ninth-witnesses" "$OUTPUT/tenth-witnesses" "$OUTPUT/eleventh-witnesses"; do
+    if [[ -f "$phase_cache/$name.imports" ]]; then
+      if [[ "$imports" != "$lean_imports" ]]; then
+        printf 'ambiguous phase import cache for %s\n' "$name" >&2
+        failures=$((failures + 1))
+        continue 2
+      fi
+      read -r cache <"$phase_cache/$name.imports"
+      imports="$phase_cache/$cache"
+    fi
+  done
+  run_step "lean-$name" "$LEAN_TIMEOUT" env LEAN_PATH="$imports" "$LEAN_BIN" "$lean_file"
 done
 
 run_step lean-ConcreteRepairMetric-vectors "$LEAN_TIMEOUT" \
@@ -322,11 +450,13 @@ run_step java-ConcreteRepairMetricRefinementTest "$JAVA_TIMEOUT" \
   "$OUTPUT/concrete-repair-metric.tsv"
 
 run_step lean-forbidden-token-scan "$LEAN_TIMEOUT" \
-  bash -c '! rg -n '\''\b(sorry|admit|axiom|unsafe)\b'\'' "$1" --glob '\''*.lean'\''' \
+  bash -c 'rg -n "\b(sorry|admit|axiom|unsafe)\b" "$1" --glob "*.lean"
+    status=$?
+    case "$status" in 0) exit 1 ;; 1) exit 0 ;; *) exit "$status" ;; esac' \
   assurance-scan "$ROOT/docs/section3-repair-audit/formal"
 run_step lean-explicit-assumption-inventory "$LEAN_TIMEOUT" \
-  python3 "$ROOT/scripts/audit_lean_assumptions.py" \
-  --root "$ROOT" --output "$OUTPUT/lean-assumptions" --lean "$LEAN_BIN"
+  env LEAN_PATH="$lean_imports" python3 -B "$ROOT/scripts/audit_lean_assumptions.py" \
+  --root "$ROOT" --output "$OUTPUT/lean-assumptions" --lean "$LEAN_BIN" --phase-caches "$OUTPUT/ninth-witnesses" --phase-caches "$OUTPUT/tenth-witnesses" --phase-caches "$OUTPUT/eleventh-witnesses"
 
 run_step traceability-tests "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" -cp "$OUTPUT/classes:$ROOT/lib/*" \

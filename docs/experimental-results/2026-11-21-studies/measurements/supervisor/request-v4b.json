@@ -1,0 +1,460 @@
+{
+  "releaseTag": "d71cd1c2343b9fdb61d311331feafbe14bea2925",
+  "build": "6648d7bd4148e6374a5446eaf12a3f1d7633db52",
+  "reviewerId": "01a1b7ca-e043-7ad0-8162-0de59a5feda6",
+  "stages": [
+    {
+      "stage": "natural-raw-egraph",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-raw-egraph.json",
+        "sha256": "7c484c86eed4c87bedf2b48d87ae472fea637608d531be7eaad1f847caa969dd"
+      }
+    },
+    {
+      "stage": "natural-raw-egraph-debruijn",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-raw-egraph-debruijn.json",
+        "sha256": "90d3059c68a64ce086783241121b7fb48ffd15b8d509211309592d16daf4d163"
+      }
+    },
+    {
+      "stage": "natural-java-egglog",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-java-egglog.json",
+        "sha256": "b2a09a6918517ab56d7da204d28c246002c3324e3ab5e8fc96a1386d3a4a198a"
+      }
+    },
+    {
+      "stage": "natural-java-egglog-debruijn",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-java-egglog-debruijn.json",
+        "sha256": "08a24f5b2e3c24f593efdc4ba9daf6b5caec6acd9e9ba36785744dc66e515778"
+      }
+    },
+    {
+      "stage": "natural-slotted-egraph",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-slotted-egraph.json",
+        "sha256": "288661fbcfcab5ea501a93d4ed327873d0f5a5af7879edd818cc1cea2fae2d5b"
+      }
+    },
+    {
+      "stage": "natural-canonical",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-canonical.json",
+        "sha256": "5c035ed525d070a4392654d4b783f08703dde4356d06a819645e80d57122f0f1"
+      }
+    },
+    {
+      "stage": "natural-typed-slotted-port-egraph",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-typed-slotted-port-egraph.json",
+        "sha256": "40d17b8dfc497d52596d243311e57bae0fab200dde88bbcba221349ed8284d22"
+      }
+    },
+    {
+      "stage": "natural-report-and-soundness",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-report-and-soundness.json",
+        "sha256": "3e99d495ae83c4927c66258e46e700e6965604d970f0da296e07363b241bbcf5"
+      }
+    },
+    {
+      "stage": "capability-raw-egraph",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-raw-egraph.json",
+        "sha256": "96e46baceb386bd747e47e8822fe47283317a926a22275ffb816c76d3d2a17a2"
+      }
+    },
+    {
+      "stage": "capability-raw-egraph-debruijn",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-raw-egraph-debruijn.json",
+        "sha256": "f402e2defe53c73d0ec1e5f79218903bb91f02274a2fccb827ccd46e7ad2e92e"
+      }
+    },
+    {
+      "stage": "capability-java-egglog",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-java-egglog.json",
+        "sha256": "2c768129eb0cf3332994eca0417836d53f47889ee849b09baec2b6f6138f3849"
+      }
+    },
+    {
+      "stage": "capability-java-egglog-debruijn",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-java-egglog-debruijn.json",
+        "sha256": "44f1c1e8d4082200c91f3fb4d743a7dc13dd01e26117b100077750ee7740a686"
+      }
+    },
+    {
+      "stage": "capability-slotted-egraph",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-slotted-egraph.json",
+        "sha256": "ba283af3bb24a46ba933b6fa8c9cbe6bdcd35f83e486b098a9b12c7c9b933c79"
+      }
+    },
+    {
+      "stage": "capability-canonical",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-canonical.json",
+        "sha256": "9102202218f00fffbbfac88143c6cb111662a38a9bda638c9ea02a4a430d94af"
+      }
+    },
+    {
+      "stage": "capability-typed-slotted-port-egraph",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-typed-slotted-port-egraph.json",
+        "sha256": "8dd6bdfbae285d16bc745875c1871351ac5cfe39337da07244b49a44f0c8baca"
+      }
+    },
+    {
+      "stage": "capability-report",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-report.json",
+        "sha256": "b1eebcb43df74deeb312ef463b42892e27cd27b9aeeea38a8212c8e466d8df21"
+      }
+    },
+    {
+      "stage": "slot-typing-slotted-egraph",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/slot-typing-slotted-egraph.json",
+        "sha256": "90259e844835394c3ac5a2db0be07af9b57c77bce636e827f05c3ffde14d69ba"
+      }
+    },
+    {
+      "stage": "slot-typing-slotted-egraph-typed",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/slot-typing-slotted-egraph-typed.json",
+        "sha256": "9a652fc13f92db10db446dc8ad54e382e9c4225478f38a5d5c0bd23423acf78a"
+      }
+    },
+    {
+      "stage": "slot-typing-report",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/slot-typing-report.json",
+        "sha256": "4af7ea862b01e3a4b756e630930570822f781253cceb37589e3e28b6fcac623a"
+      }
+    },
+    {
+      "stage": "synthetic-slot-runtime",
+      "plan": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/synthetic-slot-runtime.json",
+        "sha256": "66712c59303806957b2f2bdd81a51dd8d37ccf92a7d5ea65015d8db3aa5652c1"
+      }
+    }
+  ],
+  "bound": [
+    {
+      "file": "/home/augustus/.local/opt/node-v26.13.0-linux-x64/bin/node",
+      "sha256": "0adde40d1b7dfa57c8bc83cbc319758c3ec6ebba21363bb2fa752ea6b267ad1b"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/guard.sh",
+      "sha256": "42970d68888cdfeada0e1c9fe2262071dcfa3c468215b616644f91dab87b2cbf"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/service-guard.sh",
+      "sha256": "c5bd8bdd2341c219c6b4a3ddc41ab5cba39c3e4f63d97ee8f8826b297fcb6b70"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/resource-check.sh",
+      "sha256": "c06a0c735f9e1c529093191f9c15203bc4c12544019b80fe87a2a9f887c7aa48"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/resource-policy.mjs",
+      "sha256": "9b3795f6c159b88aaecb9bf95a31b95bfb3f3bb65afff786671d01f8bbe9445d"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/cgroup-check.mjs",
+      "sha256": "3cd9561a2748882b1d19163d89fd0049712e7d7ebcf56a04f01fb34886e55270"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/finalize.mjs",
+      "sha256": "b793b5ee5cc29c49caf2bfa8543d19d6ac90a7644e54b00166b8560ca3812cfa"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/terra-review.json",
+      "sha256": "549b3e4e9156fdf332cb6d7c12e6080826b92ac2a9ed6f74044020f5cc9b2f8b"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/live-controls-result.json",
+      "sha256": "2beea6c2240eafce23a65953b60de653a4d6e6ea53ac51957867315f4460a1af"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-capability-repair-20261115-v4/runtime.mjs",
+      "sha256": "99f11b181e56f2e9b24aa7dd9bf3c5b91bdf48393230eab68a2a2dbb78084fc6"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/full-domain-evidence-v1/full-launcher-v2/runtime.mjs",
+      "sha256": "1dfa0777e5e97b467ae4f187b0d37fee053f847e34da696215b00b6ff2ed6038"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/focused-long-run-launcher-v3/guard-environment.mjs",
+      "sha256": "d263b82d258ee48cda28af630fb5bd04dcbd06d4e2cef64c7621b3758c403a8b"
+    },
+    {
+      "file": "/home/augustus/ACGN/scripts/native_runtime.mjs",
+      "sha256": "2f2594194ce6a56534b748a53b13c3206c1439ccb09dcd16829dfe7372249750"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/service.mjs",
+      "sha256": "bc9e498e7700e799c463aa6496cfea7a407ca4f6c8528d343a5e3b0918058ab7"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/receipts.mjs",
+      "sha256": "160bd350ab3fb8e0cf999e236b75e968fa2577050826fdf01916698d357cef62"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/coordinate.mjs",
+      "sha256": "7b759cdbf8422198f2ea2023ef97e090775e6145b8b51c27426f55f31216c650"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/prepare.mjs",
+      "sha256": "ffcfc165f7609be2ed7f05aea311994a61b61679359b41dbf358014adb912740"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-job.mjs",
+      "sha256": "426a0510c0886e44dc18d395b1b96808234b657ea6d7afeff5b00086691214f2"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/CheckedClaims.java",
+      "sha256": "b99811ef281c6e4ffabc52e5dce3ccccafe234160a794cf756144c7ec11da117"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/seal-controls.mjs",
+      "sha256": "f27ddc95b7401dc2a98f81d6cc796b7d022ad9e85fe5287cdd423ec3f66fdd3d"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-controls.mjs",
+      "sha256": "74daf9a3147b938996056b6d4d0219f26ddf911637b69e992f9054c6f43586a3"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/seal-fixture/result.json",
+      "sha256": "c27dca9b7963fbe68d8657a6815a36d4bfdd301733b3295b4ea0d89e55bb97c6"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-fixture/result.json",
+      "sha256": "2eeb099e482194dc46188a6bfc7d03a21a4038fec49bdb71e4fe1d0a451928ca"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/common.mjs",
+      "sha256": "2be08733e0d8bb5ca8c039255558bcd70dd4321414a26b63f745f2d0d8f42d39"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/stage-runner.mjs",
+      "sha256": "313c29453898f7b970ac12460c799b2164077e0754e32aa5a24e562a0f8f0c1f"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/helper-integrity.mjs",
+      "sha256": "a1f84e20175d81eb39b745edc59a73d7d244dee37135180fe290f2cff32ce693"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/natural-raw-egraph.json",
+      "sha256": "aa36ee2d433d8fa858cd003159235f147baff3514edd65fd232e2fa4d6c08b4a"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/natural-raw-egraph-debruijn.json",
+      "sha256": "d16ad7079b5991c024df3dfcd3942d7c7ca2601887d44a168997831d0e1a829a"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/natural-java-egglog.json",
+      "sha256": "554984163bddf4f4747df6d81ee4d646015ceec299b3d44b88c4911a8b47fb66"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/natural-java-egglog-debruijn.json",
+      "sha256": "46a4253024a8130d835350951b267dd0b1e926de2c9fdd2d3091653332050d1a"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/natural-slotted-egraph.json",
+      "sha256": "189910d40d7c278d63a192912a000779ed7f9e2263e2869561fcbf5a91bb1910"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/natural-canonical.json",
+      "sha256": "495e8ac7467324a7a3993ee705cc0f91867d0754f7ec9373e352a2cc4fecdfdb"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/natural-typed-slotted-port-egraph.json",
+      "sha256": "41c6a3ae5f30f59824485997da53863c9db5382d71e9f7f5e518d973624afa23"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/natural-report-and-soundness.json",
+      "sha256": "9dd89a24bbd269bbbb9dbb277217d0c744ee359bd672d59ba70498a2034faf93"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/capability-raw-egraph.json",
+      "sha256": "1bbc1e27da2bdf4c76b709d10896a6a286a69fe651b0b9cfb2e65ee014503589"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/capability-raw-egraph-debruijn.json",
+      "sha256": "45a80d3b03ec4865302bc695651899a4ef2dab006879f79a8026632f88c5f8ae"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/capability-java-egglog.json",
+      "sha256": "213329bda069e03f6bcb3478123e5fbe5771f950745764ccc3fc525cd56d5695"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/capability-java-egglog-debruijn.json",
+      "sha256": "2b546861108bf2261dc40fbcca810023ae3a2098221a78408e27bd1d9b6d0121"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/capability-slotted-egraph.json",
+      "sha256": "b48d2d121a3e82a80dc722f68a52b7b26b617c47f91405477fd88240787e08d9"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/capability-canonical.json",
+      "sha256": "197061b9928da86caf98d42c218e8ec59dc5b8aef636cfe9a829fbf5df558b54"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/capability-typed-slotted-port-egraph.json",
+      "sha256": "3e59e4cf383c20848271a93dbdf5336cde89ffce3619980ab2d1bca3710e3cbc"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/capability-report.json",
+      "sha256": "fefec905849bb7aa17a44f6e306f81a5d70018ffbc9777edb1ff8f25c458b26a"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/slot-typing-slotted-egraph.json",
+      "sha256": "07aad64244c4860f28eccf46aa017f1c987dc472ed7f37dc7337d90976f02599"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/slot-typing-slotted-egraph-typed.json",
+      "sha256": "f2da7608bfec6e7c4e52a450add7aeec48764d697d3c60d45091e85fa9aebaa5"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/slot-typing-report.json",
+      "sha256": "938c3c62e43bd8034e7c33d7bceec504b68e356843e7e5c6b92c1ea50c237edc"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans/synthetic-slot-runtime.json",
+      "sha256": "95feef92f3c4fa1cd2722a661233cbb085523ccf7bf01c0846c8164bc9e4c64d"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/input-inventory.json",
+      "sha256": "774e610be17bf32ed004e72b8dc613cfd156a3b927989d096ff393456b9e37e0"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/capability-correction.mjs",
+      "sha256": "d11f09b53ea7a1f2b1de27ba020963bc089281ec512107d975a88a41eb2df208"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/coordinate-v4b.mjs",
+      "sha256": "60aa5908f2cdb86b64db32c2321730a3c8b9031693233b0991b81c3dff84e9dd"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/request.json",
+      "sha256": "a8eaa1d53e1dc0e280e92af7fe2dad289340a9eb3396487115a6e734a281beff"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/terra-answer.json",
+      "sha256": "9ea54c3f58889d89f39ab9bed97e2a4efcc87d098f3427fe27e7bad32fd166d1"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-raw-egraph.json",
+      "sha256": "7c484c86eed4c87bedf2b48d87ae472fea637608d531be7eaad1f847caa969dd"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-raw-egraph-debruijn.json",
+      "sha256": "90d3059c68a64ce086783241121b7fb48ffd15b8d509211309592d16daf4d163"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-java-egglog.json",
+      "sha256": "b2a09a6918517ab56d7da204d28c246002c3324e3ab5e8fc96a1386d3a4a198a"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-java-egglog-debruijn.json",
+      "sha256": "08a24f5b2e3c24f593efdc4ba9daf6b5caec6acd9e9ba36785744dc66e515778"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-slotted-egraph.json",
+      "sha256": "288661fbcfcab5ea501a93d4ed327873d0f5a5af7879edd818cc1cea2fae2d5b"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-canonical.json",
+      "sha256": "5c035ed525d070a4392654d4b783f08703dde4356d06a819645e80d57122f0f1"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-typed-slotted-port-egraph.json",
+      "sha256": "40d17b8dfc497d52596d243311e57bae0fab200dde88bbcba221349ed8284d22"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-report-and-soundness.json",
+      "sha256": "3e99d495ae83c4927c66258e46e700e6965604d970f0da296e07363b241bbcf5"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-raw-egraph.json",
+      "sha256": "96e46baceb386bd747e47e8822fe47283317a926a22275ffb816c76d3d2a17a2"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-raw-egraph-debruijn.json",
+      "sha256": "f402e2defe53c73d0ec1e5f79218903bb91f02274a2fccb827ccd46e7ad2e92e"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-java-egglog.json",
+      "sha256": "2c768129eb0cf3332994eca0417836d53f47889ee849b09baec2b6f6138f3849"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-java-egglog-debruijn.json",
+      "sha256": "44f1c1e8d4082200c91f3fb4d743a7dc13dd01e26117b100077750ee7740a686"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-slotted-egraph.json",
+      "sha256": "ba283af3bb24a46ba933b6fa8c9cbe6bdcd35f83e486b098a9b12c7c9b933c79"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-canonical.json",
+      "sha256": "9102202218f00fffbbfac88143c6cb111662a38a9bda638c9ea02a4a430d94af"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-typed-slotted-port-egraph.json",
+      "sha256": "8dd6bdfbae285d16bc745875c1871351ac5cfe39337da07244b49a44f0c8baca"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/capability-report.json",
+      "sha256": "b1eebcb43df74deeb312ef463b42892e27cd27b9aeeea38a8212c8e466d8df21"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/slot-typing-slotted-egraph.json",
+      "sha256": "90259e844835394c3ac5a2db0be07af9b57c77bce636e827f05c3ffde14d69ba"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/slot-typing-slotted-egraph-typed.json",
+      "sha256": "9a652fc13f92db10db446dc8ad54e382e9c4225478f38a5d5c0bd23423acf78a"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/slot-typing-report.json",
+      "sha256": "4af7ea862b01e3a4b756e630930570822f781253cceb37589e3e28b6fcac623a"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/synthetic-slot-runtime.json",
+      "sha256": "66712c59303806957b2f2bdd81a51dd8d37ccf92a7d5ea65015d8db3aa5652c1"
+    }
+  ],
+  "scope": "Only coordinate.mjs, on ACCEPT bound to this request SHA. 20 original study stages; no tag movement. Private report roots; private guard completion channel. Historical capability generator sanity checks are input evidence only.",
+  "trust": "Sole unprivileged owner, trusted systemd and supervisor in memory, no malicious root or hostile measured runtime. Any lost coordinator requires new reconciliation/review, never reconstruct trusted pins from disk alone.",
+  "controls": [
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/seal-fixture/result.json",
+      "sha256": "c27dca9b7963fbe68d8657a6815a36d4bfdd301733b3295b4ea0d89e55bb97c6"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-fixture/result.json",
+      "sha256": "2eeb099e482194dc46188a6bfc7d03a21a4038fec49bdb71e4fe1d0a451928ca"
+    }
+  ],
+  "priorRefusals": [
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/phase-a-answer.json",
+      "sha256": "eaec0b119037d633cd033da66740825887f169215891a034ea2a38ad3801508b"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/terra-answer-v2.json",
+      "sha256": "a34781575ea69ad360953a35f65c6ce26e21c2c1caeb57d42aa1d240a7bd80a8"
+    }
+  ],
+  "coordinator": {
+    "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/coordinate-v4b.mjs",
+    "sha256": "60aa5908f2cdb86b64db32c2321730a3c8b9031693233b0991b81c3dff84e9dd"
+  },
+  "correction": "Historical v3 generation soundness files are still immutable cohort provenance, never copied to report workspace. Affirm absence immediately before tagged capability reporter. No new capability-generation sanity result claimed."
+}

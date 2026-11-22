@@ -219,6 +219,19 @@ public class AugmentedNode implements Serializable {
         return occurrence == null ? defaultExactType : occurrence;
     }
 
+    private transient Map<Pair<Multigraph, Integer>, MASGVisitor.BindingVisit> bindingVisits;
+
+    public void retainBindingVisit(MASGVisitor.BindingVisit binding) {
+        if (!binding.belongsTo(this)) throw new IllegalArgumentException("Wrong binding occurrence owner");
+        if (bindingVisits == null) bindingVisits = new HashMap<>();
+        var prior = bindingVisits.putIfAbsent(Pair.of(binding.graph, binding.visit), binding);
+        if (prior != null && prior != binding) throw new IllegalStateException("Duplicate binding occurrence");
+    }
+
+    public MASGVisitor.BindingVisit parsedBindingVisit(Multigraph graph, int visit) {
+        return bindingVisits == null ? null : bindingVisits.get(Pair.of(graph, visit));
+    }
+
     public void setDefaultExactType(ExactAlloyType exactType) {
         ExactAlloyType checked = java.util.Objects.requireNonNull(exactType, "exactType");
         if (defaultExactType != null

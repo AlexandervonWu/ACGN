@@ -106,6 +106,49 @@ class CallEncoderTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(Blocked):
                 call_program(self.observed, changed)
 
+    def test_prior_import_admission_pins_rejected(self):
+        # The preceding release accepted a delimited tuple collision and mutable overload swaps.
+        previous = {
+            "declaration-resolve": (
+                "7c60f840f187c4ddf540075a02fe9f1222bf38cf3bf25a43f9be64b1528df13e",
+                "c943c1ea8f86971372c218ca4e29277126531288406f86100cbae6aad2d7c479",
+            ),
+            "ledger-key": (
+                "1a6bca531c66367bf3d68dcdcd6cd173ff4638408cbbb9a90ce5365390b1ca54",
+                "cc7de580c69bbb4b90bd293eb9d2463bc0cf93fef8a7c97f1cce37d2afab8844",
+            ),
+        }
+        for name, (shape, binding) in previous.items():
+            for edits in ({"shapeSha256": shape}, {"bindingsSha256": binding},
+                          {"shapeSha256": shape, "bindingsSha256": binding}):
+                changed = copy.deepcopy(self.extracted)
+                row = next(entry for entry in changed if entry["object"] == name)
+                row.update(edits)
+                with self.subTest(name=name, fields=tuple(edits)), self.assertRaises(Blocked):
+                    call_program(self.observed, changed)
+
+    def test_pre_binding_origin_ir_build_pins_are_rejected(self):
+        previous = {
+            "shapeSha256": "cd34ac5be7e7f6e61122d517030dbe346858f4b753f2ed0dd0218bb39c93ce00",
+            "bindingsSha256": "118238307d8b3fed045e6ea9408e95259c075a240c222722fd9ffd7a36ecb61e",
+        }
+        for edits in ({"shapeSha256": previous["shapeSha256"]},
+                      {"bindingsSha256": previous["bindingsSha256"]}, previous):
+            changed = copy.deepcopy(self.extracted)
+            row = next(entry for entry in changed if entry["object"] == "ir-build")
+            row.update(edits)
+            with self.subTest(fields=tuple(edits)), self.assertRaisesRegex(
+                    Blocked, "unregistered source structure/resolution: ir-build"):
+                call_program(self.observed, changed)
+
+    def test_superseded_ir_build_binding_rejected(self):
+        changed = copy.deepcopy(self.extracted)
+        row = next(row for row in changed if row["object"] == "ir-build")
+        row["shapeSha256"] = "208277c8f3a1b5b478af357aec94e025cfaffae629d26804cb245fee19b469a8"
+        row["bindingsSha256"] = "9fc429a3d13bba99523297e44d18929bd39093379a9924fb8bd37e1936c0d35a"
+        with self.assertRaises(Blocked):
+            call_program(self.observed, changed)
+
     def test_bad_tree_grammar(self):
         for syntax in (["atom", True], ["atom", -1], ["atom", 1, 2], ["call", sig(), "bad"],
                        ["set", 0, []], ["call", sig()[:-1], []], ["barrier", "", []], {}):

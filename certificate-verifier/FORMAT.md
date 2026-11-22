@@ -208,6 +208,14 @@ nor an independently pinned signature hierarchy, so a well-formed nonexact
 subtype or disjoint-branch proof produces
 `UNCHECKABLE / MISSING_EVIDENCE` after structural replay. A malformed subtype
 or disjointness proof is `REJECTED`; an exact-only chain can remain verifiable.
+For a single closed SOME over primitive-signature ARROWs, callers may provide
+an independent source commitment in the verification policy. It covers the
+selected raw subject, binary leaf addresses, resolved declarations and all
+observed ancestry paths. It changes no bundle fields. Exact single-product
+signature leaves can carry v2 proofs committing the rule, canonical parser
+relation spelling, stored type and complete type DAG. The verifier reconstructs
+each component. [External source format](../docs/obligation-repair/seventh-five/G08-source-to-wire.md)
+
 Zero `dependent-type-product` children are valid only for a positive-arity
 `AlloyEmptyRelation$arity=n` carrier whose encoded arity is `n` and whose
 common ancestor is `NONE`. Every nonempty relation family has one or more

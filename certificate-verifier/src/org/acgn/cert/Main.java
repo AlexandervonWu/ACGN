@@ -38,7 +38,7 @@ public final class Main {
         VerificationPolicy policy = new VerificationPolicy(
                 java.util.Set.of(parsed.theoryDigest),
                 Limits.defaults(),
-                parsed.callOccurrenceCommitments);
+                parsed.callOccurrenceCommitments, parsed.arrowSourceCommitments);
         VerificationResult result;
         if (parsed.profile == Profile.PAIR) {
             result = verifier.verifyPair(
@@ -71,6 +71,7 @@ public final class Main {
         private final String theoryDigest;
         private final List<Path> files;
         private final Map<String, String> callOccurrenceCommitments;
+        private final Map<String, String> arrowSourceCommitments;
         private final Path inspectBundle;
 
         private Arguments(
@@ -78,11 +79,13 @@ public final class Main {
                 String theoryDigest,
                 List<Path> files,
                 Map<String, String> callOccurrenceCommitments,
+                Map<String, String> arrowSourceCommitments,
                 Path inspectBundle) {
             this.profile = profile;
             this.theoryDigest = theoryDigest;
             this.files = files;
             this.callOccurrenceCommitments = callOccurrenceCommitments;
+            this.arrowSourceCommitments = arrowSourceCommitments;
             this.inspectBundle = inspectBundle;
         }
 
@@ -91,6 +94,7 @@ public final class Main {
             String digest = null;
             List<Path> files = new ArrayList<>();
             Map<String, String> commitments = new LinkedHashMap<>();
+            Map<String,String> arrowPins = new LinkedHashMap<>();
             Path inspectBundle = null;
             for (int index = 0; index < args.length; index++) {
                 switch (args[index]) {
@@ -123,6 +127,14 @@ public final class Main {
                                     "conflicting CALL occurrence commitments");
                         }
                     }
+                    case "--arrow-source-commitment" -> {
+                        if (++index >= args.length) throw new IllegalArgumentException("--arrow-source-commitment needs a value");
+                        ArrowSourceCommitment pin = ArrowSourceCommitment.parse(args[index]);
+                        String prior = arrowPins.putIfAbsent(pin.subject(), pin.digest());
+                        if (prior != null && !prior.equals(pin.digest())) {
+                            throw new IllegalArgumentException("conflicting ARROW source commitments");
+                        }
+                    }
                     case "--inspect-call-occurrences" -> {
                         if (++index >= args.length || inspectBundle != null) {
                             throw new IllegalArgumentException(
@@ -134,12 +146,12 @@ public final class Main {
                 }
             }
             if (inspectBundle != null) {
-                if (digest != null || !files.isEmpty() || !commitments.isEmpty()) {
+                if (digest != null || !files.isEmpty() || !commitments.isEmpty() || !arrowPins.isEmpty()) {
                     throw new IllegalArgumentException(
                             "CALL occurrence inspection cannot be combined with verification");
                 }
                 return new Arguments(
-                        profile, null, List.of(), Map.of(), inspectBundle);
+                        profile, null, List.of(), Map.of(), Map.of(), inspectBundle);
             }
             if (digest == null || digest.isEmpty()) {
                 throw new IllegalArgumentException("--theory-digest is required");
@@ -154,6 +166,7 @@ public final class Main {
                     digest,
                     List.copyOf(files),
                     Map.copyOf(commitments),
+                    Map.copyOf(arrowPins),
                     null);
         }
     }

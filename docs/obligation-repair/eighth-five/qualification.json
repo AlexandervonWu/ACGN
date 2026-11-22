@@ -1,0 +1,635 @@
+{
+  "profile": "eighth-public-certification-v1",
+  "trusted": [
+    "Lean 4.35.0 kernel and standard library with the named proof assumptions audited at runtime (propext, Quot.sound and Classical.choice where reported)",
+    "JDK 17 javac, JVM, jar, Python, local Git, Linux and hardware",
+    "Alloy parser and library JARs bound in the input manifest",
+    "SHA-256 collision resistance and Java cryptographic provider behavior except where a witness explicitly injects a collision",
+    "registered source extractors, structural interpretation and executable witnesses for the stated implementation-to-proof correspondences",
+    "TEST_ONLY theory trust for the named writer fixtures and explicit caller-owned authority in the registered public controls"
+  ],
+  "excluded": [
+    "unregistered claim IDs, production corpus workloads, benchmarks, unpublished user inputs and performance claims",
+    "universal refinement of Lean to the JVM, release authenticity outside the exact tracked distribution bytes, and assumptions beyond each original clause’s declared boundary"
+  ],
+  "phases": [
+    {
+      "parent": "P6-11",
+      "scope": "Source entry points, both inputs of PAIR, public CLI profiles and inspection routes gate interpretation on exact schema v10, across the independently built and checked-in JARs.",
+      "proof": "docs/section3-repair-audit/formal/P611SchemaAdmission.lean",
+      "witness": "docs/obligation-repair/eighth-five/java/P611SchemaAdmissionTest.java",
+      "class": "org.acgn.cert.P611SchemaAdmissionTest",
+      "args": [
+        "{source}",
+        "{fixtures}",
+        "{verifierJar}",
+        "{results}/out.tsv"
+      ],
+      "requiredLines": [
+        "P6-11 schema admission verified: 391 observations"
+      ],
+      "theorems": [
+        "ACGN.Eighth.P611.exact_scalar_necessary",
+        "ACGN.Eighth.P611.every_other_string_rejects",
+        "ACGN.Eighth.P611.post_decode_admission",
+        "ACGN.Eighth.P611.single_route",
+        "ACGN.Eighth.P611.pair_route",
+        "ACGN.Eighth.P611.all_admitted_roots"
+      ],
+      "outputPins": {
+        "out.tsv": "e887d14f90c0e7eefab3703019c150dc0d6a827dbb86e16693c7586b51d4be7a"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Schema admission is a necessary precondition for the six-feature contract on the governed entry points. Independent feature validity still requires its own proof; inspection reports metadata rather than a full verification judgment.",
+        "clauses": [
+          {
+            "claim": "The current rooted-binder, CALL, exact-transition, witness-unfold, dependent-subtype and correlated-DAG contract can be admitted only under schema v10.",
+            "status": "DISCHARGED",
+            "boundary": "All source-built and repository-distributed verification/inspection paths reach the exact schema guard before admission; the JARs have identical bytes.",
+            "theorems": [
+              "ACGN.Eighth.P611.exact_scalar_necessary",
+              "ACGN.Eighth.P611.post_decode_admission",
+              "ACGN.Eighth.P611.single_route",
+              "ACGN.Eighth.P611.pair_route",
+              "ACGN.Eighth.P611.all_admitted_roots"
+            ],
+            "rows": [
+              {
+                "file": "out.tsv",
+                "line": "source\tBundle#<init>\tattributed\ta168222cc8e5f3fd0f6644da27c1d210bb1d8c9b29c1d1f1009ca23879580ecc"
+              },
+              {
+                "file": "out.tsv",
+                "line": "source\tIndependentVerifier#open\tattributed\tf563907435422fe428c161da02460df24f600f4ce5b8c07944757494019eb10c"
+              },
+              {
+                "file": "out.tsv",
+                "line": "source\tIndependentVerifier#verifyPair\tattributed\t14ab1246e98bba0a988ded57a3a9e51a48addef69b8fe2afc98a2c813d70994d"
+              },
+              {
+                "file": "out.tsv",
+                "line": "tracked-jar\ttwo-root-FULL\tv10\tEXIT_0/VERIFIED/NONE"
+              },
+              {
+                "file": "out.tsv",
+                "line": "distribution\tjar-bytes\tclean-vs-tracked\t5079aac45b9205fc834b980bf76fabe110fcba0ce75f64f721efe0a960f124d8"
+              }
+            ]
+          },
+          {
+            "claim": "Schemas v5 through v9 are never reinterpreted as the current contract.",
+            "status": "DISCHARGED",
+            "boundary": "The equality test excludes every other schema string; real source APIs, both PAIR positions, inspectors and independent JAR processes exercise historical and near-miss labels.",
+            "theorems": [
+              "ACGN.Eighth.P611.every_other_string_rejects",
+              "ACGN.Eighth.P611.pair_route",
+              "ACGN.Eighth.P611.all_admitted_roots"
+            ],
+            "rows": [
+              {
+                "file": "out.tsv",
+                "line": "built-jar\ttwo-root-FULL\tv9\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION"
+              },
+              {
+                "file": "out.tsv",
+                "line": "tracked-jar\tPAIR-right\tv5\tEXIT_2/REJECTED/UNSUPPORTED_FORMAT_VERSION"
+              },
+              {
+                "file": "out.tsv",
+                "line": "source-tool\tmetadata\tv9\tEXIT_1/UNCAUGHT_FORMAT_EXCEPTION"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "parent": "P1-15",
+      "scope": "Admission of every callable tuple in the pinned ordering/integer ledger, rejection of all other declarations enumerated in those two library modules, and parser-identity, kind, module and arity guards.",
+      "proof": "docs/section3-repair-audit/formal/P115ImportedCallAdmission.lean",
+      "witness": "docs/obligation-repair/eighth-five/java/P115ImportedCallAdmissionTest.java",
+      "class": "is.fivefivefive.CanDis.P115ImportedCallAdmissionTest",
+      "args": [],
+      "requiredLines": [
+        "P115ImportedCallAdmissionTest: PASS (20 admitted, 25 outside ledger, 11 rejections, 1 alternative library origin)"
+      ],
+      "theorems": [
+        "ACGN.Eighth.P115.last_field_decodes",
+        "ACGN.Eighth.P115.field_injective",
+        "ACGN.Eighth.P115.exact_tuple_key",
+        "ACGN.Eighth.P115.lookup_exact",
+        "ACGN.Eighth.P115.slash_member_never_admitted",
+        "ACGN.Eighth.P115.imported_admission_exact",
+        "ACGN.Eighth.P115.other_pinned_overload_rejected",
+        "ACGN.Eighth.P115.foreign_open_rejected",
+        "ACGN.Eighth.P115.same_request_preserves_original_arity_kind"
+      ],
+      "outputPins": {
+        "observations.tsv": "cbee1e601f715efbc2e304d427bbaa6de283f66a54072757d34faa1f473ab176"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "The original statement concerns the authority for an imported callable’s arity. The producer accepts the independently fixed module/member/kind/arity tuple and binds it to the resolved declaration. An alternate library body can present that same admitted signature; this evidence does not authenticate arbitrary module bodies.",
+        "clauses": [
+          {
+            "claim": "A fixed library ledger is the source of every admitted imported tuple.",
+            "status": "DISCHARGED",
+            "boundary": "Complete fixed ledger and complete declaration census of two registered library modules, anchored to the loaded JAR resources.",
+            "theorems": [
+              "ACGN.Eighth.P115.last_field_decodes",
+              "ACGN.Eighth.P115.field_injective",
+              "ACGN.Eighth.P115.exact_tuple_key",
+              "ACGN.Eighth.P115.lookup_exact",
+              "ACGN.Eighth.P115.slash_member_never_admitted"
+            ],
+            "rows": [
+              {
+                "file": "observations.tsv",
+                "line": "P1-15\tutil/integer/max/EXPRESSION/0\tACCEPT ledger + resolved producer CALL"
+              },
+              {
+                "file": "observations.tsv",
+                "line": "P1-15\tutil/integer/max/EXPRESSION/1\tACCEPT ledger + resolved producer CALL"
+              },
+              {
+                "file": "observations.tsv",
+                "line": "P1-15\tutil/integer/zero/FORMULA/1\tREJECT outside fixed library ledger"
+              },
+              {
+                "file": "observations.tsv",
+                "line": "P1-15\tdelimiter-collision\tREJECT lacks an independently pinned declaration"
+              }
+            ]
+          },
+          {
+            "claim": "The producer checks declaration arity, kind and resolved module at imported-call admission.",
+            "status": "DISCHARGED",
+            "boundary": "Every admissible tuple and both integer overloads have ordinary parser/producer witnesses. The module-body source override preserves the admitted signature.",
+            "theorems": [
+              "ACGN.Eighth.P115.imported_admission_exact",
+              "ACGN.Eighth.P115.other_pinned_overload_rejected",
+              "ACGN.Eighth.P115.foreign_open_rejected",
+              "ACGN.Eighth.P115.same_request_preserves_original_arity_kind"
+            ],
+            "rows": [
+              {
+                "file": "observations.tsv",
+                "line": "P1-15\tmax-0-to-1\tREJECT arity disagrees with imported declaration"
+              },
+              {
+                "file": "observations.tsv",
+                "line": "P1-15\tmin-1-to-0\tREJECT arity disagrees with imported declaration"
+              },
+              {
+                "file": "observations.tsv",
+                "line": "P1-15\tforeign-parser-instance\tREJECT disagrees with its resolved module"
+              },
+              {
+                "file": "observations.tsv",
+                "line": "P1-15\tcaller-supplied-library\tACCEPT exact signature; source-map body differs from JAR"
+              }
+            ]
+          }
+        ]
+      },
+      "observationPrefix": "P1-15\t"
+    },
+    {
+      "parent": "P4-11",
+      "scope": "Canonical owner/term frames, deterministic public writer and verifier evaluation, and fail-closed bundle-wide collision handling on observed shape identifiers.",
+      "proof": "docs/section3-repair-audit/formal/P411ShapeIdentity.lean",
+      "witness": "docs/obligation-repair/eighth-five/java/P411ShapeIdentityTest.java",
+      "class": "org.acgn.cert.P411ShapeIdentityTest",
+      "args": [
+        "{results}/shape-identities.tsv",
+        "{verifierJar}"
+      ],
+      "requiredLines": [
+        "P411ShapeIdentityTest passed: cases=11"
+      ],
+      "theorems": [
+        "ACGN.Eighth.P411.read32_u32",
+        "ACGN.Eighth.P411.readFrame_frame",
+        "ACGN.Eighth.P411.shape_roundtrip",
+        "ACGN.Eighth.P411.shape_frame_injective",
+        "ACGN.Eighth.P411.accepted_entry",
+        "ACGN.Eighth.P411.accepted_preserves",
+        "ACGN.Eighth.P411.run_preserves",
+        "ACGN.Eighth.P411.run_contains_every_pair",
+        "ACGN.Eighth.P411.observed_digest_nonaliasing",
+        "ACGN.Eighth.P411.repeated_pair_idempotent",
+        "ACGN.Eighth.P411.observed_collision_rejects"
+      ],
+      "outputPins": {
+        "shape-identities.tsv": "978f5105bb5ea74e7d03b23795ab59e78181a5ba5f4c05ad479ee6f83c445eaa"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "UTF-8 framed owner and canonical term identifiers and bundle-wide observed histories in the public writer and checkpoint verifier. The Lean results allow an arbitrary digest and need no SHA-256 injectivity assumption.",
+        "clauses": [
+          {
+            "claim": "Each shape identifier uses a single canonical owner and canonical-term-ID preimage.",
+            "status": "DISCHARGED",
+            "boundary": "Finite-length frame left inverse, named production entry points and exact native frame bytes.",
+            "theorems": [
+              "ACGN.Eighth.P411.read32_u32",
+              "ACGN.Eighth.P411.readFrame_frame",
+              "ACGN.Eighth.P411.shape_roundtrip",
+              "ACGN.Eighth.P411.shape_frame_injective"
+            ],
+            "rows": [
+              {
+                "file": "shape-identities.tsv",
+                "line": "snapshot-preimages\tTHREE_EXACT_OWNER_TERM_FRAMES"
+              },
+              {
+                "file": "shape-identities.tsv",
+                "line": "writer-trace\tALL_FRAMES_IDENTICAL_BYTES"
+              }
+            ]
+          },
+          {
+            "claim": "Producer and verifier deterministically recompute the same shape IDs.",
+            "status": "DISCHARGED",
+            "boundary": "Ordinary fresh export, checkpoint trace and repeated replay.",
+            "theorems": [
+              "ACGN.Eighth.P411.accepted_entry",
+              "ACGN.Eighth.P411.run_contains_every_pair"
+            ],
+            "rows": [
+              {
+                "file": "shape-identities.tsv",
+                "line": "ordinary-full\tVERIFIED/NONE"
+              },
+              {
+                "file": "shape-identities.tsv",
+                "line": "writer-trace\tALL_FRAMES_IDENTICAL_BYTES"
+              },
+              {
+                "file": "shape-identities.tsv",
+                "line": "verifier-trace\tVERIFIED/NONE"
+              },
+              {
+                "file": "shape-identities.tsv",
+                "line": "fresh-replay\tVERIFIED/NONE"
+              }
+            ]
+          },
+          {
+            "claim": "Any observed content-ID collision in one bundle fails closed.",
+            "status": "DISCHARGED",
+            "boundary": "Per-bundle histories, including different snapshots. Controlled shape-only colliding digest in the writer and in both fresh and distributed verifier processes.",
+            "theorems": [
+              "ACGN.Eighth.P411.accepted_preserves",
+              "ACGN.Eighth.P411.run_preserves",
+              "ACGN.Eighth.P411.run_contains_every_pair",
+              "ACGN.Eighth.P411.observed_digest_nonaliasing",
+              "ACGN.Eighth.P411.repeated_pair_idempotent",
+              "ACGN.Eighth.P411.observed_collision_rejects"
+            ],
+            "rows": [
+              {
+                "file": "shape-identities.tsv",
+                "line": "writer-collision\tREFUSED_DESTINATION_PRESERVED"
+              },
+              {
+                "file": "shape-identities.tsv",
+                "line": "disjoint-snapshot-alias\tREJECTED/DUPLICATE_ID"
+              },
+              {
+                "file": "shape-identities.tsv",
+                "line": "fresh-jar-alias\tREJECTED/DUPLICATE_ID"
+              },
+              {
+                "file": "shape-identities.tsv",
+                "line": "distributed-jar-alias\tREJECTED/DUPLICATE_ID"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "parent": "P6-09",
+      "scope": "Recover the scoped rooted binder identity and prove injective UTF-16 framing, including paths, descriptor occurrences and automorphisms. Audit the compiled producer and replay routes and compare actual dual/nested, empty-evidence and port-admission outcomes.",
+      "proof": "docs/section3-repair-audit/formal/P609RootedBinder.lean",
+      "witness": "docs/obligation-repair/eighth-five/java/P609RootedBinderTest.java",
+      "class": "org.acgn.cert.P609RootedBinderTest",
+      "args": [
+        "{source}",
+        "{coverage}/bind-block-dual-a.acgncert",
+        "{coverage}/bind-block-nested-same-descriptor-a.acgncert",
+        "{results}/p609.tsv"
+      ],
+      "requiredLines": [
+        "P609RootedBinderTest passed: observations=13"
+      ],
+      "theorems": [
+        "ACGN.Eighth.P609.splitDelimiter",
+        "ACGN.Eighth.P609.noColon",
+        "ACGN.Eighth.P609.decimal_inj",
+        "ACGN.Eighth.P609.header_separates",
+        "ACGN.Eighth.P609.field_separates",
+        "ACGN.Eighth.P609.fields_separate",
+        "ACGN.Eighth.P609.render_injective",
+        "ACGN.Eighth.P609.path_injective",
+        "ACGN.Eighth.P609.identity_injective",
+        "ACGN.Eighth.P609.rootless_substitution_refused",
+        "ACGN.Eighth.P609.resolved_iff",
+        "ACGN.Eighth.P609.no_dangling_empty_claim",
+        "ACGN.Eighth.P609.nested_keys_injective",
+        "ACGN.Eighth.P609.nested_children_injective"
+      ],
+      "outputPins": {
+        "p609.tsv": "176a2a0fcb2374fe4ea84e8ac5e04bc976f3952672965f5ee1617bac78f8165c"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "Every emitted or admitted binder-occurrence identity on the registered producer and verification routes is scoped to its enclosing root. The result does not require all input programs to be exportable; the witness records rejections for unsupported port forms and absent laws.",
+        "clauses": [
+          {
+            "claim": "Binder-occurrence identity commits to the enclosing root, the local path, the descriptor occurrence and the automorphism.",
+            "status": "DISCHARGED",
+            "boundary": "The root, identity, path framing, decoded-term traversal and emitted/replayed keys are tied to a compiled method inventory and public dual-root and nested-binder fixtures.",
+            "theorems": [
+              "ACGN.Eighth.P609.header_separates",
+              "ACGN.Eighth.P609.fields_separate",
+              "ACGN.Eighth.P609.render_injective",
+              "ACGN.Eighth.P609.path_injective",
+              "ACGN.Eighth.P609.identity_injective",
+              "ACGN.Eighth.P609.resolved_iff",
+              "ACGN.Eighth.P609.nested_keys_injective",
+              "ACGN.Eighth.P609.nested_children_injective"
+            ],
+            "rows": [
+              {
+                "file": "p609.tsv",
+                "line": "java\tsource-layouts\tmatched"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "grammar\tproducer-ports/decoded-term-kinds\t6/12"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "utf16\tsupplementary/delimiters\t7"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "dual\tFULL/roots/paths\tVERIFIED/2/1"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "nested\tFULL/roots/paths\tVERIFIED/1/2"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "BIND\texported-occurrences/FULL\t1/VERIFIED"
+              }
+            ]
+          },
+          {
+            "claim": "Rootless replay cannot supply a valid binder-occurrence claim.",
+            "status": "DISCHARGED",
+            "boundary": "The empty-evidence guard blocks dangling occurrence references and needs. Generic endpoint equality introduces no independent binder occurrence; unregistered constructor/law combinations refuse admission.",
+            "theorems": [
+              "ACGN.Eighth.P609.rootless_substitution_refused",
+              "ACGN.Eighth.P609.resolved_iff",
+              "ACGN.Eighth.P609.no_dangling_empty_claim"
+            ],
+            "rows": [
+              {
+                "file": "p609.tsv",
+                "line": "empty-reference\tdecoded-only-rejection\tMISSING_EVIDENCE"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "empty-needs-binder\tdecoded-only-rejection\tMISSING_EVIDENCE"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "empty-fixture\tKERNEL\tVERIFIED"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "empty-fixture\tFULL\tVERIFIED"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "SEQ\texported-occurrences/FULL\t3/REJECTED_NO_EXACT_LAWS"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "BAG\tordinary-source-construction\tREFUSED_NO_COMMUTATIVITY"
+              },
+              {
+                "file": "p609.tsv",
+                "line": "SET\tordinary-source-construction\tREFUSED_NO_COMMUTATIVITY"
+              }
+            ]
+          }
+        ]
+      },
+      "leanImports": [
+        {
+          "module": "DecodedEvidenceCoverage",
+          "source": "docs/obligation-repair/sixth-five/DecodedEvidenceCoverage.lean",
+          "theorems": [
+            "ACGN.Sixth.EvidenceCoverage.walk_exact",
+            "ACGN.Sixth.EvidenceCoverage.children_exact",
+            "ACGN.Sixth.EvidenceCoverage.orbit_omission_rejected",
+            "ACGN.Sixth.EvidenceCoverage.orbit_surplus_rejected",
+            "ACGN.Sixth.EvidenceCoverage.kernel_owner_substitution_rejected",
+            "ACGN.Sixth.EvidenceCoverage.repeated_reference_preserves_key_set",
+            "ACGN.Sixth.EvidenceCoverage.shared_child_path_and_generator_witness",
+            "ACGN.Sixth.EvidenceCoverage.coordinated_omission_witness"
+          ]
+        }
+      ]
+    },
+    {
+      "parent": "A2-23",
+      "scope": "Ordered ARROW products over normalized finite input families, dependent type preservation and correspondence of the attributed Java enumeration loop to the executable Lean instruction checker.",
+      "proof": "docs/section3-repair-audit/formal/A223ArrowFamilies.lean",
+      "witness": "docs/obligation-repair/eighth-five/java/A223ArrowFamiliesTest.java",
+      "class": "is.fivefivefive.CanDis.theory.A223ArrowFamiliesTest",
+      "args": [
+        "{results}/arrow-families.tsv"
+      ],
+      "requiredLines": [
+        "A223ArrowFamiliesTest passed: rows=15"
+      ],
+      "theorems": [
+        "ACGN.Eighth.A223.arbitrary_reassociation",
+        "ACGN.Eighth.A223.mapped_matrix",
+        "ACGN.Eighth.A223.evidence_absorption",
+        "ACGN.Eighth.A223.unique_evidence_on_keys",
+        "ACGN.Eighth.A223.normalize_preserves_actual_evidence",
+        "ACGN.Eighth.A223.pair_at",
+        "ACGN.Eighth.A223.duplicate_columns",
+        "ACGN.Eighth.A223.exact_rows",
+        "ACGN.Eighth.A223.case_count",
+        "ACGN.Eighth.A223.split_weak",
+        "ACGN.Eighth.A223.no_new_absorption",
+        "ACGN.Eighth.A223.lex_prefix",
+        "ACGN.Eighth.A223.lex_suffix",
+        "ACGN.Eighth.A223.row_major_is_sorted",
+        "ACGN.Eighth.A223.unique_on_nodup",
+        "ACGN.Eighth.A223.normalized_matrix_exact",
+        "ACGN.Eighth.A223.row_width",
+        "ACGN.Eighth.A223.empty_cases",
+        "ACGN.Eighth.A223.inner_accumulator",
+        "ACGN.Eighth.A223.outer_accumulator",
+        "ACGN.Eighth.A223.accepted_compiler_stream_refines",
+        "ACGN.Eighth.A223.mergeColumns_keys",
+        "ACGN.Eighth.A223.put_keys",
+        "ACGN.Eighth.A223.put_admits",
+        "ACGN.Eighth.A223.grouped_admits",
+        "ACGN.Eighth.A223.prune_antichain",
+        "ACGN.Eighth.A223.sorted_keys",
+        "ACGN.Eighth.A223.constructor_invariants",
+        "ACGN.Eighth.A223.constructor_arrow_exact",
+        "ACGN.Eighth.A223.grouped_on_unique",
+        "ACGN.Eighth.A223.admission_fixed",
+        "ACGN.Eighth.A223.constructor_to_constructor",
+        "ACGN.Eighth.A223.source_occurrence_order",
+        "ACGN.Eighth.A223.source_leaf_multiplicity",
+        "ACGN.Eighth.A223.admitted_atomic_comparator",
+        "ACGN.Eighth.A223.relation_product_comparator",
+        "ACGN.Eighth.A223.registered_complete_result"
+      ],
+      "outputPins": {
+        "arrow-families.tsv": "59998a57aa237a09097a400105f41d07644242dfb3fbc0b9762393c543c0a213",
+        "arrow-program.txt": "652a24bdf0a56779625714b910f20d7f6c1a012691f75971499758940c87ac1f"
+      },
+      "originalRowAssessment": {
+        "status": "VERIFIED",
+        "boundary": "For admitted finite correlated input families with fixed positive widths, distinct sorted product keys, consistent module/type evidence and representable indices, the outer left and inner right indices enumerate all products in canonical family order, preserving operand order and repeated source columns. Raw union branch listings are normalized before combination.",
+        "clauses": [
+          {
+            "claim": "Dependent ARROW enumerates the ordered Cartesian product of the admitted correlated product alternatives.",
+            "status": "DISCHARGED",
+            "boundary": "The registered Java/Lean constructor and loop contract takes arbitrary valid raw families, derives canonical coalescing, antichain and sort premises, and checks the complete ordered result at representable widths and indices.",
+            "theorems": [
+              "ACGN.Eighth.A223.pair_at",
+              "ACGN.Eighth.A223.exact_rows",
+              "ACGN.Eighth.A223.case_count",
+              "ACGN.Eighth.A223.normalized_matrix_exact",
+              "ACGN.Eighth.A223.inner_accumulator",
+              "ACGN.Eighth.A223.outer_accumulator",
+              "ACGN.Eighth.A223.accepted_compiler_stream_refines",
+              "ACGN.Eighth.A223.constructor_invariants",
+              "ACGN.Eighth.A223.constructor_to_constructor",
+              "ACGN.Eighth.A223.admitted_atomic_comparator",
+              "ACGN.Eighth.A223.relation_product_comparator",
+              "ACGN.Eighth.A223.registered_complete_result"
+            ],
+            "rows": [
+              {
+                "file": "arrow-families.tsv",
+                "line": "powerset-family-pairs\tCHECKED\t128"
+              },
+              {
+                "file": "arrow-families.tsv",
+                "line": "exact-case-and-result-products\tCHECKED\t384"
+              },
+              {
+                "file": "arrow-families.tsv",
+                "line": "typed-empty-pairs\tCHECKED\t23"
+              },
+              {
+                "file": "arrow-families.tsv",
+                "line": "parser-correlated-products\tCHECKED\t4"
+              },
+              {
+                "file": "arrow-families.tsv",
+                "line": "compiler-contract\tCHECKED\t17 methods, 2 semantic mutations rejected"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "outer:left:ascending-index"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "inner:right:ascending-index"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "new:CombinationCase:leftIndex:rightIndex:CombinationDecision.ARROW_PRODUCT:null:product"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "admission:positive-uniform-width-and-compatible-authority"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "group:exact-product-key-prefer-authenticated-columns"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "prune:all-other-products-strict-coordinate-subtype"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "sort:by-structural-product-type"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "type-order:int-before-nominal-UTF16-then-lex-columns"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "freeze:rows-and-ordered-column-evidence"
+              }
+            ]
+          },
+          {
+            "claim": "Each case retains left-to-right source order and duplicate column occurrences.",
+            "status": "DISCHARGED",
+            "boundary": "Individual source column occurrences and parser-authenticated evidence survive ordered concatenation; duplicate raw family alternatives are coalesced under the separate input normalization contract.",
+            "theorems": [
+              "ACGN.Eighth.A223.duplicate_columns",
+              "ACGN.Eighth.A223.arbitrary_reassociation",
+              "ACGN.Eighth.A223.normalize_preserves_actual_evidence",
+              "ACGN.Eighth.A223.row_width",
+              "ACGN.Eighth.A223.empty_cases",
+              "ACGN.Eighth.A223.source_occurrence_order",
+              "ACGN.Eighth.A223.source_leaf_multiplicity"
+            ],
+            "rows": [
+              {
+                "file": "arrow-families.tsv",
+                "line": "duplicate-representative\tCHECKED\tauthenticated in both orders"
+              },
+              {
+                "file": "arrow-families.tsv",
+                "line": "conflicting-duplicate-evidence\tCHECKED\trejected"
+              },
+              {
+                "file": "arrow-families.tsv",
+                "line": "same-key-foreign-case-owner\tCHECKED\trejected"
+              },
+              {
+                "file": "arrow-families.tsv",
+                "line": "both-associated-repeated-source\tCHECKED\t8"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "addAll:leftProduct"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "addAll:rightProduct"
+              },
+              {
+                "file": "arrow-program.txt",
+                "line": "source:append-left-leaves-then-right-leaves"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

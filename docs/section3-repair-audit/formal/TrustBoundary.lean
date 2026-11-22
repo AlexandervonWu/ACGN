@@ -157,7 +157,7 @@ theorem parent_pin_cannot_authorize_publication :
     verify (some fixtureParentPin)
       { parentFixture with mode := .publication }
       .completeAndValid = .rejected := by
-  native_decide
+  decide
 
 theorem empty_fixture_pin_authorizes_no_ground_equation :
     verify (some fixtureEmptyPin)

@@ -1,0 +1,18 @@
+{
+  "experimentTag": "v3.1",
+  "releaseCommit": "d71cd1c2343b9fdb61d311331feafbe14bea2925",
+  "compiledAt": "6648d7bd4148e6374a5446eaf12a3f1d7633db52",
+  "status": "MEASURED",
+  "acceptedStages": 20,
+  "scope": "Supplemental measurements on the frozen v3.1 engine. The tag was not moved.",
+  "studies": {
+    "naturalAblation": {"arms": 7, "filesPerArm": 66080, "astDistinctMeasuredPerArm": 61598, "astIdenticalPerArm": 4482, "armResults": "measurements/arm-results.json", "boundedChecks": "measurements/natural-ablation/bounded-checks.json"},
+    "capability": {"arms": 7, "casesPerArm": 5500, "families": 11, "results": "measurements/capability/results.json"},
+    "naturalSlotTyping": {"arms": 2, "filesPerArm": 66080, "results": "measurements/natural-slot-typing/comparison.json"},
+    "syntheticSlotTyping": {"arms": 2, "predicatesPerArm": 540, "trials": 1080, "deadlineSeconds": 300, "results": "measurements/synthetic/summary.json"}
+  },
+  "previousAttempt": "study-status-preflight.json",
+  "launchReview": "measurements/supervisor/terra-v4b.json",
+  "execution": "measurements/execution-index.json",
+  "publicCertification": "BLOCKED"
+}
