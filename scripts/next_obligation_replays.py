@@ -98,6 +98,9 @@ CHAIN_MODELS = {
 # source authority. Reject stale or mixed source/binding pairs before Lean replay.
 _CHAIN_VERIFIER = "org.acgn.cert.SemanticEvidenceVerifier.SemanticReplay"
 CHAIN_REPLAY_OBJECTS = {
+    "adapter-barrier": ("is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.Builder", "dependentChainInput", "7",
+                        "c90cc7354bb910cafe1298406bb1061b9530115c733a0b0b73de57baacf58830",
+                        "3bf71ec4f6e4ec545f68daa851d156d8421bfaabe66f46025f6e666d5c89d2d5"),
     "replay-source": (_CHAIN_VERIFIER, "dependentChainInput", "3",
                       "e1686f501e5c82e70ce08f08c43e92aa710c403596ba7c15c9895482a6b4ea5a",
                       "a85bc662b6151a52491ae727ba84fc6bca7082d00d8273435e7e1b80927aca2c"),

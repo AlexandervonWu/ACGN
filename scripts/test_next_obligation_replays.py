@@ -79,6 +79,8 @@ class ReplayEncodingTest(unittest.TestCase):
 
     def test_stale_chain_replay_sources(self):
         previous = [
+            ("adapter-barrier", "e85148fc525fbd3f0976e00ae778add3109d3435f9c13e5f08a9eb7e6a9fa650",
+             "2a28bdf9a25d77fa01eba72bf7a70c4874dd0b0afdf0c98299064284b7dbc8a2"),
             ("replay-source", "4cc45f14bf4ad74089ba62eae9a9f1daa4f612b9179dee4e7fe372bca2f7af74",
              "c03e4e9fd111db518c63997f8fb8ec9d3a043ee80de6ee32cdfd0b0edf0be5fe"),
             ("replay-source", "2b5ba76cd32106acde5eb375b5f3f4a07bf0b4edc08dc0ae75a5d53659136f54",

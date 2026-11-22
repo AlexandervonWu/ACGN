@@ -49,9 +49,16 @@ the JOIN decision matrix and typed emptiness, schema-v10 wire commitments,
 and parser-issued evidence for binding nonemptiness.
 [Ninth batch and ranking](ninth-five/README.md) · [Verification results](ninth-five-results.json)
 
-The current assessment reports **122 of 191 requirements ready**. All 129
-executable steps passed. The overall result is `INCOMPLETE` with 95
-diagnostics. Of these, 94 are in the original queue and one records the
+The tenth package verified five original requirements in two clean builds.
+They cover unary membership in the empty relation, the corresponding negative
+membership rule, lexical binding authority across the evaluator configurations,
+recursive agreement for set-operation sources, and owner-index restoration
+after interface changes.
+[Tenth batch and ranking](tenth-five/README.md) · [Verification results](tenth-five-results.json)
+
+The current assessment reports **127 of 191 requirements ready**. All 140
+executable steps passed. The overall result is `INCOMPLETE` with 90
+diagnostics. Of these, 89 are in the original queue and one records the
 missing A-01 low-level registry. [Current assessment](current.md)
 
 The [v2.14 candidate list](next-candidates-v2.14.md) records the original scope

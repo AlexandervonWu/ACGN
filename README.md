@@ -161,10 +161,10 @@ integration failures are documented. All 898 existing experimental JAR classes
 remain byte-identical; this proof/test-only release retains the empirical
 snapshot below and the separate v2.16 validation run.
 
-The eighth and ninth public certification packages each verified five original
-requirements in two clean builds. The current Section 3 assessment has
-**122 of 191 requirements ready** and **95 open diagnostics**. All 129
-executable assurance steps passed. [Assurance status](docs/obligation-repair/README.md) · [Eighth results](docs/obligation-repair/eighth-five-results.json) · [Ninth results](docs/obligation-repair/ninth-five-results.json)
+The eighth, ninth and tenth public certification packages each verified five
+original requirements in two clean builds. The current Section 3 assessment
+has **127 of 191 requirements ready** and **90 open diagnostics**. All 140
+executable assurance steps passed. [Assurance status](docs/obligation-repair/README.md) · [Eighth results](docs/obligation-repair/eighth-five-results.json) · [Ninth results](docs/obligation-repair/ninth-five-results.json) · [Tenth results](docs/obligation-repair/tenth-five-results.json)
 
 ## Headline Results
 

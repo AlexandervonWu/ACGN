@@ -49,6 +49,16 @@ def synthetic_binding(name):
 
 
 class RecordsPluginTests(unittest.TestCase):
+    def test_pre_recursive_integer_adapter_pins_are_rejected(self):
+        shape = "b583b8d4c87dc505d5391eafeffa3e2927c504dd29836a4a185481eb77f9e7c5"
+        bindings = "c7e96284672950a308c81ed1e6741ba5b626e0988cf58aa2dc9854b290500fec"
+        for stale in ({"shapeSha256": shape}, {"bindingsSha256": bindings},
+                      {"shapeSha256": shape, "bindingsSha256": bindings}):
+            changed = sources()
+            next(row for row in changed if row["object"] == "TheoryAlloyAdapter").update(stale)
+            with self.subTest(fields=tuple(stale)), self.assertRaises(Blocked):
+                r.source_census(changed)
+
     def test_superseded_verifier_and_writer_pins_are_rejected(self):
         # Retain superseded verifier generations and the pre-registry writer as independent negatives.
         for name, shape, binding in (

@@ -23,7 +23,7 @@ public final class SourceOccurrenceBindingsExtractor {
     private static final Map<String, String> EXPECTED = Map.of(
             "CertificateVerificationScope", "96cbb043b0b01bba17d547f3048e1fb93b4c4cf53553a4840c4c783b763deea4 40e9edc6e7d3909ffa2a28b08367c3c0850a8d5bc50aacb0df43e6d69674af32",
             "CertificateVerifier", "3d6c3503df22ddfb41c12c61916d90ef9c40efaa31ef4079510e99c5fc949d04 bffa5b50b8e99dca4b4dd59288a0d4d0fd0253d3145cad4816913efa22e5f8b8",
-            "TheoryAlloyAdapter", "b583b8d4c87dc505d5391eafeffa3e2927c504dd29836a4a185481eb77f9e7c5 c7e96284672950a308c81ed1e6741ba5b626e0988cf58aa2dc9854b290500fec",
+            "TheoryAlloyAdapter", "f1fa121d2b059147dc2af5bf7e44531585c147cf827a7aa6138aec658bca9d6c d9551bea070c3fd486e496ba2e9daacaae558c862bddbffae0fb9bbd9104bdb5",
             "EGraphNode", "ac78c01d04be3dbc9275c34f3dd301e219929c01594bc6d3390e21a7d254e67b fd2ca306c0dde6cf4050bd844aebc153f57e6d75e3e70e64cb023648585eb4b6",
             "NormalForm", "1d474aa7f9f55da081178b49c447d4fe419dc47ef110688b0b3bf7d69759b80d 8894eeeffd4d64552180d580618f16d4a05e85d29fb849026a02e74c9cedce80",
             "StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",

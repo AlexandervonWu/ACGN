@@ -6,8 +6,8 @@
 
 - Scoped claims: 191
 - Matrix rows: 191
-- Fully ready rows: 122
-- Open diagnostics: 95
+- Fully ready rows: 127
+- Open diagnostics: 90
 - Assurance state: `INCOMPLETE`
 
 ## Common Proof Process
@@ -1322,15 +1322,15 @@ Every claim follows the same bounded process:
 - Class: `I/P`
 - Claim SHA-256: `2383859cecf4dbfa79f149e0308fde456c5fcb367993b813221961fbd99da6ad`
 - Ledger line: 138
-- Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
-- Lean declarations: `union_absorbs_authenticated_subtype;union_retains_disjoint_siblings;intersection_keeps_more_specific_product;intersection_omits_proven_disjoint_product;typed_empty_union_retains_positive_arity;all_disjoint_intersection_retains_positive_empty_arity;mixed_arity_set_operation_rejects`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#dependentTypeDagForSource;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand`
-- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/A226SourceAgreement.lean`
+- Lean declarations: `recursive_parser_agreement;every_accepted_set_child;matched_empty_keeps_parser_arity;fixed_iff_unsupported_without_authority;disagreement_has_no_fallback;registered_source_agreement`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#dependentChainInput;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#dependentTypeDagForSource;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#union;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#intersection`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;docs/obligation-repair/tenth-five/java/A226Qualification.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The standalone file fixes bounded UNION and INTERSECTION semantics, including positive-arity typed-empty results and mixed-arity rejection, while the pipeline independently derives and compares relation-family types. Complete parser-source refinement and exhaustive unsupported-form coverage remain open.
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: Every accepted source set child agrees with its parser family under the registered Java-to-Lean correspondence. Positive-arity empty families retain width. Disagreement or reentry rejects. Unsupported primitive/nominal crossings retain fixed binary structure without dependent equality authority. A separate guarded JOIN requires its own evidence.
+- Current proof state: `READY`
 
 ### A2-27
 
@@ -2087,15 +2087,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `9e9ffde2a03d7ad605388bba45460064d6106d4be38dbbafeff2fc2a049af8fe`
 - Ledger line: 198
-- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
-- Lean declarations: `initial_graph_is_quiescent_exact;supported_operation_preserves_quiescent_exact;supported_run_preserves_quiescent_exact;supported_quiescent_public_observation_is_exact`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#rebuildHashConsExactly;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#requireHashBucketsExact;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#hashIndexRebuildCount`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testCertifiedInterfaceRestriction;src/is/fivefivefive/CanDis/theory/TheoryStateTest.java#testGraphOwnershipAndQuiescence`
+- Lean file: `docs/section3-repair-audit/formal/P408LiveOwnerIndex.lean`
+- Lean declarations: `rebuilt_exact;expected_map_test;source_program_publishes_exact;restricted_rebuild_observation;every_completed_view_is_live;missing_scan_cannot_publish`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#restrictInterfaceCertified;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#rebuild;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#rebuildHashConsExactly;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#requireHashBucketsExact;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#hashBucketsSnapshot`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testCertifiedInterfaceRestriction;src/is/fivefivefive/CanDis/theory/TheoryStateTest.java#testGraphOwnershipAndQuiescence;docs/obligation-repair/tenth-five/java/P408OwnerRestorationTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The finite supported-operation model preserves exact public buckets; Java validates the incoming index, clears and reconstructs it from live records, and validates exact buckets afterward; fresh counter-only and empty-body mutants die in full and isolated interface-change tests, while a whole-program refinement theorem remains open
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: A successful synchronized dirty rebuild reconstructs the complete index from final live records and checks both keys and owners before ordinary hash reads resume. The result assumes stable comparison keys and observer-only trace callbacks. A missing factorization can defer completion.
+- Current proof state: `READY`
 
 ### P4-09
 
@@ -2240,15 +2240,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `4252bf755653e6ab1d7954ae66372c23a5df58520d532a0dfef38b7d46ec0652`
 - Ledger line: 212
-- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
-- Lean declarations: `arbitrary_in_none_is_not_false_without_evidence;nonempty_in_none_is_false;in_unknown_none_stays_guarded;in_proven_nonempty_none_folds_false`
-- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyNonemptySet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty`
-- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkGenericLabelCannotMintNonemptiness;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/P505ParsedMembership.lean`
+- Lean declarations: `observed_false_requires_source;nullable_false_has_empty_countermodel`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyNonemptySet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteNode;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty;src/parser/ast/nodes/ResolvedBindingOrigins.java#read`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkGenericLabelCannotMintNonemptiness;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main;docs/obligation-repair/tenth-five/java/MembershipDualTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `PARTIAL`
-- Claim-specific process/limits: The semantic guard and direct positive/nullable/synthetic-label attacks pass; complete alias and De Bruijn refinement remains part of P5-14
-- Current proof state: `INCOMPLETE`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: For an ordinary unary variable in none, a literal false identifies a visible declaration-issued ONE or SOME slot and an admitted nonempty value. A nullable operand has an empty countermodel. The correspondence uses type-correct relational operands, the pinned parser and attributed guard branches.
+- Current proof state: `READY`
 
 ### P5-06
 
@@ -2274,15 +2274,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `da74ebe0acd1ce6b63daadf6b3b6d1abd901208b31d3e9381134dc2b5130be83`
 - Ledger line: 214
-- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
-- Lean declarations: `none_not_in_none_is_false;nonempty_not_in_none_is_true;no_relation_not_in_univ;not_in_unknown_none_stays_guarded;not_in_proven_nonempty_none_folds_true`
-- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteNode`
-- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkAblationBindingGuards`
+- Lean file: `docs/section3-repair-audit/formal/P507MembershipDual.lean`
+- Lean declarations: `observed_relational_duals;shadowed_set;shadowed_some`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyNonemptySet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteNode;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#atomicNegationDual;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkAblationBindingGuards;docs/obligation-repair/tenth-five/java/MembershipDualTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `PARTIAL`
-- Claim-specific process/limits: The exact relational duals share ONE/SOME authority and retain univ-in-none guards without an inhabitant witness; complete alias refinement remains open
-- Current proof state: `INCOMPLETE`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: NOT_IN has the complementary relational decision for the same operands and shares IN's visible nonemptiness authority. The model and witness distinguish a guarded relation from a constant result and derive the enclosing quantified outcomes under each declaration.
+- Current proof state: `READY`
 
 ### P5-08
 
@@ -2342,15 +2342,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `d47927aa3fbf53685a9009de72bf8e38a3aa860736c74f22d75ebea29e9e7050`
 - Ledger line: 218
-- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
-- Lean declarations: `ablation_mirror_counterexample_for_one_binding;ablation_mirror_counterexample_for_some_binding`
-- Implementation references: `src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteScopedTree`
-- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkAblationBindingGuards;src/is/fivefivefive/CanDis/ablation/EGraphAblationTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/P511LexicalTransport.lean`
+- Lean declarations: `generated_guard_has_current_coordinate;cross_engine_guard;checked_positive_same_original;substitution_transports_original;synthetic_label_has_no_authority`
+- Implementation references: `src/is/fivefivefive/CanDis/EGraphAblationStudy.java#processFile;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteScopedTree;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#addDeclarationBindings;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#substitute;src/is/fivefivefive/CanDis/core/egraph/SlotCanonicalizer.java#scopeVariables;src/is/fivefivefive/CanDis/core/egraph/AlloyTerm.java#renameVariable;src/parser/ast/nodes/ResolvedBindingOrigins.java#read;src/is/fivefivefive/CanDis/core/egraph/RawEGraph.java#compare;src/is/fivefivefive/CanDis/core/egraph/RawDeBruijnEGraph.java#compare;src/is/fivefivefive/CanDis/core/egraph/JavaEgglog.java#compare;src/is/fivefivefive/CanDis/core/egraph/JavaEgglogDeBruijn.java#compare;src/is/fivefivefive/CanDis/core/egraph/SlottedEGraph.java#compare`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkAblationBindingGuards;src/is/fivefivefive/CanDis/ablation/EGraphAblationTest.java#main;docs/obligation-repair/tenth-five/java/P511LexicalTransportTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: Five engines pass scoped bare/ONE/SOME versus SET/LONE, nested shadowing, and synthetic-label attacks; the Lean counterexamples establish why erasing binding context is wrong but do not refine every engine implementation
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: Across the five engines and the typed-slotted configuration, a positive read traces to the same visible declaration before and after coordinate changes or capture-avoiding substitution. Nullable shadows, foreign reads and bare synthetic labels confer no authority. Parser issuance, the attributed source mapping and JVM execution are trusted.
+- Current proof state: `READY`
 
 ### P5-12
 

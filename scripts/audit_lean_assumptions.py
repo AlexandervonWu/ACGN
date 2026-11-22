@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import importlib.util
 import json
 import os
@@ -60,6 +61,12 @@ def supplemental_declarations(root: Path) -> dict[str, list[str]]:
             "shadowed_first_slot",
         ],
     }
+    # The 10th primary succeeds the last live reference to this original module.
+    # Register the complete immutable historical source and audit every named theorem.
+    retired = root / FORMAL / "DependentTypeDagStandalone.lean"
+    if hashlib.sha256(retired.read_bytes()).hexdigest() != "43e71745ef0872c31e0473308ba332abca9b2d5d497b31a25cf7bdc0a7c2faa7":
+        raise SystemExit("stale DependentTypeDagStandalone supplemental source")
+    modules["DependentTypeDagStandalone"] = scan_proof(retired)
     registered = {}
     for module, expected in modules.items():
         relative = str(FORMAL / (module + ".lean"))
@@ -95,10 +102,11 @@ def audit_supplemental_output(output: Path, stem: str, log: str, names: list[str
 class AssurancePhase:
     """Run a registered phase with the standard assurance classes and evidence directory."""
 
-    def __init__(self, root: Path, output: Path, heap: str):
+    def __init__(self, root: Path, output: Path, heap: str, batch: str):
         self.source = root
         self.path = output
         self.heap = heap
+        self.batch = batch
         self.logs = output / "logs"
         self.tmp = output / "tmp"
         for folder in (self.logs, self.tmp):
@@ -106,6 +114,9 @@ class AssurancePhase:
         self.record = {"claims": {}}
 
     def run(self, name, args, cwd=None, *, expected=0, extra=None):
+        if self.batch == "tenth" and extra and "ACGN_NINTH_PROOF" in extra:
+            extra = dict(extra, ACGN_TENTH_LEAN=extra["ACGN_NINTH_LEAN"],
+                         ACGN_TENTH_PROOF=extra["ACGN_NINTH_PROOF"])
         command = [str(arg) for arg in args]
         if command[0] == "java":
             command[command.index("-Xmx1g")] = "-Xmx" + self.heap
@@ -120,8 +131,8 @@ class AssurancePhase:
         return log
 
 
-def run_ninth_phase(argv: list[str]) -> int:
-    parser = argparse.ArgumentParser(description="Execute a sealed ninth witness on the assurance build.")
+def run_registered_phase(batch: str, argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description="Execute a sealed witness on the assurance build.")
     parser.add_argument("parent")
     parser.add_argument("main_class")
     parser.add_argument("root", type=Path)
@@ -132,8 +143,8 @@ def run_ninth_phase(argv: list[str]) -> int:
     parser.add_argument("provenance", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
     root, output = args.root.resolve(), args.output.resolve()
-    package = Path("docs/obligation-repair/ninth-five")
-    spec = importlib.util.spec_from_file_location("section3_ninth", root / package / "verify_ninth.py")
+    package = Path("docs/obligation-repair") / (batch + "-five")
+    spec = importlib.util.spec_from_file_location("section3_" + batch, root / package / ("verify_" + batch + ".py"))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     base = module.configure(root)
@@ -145,16 +156,16 @@ def run_ninth_phase(argv: list[str]) -> int:
                 if Path(item["source"]).is_relative_to(package)}
     discovered = {p.relative_to(root).as_posix() for p in (root / package).rglob("*.lean")}
     if discovered != governed:
-        raise SystemExit(f"ninth supplemental Lean inventory differs: {sorted(discovered ^ governed)}")
+        raise SystemExit(f"{batch} supplemental Lean inventory differs: {sorted(discovered ^ governed)}")
     with (output / "input-manifest.tsv").open(encoding="utf-8") as stream:
         manifest = {r["path"]: r["sha256"] for r in csv.DictReader(stream, delimiter="\t")
                     if r["type"] == "file"}
-    build = AssurancePhase(root, output / "ninth-witnesses", args.heap)
+    build = AssurancePhase(root, output / (batch + "-witnesses"), args.heap, batch)
     fixtures = output / "certificate-fixtures"
     values = {"source": str(root), "fixtures": str(fixtures), "coverage": str(fixtures / "schema-v8-coverage"),
               "verifierJar": str(output / "acgn-certificate-verifier.jar")}
-    claim = module.check_phase(base, build, phase, manifest, parents[args.parent], args.lean.resolve(),
-                               None, args.classpath, values, args.provenance)
+    claim = base.check_parent(build, phase, manifest, parents[args.parent], args.lean.absolute(),
+                              None, args.classpath, values, args.provenance)
     base.write_json(build.path / (args.parent + "-claim.json"), claim)
     # The generic mapped-proof and declaration checks use the same isolated imports.
     # Publish this record only after the full phase passed.
@@ -173,7 +184,7 @@ def main() -> int:
     action.add_argument("--list-formal-files", action="store_true",
                         help="print the complete governed file inventory")
     parser.add_argument("--lean", type=Path)
-    parser.add_argument("--ninth-caches", type=Path)
+    parser.add_argument("--phase-caches", "--ninth-caches", type=Path, action="append", default=[])
     parser.add_argument(
         "--rewrite-only",
         action="store_true",
@@ -279,14 +290,16 @@ def main() -> int:
                 newline="\n",
             )
             env = os.environ.copy()
-            if args.ninth_caches:
-                record = args.ninth_caches / (source_path.stem + ".imports")
-                if record.exists():
-                    cache = args.ninth_caches / record.read_text(encoding="utf-8").strip()
-                    if (cache.parent != args.ninth_caches or
-                            not (cache / (source_path.stem + ".olean")).is_file()):
-                        raise SystemExit(f"missing or invalid phase import cache for {relative}")
-                    env["LEAN_PATH"] = str(cache)
+            indexes = [root_cache / (source_path.stem + ".imports") for root_cache in args.phase_caches]
+            records = [idx for idx in indexes if idx.is_file()]
+            if len(records) > 1:
+                raise SystemExit(f"ambiguous phase import cache for {relative}")
+            if records:
+                record = records[0]
+                cache = record.parent / record.read_text(encoding="utf-8").strip()
+                if cache.parent != record.parent or not (cache / (source_path.stem + ".olean")).is_file():
+                    raise SystemExit(f"missing or invalid phase import cache for {relative}")
+                env["LEAN_PATH"] = str(cache)
             completed = subprocess.run(
                 [str(args.lean), str(audit_source)],
                 cwd=root, env=env,
@@ -310,6 +323,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    if sys.argv[1:2] == ["ninth-phase"]:
-        raise SystemExit(run_ninth_phase(sys.argv[2:]))
+    if sys.argv[1:2] in (["ninth-phase"], ["tenth-phase"]):
+        raise SystemExit(run_registered_phase(sys.argv[1].split("-")[0], sys.argv[2:]))
     raise SystemExit(main())

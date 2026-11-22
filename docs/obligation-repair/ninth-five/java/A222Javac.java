@@ -27,7 +27,7 @@ final class A222Javac {
         ALLOY+"ExactAlloyType", List.of("fromParser/2","from/3","ancestryOf/1","parserSignatures/1",
             "hasParserAuthenticatedParents/2","isTrustedBuiltinParentEdge/2","normalizeColumn/1",
             "sharesParserModuleAuthorityWith/1","parserCertifiedRelationIntersection/1","intersectShapes/2","intersectShape/2"));
-    private static final String PIN = "5b2051216c1dbc4774eca5f013538389cd6e2e98ae152968cf6108863352cc63";
+    private static final String PIN = "b4708dea1cc5e281292dccc8007282a16e68c2d7ea17033993809c071e24995b";
 
     private static void add(MessageDigest hash, String value) {
         byte[] bytes = value.getBytes(StandardCharsets.UTF_8);

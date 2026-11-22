@@ -1,6 +1,6 @@
 # Ordered Obligation Repair Status
 
-Current diagnostics: **95**. Original diagnostics: **132**.
+Current diagnostics: **90**. Original diagnostics: **132**.
 
 Absence of a diagnostic is not proof of repair; verified evidence is required.
 
@@ -71,7 +71,7 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 63 | A2-23 | A2-23 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 64 | A2-24 | A2-24 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 65 | A2-25 | A2-25 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 66 | A2-26 | A2-26 formal_status is PARTIAL | OPEN |
+| 66 | A2-26 | A2-26 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 67 | A2-27 | A2-27 formal_status is PARTIAL | OPEN |
 | 68 | P2-02 | P2-02 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 69 | P2-05 | P2-05 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
@@ -99,14 +99,14 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 91 | P4-04 | P4-04 formal_status is PARTIAL | OPEN |
 | 92 | P4-06 | P4-06 formal_status is PARTIAL | OPEN |
 | 93 | P4-07 | P4-07 formal_status is PARTIAL | OPEN |
-| 94 | P4-08 | P4-08 formal_status is PARTIAL | OPEN |
+| 94 | P4-08 | P4-08 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 95 | P4-11 | P4-11 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 96 | P5-05 | P5-05 conformance_status is PARTIAL | OPEN |
+| 96 | P5-05 | P5-05 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 97 | P5-06 | P5-06 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 98 | P5-07 | P5-07 conformance_status is PARTIAL | OPEN |
+| 98 | P5-07 | P5-07 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 99 | P5-08 | P5-08 conformance_status is PARTIAL | OPEN |
 | 100 | P5-09 | P5-09 formal_status is PARTIAL | OPEN |
-| 101 | P5-11 | P5-11 formal_status is PARTIAL | OPEN |
+| 101 | P5-11 | P5-11 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 102 | P5-12 | P5-12 conformance_status is PARTIAL | OPEN |
 | 103 | P5-13 | P5-13 formal_status is PARTIAL | OPEN |
 | 104 | P5-14 | P5-14 formal_status is PARTIAL | OPEN |

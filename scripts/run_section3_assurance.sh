@@ -73,6 +73,7 @@ input_roots=(
   certificate-verifier
   docs/obligation-repair/eighth-five
   docs/obligation-repair/ninth-five
+  docs/obligation-repair/tenth-five
   docs/obligation-repair/sixth-five/qualification.json
   docs/obligation-repair/sixth-five/DecodedEvidenceCoverage.lean
   docs/obligation-repair/sixth-five/java/RawCallSourceAuthority.java
@@ -288,6 +289,25 @@ run_ninth_witness A2-24 org.acgn.cert.A224Qualification
 run_ninth_witness A2-25 org.acgn.cert.A225WireCommitmentTest
 run_ninth_witness P5-06 is.fivefivefive.CanDis.P506SourceBindingTest
 
+tenth_package="$ROOT/docs/obligation-repair/tenth-five"
+tenth_classes="$OUTPUT/tenth-witness-classes"
+mkdir -p "$tenth_classes"
+mapfile -t tenth_sources < <(find "$tenth_package/java" -type f -name '*.java' | sort)
+run_step compile-tenth-witnesses "$JAVA_TIMEOUT" \
+  javac --release 17 -encoding UTF-8 -cp "$eighth_dependencies" -d "$tenth_classes" "${tenth_sources[@]}"
+
+run_tenth_witness() {
+  local parent="$1" main="$2"
+  run_step "java-$parent-${main##*.}" "$JAVA_TIMEOUT" \
+    python3 -B "$ROOT/scripts/audit_lean_assumptions.py" tenth-phase "$parent" "$main" \
+    "$ROOT" "$OUTPUT" "$LEAN_BIN" "$tenth_classes:$eighth_dependencies" "$JAVA_HEAP" "${provenance_options[@]}"
+}
+run_tenth_witness P5-05 is.fivefivefive.CanDis.MembershipDualTest
+run_tenth_witness P5-07 is.fivefivefive.CanDis.MembershipDualTest
+run_tenth_witness P5-11 is.fivefivefive.CanDis.core.egraph.P511LexicalTransportTest
+run_tenth_witness A2-26 is.fivefivefive.CanDis.A226Qualification
+run_tenth_witness P4-08 is.fivefivefive.CanDis.theory.P408OwnerRestorationTest
+
 run_step producer-Phase6SemanticOrderProducerRegressionTest "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" "${provenance_options[@]}" \
   -cp "$OUTPUT/classes:$ROOT/lib/*" \
@@ -386,10 +406,17 @@ for relative_lean_file in "${mapped_lean_files[@]}"; do
   lean_file="$ROOT/$relative_lean_file"
   name="$(basename "$lean_file" .lean)"
   imports="$lean_imports"
-  if [[ -f "$OUTPUT/ninth-witnesses/$name.imports" ]]; then
-    read -r cache <"$OUTPUT/ninth-witnesses/$name.imports"
-    imports="$OUTPUT/ninth-witnesses/$cache"
-  fi
+  for phase_cache in "$OUTPUT/ninth-witnesses" "$OUTPUT/tenth-witnesses"; do
+    if [[ -f "$phase_cache/$name.imports" ]]; then
+      if [[ "$imports" != "$lean_imports" ]]; then
+        printf 'ambiguous phase import cache for %s\n' "$name" >&2
+        failures=$((failures + 1))
+        continue 2
+      fi
+      read -r cache <"$phase_cache/$name.imports"
+      imports="$phase_cache/$cache"
+    fi
+  done
   run_step "lean-$name" "$LEAN_TIMEOUT" env LEAN_PATH="$imports" "$LEAN_BIN" "$lean_file"
 done
 
@@ -409,7 +436,7 @@ run_step lean-forbidden-token-scan "$LEAN_TIMEOUT" \
   assurance-scan "$ROOT/docs/section3-repair-audit/formal"
 run_step lean-explicit-assumption-inventory "$LEAN_TIMEOUT" \
   env LEAN_PATH="$lean_imports" python3 -B "$ROOT/scripts/audit_lean_assumptions.py" \
-  --root "$ROOT" --output "$OUTPUT/lean-assumptions" --lean "$LEAN_BIN" --ninth-caches "$OUTPUT/ninth-witnesses"
+  --root "$ROOT" --output "$OUTPUT/lean-assumptions" --lean "$LEAN_BIN" --phase-caches "$OUTPUT/ninth-witnesses" --phase-caches "$OUTPUT/tenth-witnesses"
 
 run_step traceability-tests "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" -cp "$OUTPUT/classes:$ROOT/lib/*" \

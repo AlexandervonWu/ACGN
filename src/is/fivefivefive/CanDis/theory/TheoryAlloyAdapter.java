@@ -2003,10 +2003,12 @@ public final class TheoryAlloyAdapter {
                         ? storedType
                         : DependentChainTheory.relationViewFromStoredType(storedType);
                 ExactAlloyType exactType = child.getExactAlloyType();
-                DependentTypeDag typeDag = exactType != null
-                                && (exactType.kind() == ExactAlloyType.Kind.RELATION
-                                        || exactType.kind()
-                                                == ExactAlloyType.Kind.EMPTY_RELATION)
+                boolean sourceSetOperation = child.getOpcode() == Opcode.PLUS
+                        || child.getOpcode() == Opcode.INTERSECT;
+                boolean relationFamily = exactType != null
+                        && (exactType.kind() == ExactAlloyType.Kind.RELATION
+                                || exactType.kind() == ExactAlloyType.Kind.EMPTY_RELATION);
+                DependentTypeDag typeDag = sourceSetOperation || relationFamily
                         ? dependentTypeDagForSource(child, new HashSet<>())
                         : DependentTypeDag.fromRelationFamilyType(relationType);
                 return new DependentChainLeaf(leaf, typeDag, exactType);
@@ -2022,13 +2024,17 @@ public final class TheoryAlloyAdapter {
             ExactAlloyType exactType = source.getExactAlloyType();
             if (exactType == null
                     || (exactType.kind() != ExactAlloyType.Kind.RELATION
-                            && exactType.kind()
-                                    != ExactAlloyType.Kind.EMPTY_RELATION)) {
+                            && exactType.kind() != ExactAlloyType.Kind.EMPTY_RELATION
+                            && exactType.kind() != ExactAlloyType.Kind.INT)) {
                 throw new DependentChainTheory.UnsupportedFlattening(
                         "A dependent DAG leaf lacks an exact relation family");
             }
-            DependentTypeDag parserDag = AlloyTypeBridge.dependentTypeDag(
-                    exactType);
+            // Alloy represents a unary Int set as INT. Reuse the declared primitive
+            // relation lift when checking the source operator and each of its children.
+            DependentTypeDag parserDag = exactType.kind() == ExactAlloyType.Kind.INT
+                    ? DependentTypeDag.fromRelationFamilyType(
+                            DependentChainTheory.relationViewFromStoredType(GraphType.INT))
+                    : AlloyTypeBridge.dependentTypeDag(exactType);
             if (source.getOpcode() != Opcode.PLUS
                     && source.getOpcode() != Opcode.INTERSECT) {
                 return parserDag;
@@ -2043,6 +2049,14 @@ public final class TheoryAlloyAdapter {
                 for (EClassRef childRef : source.getChildClasses()) {
                     EGraphNode child = childRef.canonical().getEClass()
                             .getRepresentative();
+                    ExactAlloyType operandType = child.getExactAlloyType();
+                    if (operandType != null
+                            && (exactType.kind() == ExactAlloyType.Kind.INT)
+                                    != (operandType.kind() == ExactAlloyType.Kind.INT)) {
+                        // The primitive lift supplies no nominal ancestry for a mixed proof.
+                        throw new DependentChainTheory.UnsupportedFlattening(
+                                "A mixed primitive Int set operand lacks a common source evidence representation");
+                    }
                     operands.add(dependentTypeDagForSource(
                             child, activeTypeClasses));
                 }
