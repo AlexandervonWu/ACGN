@@ -65,6 +65,24 @@ class ChainReplayTests(unittest.TestCase):
         cls.observed = synthetic_rows()
         cls.extracted = sources()
 
+    def test_pre_arrow_authority_verifier_pins_are_rejected(self):
+        # Original 69c72235 class: reject either stale coordinate independently.
+        shape = "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc"
+        binding = "a96e5e846bc4901abe3350c51da5a02ba7650677d50a176ab88b8390e0660177"
+        for stale in ({"shapeSha256": shape}, {"bindingsSha256": binding},
+                      {"shapeSha256": shape, "bindingsSha256": binding}):
+            changed = sources()
+            row = next(r for r in changed if r["object"] == "SemanticEvidenceVerifier")
+            row.update(stale)
+            # This encoder submits exact equality to the Lean kernel.
+            lean = r.Lean()
+            r.source_rows(changed, lean)
+            expected_shape, expected_binding = r.PINS[row["object"]].split()
+            self.assertNotEqual((row["shapeSha256"], row["bindingsSha256"]),
+                                (expected_shape, expected_binding))
+            self.assertIn(f'theorem source{changed.index(row)} : "{row["shapeSha256"]}" = "{expected_shape}"'
+                          f' /\\ "{row["bindingsSha256"]}" = "{expected_binding}" := by decide', lean.proofs)
+
     def test_fixed_census_and_audits(self):
         source, count = r.program(self.observed, self.extracted)
         self.assertEqual(count, 8754)

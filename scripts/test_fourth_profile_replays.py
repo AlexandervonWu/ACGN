@@ -35,6 +35,18 @@ def observations():
 
 
 class ProfileReplayTest(unittest.TestCase):
+    def test_pre_arrow_authority_verifier_pins_are_rejected(self):
+        # Original 69c72235 class: reject either stale coordinate independently.
+        shape = "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc"
+        binding = "cd2fe91218d45a6eaebc03233f04d8119c8a23064ab520a3f7657e3ee54755cd"
+        for stale in ({"shapeSha256": shape}, {"bindingsSha256": binding},
+                      {"shapeSha256": shape, "bindingsSha256": binding}):
+            changed = sources()
+            row = next(r for r in changed if r["object"] == "SemanticEvidenceVerifier")
+            row.update(stale)
+            with self.subTest(fields=tuple(stale)), self.assertRaises(r.Blocked):
+                r.validate_sources(changed)
+
     def test_pre_upgrade_solver_binding_is_rejected(self):
         changed = sources()
         row = next(s for s in changed if s["object"] == "AlloySemanticProfileFactory")

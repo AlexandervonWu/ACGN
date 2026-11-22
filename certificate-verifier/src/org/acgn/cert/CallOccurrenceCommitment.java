@@ -67,11 +67,15 @@ public record CallOccurrenceCommitment(
 
     static String subjectDigest(Bundle.Metadata metadata) {
         Objects.requireNonNull(metadata, "metadata");
+        return subjectDigest(metadata.inputIdentifier(), metadata.inputSha256());
+    }
+
+    static String subjectDigest(String inputIdentifier, String inputSha256) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             update(digest, VERSION + "/subject");
-            update(digest, metadata.inputIdentifier());
-            update(digest, metadata.inputSha256());
+            update(digest, inputIdentifier);
+            update(digest, requireDigest(inputSha256, "inputSha256"));
             return HexFormat.of().formatHex(digest.digest());
         } catch (NoSuchAlgorithmException exception) {
             throw new IllegalStateException("SHA-256 is unavailable", exception);

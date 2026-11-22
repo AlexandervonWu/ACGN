@@ -1,0 +1,203 @@
+{
+  "profile": "seventh-public-certification-v1",
+  "trusted": [
+    "Lean 4.35.0 kernel and standard library under propext, Quot.sound and Classical.choice",
+    "JDK 17 javac, JVM and jar, Python, Git, Linux and hardware",
+    "Alloy parser and libraries in the frozen checkout",
+    "SHA-256 collision resistance",
+    "registered finite source extractors, compiled witness programs and dependent CALL authority",
+    "TEST_ONLY theory pins for the stated public fixtures"
+  ],
+  "excluded": [
+    "general raw Alloy, parser or JVM refinement",
+    "independent authority for unregistered source forms or missing PAIR sides",
+    "faithfulness or optimality outside the registered admissible edit fragment",
+    "broader original claim status, empirical results, production certificates and release provenance"
+  ],
+  "phases": [
+    {
+      "parent": "A2-15",
+      "scope": "Recorded ARROW applications in the independently decoded selected-predicate fragment and their admitted concrete construction evidence.",
+      "proof": "docs/obligation-repair/seventh-five/RawArrowOccurrenceCensus.lean",
+      "class": "is.fivefivefive.CanDis.RawArrowCensusTest",
+      "args": [],
+      "outputs": [],
+      "witness": "docs/obligation-repair/seventh-five/java/RawArrowCensusTest.java",
+      "kind": "source-authority",
+      "requiredLines": [
+        "A2-15\ttwo-same-type-arrows\tACCEPT 2 paths, 4 typed field leaves, 2 ledger keys",
+        "A2-15\treversed-predicate\tACCEPT independently selected reverse order",
+        "A2-15\tmissing-ledger-row\tREJECT different construction ledger multiset",
+        "A2-15\tcoordinated-omission\tREJECT different retained construction multiset",
+        "A2-15\textra-ledger-count\tREJECT different construction ledger multiset",
+        "A2-15\tcoordinated-extra\tREJECT different retained construction multiset",
+        "A2-15\tsame-size-coordinated-substitution\tREJECT different retained construction multiset",
+        "A2-15\tforeign-retained-matrix\tREJECT different selected predicate",
+        "A2-15\tsame-root-typed-operand-swap\tREJECT different ordered typed ARROW leaves",
+        "A2-15\tforeign-selected-predicate\tREJECT different source bytes or selected predicate",
+        "A2-15\tdifferent-original-bytes\tREJECT different source bytes or selected predicate",
+        "A2-15\tnested-repeated-leaves\tACCEPT 2 distinct associations, 6 typed field leaves",
+        "A2-15\tsome-signature-product\tACCEPT 1 path, 3 typed signature leaves",
+        "A2-15\tunsupported-body\tREJECT unsupported predicate body",
+        "RawArrowCensusTest: PASS (14 cases)"
+      ],
+      "theorems": [
+        "ACGN.Seventh.RawArrowOccurrenceCensus.frontier_resolves",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.owner_at_path_unique",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.frontier_cardinality",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.frontier_typed_order",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.census_addresses",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.accepted_ledger_resolves",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.accepted_counts",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.included_roles_distinct",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.coordinated_omission_rejected",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.extra_occurrence_rejected",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.equal_size_substitution_rejected",
+        "ACGN.Seventh.RawArrowOccurrenceCensus.foreign_subject_rejected"
+      ]
+    },
+    {
+      "parent": "G-08",
+      "scope": "Source-selected occurrence identities, producer ownership, supported transfers and independent public-wire obligations on registered typed ARROW cases.",
+      "proof": "docs/obligation-repair/seventh-five/G08ArrowSourceWire.lean",
+      "class": "org.acgn.cert.ArrowSourceWireRegressionTest",
+      "args": [
+        "{results}/occurrences.tsv"
+      ],
+      "outputs": [
+        "occurrences.tsv"
+      ],
+      "witness": "docs/obligation-repair/seventh-five/java/ArrowSourceWireRegressionTest.java",
+      "kind": "source-authority",
+      "requiredLines": [
+        "ArrowSourceWireRegressionTest passed: cases=14"
+      ],
+      "theorems": [
+        "Seventh.G08.census_lookup",
+        "Seventh.G08.lookup_ext",
+        "Seventh.G08.census_determines_source",
+        "Seventh.G08.verified_preserves_origin",
+        "Seventh.G08.missing_or_other_trust_blocks"
+      ],
+      "outputPins": {
+        "occurrences.tsv": "e2a83d200b72ad31bd0b3ddd5bc34a5d36ca0dca160b9b33b30170de13e2f708"
+      }
+    },
+    {
+      "parent": "A2-17",
+      "scope": "Projection and per-index validation for an admitted immutable occurrence binding and registered detached, foreign and changed source controls.",
+      "proof": "docs/obligation-repair/seventh-five/A217Projection.lean",
+      "class": "is.fivefivefive.CanDis.A217ProjectionTest",
+      "args": [
+        "{results}/projection.tsv"
+      ],
+      "outputs": [
+        "projection.tsv"
+      ],
+      "witness": "docs/obligation-repair/seventh-five/java/A217ProjectionTest.java",
+      "kind": "source-authority",
+      "requiredLines": [
+        "A217ProjectionTest passed: observations=21"
+      ],
+      "theorems": [
+        "ACGN.Seventh.A217.flatten_length",
+        "ACGN.Seventh.A217.select_agrees",
+        "ACGN.Seventh.A217.select_recovers_ordinal",
+        "ACGN.Seventh.A217.repeated_values_keep_distinct_addresses",
+        "ACGN.Seventh.A217.accepted_index",
+        "ACGN.Seventh.A217.mismatched_index_rejected"
+      ],
+      "outputPins": {
+        "projection.tsv": "31d5bfcf8c4f9efdf815782f766633bee053151e201d57d63194f74ac5b923fd"
+      }
+    },
+    {
+      "parent": "P6-13",
+      "scope": "Separate verified side derivations and exact common endpoint for retained source-pinned PAIR fixtures, including the registered mismatched and missing authority controls.",
+      "proof": "docs/obligation-repair/seventh-five/P613PairComposition.lean",
+      "class": "org.acgn.cert.P613SourcePairTest",
+      "args": [
+        "@verifierJar",
+        "{results}/pair"
+      ],
+      "outputs": [
+        "pair/p613-cases.tsv",
+        "pair/p613-owners.tsv"
+      ],
+      "witness": "docs/obligation-repair/seventh-five/java/P613SourcePairTest.java",
+      "kind": "source-authority",
+      "requiredLines": [
+        "P613SourcePairTest passed: cases=18 owners=4"
+      ],
+      "theorems": [
+        "ACGN.Seventh.P613.wrong_middle_refused",
+        "ACGN.Seventh.P613.foreign_subject_refused",
+        "ACGN.Seventh.P613.same_declaration_separate_bytes",
+        "ACGN.Seventh.P613.minima_of_same_orbit",
+        "ACGN.Seventh.P613.sort_mismatch_refused",
+        "ACGN.Seventh.P613.unshared_vocabulary_refused",
+        "ACGN.Seventh.P613.side_preserves",
+        "ACGN.Seventh.P613.pair_composition"
+      ],
+      "outputPins": {
+        "pair/p613-cases.tsv": "696b6d3ea397385f8004f417435c0815c9a32d0577e40caed77457e75a62508e",
+        "pair/p613-owners.tsv": "d30de93619fdcf003f008afb9ec8d247f836c925153c6edb3f99bcd33618de58"
+      }
+    },
+    {
+      "parent": "G-07",
+      "scope": "Faithfully identified admissible alignments and fast/certified operation costs on the registered closed two-child assignment fragment.",
+      "proof": "docs/obligation-repair/seventh-five/BoundedAssignmentMinimum.lean",
+      "class": "is.fivefivefive.CanDis.BoundedAssignmentMinimumTest",
+      "args": [
+        "{results}/operations.tsv"
+      ],
+      "outputs": [
+        "operations.tsv"
+      ],
+      "witness": "docs/obligation-repair/seventh-five/java/BoundedAssignmentMinimumTest.java",
+      "kind": "source-authority",
+      "requiredLines": [
+        "BoundedAssignmentMinimumTest passed: cases=23"
+      ],
+      "theorems": [
+        "ACGN.Seventh.BoundedAssignment.maps_exact",
+        "ACGN.Seventh.BoundedAssignment.maps_once",
+        "ACGN.Seventh.BoundedAssignment.minimum_over_all_admissible",
+        "ACGN.Seventh.BoundedAssignment.accepts_exact",
+        "ACGN.Seventh.BoundedAssignment.foreign_owner_rejected",
+        "ACGN.Seventh.BoundedAssignment.incomplete_or_foreign_actions_rejected",
+        "ACGN.Seventh.BoundedAssignment.suboptimal_rejected",
+        "ACGN.Seventh.BoundedAssignment.padded_maps_exact"
+      ],
+      "outputPins": {
+        "operations.tsv": "46ff5831fe68a2714dac2bb85779c7019535f9f46fe127d1e6eb9bf88c214bfb"
+      }
+    }
+  ],
+  "supplements": [
+    {
+      "id": "G-07-P6-13",
+      "parents": [
+        "G-07",
+        "P6-13"
+      ],
+      "scope": "Source-derived unary CALL edit sequences, independently verified FULL sides, and the separately interpreted PAIR outcome for the same registered bytes.",
+      "witness": "docs/obligation-repair/seventh-five/java/UnaryCallSequenceTest.java",
+      "class": "org.acgn.cert.UnaryCallSequenceTest",
+      "kind": "source-authority",
+      "args": [
+        "{results}/cross.tsv"
+      ],
+      "requiredLines": [
+        "UnaryCallSequenceTest passed: cases=23"
+      ],
+      "outputs": [
+        "cross.tsv"
+      ],
+      "outputPins": {
+        "cross.tsv": "36f052257e4cec6f5cf32cec238535049e3e7de199523913ec63eeebf2e05174"
+      }
+    }
+  ]
+}

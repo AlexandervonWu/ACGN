@@ -25,7 +25,7 @@ public final class DependentChainWitnessesExtractor {
             Map.entry("TypedCertificateEndpoint", "76846373f9b57600804ee50fac435beccf9113bab8618b4032330483854a14ab 982db80170cfc6f8b512398267b23e3de3da05b46eb2ad26526ca01132353f0f"),
             Map.entry("TypedEqualityCertificate", "caf24a5b72dba9a657454c1ad98d95ac403e700dd6751626a9465ff852a180d8 c51e42addd6cee088acc72cafecdd0519602df3e40aef8400e1ee3c14db282ae"),
             Map.entry("SemanticProfile", "2e7f3ce494388bbd2d7d983b2bee30f1a25a38c9fcd7c7dfa148b038ebe3c65c 3bb8166269c04aa1cb967873088cfdeaefc3bafdbc3399c01122f12e1b99334b"),
-            Map.entry("SemanticEvidenceVerifier", "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc a96e5e846bc4901abe3350c51da5a02ba7650677d50a176ab88b8390e0660177"));
+            Map.entry("SemanticEvidenceVerifier", "b5112361b564655f391d9f9ce264bed924f79a9b3fcbd8b6f2039cc2ad24aa01 3279c660456f16d9b160c97f2e0a859d5bad57a9c0239c6e50856e0349676ab8"));
 
     private static void require(boolean ok, String message) {
         if (!ok) throw new IllegalArgumentException("UNMODELED_SOURCE:" + message);
