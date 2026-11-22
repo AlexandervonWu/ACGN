@@ -2780,6 +2780,18 @@
   ],
   "inputManifestFileSha256": "70f4093321ec8204a8d870d8f8e89416de534745425b22627e98e4f28f83783f",
   "inputRootHash": "a119f7f4dbfd781e6300d0d5dc663115acccccc574c55d3d59775867e420f11d",
+  "normalRoutes": {
+    "bounded-java": {
+      "exitCode": 0,
+      "logSha256": "fb25162de64971aac4cc28104dc196f2338598fea93ed85e8bafb6ca9453f638",
+      "script": "scripts/run_bounded_ci_java_tests.sh"
+    },
+    "certificates": {
+      "exitCode": 0,
+      "logSha256": "eb579c71a8b1340030dfc68e5d893bf36bd633d954e67dddcf4be49fef5fc265",
+      "script": "scripts/run_certificate_bundle_writer_tests.sh"
+    }
+  },
   "observations": {
     "A2-21/a221-lean-rejection.log": {
       "bytes": 2602,
@@ -3685,6 +3697,309 @@
     "verifierSetHash": "960231c0fb3011a0b5bac72cd22baa8ce0ada78d8e7ca4b04847a660bbdad138"
   },
   "schemaVersion": 1,
+  "section3Assessment": {
+    "environment": "Set LEAN_BIN to the pinned 4.35.0 executable. Set PATH so the augmentation verifier independently resolves its pinned 4.33.0 launcher. Make the selected tracked models and the imported historical snapshot available.",
+    "executedSteps": 129,
+    "failedExecutableSteps": 0,
+    "inputManifestSha256": "d1b0470de8fe229942663b82a362b4902951279e6f895d4797e2dfad04f99740",
+    "openDiagnostics": 95,
+    "outcome": "INCOMPLETE",
+    "outputManifestSha256": "c828cf9699d589fbd95f5664a842b24d8e6d0c741aff5ca8bb3b5df8b5e6e3fb",
+    "proofToolchains": {
+      "augmentation": "Lean (version 4.33.0, x86_64-unknown-linux-gnu, commit d8b18978322de05a8f3dba51ef03cf5461676c17, Release)",
+      "governedProofs": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)"
+    },
+    "ready": 122,
+    "requirements": 191,
+    "script": "scripts/run_section3_assurance.sh",
+    "stepResultsSha256": "33ca950443aec64d5257bb42fe7b3bbbedfb88384009a50caf02af4a5a8d0f19",
+    "supportingFilesSha256": "54e5dd441fb96e924c738ced97623f868fa4ef03d6afb1532fbffef00477d3f4",
+    "supportingModelCount": 41,
+    "traceabilityReportSha256": "ce08f4ef14fa34a2da29defb281d6cf2d531a29bb9a1b55b90b8b3ee24f05047",
+    "witnessAndLogArchiveSha256": "98b38d1d809436c5cbfc6b2208bd4f48168d3c9a07b0bee4d0588cf06211cdee"
+  },
+  "sharedRegressions": {
+    "fifth": {
+      "builds": [
+        {
+          "artifactManifestSha256": "2e4c4bbdcdcafb650ee70a403ca239cf1aa63899d4e84df7ff41536bbecaf0a9",
+          "commandCount": 184,
+          "evidenceFileSha256": "beece344be4ea2abf2154af1d63bcfb2806759a3c7a3be6b07d5be2d284cc526",
+          "negativeControls": 96,
+          "number": 1,
+          "sourceMutationControls": 60,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "2e4c4bbdcdcafb650ee70a403ca239cf1aa63899d4e84df7ff41536bbecaf0a9",
+          "commandCount": 184,
+          "evidenceFileSha256": "b3ef7a46d7338e8d205e85f6fc408461e5132891d593f9992f9fed80993bd968",
+          "negativeControls": 96,
+          "number": 2,
+          "sourceMutationControls": 60,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "18cad4d28b091ca765effb6fd6c2f9f7f75e190ab24162bf97ac2f804bef3bf7",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "6851f17b9bbc4a15bc24450a8a8c46a82cb5b0fed210ee1ef4b6d0bfc791222b",
+      "inputRootHash": "739480456e2f361a73b52b5a3873e31c72df1d0f1cf6e2a06cf6fcfcad8de0fe",
+      "reportFileSha256": "baf1509260d43fa60672a7361d21bd6667c4b87b6eac1878f1383299f936dbf6",
+      "script": "scripts/run_fifth_obligation_repairs.py",
+      "totalCommands": 377,
+      "workstationExecution": {
+        "leanWorkerEnvironment": {
+          "LEAN_NUM_THREADS": "1"
+        },
+        "leanWorkers": 1,
+        "maximumScopeMemoryPeakBytesObserved": 1702051840,
+        "minimumAvailableHostMemoryBytesObserved": 9508478976,
+        "resourceSamples": 248,
+        "scopeMemoryHighBytes": 9663676416,
+        "scopeMemoryMaxBytes": 9663676416,
+        "scopeSwapMaxBytes": 0
+      }
+    },
+    "fourth": {
+      "builds": [
+        {
+          "artifactManifestSha256": "6fbb2d61d8134eb1ef3b72605cfca0442eaf264b2a74e7a421b338f195c97b84",
+          "commandCount": 105,
+          "evidenceFileSha256": "97376b0e88eede78e5507d9905dac232f7b58ed1a1b44e63c068d1c41a86cfbd",
+          "negativeControls": 36,
+          "number": 1,
+          "sourceMutationControls": 45,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "6fbb2d61d8134eb1ef3b72605cfca0442eaf264b2a74e7a421b338f195c97b84",
+          "commandCount": 105,
+          "evidenceFileSha256": "e1c0d3dde31be132c869a66dc2fae10c1926767d1141e2a7d0aea47170b019ca",
+          "negativeControls": 36,
+          "number": 2,
+          "sourceMutationControls": 45,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "b641c16f4a331743b0544182791b5f9687d43058f5058cb63d1eef4be2c1bdc9",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "initialInterruptedAttempt": {
+        "availableHostMemoryBytesAtStop": 6102216704,
+        "completedBuilds": 1,
+        "completedStageAndIncidentArchiveSha256": "73cbcfcf4022ddecff4ba50f96a88a237e5657e3a38daac8586b42a13b9959a0",
+        "incidentReceiptSha256": "ba02ef3bca24fe1f03d0a652588d589a0510c6d63f4cf643d78831041726316f",
+        "minimumRequiredAvailableHostMemoryBytes": 6442450944,
+        "status": "INFRASTRUCTURE_FAILURE",
+        "stoppedCommand": "build2-proof-SemanticProfileWireReplay.log",
+        "verifiedSingleWorkerProofLogSha256": "f0c90bb534525293a855bb24e8a4e53630da2f31601ea665b50cf6bf4b595f14"
+      },
+      "inputManifestFileSha256": "099071f9e38f7f9842f4f9d25e8f66b2d21fafc3f06f9f9bda3a05a5ce2708f7",
+      "inputRootHash": "da8f5d5a8eb405ee489f4bc625c5f62362dfdf403fea78149fbd4ad2d459274b",
+      "replayRepresentation": {
+        "comparison": {
+          "andConnectives": 2244,
+          "authenticInputs": {
+            "semantic-profile-wire-source.tsv": "8c3a39c41c2cbdc1e831c94033aae4a35622f21c4894fc514737eef8703bb0ba",
+            "semantic-profile-wire.tsv": "cd1653fc9f3513ffa8913b5c6660f0d18b5e2042c8889a8cfd1f535281e4bc73"
+          },
+          "compactBytes": 651253,
+          "compactSha256": "a5740a453d77af18f4baa31519351e5cddfe3679a4a8952bf073275cbb85e95f",
+          "conjuncts": 2516,
+          "distinctLiterals": 456,
+          "encoderRegressions": 19,
+          "expandedSha256": "d4a03087037151ec9941c47e8e97f1775ac71d45edc03afe55a0e4f094be32b8",
+          "kernelDecisionOccurrences": 1972,
+          "literalOccurrences": 15236,
+          "negativePrograms": {
+            "profile-0-producerKey": "84ed873fe603f4372121e65269cd577ebd1bda2e3f9472c9574c7d0ccbd97419",
+            "profile-1-independentKey": "8f3e1d097777b50ec03ea8430daaf3e49c96444ad435be1f00fd38e57c6d1b5e",
+            "profile-10-outcome": "67f7f52d8f1624b17499258695b5537f78fe567aed83669c10c8c892e462c4a9",
+            "profile-2-digest": "ebbdc4d537dd395258550096a4be2d5d0bf9d2f4b6b90c9b65c3903ab869f98d",
+            "profile-3-outcome": "47d86fa3392f7128e3ebaa9f513b37e4b3c09e8180ebcd13a1e271ff6d315967",
+            "profile-4-outcome": "cb827cbf75346cfbccb0d4cd911c58720101ead550c4c4ec1b3480288abb3011",
+            "profile-5-outcome": "94379a54286ca2d94c3a25f013248a6c0250c425b49b781f8819932042640b40",
+            "profile-6-outcome": "31729b67f92dcaf2672c6438522648e469a74fe48b8268360a7b08f4fc20f096",
+            "profile-7-outcome": "43f8d5caf4adbb0c7b49ab7c5bb99445593de4555dcf9ced62594a8e8456e6cb",
+            "profile-8-outcome": "371ef9a1999a208315730e33ed9e51c81bfaeef3bde894feedb284949cf58270",
+            "profile-9-outcome": "df903d4217d4aab2fff704c58aa8806c4d849870ef329c796c3b6bc3027ff539"
+          },
+          "observations": 272,
+          "oldBytes": 3867087,
+          "originalSha256": "d4a03087037151ec9941c47e8e97f1775ac71d45edc03afe55a0e4f094be32b8",
+          "printedAxiomInventories": 272,
+          "proposedPluginSha256": "dced344dc2cb7654d1c45623f40afd6a3c827e49ec03c955bd4c3060573f82e9",
+          "referencePluginSha256": "e9ee45d821904347189554823575e70e24bc0dfa35e20821780a8c5f208e27de",
+          "referenceRevision": "8b068de6199f561f683681e9a74f4c400a43c640",
+          "sourceMutationControls": 15
+        },
+        "comparisonArchiveSha256": "92fad3e8a32a33bc5fd392c5d52ecfc66bbb2d28f48cf4ddbb758e16fe117310",
+        "earlierSourceCommit": "8b068de6199f561f683681e9a74f4c400a43c640",
+        "equivalenceReceiptSha256": "a928b3fa1fb687be0096f6ef37ed52b1a4625e7a49535950aeb4ebffec109f24",
+        "kernelProfile": {
+          "argv": [
+            "<pinned-lean>",
+            "-o",
+            "SemanticProfileWireReplay.olean",
+            "SemanticProfileWireReplay.lean"
+          ],
+          "cgroupMemoryPeakBytes": 1275715584,
+          "compiledFileSha256": "0c418bece6412b7059cf32a2fe4c3911b2015933a94017ec758c60b7e6851682",
+          "inputFileSha256": "a5740a453d77af18f4baa31519351e5cddfe3679a4a8952bf073275cbb85e95f",
+          "leanExecutableSha256": "bf8d54e4714cc4b03d3f6bb34c83b7202b87e49c8bfcbff6895c085bb90ceb38",
+          "minAvailableHostBytes": 11930869760,
+          "mode": {
+            "LEAN_NUM_THREADS": 1
+          },
+          "proofAxiomLogSha256": "f0c90bb534525293a855bb24e8a4e53630da2f31601ea665b50cf6bf4b595f14",
+          "referenceImportedModuleSha256": "78efe8235a6c9977a71b0d77fa43fd5f55640e28bbda011e1cc289c97d6b9649",
+          "wallSeconds": 47.47030578399426
+        },
+        "referenceEvidence": "The reference compiler log and candidate log had the same SHA-256. Transparent definitions reconstruct every original theorem and proof byte for byte.",
+        "secondInterruptedRunReceiptSha256": "60120db28f6f875d037a6b08ecc9e2759859aac5e467fd439c2a846027f58964"
+      },
+      "reportFileSha256": "e869d570d33dd45e0d09a5cc8bb9b8e81ba6623260f6c598a2ff7791d5563da5",
+      "script": "scripts/run_fourth_obligation_repairs.py",
+      "totalCommands": 218,
+      "workstationExecution": {
+        "leanWorkerEnvironment": {
+          "LEAN_NUM_THREADS": "1"
+        },
+        "leanWorkers": 1,
+        "maximumScopeMemoryPeakBytesObserved": 1651191808,
+        "minimumAvailableHostMemoryBytesObserved": 10782707712,
+        "resourceSamples": 266,
+        "scopeMemoryHighBytes": 9663676416,
+        "scopeMemoryMaxBytes": 9663676416,
+        "scopeSwapMaxBytes": 0
+      }
+    },
+    "next": {
+      "builds": [
+        {
+          "artifactManifestSha256": "22b57ee2bcc03f0b5d4bf305075614b1de539e933646c135dd72777d6ad0816f",
+          "commandCount": 49,
+          "evidenceFileSha256": "f0f2c76e2d3cd19fc50cbdde2f527f497902ff8534c089e21e3a4c40a2302873",
+          "negativeControls": 12,
+          "number": 1,
+          "sourceMutationControls": 11,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "22b57ee2bcc03f0b5d4bf305075614b1de539e933646c135dd72777d6ad0816f",
+          "commandCount": 49,
+          "evidenceFileSha256": "9da377970477e06ee6c4b27f92fb0ccde8bb43b1c0de4eac6e194cc841350121",
+          "negativeControls": 12,
+          "number": 2,
+          "sourceMutationControls": 11,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "bf72d39e8b090f60863ec30f80375e9798b4c006bc8b56eb2a228a4f67f61b14",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "125c50a5fdc0e950c4d33f762f80013316a852407db81d00b12a4a59fabd4175",
+      "inputRootHash": "5c8fb211b3273bd6c31a8a62be259f6ed0069fdd342c751040b93eeb3dd09a84",
+      "reportFileSha256": "e8a9fc9ffc4999c30f3387879571379475cd936536a9172f04c78957bf2989e6",
+      "script": "scripts/run_next_obligation_repairs.py",
+      "totalCommands": 103
+    },
+    "seventh": {
+      "archiveSha256": "0cb2794fa5a1d19f3e3376e0b787f3f209548ee954338a972452a41734993480",
+      "claimCounts": {
+        "qualified": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandsPerBuild": [
+        31,
+        31
+      ],
+      "decision": "VERIFIED",
+      "decisionScope": "five registered finite proof and observation surfaces",
+      "deterministic": true,
+      "inputFiles": 876,
+      "inputManifestFileSha256": "cee60f27f723e328b946fa57886be7d4002c72242416431bc9c5b80c7074afb4",
+      "inputRootHash": "1ee44bbcc7fab5612e36d3a89b6b169d6005fe0fc3b44f3977057ebda50bcf7c",
+      "receiptFileSha256": "50d4fa9bc72a53fa6400bb3f33ccf197778d1c64b7e834238c1785d6930bb53e",
+      "reportFileSha256": "5792eb72b6a3d5dfafc7804238cbc5b00eacf91e8ee4215e512b768724b0d561",
+      "script": "docs/obligation-repair/seventh-five/verify_seventh.py",
+      "theorems": 39
+    },
+    "sixth": {
+      "archiveSha256": "d72cd8c414b5a9ff8b01d69d92d93d89e4865718b053fa4eb3d03926a0c30f86",
+      "claimCounts": {
+        "qualified": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandsPerBuild": [
+        30,
+        30
+      ],
+      "decision": "VERIFIED",
+      "decisionScope": "five registered finite proof and observation surfaces",
+      "deterministic": true,
+      "inputFiles": 850,
+      "inputManifestFileSha256": "e3670e09140ada2a05cf4516d50bac3be6877daa6532b6360b4330a831938dd7",
+      "inputRootHash": "a97346b3015965a30c0e3ffaf625b2104688d8162b82bea8e57b970e36295d0b",
+      "receiptFileSha256": "167ce2105ab150327eb80f7a5d00686e1075fd25428c9647ec4a5a2f4b774c52",
+      "reportFileSha256": "63fae444a0c8677fd99635506bbc33681044b5372959992ac199904616f02c44",
+      "script": "scripts/verify_sixth_obligation_repair.py",
+      "theorems": 48
+    },
+    "third": {
+      "builds": [
+        {
+          "artifactManifestSha256": "6a388bf22e04df71835f2bc5b1857bdadb29b5fc70444c0e04df57ca7978ce04",
+          "commandCount": 83,
+          "evidenceFileSha256": "6bf1f473e22983ff5352ed89ba50b2bb5a8d8fc7c53802caa124427df92c962f",
+          "negativeControls": 28,
+          "number": 1,
+          "sourceMutationControls": 26,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "6a388bf22e04df71835f2bc5b1857bdadb29b5fc70444c0e04df57ca7978ce04",
+          "commandCount": 83,
+          "evidenceFileSha256": "0f29f5b224546f919ff06840fc89f2071cb86246167e922a4bdc4ae3ce0384fc",
+          "negativeControls": 28,
+          "number": 2,
+          "sourceMutationControls": 26,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "401416c0632b6c8087cbb3a223e2ab0b553e0aa02ab99b80fe0fabe17408853f",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "4338102efea06197aaf205d9d1be73bf9b62c985dff9c1b182b565a543fb4001",
+      "inputRootHash": "7b0d8357e2f5318f8eb13c07705ec3acaae8a8c32517a8621e7c9d9bc7c477c4",
+      "reportFileSha256": "13c5dd00274c9d07523ba1646cba6baa1290601ddb620e81c411b7d16000acfe",
+      "script": "scripts/run_third_obligation_repairs.py",
+      "totalCommands": 174
+    }
+  },
   "status": "VERIFIED",
   "trusted": [
     "Lean 4.35.0 kernel and standard library, subject to each locally audited theorem’s printed assumptions",

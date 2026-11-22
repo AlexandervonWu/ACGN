@@ -43,9 +43,15 @@ They cover exact schema-v10 admission, imported callable arity, shape-ID
 collisions, rooted binder occurrences and ordered dependent ARROW products.
 [Eighth batch and ranking](eighth-five/README.md) · [Verification results](eighth-five-results.json)
 
-The current assessment reports **117 of 191 requirements ready**. All 118
-executable steps passed. The overall result is `INCOMPLETE` with 100
-diagnostics. Of these, 99 are in the original queue and one records the
+The ninth package verified five original requirements in two clean builds.
+They cover normalization of correlated alternatives, componentwise intersection,
+the JOIN decision matrix and typed emptiness, schema-v10 wire commitments,
+and parser-issued evidence for binding nonemptiness.
+[Ninth batch and ranking](ninth-five/README.md) · [Verification results](ninth-five-results.json)
+
+The current assessment reports **122 of 191 requirements ready**. All 129
+executable steps passed. The overall result is `INCOMPLETE` with 95
+diagnostics. Of these, 94 are in the original queue and one records the
 missing A-01 low-level registry. [Current assessment](current.md)
 
 The [v2.14 candidate list](next-candidates-v2.14.md) records the original scope
