@@ -19,7 +19,7 @@ PACKAGE = Path("docs/obligation-repair/ninth-five")
 EIGHTH = Path("docs/obligation-repair/eighth-five")
 PROFILE = "ninth-public-certification-v1"
 ENGINE_SHA256 = "9620c1d5d45be4677d631dbb47c6237d02473af239db1232ebd4f02eacaf816b"
-CONFIG_SHA256 = "d7cd09092a883932a9b81c74787d61c819cbfbad2c349353cfb6e8bbe194199c"
+CONFIG_SHA256 = "80640aecaaf6203fb7bb2f12b14c20876d7f1bca0efc4215e4279c6b67e8a2e0"
 PARENTS = {
     "A2-21": "4bf2b29d09a49228b6013a04ae6d04576b2e092719bf27e3b9a9d320d0fdd6d3",
     "A2-22": "c4c3d3558acdd3162344346a38cf3f320b80486d1626ebdc8d7558cebf129a98",

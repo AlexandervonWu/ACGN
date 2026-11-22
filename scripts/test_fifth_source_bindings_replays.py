@@ -74,6 +74,22 @@ class SourceBindingsReplayTest(unittest.TestCase):
             with self.subTest(name=name), self.assertRaises(Blocked):
                 r.program(observations(), changed)
 
+    def test_tenth_source_inventory_is_rejected(self):
+        prior = {
+            "NormalForm": ("1d474aa7f9f55da081178b49c447d4fe419dc47ef110688b0b3bf7d69759b80d",
+                "8894eeeffd4d64552180d580618f16d4a05e85d29fb849026a02e74c9cedce80"),
+            "TheoryAlloyAdapter": ("f1fa121d2b059147dc2af5bf7e44531585c147cf827a7aa6138aec658bca9d6c",
+                "d9551bea070c3fd486e496ba2e9daacaae558c862bddbffae0fb9bbd9104bdb5"),
+        }
+        for name, (shape, binding) in prior.items():
+            for stale in ({"shapeSha256": shape}, {"bindingsSha256": binding},
+                          {"shapeSha256": shape, "bindingsSha256": binding}):
+                changed = sources()
+                next(row for row in changed if row["object"] == name).update(stale)
+                with self.subTest(owner=name, fields=tuple(stale)), self.assertRaisesRegex(
+                        Blocked, "source-bindings: source pin/census"):
+                    r.validate_sources(changed)
+
     def test_pre_binding_origin_source_pins_are_rejected(self):
         previous = {
             "EGraphNode": ("6069b147c740722ba39abe8611649937c9845caa49e3db62375ec79f38b4de48", "fd1a2f18477610ca7818fa84c60bf0ef1a68c97095a362c9293e34d9841f6e0a"),

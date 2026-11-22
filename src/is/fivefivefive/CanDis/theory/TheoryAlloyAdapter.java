@@ -898,6 +898,7 @@ public final class TheoryAlloyAdapter {
         private static void requirePristineCertificationSources(
                 List<NormalForm> normalForms) {
             Set<EGraphNode> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+            Set<Integer> classIds = new HashSet<>();
             ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
             for (NormalForm normalForm : normalForms) {
                 EGraphNode root = normalForm.getCertificationMatrixEGraph();
@@ -911,6 +912,10 @@ public final class TheoryAlloyAdapter {
                     continue;
                 }
                 node.requirePristineCertificationSource();
+                if (!classIds.add(node.getEClass().getId())) {
+                    throw new IllegalStateException(
+                            "Distinct pristine source e-classes share a numeric identifier");
+                }
                 pending.addAll(node.getChildren());
             }
         }

@@ -16,8 +16,8 @@ from tempfile import TemporaryDirectory
 sys.dont_write_bytecode = True
 PACKAGE = Path("docs/obligation-repair/tenth-five")
 NINTH = Path("docs/obligation-repair/ninth-five")
-ENGINE_SHA256 = "55c93a6c7dcd7fa74275a04c5997901200e22b18b1f27ef51943c7efb3abbd5d"
-CONFIG_SHA256 = "27401d91651e3871337629ae626d256c6a9b19307fef01e904623c3eef0c63a4"
+ENGINE_SHA256 = "f7f25095c537aa1900e419985fd4872f24c75c79ce3fb7e7a3e1c89e07a255e6"
+CONFIG_SHA256 = "a36a0e3e272c0d7f238cd9fbe7ef72d4db723deff6aade0d7d260df38808b5b9"
 PROFILE = "tenth-public-certification-v1"
 PARENTS = {
     "P5-05": "4252bf755653e6ab1d7954ae66372c23a5df58520d532a0dfef38b7d46ec0652",

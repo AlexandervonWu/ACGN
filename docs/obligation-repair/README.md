@@ -56,10 +56,10 @@ recursive agreement for set-operation sources, and owner-index restoration
 after interface changes.
 [Tenth batch and ranking](tenth-five/README.md) · [Verification results](tenth-five-results.json)
 
-The current assessment reports **127 of 191 requirements ready**. All 140
-executable steps passed. The overall result is `INCOMPLETE` with 90
-diagnostics. Of these, 89 are in the original queue and one records the
-missing A-01 low-level registry. [Current assessment](current.md)
+The eleventh package verified P5-08, A2-16, P4-07, P4-04 and P4-06 in two clean builds. The two builds agreed on all 14 retained witness files.
+[Eleventh batch and ranking](eleventh-five/README.md) · [Verification results](eleventh-five-results.json)
+
+The current assessment reports **132 of 191 requirements ready**. All 151 executable steps passed. The overall result is `INCOMPLETE` with 84 open diagnostics. Of these, 83 remain in the original queue and one records the missing A-01 low-level registry. [Current assessment](current.md)
 
 The [v2.14 candidate list](next-candidates-v2.14.md) records the original scope
 of that continuation; the [v2.16 list](next-candidates-v2.16.md) records the

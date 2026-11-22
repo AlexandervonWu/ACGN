@@ -1336,7 +1336,7 @@
         "P506SourceBindingTest: cases=24"
       ],
       "outputPins": {
-        "source-binding-nonempty.tsv": "4e9399cbba3d0896b4ce4b1c8ef8cc033754465febdccbbfc7aad121fa3a3d99"
+        "source-binding-nonempty.tsv": "c39c494b856050db1d0de302a55761dec17f91ffff48a81082a72f65beb9358d"
       },
       "originalRowAssessment": {
         "status": "VERIFIED",
@@ -1439,7 +1439,7 @@
     "docs/obligation-repair/ninth-five/java/A225UnsignedDecimalTest.java": "08ff8be7bb6a0a2ae1aaa0b407cb273fdf5e899fb170faa02b456358fd787bac",
     "docs/obligation-repair/ninth-five/java/A225WireCommitmentTest.java": "64a6b7d793906ec4b2a3992bf234129089a07e0bb85ad9277fac5960dabb0ac3",
     "docs/obligation-repair/ninth-five/java/P506SourceBindingTest.java": "6f104bdea0dc61057c6fefe199c46645a6f52d75561419a89f62449c61615cc7",
-    "docs/obligation-repair/ninth-five/java/P506CompilerContract.java": "3ef8c4ea3de869f2b925f79d15c16730637df50ca963d0fb9bc08489ba10b188",
+    "docs/obligation-repair/ninth-five/java/P506CompilerContract.java": "e603619af70ad9ae4cedc1e9774d32e23f5d70f947995e49012a6c2d17e0c8b3",
     "docs/obligation-repair/ninth-five/java/P506ExactSource.java": "515209890920ad98ce3da52b64fe50e9979183686a3e5f8f31ab345cbc53534e",
     "docs/obligation-repair/ninth-five/A225-methods.tsv": "cced611814829f1db504f26073f2f1cd09f6eb4f615b96ab12967766eb838808",
     "docs/obligation-repair/ninth-five/A224BoundaryBridge.lean": "d5b64e1ba523c70a2351ed591bfd2da958491b944e060cf7a288e5d43d061387",

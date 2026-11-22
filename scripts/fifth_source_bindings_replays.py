@@ -22,9 +22,9 @@ PINS = {
     "CertificateVerifier": "3d6c3503df22ddfb41c12c61916d90ef9c40efaa31ef4079510e99c5fc949d04 bffa5b50b8e99dca4b4dd59288a0d4d0fd0253d3145cad4816913efa22e5f8b8",
     "DependentChainCertificate": "800b128e0f225b68f242d201009689bb5eeded3391250ef4259378dce034c35f 123b6c433070bf4455f1a888010e09bd51b45b584833ff884c6d71d48f0978e4",
     "EGraphNode": "ac78c01d04be3dbc9275c34f3dd301e219929c01594bc6d3390e21a7d254e67b fd2ca306c0dde6cf4050bd844aebc153f57e6d75e3e70e64cb023648585eb4b6",
-    "NormalForm": "1d474aa7f9f55da081178b49c447d4fe419dc47ef110688b0b3bf7d69759b80d 8894eeeffd4d64552180d580618f16d4a05e85d29fb849026a02e74c9cedce80",
+    "NormalForm": "9201ffa8694acaee24f9ad339f45e408d2bf2ad7a2487acb89f9aea5b2f0a4d0 9d13dee91fcd9bf8134f6dbf254c12a4b6e21b024b94ae6cf789271185ef3018",
     "StructuralKey": "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",
-    "TheoryAlloyAdapter": "f1fa121d2b059147dc2af5bf7e44531585c147cf827a7aa6138aec658bca9d6c d9551bea070c3fd486e496ba2e9daacaae558c862bddbffae0fb9bbd9104bdb5",
+    "TheoryAlloyAdapter": "89e33afd140ddd409f2650d21242d63879af171ac61b67e2009b52f71064756f bc3842ae59efb585a3b27fd0e02406f16f5db8e446ec51dd5844d437da2e3aaf",
 }
 FROZEN = "IllegalStateException:A certified Fast Rewrite source e-graph is immutable"
 LINEAGE = "IllegalStateException:A dependent certificate was attached to another source lineage"

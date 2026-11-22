@@ -949,7 +949,7 @@
         "P511LexicalTransportTest PASS methods=6 cases=17 rows=145"
       ],
       "outputPins": {
-        "p511.tsv": "20084238bdffdb87d319aa7d95833173ab57ab9fa9130edcea525b3ae5a64ede",
+        "p511.tsv": "5b87be0341b8f5b8ba6440b8cd889313de9ef0e556f4be26d14913c244b40e33",
         "p511-frontiers.tsv": "5df485f28d5fc9ec08c500295e993e1283d67593b17a877e9b883797ec5d01aa"
       },
       "originalRowAssessment": {
@@ -1354,7 +1354,7 @@
     "docs/obligation-repair/tenth-five/java/P408CompilerContract.java": "9ca12d9d74e8d66e01600d285f4581297b0262b206b5c4bdfc147b38df9eb3bd",
     "docs/obligation-repair/tenth-five/java/P408OwnerRestorationTest.java": "d0d0856d07e3985cd2907626292aac96e40d643f61052d94ea9c5037e28269e1",
     "docs/obligation-repair/tenth-five/java/P511Coordinates.java": "dd84750e996f73b4c5a5d4e02119df89cbc48ef477bc69502190497def5a40be",
-    "docs/obligation-repair/tenth-five/java/P511Entrypoints.java": "65bba025e3a94a3225d6233a7ab680a56cd532c95f106ce02f6deead23d8d0ee",
+    "docs/obligation-repair/tenth-five/java/P511Entrypoints.java": "ecbc97ea0906d55c42a6de6444a590362dfc366599b9e689556f11b05805d1ac",
     "docs/obligation-repair/tenth-five/java/P511LexicalTransportTest.java": "c2cd2c3623edd55cb954933855e0c7a3874351035177aab0af73700b5c61bb55",
     "docs/obligation-repair/tenth-five/java/P511SourceScope.java": "5e538ddfcf5a9b2838468ba62ab9913480f9719bc053a225c603a8dbe5e7bb40",
     "docs/section3-repair-audit/formal/A226SourceAgreement.lean": "f63a442ebc42ec748a784dda5425fb0b5e1cbc346d5d9ac5aed6b6cb63d2418e",
@@ -1364,7 +1364,7 @@
     "docs/section3-repair-audit/formal/P507MembershipDual.lean": "05a9c40276114132a3968571be22dc49946548e4ada414a9ab6d06f6fa4b5311",
     "docs/section3-repair-audit/formal/P511LexicalTransport.lean": "18f00a2d62c6f7d2c2024ed0d36e5bb1d0e8bde48d0dc87553701149247f1081",
     "docs/section3-repair-audit/formal/Phase5SourceRules.lean": "3f2195eb0d116569cc052b61b7ad437e9fea33a80f7368c75390fb295d052f12",
-    "src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java": "d528e9b39ade3879af3dda6482647e55a1ce7fdc3fdb1ba93a819ce08521f33f"
+    "src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java": "4b28a5b29e8c626a2692b46eaa7dd36dfbf69df054986d81b8a9df1233819226"
   },
   "witnessInputs": [
     "src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java"

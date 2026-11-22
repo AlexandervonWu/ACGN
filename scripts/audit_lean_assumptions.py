@@ -114,9 +114,10 @@ class AssurancePhase:
         self.record = {"claims": {}}
 
     def run(self, name, args, cwd=None, *, expected=0, extra=None):
-        if self.batch == "tenth" and extra and "ACGN_NINTH_PROOF" in extra:
-            extra = dict(extra, ACGN_TENTH_LEAN=extra["ACGN_NINTH_LEAN"],
-                         ACGN_TENTH_PROOF=extra["ACGN_NINTH_PROOF"])
+        if self.batch in {"tenth", "eleventh"} and extra and "ACGN_NINTH_PROOF" in extra:
+            prefix = "ACGN_" + self.batch.upper()
+            extra = dict(extra, **{prefix + "_LEAN": extra["ACGN_NINTH_LEAN"],
+                                   prefix + "_PROOF": extra["ACGN_NINTH_PROOF"]})
         command = [str(arg) for arg in args]
         if command[0] == "java":
             command[command.index("-Xmx1g")] = "-Xmx" + self.heap
@@ -323,6 +324,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    if sys.argv[1:2] in (["ninth-phase"], ["tenth-phase"]):
+    if sys.argv[1:2] in (["ninth-phase"], ["tenth-phase"], ["eleventh-phase"]):
         raise SystemExit(run_registered_phase(sys.argv[1].split("-")[0], sys.argv[2:]))
     raise SystemExit(main())

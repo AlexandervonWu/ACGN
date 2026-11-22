@@ -68,6 +68,8 @@ class RecordsPluginTests(unittest.TestCase):
                  "0e1a6587d36c037fe55af80bdff163bd7816d0eec1dfc69c14dbf7aea60bcec8"),
                 ("SemanticEvidenceVerifier", "b5112361b564655f391d9f9ce264bed924f79a9b3fcbd8b6f2039cc2ad24aa01",
                  "47dc4427500b1ef24863201ee627c2bb3905ecf4aaa2e15836a82ff0e9b87b3d"),
+                ("TheoryAlloyAdapter", "f1fa121d2b059147dc2af5bf7e44531585c147cf827a7aa6138aec658bca9d6c",
+                 "d9551bea070c3fd486e496ba2e9daacaae558c862bddbffae0fb9bbd9104bdb5"),
                 ("CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46",
                  "0807ef1b7acdba3a1c72c6f339a02ede7d8beebc969500c4e66de3c5983b1d21")):
             for stale in ({"shapeSha256": shape}, {"bindingsSha256": binding},

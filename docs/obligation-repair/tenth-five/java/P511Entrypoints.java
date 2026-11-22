@@ -12,7 +12,7 @@ import javax.tools.*;
 /** Full method bodies with resolved invocation, construction and method-reference targets.
     Only data/storage internals below SlottedEGraph's frontier boundary are excluded. */
 final class P511Entrypoints {
-    private static final String EXPECTED = "416f8582fbb0f215ceb3a7386e894303a25761cb4330a81bc7b9de51cf992e2b";
+    private static final String EXPECTED = "b24b9913d7f940e51c9b818e8db806bf7ca0c121ecedad37ae5dfb4060a95b1a";
     private static final String ROOT = "is.fivefivefive.CanDis.";
     private static final String CORE = ROOT + "core.egraph.";
     private static final List<String> CLASSES = List.of("AblationEngine","AlloyTerm","AlloyRewriteSystem",

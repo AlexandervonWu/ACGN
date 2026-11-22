@@ -94,8 +94,18 @@ final class AlloyRewriteSystem {
         List<AlloyTerm> rewrittenChildren = new ArrayList<>(children.size());
         boolean childChanged = false;
         for (AlloyTerm child : children) {
+            int committedChanges = counter.changes;
             AlloyTerm rewritten = rewriteTree(
                     child, counter, arityMode, positiveBindings);
+            // A bare declaration applies its default multiplicity before rewriting.
+            // Reducing an arbitrary-width relation to the raw unary literal none
+            // would turn a nullable tuple-set declaration into a mandatory one.
+            if (isDeclaration(input) && rewrittenChildren.size() == children.size() - 1
+                    && isConstant(rewritten, "none") && !isConstant(child, "none")
+                    && !isAuthenticatedUnaryDeclaration(input)) {
+                rewritten = child;
+                counter.changes = committedChanges;
+            }
             rewrittenChildren.add(rewritten);
             childChanged |= rewritten != child;
         }
@@ -140,6 +150,14 @@ final class AlloyRewriteSystem {
         return "PREDICATE".equals(term.head())
                 || term.head().startsWith("QF/")
                 || term.head().startsWith("QE/");
+    }
+
+    private static boolean isAuthenticatedUnaryDeclaration(AlloyTerm declaration) {
+        List<AlloyTerm> children = declaration.children();
+        if (children.size() < 2) return false;
+        AlloyTerm variable = children.get(0);
+        var slot = variable.binding();
+        return variable.isVariable() && declaration.owns(slot) && slot.implicitOne();
     }
 
     private static boolean isDeclaration(AlloyTerm term) {
@@ -485,7 +503,8 @@ final class AlloyRewriteSystem {
     private static AlloyTerm emptyDomainResult(AlloyTerm quantifier) {
         boolean empty = false;
         for (AlloyTerm child : quantifier.children()) {
-            if (child.head().startsWith("DECL/") && !child.children().isEmpty()
+            if (isDeclaration(child) && child.children().size() >= 2
+                    && child.children().subList(0, child.children().size() - 1).stream().allMatch(AlloyTerm::isVariable)
                     && isEmptyDomain(child.children().get(child.children().size() - 1))) {
                 empty = true;
                 break;

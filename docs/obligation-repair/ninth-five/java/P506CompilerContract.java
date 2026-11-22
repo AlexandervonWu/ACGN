@@ -28,7 +28,7 @@ public final class P506CompilerContract {
         is.fivefivefive.CanDis.core.NormalForm	addGuardedBindingFacts	b7ef0da0cfdfd64977289cd110c599563ae289b0913112f8ab14b3b777929ff0
         is.fivefivefive.CanDis.core.NormalForm	guardedBindingFacts	4a4be3c403815fe308667f71ee1399ab624e9450bb7eb792a7d382ffbfd0ac80
         is.fivefivefive.CanDis.core.NormalForm	bindingParent	8258e93351ff61cd91739643907e0fe99d36190c88a1fe6437ff65930f0d95d2
-        is.fivefivefive.CanDis.core.NormalForm	domainDescriptor	2310aa75c11589f4a723125e1580b2051d1cd67c3d0ed3b52f37d107bfa85161
+        is.fivefivefive.CanDis.core.NormalForm	domainDescriptor	af2cf4fb6a99482b67146b4acbac1742bef85a33e52818f937b7247253164a7b
         is.fivefivefive.CanDis.core.NormalForm	retainDeclarationFrame	983b77542b7a95c332e9acbebf7e389a64bc761216d561556dc0eeb3d6a8fb95
         is.fivefivefive.CanDis.core.egraph.AlloyRewriteSystem	addDeclarationBindings	e17e75f99245ed497a8ceb6f02321c84a43ea371d92876381ab52d729f23dd4b
         is.fivefivefive.CanDis.core.egraph.AlloyRewriteSystem	isPositiveBindingDomain	ca0990e66ee8adb45cc8bd1f99760396cd1f686a44d4c01e6875ebd4a46b4576
@@ -70,6 +70,7 @@ public final class P506CompilerContract {
         parser.ast.nodes.BinaryExprOrFormula	setRight	8b4f8e4c00b1d6e02b56459b82eb7f5d08583e4a939f3e324b65c5250cfbc1c5
         """;
     private static final String SHALLOW_BOUND = "d64e4c64fdc8f134bd38a12f3573d4bbbd0dc38a8d58601c76a6dd3ed56f9c10";
+    private static final String PREVIOUS_DOMAIN = "2310aa75c11589f4a723125e1580b2051d1cd67c3d0ed3b52f37d107bfa85161";
     private static final String ORIGINAL_GUARD = "5f67e2f82997fa5df43e0d30ea0e5b446c33e77fb5b5d723a3e72f56e3e7d5e1";
 
     private static String hash(byte[] bytes) throws Exception {
@@ -147,6 +148,7 @@ public final class P506CompilerContract {
             throw new IllegalArgumentException("Unexpected parser/Alloy distribution");
         }
         Map<String, List<String>> cache = new HashMap<>();
+        boolean previousDomainRejected = false;
         boolean staleGuardRejected = false;
         boolean shallowBoundRejected = false;
         String[] pins = INVENTORY.strip().split("\n");
@@ -157,6 +159,9 @@ public final class P506CompilerContract {
             String owner = fields[0], name = fields[1], expected = fields[2];
             if (!cache.containsKey(owner)) cache.put(owner, listing(owner));
             requireMatch(owner, name, expected, method(cache.get(owner), name));
+            if (owner.equals("is.fivefivefive.CanDis.core.NormalForm") && name.equals("domainDescriptor")) {
+                previousDomainRejected = rejects(owner, name, expected, PREVIOUS_DOMAIN);
+            }
             if (name.equals("isStaticallyNonemptySet")) {
                 staleGuardRejected = rejects(owner, name, expected, ORIGINAL_GUARD);
             }
@@ -164,7 +169,7 @@ public final class P506CompilerContract {
                 shallowBoundRejected = rejects(owner, name, expected, SHALLOW_BOUND);
             }
         }
-        if (!staleGuardRejected || !shallowBoundRejected) throw new IllegalArgumentException("Prior guard/projection accepted");
+        if (!previousDomainRejected || !staleGuardRejected || !shallowBoundRejected) throw new IllegalArgumentException("Prior guard/projection accepted");
         return hash(INVENTORY.getBytes(StandardCharsets.UTF_8));
     }
 }

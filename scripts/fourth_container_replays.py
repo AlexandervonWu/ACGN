@@ -22,7 +22,7 @@ SOURCE_PINS = {
     "FlatConstructionCertificate": "fddb9145978709c2881df347a902401fb1cc51ced2ac375aeb8e5d1413a97c9a 1de9f3d0ef542c59dc12a3bc379a5dd527330e103312940db1eca53e5a883aa2",
     "SemanticEvidenceVerifier": "85f06b745f3974245747abc0cb30b749864c54d716212132e53d0a4cf0502d95 800f352adbfef4646c7bd58e37f2a8b7b239653ef1ebd87358df0154c38decc4",
     "StructuralKey": "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",
-    "TheoryAlloyAdapter": "f1fa121d2b059147dc2af5bf7e44531585c147cf827a7aa6138aec658bca9d6c d9551bea070c3fd486e496ba2e9daacaae558c862bddbffae0fb9bbd9104bdb5",
+    "TheoryAlloyAdapter": "89e33afd140ddd409f2650d21242d63879af171ac61b67e2009b52f71064756f bc3842ae59efb585a3b27fd0e02406f16f5db8e446ec51dd5844d437da2e3aaf",
     "TypedENode": "b70e73eaabd850acf69575e9e134f165dbc8a60dc1790e816b7aaa6d65e18cc1 ef393be4a64e937af202fa7ca18d9858f6aa0afe0faa6c113b8155223a767a2b",
 }
 BOUNDARIES = ("missingA", "wrongAHead", "wrongAType", "wrongAPath", "wrongASchema", "wrongAProfile",

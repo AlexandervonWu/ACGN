@@ -4098,7 +4098,7 @@ public class NormalForm {
                 return false;
             }
             DomainDescriptor domain = domainDescriptor(child.getChildren().get(0));
-            if (hasEmptyAdmissibleBindingSet(domain)) {
+            if (hasEmptyAdmissibleBindingSet(child, domain)) {
                 return false;
             }
             for (int index = 1; index < child.getChildren().size(); index++) {
@@ -4179,7 +4179,7 @@ public class NormalForm {
         DomainDescriptor domain = domainDescriptor(normalizedTypeEGraph);
         List<QuantiVar> quantiVars = new ArrayList<>();
         Quantifier quantifier = quantifierOf(quantifierOpcode, negated);
-        if (hasEmptyAdmissibleBindingSet(domain)) {
+        if (hasEmptyAdmissibleBindingSet(relDecl, domain)) {
             return new RelDeclResult(quantiVars, emptyDomainValue(quantifier));
         }
         boolean disj = isDisj(relDecl.getOpcode());
@@ -4292,7 +4292,7 @@ public class NormalForm {
             }
             EGraphNode normalizedDomain = removeEndNodes(
                     toNNF(cloneEGraph(child.getChildren().get(0)), false));
-            if (hasEmptyAdmissibleBindingSet(domainDescriptor(normalizedDomain))) {
+            if (hasEmptyAdmissibleBindingSet(child, domainDescriptor(normalizedDomain))) {
                 return emptyDomainValue(quantifier);
             }
         }
@@ -5460,18 +5460,23 @@ public class NormalForm {
 
     private static DomainDescriptor domainDescriptor(EGraphNode typeEGraph) {
         if (typeEGraph == null) {
-            return new DomainDescriptor(null, Cardinality.ONE);
+            return new DomainDescriptor(null, Cardinality.ONE, false);
         }
         Cardinality cardinality = cardinalityOf(typeEGraph.getOpcode());
         if (cardinality != null && typeEGraph.getChildren().size() == 1) {
-            return new DomainDescriptor(typeEGraph.getChildren().get(0), cardinality);
+            return new DomainDescriptor(typeEGraph.getChildren().get(0), cardinality, true);
         }
         // Alloy defaults an undecorated, resolved unary domain to ONE. A relation
         // of larger arity ranges over sets of tuples and can be empty.
         var exact = typeEGraph.getExactAlloyType();
-        Cardinality bare = exact != null && exact.kind() == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
-                && exact.relationArity() > 1 ? Cardinality.SET : Cardinality.ONE;
-        return new DomainDescriptor(typeEGraph, bare);
+        boolean relation = exact != null
+                && (exact.kind() == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
+                        || exact.kind() == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.EMPTY_RELATION);
+        Cardinality bare = relation && exact.relationArity() > 1 ? Cardinality.SET : Cardinality.ONE;
+        boolean unary = relation && exact.relationArity() == 1
+                || exact != null && exact.kind() == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.INT
+                || isNone(typeEGraph);
+        return new DomainDescriptor(typeEGraph, bare, unary || bare == Cardinality.SET);
     }
 
     private static String primitiveDomainName(EGraphNode typeEGraph) {
@@ -5505,8 +5510,10 @@ public class NormalForm {
         return EGraphNode.isSetConstant(node, "none");
     }
 
-    private static boolean hasEmptyAdmissibleBindingSet(DomainDescriptor domain) {
-        if (domain == null || !isStaticallyEmptySet(domain.domain)) {
+    private static boolean hasEmptyAdmissibleBindingSet(EGraphNode declaration, DomainDescriptor domain) {
+        if (domain == null || !domain.knownMultiplicity || !isStaticallyEmptySet(domain.domain)
+                || declaration.getChildren().stream().skip(1).noneMatch(slot ->
+                        slot.getOpcode() == Opcode.VARIABLE && slot.getChildren().isEmpty())) {
             return false;
         }
         return domain.cardinality == Cardinality.SOME
@@ -6567,7 +6574,12 @@ public class NormalForm {
         private final EGraphNode domain;
         private final Cardinality cardinality;
 
-        private DomainDescriptor(EGraphNode domain, Cardinality cardinality) {
+        // A legacy bare domain without width metadata can still be represented,
+        // but cannot authorize an empty-binding reduction.
+        private final boolean knownMultiplicity;
+
+        private DomainDescriptor(EGraphNode domain, Cardinality cardinality, boolean knownMultiplicity) {
+            this.knownMultiplicity = knownMultiplicity;
             this.domain = domain;
             this.cardinality = cardinality == null ? Cardinality.SET : cardinality;
         }
