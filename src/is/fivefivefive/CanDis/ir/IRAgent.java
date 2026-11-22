@@ -526,6 +526,8 @@ public class IRAgent {
                     semanticProfile);
         }
         attachSourceMetadata(current, node, exactType);
+        var origin = node.parsedBindingVisit(graph, tov);
+        if (origin != null) current.attachParsedBinding(new BindingOrigin(current, origin));
 
         if (opcode == Opcode.LET && (downlinks == null || downlinks.isEmpty())) {
             EGraphNode replacement = letBindings.get(node);
@@ -874,6 +876,19 @@ public class IRAgent {
             return 2;
         }
         return -1;
+    }
+
+    public static final class BindingOrigin {
+        private final EGraphNode recipient;
+        private final is.fivefivefive.ACGN.visitor.MASGVisitor.BindingVisit visit;
+        private BindingOrigin(EGraphNode recipient, is.fivefivefive.ACGN.visitor.MASGVisitor.BindingVisit visit) {
+            this.recipient = recipient;
+            this.visit = visit;
+        }
+        public is.fivefivefive.ACGN.visitor.MASGVisitor.BindingVisit checked(EGraphNode node) {
+            if (recipient != node) throw new IllegalArgumentException("Wrong binding occurrence recipient");
+            return visit;
+        }
     }
 
     private void attachSourceMetadata(

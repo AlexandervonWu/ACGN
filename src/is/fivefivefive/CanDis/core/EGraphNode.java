@@ -1,5 +1,7 @@
 package is.fivefivefive.CanDis.core;
 
+import parser.ast.nodes.ResolvedBindingOrigins;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1060,6 +1062,7 @@ public final class EGraphNode {
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             parserSignatureEvidence = null;
+            if (!Objects.equals(this.sourceName, sourceName)) parsedBinding = null;
             this.sourceName = sourceName;
             if (opcode == Opcode.VARIABLE) {
                 refreshEClassSlots();
@@ -1240,6 +1243,7 @@ public final class EGraphNode {
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             parserSignatureEvidence = null;
+            if (!Objects.equals(this.semanticIdentity, semanticIdentity)) parsedBinding = null;
             this.semanticIdentity = semanticIdentity;
         });
     }
@@ -1425,6 +1429,24 @@ public final class EGraphNode {
         output.append(value.length()).append(':').append(value);
     }
 
+    private ResolvedBindingOrigins.Slot parsedBinding;
+    private List<ResolvedBindingOrigins.Slot> parsedDeclaration = List.of();
+
+    public void attachParsedBinding(is.fivefivefive.CanDis.ir.IRAgent.BindingOrigin origin) {
+        var visit = origin.checked(this);
+        arena.mutate(this, () -> {
+            if (opcode == Opcode.VARIABLE) parsedBinding = visit.read;
+            else parsedDeclaration = visit.declaration;
+        });
+    }
+
+    ResolvedBindingOrigins.Slot parsedBinding() { return parsedBinding; }
+
+    boolean ownsParsedBinding(int position, EGraphNode slot) {
+        return position >= 0 && position < parsedDeclaration.size() && slot.parsedBinding != null
+                && parsedDeclaration.get(position) == slot.parsedBinding;
+    }
+
     void preserveSourceOccurrenceLineageFrom(EGraphNode source) {
         arena.mutate(this, () -> {
             if (source == null || source.sourceOccurrenceLineage <= 0L
@@ -1433,6 +1455,8 @@ public final class EGraphNode {
                         "A source occurrence lineage must be positive");
             }
             sourceOccurrenceLineage = source.sourceOccurrenceLineage;
+            parsedBinding = opcode == source.opcode ? source.parsedBinding : null;
+            parsedDeclaration = opcode == source.opcode ? source.parsedDeclaration : List.of();
             if (opcode == Opcode.CALL && source.opcode == Opcode.CALL)
                 callSourceAnchor = source.callSourceAnchor;
             certificationOccurrenceLineage =
@@ -3879,6 +3903,8 @@ public final class EGraphNode {
         semanticIdentity = replacement.semanticIdentity;
         builtinConstantKind = replacement.builtinConstantKind;
         parserSignatureEvidence = replacement.parserSignatureEvidence;
+        parsedBinding = replacement.parsedBinding;
+        parsedDeclaration = replacement.parsedDeclaration;
         sourceOccurrenceLineage = replacement.sourceOccurrenceLineage;
         callOccurrenceId = replacement.callOccurrenceId;
         callSourceAnchor = replacement.callSourceAnchor;
@@ -3892,6 +3918,8 @@ public final class EGraphNode {
 
     private void collapseToBooleanConstant(boolean value) {
         opcode = Opcode.CONSTANT;
+        parsedBinding = null;
+        parsedDeclaration = List.of();
         childClasses = new ArrayList<>();
         isCommutative = false;
         maxArity = 0;
@@ -3915,6 +3943,8 @@ public final class EGraphNode {
 
     private void collapseToSetConstant(String name) {
         opcode = Opcode.GLOBALBINDING;
+        parsedBinding = null;
+        parsedDeclaration = List.of();
         childClasses = new ArrayList<>();
         isCommutative = false;
         maxArity = 0;
@@ -7669,6 +7699,8 @@ public final class EGraphNode {
         copy.domainContextOrigin = domainContextOrigin;
         copy.comparisonTemporalReferenceName = comparisonTemporalReferenceName;
         copy.sourceName = sourceName;
+        copy.parsedBinding = parsedBinding;
+        copy.parsedDeclaration = parsedDeclaration;
         copy.sourceType = sourceType;
         copy.exactAlloyType = exactAlloyType;
         copy.alphaName = alphaName;
@@ -7727,6 +7759,8 @@ public final class EGraphNode {
         semanticIdentity = null;
         builtinConstantKind = null;
         parserSignatureEvidence = null;
+        parsedBinding = null;
+        parsedDeclaration = List.of();
         sourceOccurrenceLineage = 0L;
         currentDeclarationSlot = null;
         domainGuardOrigin = null;

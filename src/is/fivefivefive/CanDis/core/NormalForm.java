@@ -1,5 +1,7 @@
 package is.fivefivefive.CanDis.core;
 
+import parser.ast.nodes.ResolvedBindingOrigins;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -120,6 +122,7 @@ public class NormalForm {
         private final QuantiVar variable;
         private final long declarationOccurrence, variableOccurrence;
         private final int tupleSlot;
+        private final ResolvedBindingOrigins.Slot parsedBinding;
         private final StructuralKey domain;
         private final List<QuantiVar> dependencies;
         private final is.fivefivefive.ACGN.alloy.SigSymbol signature;
@@ -143,6 +146,7 @@ public class NormalForm {
             this.declarationOccurrence = declaration.getSourceOccurrenceLineage();
             this.variableOccurrence = sourceVariable.getSourceOccurrenceLineage();
             this.tupleSlot = tupleSlot;
+            this.parsedBinding = declaration.ownsParsedBinding(tupleSlot, sourceVariable) ? sourceVariable.parsedBinding() : null;
             this.domain = domain;
             this.dependencies = List.copyOf(dependencies);
             this.signature = signature;
@@ -1106,6 +1110,7 @@ public class NormalForm {
     private NormalForm comparisonSource;
     private final Map<Long, TemporalReferenceAuthority> temporalReferenceAuthorities;
     private final Object lifecycleLock;
+    private NormalForm lexicalParent;
     private TemporalOp temporalOp; // the temporal operator of the formula, if any, e.g., "before", "historically", "once", "always", "eventually", "until", "releases", "since", "triggered". If none, then it is a non-temporal formula.
     private int nextDisjointnessClass;
     private int prenexReductionsThisPass;
@@ -1617,6 +1622,7 @@ public class NormalForm {
         NormalForm checkedParent = java.util.Objects.requireNonNull(
                 parent, "temporal parent");
         this.lifecycleLock = checkedParent.lifecycleLock;
+        this.lexicalParent = checkedParent;
         this.certificationMatrixEGraphRoot = null;
         this.params = new ArrayList<>();
         this.matrixQuantiVars = new ArrayList<>();
@@ -2782,20 +2788,20 @@ public class NormalForm {
             }
             if (!primitive.isEmpty()
                     && primitive.equals(carrier)
-                    && cardinalityGuaranteesNonempty(variable.getCardinality())) {
+                    && !sourceNonemptySlots(variable).isEmpty()) {
                 inhabited.add(primitive);
             }
         }
     }
 
-    private static void recordDirectCarrierWitnesses(
+    private void recordDirectCarrierWitnesses(
             List<QuantiVar> variables,
             java.util.Set<String> inhabited) {
         for (QuantiVar variable : variables) {
             String primitive = normalizeType(variable.getTypeName());
             if (!primitive.isEmpty()
                     && primitive.equals(normalizeType(variable.getCarrierTypeName()))
-                    && cardinalityGuaranteesNonempty(variable.getCardinality())) {
+                    && !sourceNonemptySlots(variable).isEmpty()) {
                 inhabited.add(primitive);
             }
         }
@@ -4120,7 +4126,7 @@ public class NormalForm {
         for (QuantiVar binding : enclosing) {
             if (normalizeType(binding.getTypeName()).equals(required)
                     && normalizeType(binding.getCarrierTypeName()).equals(required)
-                    && cardinalityGuaranteesNonempty(binding.getCardinality())) {
+                    && !sourceNonemptySlots(binding).isEmpty()) {
                 return true;
             }
         }
@@ -4343,8 +4349,8 @@ public class NormalForm {
      * adapter boundary. Algebraic A/C/I normalization deliberately remains
      * after the certification snapshot and requires its own law evidence.
      */
-    private Map<String, QuantiVar> guardedBindingFacts() {
-        Map<String, QuantiVar> result = new HashMap<>();
+    private Map<String, List<ResolvedBindingOrigins.Slot>> guardedBindingFacts() {
+        Map<String, List<ResolvedBindingOrigins.Slot>> result = new HashMap<>();
         addGuardedBindingFacts(result, params);
         addGuardedBindingFacts(result, inheritedQuantiVars);
         addGuardedBindingFacts(result, phaseLocalVariables());
@@ -4360,15 +4366,40 @@ public class NormalForm {
         return result;
     }
 
-    private static void addGuardedBindingFacts(
-            Map<String, QuantiVar> target,
+    private NormalForm bindingParent() {
+        if (lexicalParent != null) {
+            for (var authority : lexicalParent.temporalReferenceAuthorities.values()) {
+                for (var child : authority.children) if (child == this) return lexicalParent;
+            }
+        }
+        return null;
+    }
+
+    private List<ResolvedBindingOrigins.Slot> sourceNonemptySlots(QuantiVar variable) {
+        var origins = new ArrayList<ResolvedBindingOrigins.Slot>();
+        for (DeclarationFrame frame : variable.getDeclarationFrames()) {
+            if (frame.variable != variable || frame.parsedBinding == null
+                    || frame.cardinality != variable.getCardinality()
+                    || !(frame.cardinality == Cardinality.ONE && frame.parsedBinding.authorizesOne()
+                      || frame.cardinality == Cardinality.SOME && frame.parsedBinding.authorizesSome())) continue;
+            for (NormalForm phase = this; phase != null; phase = phase.bindingParent()) {
+                if (phase == frame.owner && phase.issuedDeclarationOrigins.get(frame) == frame.sourceOrigin) {
+                    origins.add(frame.parsedBinding);
+                    break;
+                }
+            }
+        }
+        return origins;
+    }
+
+    private void addGuardedBindingFacts(
+            Map<String, List<ResolvedBindingOrigins.Slot>> target,
             List<QuantiVar> variables) {
         for (QuantiVar variable : variables) {
-            target.put(variable.getName(), variable);
-            target.put(variable.getDeBruijnKey(), variable);
-            for (String original : variable.getOriginalNames()) {
-                target.putIfAbsent(original, variable);
-            }
+            var origins = sourceNonemptySlots(variable);
+            target.put(variable.getName(), origins);
+            target.put(variable.getDeBruijnKey(), origins);
+            for (String original : variable.getOriginalNames()) target.putIfAbsent(original, origins);
         }
     }
 
@@ -4399,7 +4430,7 @@ public class NormalForm {
     })
     private static EGraphNode normalizeGuardedSourceRules(
             EGraphNode node,
-            Map<String, QuantiVar> bindings) {
+            Map<String, List<ResolvedBindingOrigins.Slot>> bindings) {
         if (node == null) {
             return null;
         }
@@ -4817,7 +4848,7 @@ public class NormalForm {
     private static EGraphNode normalizeRelationalUnaryAndIdentityRules(
             EGraphNode node,
             List<EGraphNode> rewritten,
-            Map<String, QuantiVar> bindings) {
+            Map<String, List<ResolvedBindingOrigins.Slot>> bindings) {
         if ((node.getOpcode() == Opcode.SOME
                         || node.getOpcode() == Opcode.NO)
                 && rewritten.size() == 1) {
@@ -5251,14 +5282,14 @@ public class NormalForm {
 
     private static boolean isStaticallyNonemptySet(
             EGraphNode node,
-            Map<String, QuantiVar> bindings) {
+            Map<String, List<ResolvedBindingOrigins.Slot>> bindings) {
         if (node == null) {
             return false;
         }
         if (node.getOpcode() != Opcode.VARIABLE) {
             return false;
         }
-        QuantiVar variable = bindings.get(node.getAlphaName());
+        var variable = bindings.get(node.getAlphaName());
         if (variable == null) {
             variable = bindings.get(node.getSourceName());
         }
@@ -5268,12 +5299,7 @@ public class NormalForm {
         if (variable == null) {
             return false;
         }
-        Cardinality cardinality = variable.getCardinality();
-        return cardinalityGuaranteesNonempty(cardinality);
-    }
-
-    private static boolean cardinalityGuaranteesNonempty(Cardinality cardinality) {
-        return cardinality == Cardinality.ONE || cardinality == Cardinality.SOME;
+        return node.getChildren().isEmpty() && node.parsedBinding() != null && variable.contains(node.parsedBinding());
     }
 
     private static String primitiveVarType(String type) {
@@ -5440,9 +5466,12 @@ public class NormalForm {
         if (cardinality != null && typeEGraph.getChildren().size() == 1) {
             return new DomainDescriptor(typeEGraph.getChildren().get(0), cardinality);
         }
-        // Alloy declaration domains default to exactly one value. Explicit
-        // set/lone/some/one wrappers above override this source-language default.
-        return new DomainDescriptor(typeEGraph, Cardinality.ONE);
+        // Alloy defaults an undecorated, resolved unary domain to ONE. A relation
+        // of larger arity ranges over sets of tuples and can be empty.
+        var exact = typeEGraph.getExactAlloyType();
+        Cardinality bare = exact != null && exact.kind() == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
+                && exact.relationArity() > 1 ? Cardinality.SET : Cardinality.ONE;
+        return new DomainDescriptor(typeEGraph, bare);
     }
 
     private static String primitiveDomainName(EGraphNode typeEGraph) {

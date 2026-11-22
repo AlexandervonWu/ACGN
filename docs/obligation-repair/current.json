@@ -364,13 +364,13 @@
       "diagnostic": "A2-21 formal_status is PARTIAL",
       "requirementId": "A2-21",
       "sequence": 61,
-      "state": "OPEN"
+      "state": "ABSENT_REQUIRES_EVIDENCE"
     },
     {
       "diagnostic": "A2-22 formal_status is PARTIAL",
       "requirementId": "A2-22",
       "sequence": 62,
-      "state": "OPEN"
+      "state": "ABSENT_REQUIRES_EVIDENCE"
     },
     {
       "diagnostic": "A2-23 formal_status is PARTIAL",
@@ -382,13 +382,13 @@
       "diagnostic": "A2-24 formal_status is PARTIAL",
       "requirementId": "A2-24",
       "sequence": 64,
-      "state": "OPEN"
+      "state": "ABSENT_REQUIRES_EVIDENCE"
     },
     {
       "diagnostic": "A2-25 formal_status is PARTIAL",
       "requirementId": "A2-25",
       "sequence": 65,
-      "state": "OPEN"
+      "state": "ABSENT_REQUIRES_EVIDENCE"
     },
     {
       "diagnostic": "A2-26 formal_status is PARTIAL",
@@ -580,7 +580,7 @@
       "diagnostic": "P5-06 conformance_status is PARTIAL",
       "requirementId": "P5-06",
       "sequence": 97,
-      "state": "OPEN"
+      "state": "ABSENT_REQUIRES_EVIDENCE"
     },
     {
       "diagnostic": "P5-07 conformance_status is PARTIAL",
@@ -802,7 +802,7 @@
       ],
       "exitCode": 0,
       "name": "reporting-tests",
-      "seconds": 0.06364731599751394,
+      "seconds": 0.21406974700221326,
       "sha256": "f8f7b0ac7f2b53ac4e96000f166430c488f2c37e059ad5502b09d60f29d363b8"
     },
     {
@@ -812,7 +812,7 @@
       ],
       "exitCode": 0,
       "name": "lean-version",
-      "seconds": 0.03165848100616131,
+      "seconds": 0.0317150330010918,
       "sha256": "eb22144228dd41cd51a0c84af4f976cd0cef473102dcf99b60be756b11f2b95a"
     },
     {
@@ -824,7 +824,7 @@
         "-encoding",
         "UTF-8",
         "-d",
-        "/dev/shm/acgn-eighth-assessment-1dfy3avv/fresh/classes",
+        "/dev/shm/acgn-ninth-normal-fix-status-20261122T061002Z/classes",
         "src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java",
         "src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java",
         "src/is/fivefivefive/CanDis/assurance/ContractDecomposition.java",
@@ -832,7 +832,7 @@
       ],
       "exitCode": 0,
       "name": "compile",
-      "seconds": 0.5646096690034028,
+      "seconds": 0.5645913059997838,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
@@ -841,14 +841,14 @@
         "-ea",
         "-Xmx256m",
         "-cp",
-        "/dev/shm/acgn-eighth-assessment-1dfy3avv/fresh/classes",
+        "/dev/shm/acgn-ninth-normal-fix-status-20261122T061002Z/classes",
         "is.fivefivefive.CanDis.Section3AssuranceTraceability",
-        "/home/augustus/Documents/Codex/2026-11-21/task/acgn-public-certification-eighth"
+        "/home/augustus/Documents/Codex/2026-11-21/task/acgn-public-certification-ninth"
       ],
       "exitCode": 0,
       "name": "assessment",
-      "seconds": 2.768334150001465,
-      "sha256": "166271798207ec3f052cae8f722e7025b422db3c2ce326364d8b4ac86f5145d1"
+      "seconds": 2.818251616998168,
+      "sha256": "ce08f4ef14fa34a2da29defb281d6cf2d531a29bb9a1b55b90b8b3ee24f05047"
     },
     {
       "argv": [
@@ -856,13 +856,13 @@
         "-ea",
         "-Xmx256m",
         "-cp",
-        "/dev/shm/acgn-eighth-assessment-1dfy3avv/fresh/classes",
+        "/dev/shm/acgn-ninth-normal-fix-status-20261122T061002Z/classes",
         "is.fivefivefive.CanDis.Section3AssuranceTraceabilityTest",
-        "/home/augustus/Documents/Codex/2026-11-21/task/acgn-public-certification-eighth"
+        "/home/augustus/Documents/Codex/2026-11-21/task/acgn-public-certification-ninth"
       ],
       "exitCode": 0,
       "name": "regressions",
-      "seconds": 2.5178947750027874,
+      "seconds": 2.568226777999371,
       "sha256": "930d21935f4104ad9587a97279755595856ab65299057fe5b5f863a58edf1b1b"
     },
     {
@@ -871,46 +871,46 @@
         "-ea",
         "-Xmx256m",
         "-cp",
-        "/dev/shm/acgn-eighth-assessment-1dfy3avv/fresh/classes",
+        "/dev/shm/acgn-ninth-normal-fix-status-20261122T061002Z/classes",
         "is.fivefivefive.CanDis.assurance.ContractDecompositionTest"
       ],
       "exitCode": 0,
       "name": "decomposition-tests",
-      "seconds": 0.06393566799670225,
+      "seconds": 0.0637727189969155,
       "sha256": "b2a9d86438097bf6e056ba0421fd42028b645c20ec1383f0daec580b226fffce"
     },
     {
       "argv": [
         "lean",
         "-o",
-        "/dev/shm/acgn-eighth-assessment-1dfy3avv/fresh/A01Admission.olean",
+        "/dev/shm/acgn-ninth-normal-fix-status-20261122T061002Z/A01Admission.olean",
         "docs/obligation-repair/A01Admission.lean"
       ],
       "exitCode": 0,
       "name": "A01Admission",
-      "seconds": 0.16389767699729418,
+      "seconds": 0.11375936299737077,
       "sha256": "3274c1f52fe16dfbe81e0e9f53a398ee3ee920e67dfc03b5c574924081ea2dcc"
     },
     {
       "argv": [
         "lean",
         "-o",
-        "/dev/shm/acgn-eighth-assessment-1dfy3avv/fresh/ContractDecomposition.olean",
+        "/dev/shm/acgn-ninth-normal-fix-status-20261122T061002Z/ContractDecomposition.olean",
         "docs/obligation-repair/ContractDecomposition.lean"
       ],
       "exitCode": 0,
       "name": "ContractDecomposition",
-      "seconds": 0.36418433699873276,
+      "seconds": 0.41444466399843805,
       "sha256": "2b45a68033f1b09ba35bfc06420ea77425cbf50d2b6264ffb71cf35f27f05644"
     }
   ],
   "counts": {
-    "failures": 100,
+    "failures": 95,
     "matrixRows": 191,
-    "ready": 117,
+    "ready": 122,
     "requirements": 191
   },
-  "inputManifestSha256": "24ae3b80ec06e741677985fe5b442fe5dacc075bf0786ea9dd627e049e38eb65",
+  "inputManifestSha256": "6f6417f2cfbbd88a65d01142db98f3e389991087c4fe2c7f053e65088e6fa480",
   "newDiagnostics": [
     "A-01 MISSING_LOW_LEVEL_REGISTRY: no atomic child obligations or parent reconstruction evidence"
   ],

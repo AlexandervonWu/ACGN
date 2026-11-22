@@ -78,13 +78,15 @@ class ReplayEncodingTest(unittest.TestCase):
         return extracted
 
     def test_stale_chain_replay_sources(self):
-        previous = {
-            "replay-source": ("4cc45f14bf4ad74089ba62eae9a9f1daa4f612b9179dee4e7fe372bca2f7af74",
-                              "c03e4e9fd111db518c63997f8fb8ec9d3a043ee80de6ee32cdfd0b0edf0be5fe"),
-            "replay-certificate": ("a578ce184539c708e9f9b24b5757cfa9e048acfbe41296a8166089c82f51e38f",
-                                   "253f55eca20f1e12481db83947987977913183e792d073d88df895ec55b22390"),
-        }
-        for name, (shape, bindings) in previous.items():
+        previous = [
+            ("replay-source", "4cc45f14bf4ad74089ba62eae9a9f1daa4f612b9179dee4e7fe372bca2f7af74",
+             "c03e4e9fd111db518c63997f8fb8ec9d3a043ee80de6ee32cdfd0b0edf0be5fe"),
+            ("replay-source", "2b5ba76cd32106acde5eb375b5f3f4a07bf0b4edc08dc0ae75a5d53659136f54",
+             "2fd56196eecfeb11371bd81ea0a8f38372b0b103946bfbe9e5b9e927482a8850"),
+            ("replay-certificate", "a578ce184539c708e9f9b24b5757cfa9e048acfbe41296a8166089c82f51e38f",
+             "253f55eca20f1e12481db83947987977913183e792d073d88df895ec55b22390"),
+        ]
+        for name, shape, bindings in previous:
             for change in ({"shapeSha256": shape}, {"bindingsSha256": bindings},
                            {"shapeSha256": shape, "bindingsSha256": bindings},
                            {"owner": "foreign.owner"}, {"method": "foreignMethod"}, {"arity": "0"}):

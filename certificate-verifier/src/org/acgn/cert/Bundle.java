@@ -260,6 +260,11 @@ public final class Bundle {
             if (value < 0) {
                 throw new NumberFormatException("negative");
             }
+            if (!Long.toString(value).equals(text)) {
+                throw new FormatException(
+                        FailureCode.NONCANONICAL_ENCODING,
+                        "Noncanonical " + field + ": " + text);
+            }
             return value;
         } catch (NumberFormatException exception) {
             throw new FormatException(

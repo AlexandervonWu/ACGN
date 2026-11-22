@@ -85,7 +85,7 @@ public final class ChainSequenceExtractor {
             Map.entry("wire-normalization", "8eea28698577028eb46f608ab8d15193f4ab45346d5952167b7cb31e8e044aa4 a4a72e41a72e15cdfdab6970e4b6044b32cd162b8927fc7797c2154c90bd2a00"),
             Map.entry("adapter-application", "0ec3ad4a558d9ce596ff9d724082f4c690c89ff84dae5524c843db5e88d296f9 f533f6eae851c20b482b6dbb79cc6fc12c9fa72a5e56625fc14344359dd9b076"),
             Map.entry("adapter-barrier", "e85148fc525fbd3f0976e00ae778add3109d3435f9c13e5f08a9eb7e6a9fa650 2a28bdf9a25d77fa01eba72bf7a70c4874dd0b0afdf0c98299064284b7dbc8a2"),
-            Map.entry("replay-source", "2b5ba76cd32106acde5eb375b5f3f4a07bf0b4edc08dc0ae75a5d53659136f54 2fd56196eecfeb11371bd81ea0a8f38372b0b103946bfbe9e5b9e927482a8850"),
+            Map.entry("replay-source", "e1686f501e5c82e70ce08f08c43e92aa710c403596ba7c15c9895482a6b4ea5a a85bc662b6151a52491ae727ba84fc6bca7082d00d8273435e7e1b80927aca2c"),
             Map.entry("replay-certificate", "92b8dc6a2f9e2d3f704a83495510e0342d5750e689e559ad5a25448884b013d0 4627e6b16efd5f9aaf08590f733d36c337d06b191edcc423b27db6bddf8959d0"),
             Map.entry("replay-schema", "15d9e16b453a19b3838939ba283e4ac80f3eab69977a35cb50771c8409c37653 6ca14aa251c7a500fbcbcf9b806a3ef869b46939b0369b0892b469eafdb7d01d")
         );

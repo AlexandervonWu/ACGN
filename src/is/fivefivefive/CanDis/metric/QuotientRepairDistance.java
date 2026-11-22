@@ -2294,8 +2294,8 @@ public final class QuotientRepairDistance {
                                     candidate.identity.ownerContext)
                             && current.binding.declaration().exchangeClass()
                                     == candidate.binding.declaration().exchangeClass()
-                            && current.binding.declaration().sameCertifiedPayload(
-                                    candidate.binding.declaration())) {
+                            && sameOwnerCoordinatePayload(
+                                    current.binding.declaration(), candidate.binding.declaration())) {
                         expected.add(candidate.identity.coordinate);
                     }
                 }
@@ -2308,10 +2308,17 @@ public final class QuotientRepairDistance {
             }
         }
 
+        /** Reconstruct one producer's coordinate class from its typed binder descriptor. */
+        private static boolean sameOwnerCoordinatePayload(Declaration first, Declaration second) {
+            return first.sameCertifiedPayload(second)
+                    && Objects.equals(first.observationType(), second.observationType())
+                    && Objects.equals(first.observationDomain(), second.observationDomain());
+        }
+
         private static void requireConsistentGlobalBinding(
                 Binding first,
                 Binding repeated) {
-            if (!first.declaration().sameCertifiedPayload(repeated.declaration())
+            if (!sameOwnerCoordinatePayload(first.declaration(), repeated.declaration())
                     || first.declaration().exchangeClass()
                             != repeated.declaration().exchangeClass()
                     || !first.certifiedOrbit().equals(repeated.certifiedOrbit())

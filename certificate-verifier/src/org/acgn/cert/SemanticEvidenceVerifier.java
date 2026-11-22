@@ -1347,6 +1347,7 @@ final class SemanticEvidenceVerifier {
         private boolean hasUntrustedSubtypeHierarchy;
         private boolean hasNontrivialAncestry;
         private boolean requiresArrowSourceForExactV2;
+        private boolean requiresJoinSourceForExactV2;
         private final Map<String, List<String>> arrowAncestry = new HashMap<>();
         private String pinnedArrowPath;
 
@@ -1394,6 +1395,10 @@ final class SemanticEvidenceVerifier {
                         FailureCode.MISSING_EVIDENCE,
                         "Subtype JOIN ancestry is internally consistent but lacks "
                                 + "an independently pinned source-hierarchy authority");
+            }
+            if (requiresJoinSourceForExactV2) {
+                throw new UncheckableException(FailureCode.MISSING_EVIDENCE,
+                        "Exact v2 JOIN leaf requires independently pinned JOIN source evidence");
             }
         }
 
@@ -2047,21 +2052,31 @@ final class SemanticEvidenceVerifier {
                             List.of(stored.key(), output.key()));
                     if (typeProof.tag().equals("dependent-chain-leaf-type-proof-v2")
                             && rule == LeafTypeRule.EXACT_RELATION
-                            && dag.alternatives().size() == 1
-                            && dag.alternatives().get(0).stream().allMatch(c ->
-                                c.exact().is(TypeKind.CONSTRUCTOR) && c.exact().symbol().startsWith("AlloySig:"))) {
-                        // A single concrete product fixes the parser's exact relation spelling.
-                        // Accept this encoding only after matching the caller-pinned ARROW source.
-                        requiresArrowSourceForExactV2 = true;
-                        StringBuilder source = new StringBuilder("RELATION[");
-                        for (ChainColumn column : dag.alternatives().get(0)) {
-                            ExactType exact = column.exact();
-                            String label = exact.symbol().substring("AlloySig:".length());
-                            source.append(label.length()).append(':').append(label);
+                            && !dag.alternatives().isEmpty()
+                            && (expectedKind == ChainKind.JOIN || dag.alternatives().size() == 1)
+                            && dag.alternatives().stream().flatMap(List::stream).allMatch(column ->
+                                    column.exact().is(TypeKind.CONSTRUCTOR)
+                                            && column.exact().symbol().startsWith("AlloySig:"))) {
+                        if (expectedKind == ChainKind.JOIN) {
+                            requiresJoinSourceForExactV2 = true;
+                        } else {
+                            requiresArrowSourceForExactV2 = true;
                         }
+                        // The parser sorts whole products by their length-prefixed spelling.
+                        List<String> products = new ArrayList<>();
+                        for (List<ChainColumn> product : dag.alternatives()) {
+                            StringBuilder tuple = new StringBuilder();
+                            for (ChainColumn column : product) {
+                                String label = column.exact().symbol().substring("AlloySig:".length());
+                                tuple.append(label.length()).append(':').append(label);
+                            }
+                            products.add(tuple.toString());
+                        }
+                        products.sort(String::compareTo);
+                        String source = "RELATION[" + String.join("][", products) + "]";
                         expectedProof = StableKey.of(
                                 "dependent-chain-leaf-type-proof-v2",
-                                List.of(rule.name(), source.append(']').toString()),
+                                List.of(rule.name(), source),
                                 List.of(stored.key(), dag.key()));
                     }
                     if (!typeProof.equals(expectedProof)) {

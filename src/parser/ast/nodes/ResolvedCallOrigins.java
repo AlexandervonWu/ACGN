@@ -14,6 +14,7 @@ public final class ResolvedCallOrigins extends NodeMap {
   private final Map<Call, ExprCall> originals = new IdentityHashMap<>();
   private final NodeMap inherited;
   private boolean sealed;
+  final ResolvedBindingOrigins bindings = new ResolvedBindingOrigins();
 
   ResolvedCallOrigins(Node parent) {
     inherited = parent == null ? null : parent.getNodeMap();
@@ -21,6 +22,7 @@ public final class ResolvedCallOrigins extends NodeMap {
 
   @Override
   public void addToMap(Object source, Node adapter) {
+    bindings.capture(source, adapter);
     if (!sealed && source instanceof ExprCall resolved && adapter instanceof Call call) {
       originals.putIfAbsent(call, resolved);
     }
@@ -46,7 +48,7 @@ public final class ResolvedCallOrigins extends NodeMap {
     return inherited != null ? inherited.findSrc(node) : super.findSrc(node);
   }
 
-  void seal() { sealed = true; }
+  void seal() { bindings.seal(); sealed = true; }
 
   public static ExprCall original(Call call) {
     return call.getNodeMap() instanceof ResolvedCallOrigins origins && origins.sealed

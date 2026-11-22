@@ -251,6 +251,8 @@ public final class QuotientRepairDistanceTest {
                                 variable("right-one", 1), variable("right-zero", 0)))) > 0,
                 "distinct non-ALL exchange blocks cannot cross after path erasure");
 
+        checkTypedOwnerPartitions();
+
         Declaration blockZero = declaration("ALL", 0);
         Declaration blockOne = declaration("ALL", 1);
         Binding leftZero = binding(blockZero, "left/zero", 0);
@@ -980,6 +982,53 @@ public final class QuotientRepairDistanceTest {
                 List.of(phases),
                 TEST_PROFILE,
                 TEST_OBSERVATION);
+    }
+
+    private static void checkTypedOwnerPartitions() {
+        Declaration coarse = declaration("ALL", 0);
+        GraphType u = GraphType.constructor("U");
+        StructuralKey domain = StructuralKey.leaf("carrier", "U");
+        Declaration unary = coarse.withObservation(u, domain);
+        Declaration binary = coarse.withObservation(GraphType.relation(List.of(u, u)), domain);
+        Declaration otherDomain = coarse.withObservation(u, StructuralKey.leaf("carrier", "V"));
+        List<Integer> pair = List.of(1, 2);
+        List<List<Integer>> partition = List.of(List.of(0), pair, pair);
+        List<List<Integer>> all = Collections.nCopies(3, List.of(0, 1, 2));
+
+        RepairView exact = partitionView(List.of(unary, binary, binary), partition);
+        check(distance(exact, exact) == 0, "binary siblings exchange independently of a unary variable with the same display tuple");
+        RepairView differentDomain = partitionView(List.of(otherDomain, unary, unary), partition);
+        check(distance(differentDomain, differentDomain) == 0, "structured domains distinguish owner coordinate classes");
+        RepairView bounded = partitionView(List.of(coarse, coarse, coarse), all);
+        check(distance(bounded, bounded) == 0, "unobserved bounded-test declarations retain their complete class");
+
+        for (List<Declaration> decls : List.of(List.of(unary, binary, binary),
+                List.of(otherDomain, unary, unary), List.of(coarse, unary, unary))) {
+            RepairView tooWide = partitionView(decls, all);
+            expectThrows(IllegalStateException.class, () -> distance(tooWide, tooWide));
+        }
+        RepairView tooNarrow = partitionView(List.of(unary, binary, binary),
+                List.of(List.of(0), List.of(1), List.of(2)));
+        expectThrows(IllegalStateException.class, () -> distance(tooNarrow, tooNarrow));
+        RepairView inheritedType = multiPhaseView(
+                new Phase(List.of(unary), List.of(binding(unary, "owner", 0)), variable("x", 0)),
+                new Phase(List.of(), List.of(inherited(unary, "owner", 0, List.of(0))), variable("x", 0)));
+        check(distance(inheritedType, inheritedType) == 0, "an inherited coordinate retains its owner descriptor");
+        for (Declaration conflicting : List.of(binary, otherDomain, coarse)) {
+            RepairView changed = multiPhaseView(
+                    new Phase(List.of(unary), List.of(binding(unary, "owner", 0)), variable("x", 0)),
+                    new Phase(List.of(), List.of(inherited(conflicting, "owner", 0, List.of(0))), variable("x", 0)));
+            expectThrows(IllegalStateException.class, () -> distance(changed, changed));
+        }
+    }
+
+    private static RepairView partitionView(List<Declaration> declarations, List<List<Integer>> orbits) {
+        List<Binding> bindings = new ArrayList<>();
+        for (int i = 0; i < declarations.size(); i++) {
+            bindings.add(binding(declarations.get(i), "owner", i, orbits.get(i)));
+        }
+        return view(declarations, bindings, node("R", ContainerKind.SEQUENCE,
+                variable("a", 0), variable("r", 1), variable("s", 2)));
     }
 
     private static Declaration declaration(String quantifier, int exchangeClass) {

@@ -32,6 +32,16 @@ def observations():
 
 
 class WireTablesReplayTest(unittest.TestCase):
+    def test_previous_bundle_numeric_decoder_pins_are_rejected(self):
+        shape = "ff78efef7d57a6ddc37bc35609a758d3ae1d5c7b453f75ae1851540d8dc11131"
+        binding = "6d2831b66e4cb1a1741ae5a8131914dad3c9ac1f3da953d36fb6bc67f0851e88"
+        for stale in ({"shapeSha256": shape}, {"bindingsSha256": binding},
+                      {"shapeSha256": shape, "bindingsSha256": binding}):
+            changed = sources()
+            next(row for row in changed if row["object"] == "Bundle").update(stale)
+            with self.subTest(fields=tuple(stale)), self.assertRaises(Blocked):
+                r.validate_sources(changed)
+
     def test_census(self):
         self.assertEqual(Counter(k[0] for k in r.census()), {"writer": 2, "table": 44, "content": 7, "grammar": 13})
         self.assertEqual(len(r.census()), 66)

@@ -78,8 +78,12 @@ class ChainReplayTests(unittest.TestCase):
         accepted = submit(sources())
         self.assertEqual(accepted.returncode, 0, accepted.stdout + accepted.stderr)
         for name, shape, binding in (
+                ("DependentTypeDag", "b6c18c3ca66eba2bdaba5385211ab9f557419ac6dc6f807659fef0c33acb5c4e",
+                 "b52e7b1c6925e177d91e6202f01cd5ceb4786d0ce26d9c01ec8bf2972be90c42"),
                 ("SemanticEvidenceVerifier", "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc",
                  "a96e5e846bc4901abe3350c51da5a02ba7650677d50a176ab88b8390e0660177"),
+                ("SemanticEvidenceVerifier", "454ab4a9ae622571b4b1f5fc690cddddc50a811fb24c9806ac472b9a696302d6",
+                 "c3eca7cea4ea918b262f8b03b132b90e5c83dc356e436cfc4b09f937ec95c26f"),
                 ("SemanticEvidenceVerifier", "b5112361b564655f391d9f9ce264bed924f79a9b3fcbd8b6f2039cc2ad24aa01",
                  "3279c660456f16d9b160c97f2e0a859d5bad57a9c0239c6e50856e0349676ab8"),
                 ("CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46",

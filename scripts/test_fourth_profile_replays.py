@@ -36,10 +36,12 @@ def observations():
 
 class ProfileReplayTest(unittest.TestCase):
     def test_superseded_verifier_and_writer_pins_are_rejected(self):
-        # Retain both superseded verifier generations and the pre-registry writer as independent negatives.
+        # Retain superseded verifier generations and the pre-registry writer as independent negatives.
         for name, shape, binding in (
                 ("SemanticEvidenceVerifier", "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc",
                  "cd2fe91218d45a6eaebc03233f04d8119c8a23064ab520a3f7657e3ee54755cd"),
+                ("SemanticEvidenceVerifier", "454ab4a9ae622571b4b1f5fc690cddddc50a811fb24c9806ac472b9a696302d6",
+                 "0e1a6587d36c037fe55af80bdff163bd7816d0eec1dfc69c14dbf7aea60bcec8"),
                 ("SemanticEvidenceVerifier", "b5112361b564655f391d9f9ce264bed924f79a9b3fcbd8b6f2039cc2ad24aa01",
                  "47dc4427500b1ef24863201ee627c2bb3905ecf4aaa2e15836a82ff0e9b87b3d"),
                 ("CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46",
@@ -144,6 +146,24 @@ class ProfileReplayTest(unittest.TestCase):
         changed = observations()
         changed[0]["digest"] = "0" * 64
         self.assertIn(r.text("0" * 64) + " =", r.program(changed, sources())[0])
+
+    def test_compact_positive_replay_delta_expands_to_the_complete_original(self):
+        observed = observations()
+        original, expected_count = r.program(observed, sources())
+        compact, count = r.program(observed, sources(), share_literals=True)
+        declarations = re.compile(
+            r"^private def (profileText[0-9]+) : Text := (\(ofCodepoints \[[0-9, ]*\]\))\n", re.M)
+        pairs = declarations.findall(compact)
+        aliases = dict(pairs)
+        self.assertEqual(count, expected_count)
+        self.assertEqual(len(pairs), len(aliases))
+        self.assertEqual(len(pairs), len(set(aliases.values())))
+        self.assertTrue(pairs)
+        body = declarations.sub("", compact)
+        references = re.compile(r"\bprofileText[0-9]+\b")
+        self.assertEqual(set(references.findall(body)), set(aliases))
+        self.assertEqual(references.sub(lambda m: aliases[m.group()], body), original)
+        self.assertLess(len(compact), len(original))
 
     def test_no_unknown_rejection_stage(self):
         changed = observations()

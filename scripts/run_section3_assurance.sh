@@ -72,10 +72,13 @@ input_roots=(
   .github/workflows/bounded-ci.yml
   certificate-verifier
   docs/obligation-repair/eighth-five
+  docs/obligation-repair/ninth-five
   docs/obligation-repair/sixth-five/qualification.json
   docs/obligation-repair/sixth-five/DecodedEvidenceCoverage.lean
   docs/obligation-repair/sixth-five/java/RawCallSourceAuthority.java
   docs/obligation-repair/seventh-five/java/P613SourcePair.java
+  docs/obligation-repair/seventh-five/java/RawArrowOccurrenceAuthority.java
+  docs/obligation-repair/seventh-five/java/RawArrowSourcePin.java
   docs/section3-assurance-claims.md
   docs/section3-repair-audit
   lean-toolchain
@@ -264,6 +267,27 @@ run_step java-A223ArrowFamiliesTest "$JAVA_TIMEOUT" \
   env ACGN_EIGHTH_LEAN="$LEAN_BIN" ACGN_EIGHTH_PROOF="$ROOT/docs/section3-repair-audit/formal/A223ArrowFamilies.lean" \
   "${eighth_java[@]}" is.fivefivefive.CanDis.theory.A223ArrowFamiliesTest "$eighth_output/arrow-families.tsv"
 
+ninth_package="$ROOT/docs/obligation-repair/ninth-five"
+ninth_classes="$OUTPUT/ninth-witness-classes"
+mkdir -p "$ninth_classes"
+mapfile -t ninth_sources < <(find "$ninth_package/java" -type f -name '*.java' | sort)
+run_step compile-ninth-witnesses "$JAVA_TIMEOUT" \
+  javac --release 17 -encoding UTF-8 -cp "$eighth_dependencies" -d "$ninth_classes" \
+  "$ROOT/docs/obligation-repair/seventh-five/java/RawArrowOccurrenceAuthority.java" \
+  "$ROOT/docs/obligation-repair/seventh-five/java/RawArrowSourcePin.java" "${ninth_sources[@]}"
+
+run_ninth_witness() {
+  local parent="$1" main="$2"
+  run_step "java-${main##*.}" "$JAVA_TIMEOUT" \
+    python3 -B "$ROOT/scripts/audit_lean_assumptions.py" ninth-phase "$parent" "$main" \
+    "$ROOT" "$OUTPUT" "$LEAN_BIN" "$ninth_classes:$eighth_dependencies" "$JAVA_HEAP" "${provenance_options[@]}"
+}
+run_ninth_witness A2-21 is.fivefivefive.CanDis.theory.A221NormalizationTest
+run_ninth_witness A2-22 is.fivefivefive.CanDis.theory.A222IntersectionTest
+run_ninth_witness A2-24 org.acgn.cert.A224Qualification
+run_ninth_witness A2-25 org.acgn.cert.A225WireCommitmentTest
+run_ninth_witness P5-06 is.fivefivefive.CanDis.P506SourceBindingTest
+
 run_step producer-Phase6SemanticOrderProducerRegressionTest "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" "${provenance_options[@]}" \
   -cp "$OUTPUT/classes:$ROOT/lib/*" \
@@ -361,7 +385,12 @@ for relative_lean_file in "${mapped_lean_files[@]}"; do
   fi
   lean_file="$ROOT/$relative_lean_file"
   name="$(basename "$lean_file" .lean)"
-  run_step "lean-$name" "$LEAN_TIMEOUT" env LEAN_PATH="$lean_imports" "$LEAN_BIN" "$lean_file"
+  imports="$lean_imports"
+  if [[ -f "$OUTPUT/ninth-witnesses/$name.imports" ]]; then
+    read -r cache <"$OUTPUT/ninth-witnesses/$name.imports"
+    imports="$OUTPUT/ninth-witnesses/$cache"
+  fi
+  run_step "lean-$name" "$LEAN_TIMEOUT" env LEAN_PATH="$imports" "$LEAN_BIN" "$lean_file"
 done
 
 run_step lean-ConcreteRepairMetric-vectors "$LEAN_TIMEOUT" \
@@ -380,7 +409,7 @@ run_step lean-forbidden-token-scan "$LEAN_TIMEOUT" \
   assurance-scan "$ROOT/docs/section3-repair-audit/formal"
 run_step lean-explicit-assumption-inventory "$LEAN_TIMEOUT" \
   env LEAN_PATH="$lean_imports" python3 -B "$ROOT/scripts/audit_lean_assumptions.py" \
-  --root "$ROOT" --output "$OUTPUT/lean-assumptions" --lean "$LEAN_BIN"
+  --root "$ROOT" --output "$OUTPUT/lean-assumptions" --lean "$LEAN_BIN" --ninth-caches "$OUTPUT/ninth-witnesses"
 
 run_step traceability-tests "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" -cp "$OUTPUT/classes:$ROOT/lib/*" \

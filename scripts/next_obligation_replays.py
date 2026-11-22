@@ -94,13 +94,13 @@ CHAIN_MODELS = {
 }
 
 
-# These two verifier methods also authenticate caller-pinned primitive ARROW
-# source evidence. Reject stale or mixed source/binding pairs before Lean replay.
+# The independent chain replay checks exact leaf proof spellings and external
+# source authority. Reject stale or mixed source/binding pairs before Lean replay.
 _CHAIN_VERIFIER = "org.acgn.cert.SemanticEvidenceVerifier.SemanticReplay"
 CHAIN_REPLAY_OBJECTS = {
     "replay-source": (_CHAIN_VERIFIER, "dependentChainInput", "3",
-                      "2b5ba76cd32106acde5eb375b5f3f4a07bf0b4edc08dc0ae75a5d53659136f54",
-                      "2fd56196eecfeb11371bd81ea0a8f38372b0b103946bfbe9e5b9e927482a8850"),
+                      "e1686f501e5c82e70ce08f08c43e92aa710c403596ba7c15c9895482a6b4ea5a",
+                      "a85bc662b6151a52491ae727ba84fc6bca7082d00d8273435e7e1b80927aca2c"),
     "replay-certificate": (_CHAIN_VERIFIER, "verifyDependentChain", "1",
                            "92b8dc6a2f9e2d3f704a83495510e0342d5750e689e559ad5a25448884b013d0",
                            "4627e6b16efd5f9aaf08590f733d36c337d06b191edcc423b27db6bddf8959d0"),

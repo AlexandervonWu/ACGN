@@ -58,7 +58,7 @@ final class SlotCanonicalizer {
                     children.add(scopeVariables(child, local, counter));
                 }
             }
-            return term.withChildren(children);
+            return term.rewrittenChildren(children);
         }
         if ("LetExpr".equals(term.head()) && term.children().size() >= 3) {
             List<AlloyTerm> children = new ArrayList<>(term.children());
@@ -73,13 +73,13 @@ final class SlotCanonicalizer {
             for (int i = 2; i < children.size(); i++) {
                 children.set(i, scopeVariables(term.children().get(i), local, counter));
             }
-            return term.withChildren(children);
+            return term.rewrittenChildren(children);
         }
         List<AlloyTerm> children = new ArrayList<>(term.children().size());
         for (AlloyTerm child : term.children()) {
             children.add(scopeVariables(child, environment, counter));
         }
-        return term.withChildren(children);
+        return term.rewrittenChildren(children);
     }
 
     private static AlloyTerm scopeDeclaration(
@@ -102,7 +102,7 @@ final class SlotCanonicalizer {
             environment.put(variable.atom(), scoped);
         }
         children.addAll(domains);
-        return declaration.withChildren(children);
+        return declaration.rewrittenChildren(children);
     }
 
     private static boolean isBinder(AlloyTerm term) {
@@ -161,7 +161,7 @@ final class SlotCanonicalizer {
             // The domain travels with its renamed binding when independent declarations commute.
             children.subList(0, children.size() - 1).sort(AlloyTerm::compareTo);
         }
-        return term.withChildren(children);
+        return term.rewrittenChildren(children);
     }
 
     private static AlloyTerm sortCommutative(AlloyTerm term) {
@@ -175,7 +175,7 @@ final class SlotCanonicalizer {
         if (COMMUTATIVE_HEADS.contains(term.head()) && children.size() > 1) {
             sortOperands(children);
         }
-        return term.withChildren(children);
+        return term.rewrittenChildren(children);
     }
 
     /** Shared orientation for commutative operands in the slotted rewrite/alpha passes. */
@@ -205,7 +205,7 @@ final class SlotCanonicalizer {
         for (AlloyTerm child : term.children()) {
             children.add(localSlotKey(child, slots));
         }
-        return term.withChildren(children);
+        return term.rewrittenChildren(children);
     }
 
     private static final class ScopeCounter {

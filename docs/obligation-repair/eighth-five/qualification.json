@@ -37,7 +37,7 @@
         "ACGN.Eighth.P611.all_admitted_roots"
       ],
       "outputPins": {
-        "out.tsv": "203bf1fe7b83ac83fe8670b4aa851dc4abbde2b0f2712d41b3520b004f47baa2"
+        "out.tsv": "e887d14f90c0e7eefab3703019c150dc0d6a827dbb86e16693c7586b51d4be7a"
       },
       "originalRowAssessment": {
         "status": "VERIFIED",
@@ -73,7 +73,7 @@
               },
               {
                 "file": "out.tsv",
-                "line": "distribution\tjar-bytes\tclean-vs-tracked\t760c72c9e2a2df4b06013fb6898c64016affed9fca12bee46594e07b10929d57"
+                "line": "distribution\tjar-bytes\tclean-vs-tracked\t5079aac45b9205fc834b980bf76fabe110fcba0ce75f64f721efe0a960f124d8"
               }
             ]
           },
@@ -482,6 +482,7 @@
         "ACGN.Eighth.A223.inner_accumulator",
         "ACGN.Eighth.A223.outer_accumulator",
         "ACGN.Eighth.A223.accepted_compiler_stream_refines",
+        "ACGN.Eighth.A223.mergeColumns_keys",
         "ACGN.Eighth.A223.put_keys",
         "ACGN.Eighth.A223.put_admits",
         "ACGN.Eighth.A223.grouped_admits",
@@ -500,7 +501,7 @@
       ],
       "outputPins": {
         "arrow-families.tsv": "59998a57aa237a09097a400105f41d07644242dfb3fbc0b9762393c543c0a213",
-        "arrow-program.txt": "4f04e1619bcaf71ee0fb36fc08171e9dab1256fd3abf79b1c6b3efa2cabd3a94"
+        "arrow-program.txt": "652a24bdf0a56779625714b910f20d7f6c1a012691f75971499758940c87ac1f"
       },
       "originalRowAssessment": {
         "status": "VERIFIED",
@@ -563,7 +564,7 @@
               },
               {
                 "file": "arrow-program.txt",
-                "line": "group:exact-product-key-prefer-authenticated-duplicate"
+                "line": "group:exact-product-key-prefer-authenticated-columns"
               },
               {
                 "file": "arrow-program.txt",

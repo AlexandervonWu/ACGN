@@ -29,10 +29,11 @@ final class A223AdmissionCode {
                 "previous=unique.get(type)","previous==null","unique.put(type,product)","continue;",
                 "!previous.equals(product)","unique.put(type,preferAuthenticated(previous,product))","newArrayList<>(unique.values())");
         ordered(body(methods,"DependentTypeDag#preferAuthenticated/2"),
-                "left.stream().anyMatch(DependentColumnEvidence::hasParserModuleAuthority)",
-                "right.stream().anyMatch(DependentColumnEvidence::hasParserModuleAuthority)",
-                "!leftAuthenticated&&rightAuthenticated?right:left");
-        stages.add("group:exact-product-key-prefer-authenticated-duplicate");
+                "index=0;index<left.size();index++",
+                "!left.get(index).hasParserModuleAuthority()&&right.get(index).hasParserModuleAuthority()",
+                "merged==null","merged=newArrayList<>(left)","merged.set(index,right.get(index))",
+                "returnmerged==null?left:List.copyOf(merged)");
+        stages.add("group:exact-product-key-prefer-authenticated-columns");
         ordered(n,"candidateIndex=0;candidateIndex<candidates.size();candidateIndex++","candidate=candidates.get(candidateIndex)",
                 "otherIndex=0;otherIndex<candidates.size();otherIndex++","candidateIndex==otherIndex","continue;",
                 "productSubtypeOrEqual(candidate,candidates.get(otherIndex))","absorbed=true;","break;","if(!absorbed)","antichain.add(candidate)");

@@ -1,5 +1,7 @@
 package is.fivefivefive.CanDis.core.egraph;
 
+import parser.ast.nodes.ResolvedBindingOrigins;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,12 +15,22 @@ public final class AlloyTerm implements Comparable<AlloyTerm> {
     private final List<AlloyTerm> children;
     private final int hashCode;
     private final int size;
+    private final ResolvedBindingOrigins.Slot binding;
+    private final List<ResolvedBindingOrigins.Slot> declaration;
 
     private AlloyTerm(String head, String atom, List<AlloyTerm> children) {
         this(head, atom, children, "");
     }
 
     private AlloyTerm(String head, String atom, List<AlloyTerm> children, String slotType) {
+        this(head, atom, children, slotType, null, List.of());
+    }
+
+    private AlloyTerm(String head, String atom, List<AlloyTerm> children, String slotType,
+            ResolvedBindingOrigins.Slot binding,
+            List<ResolvedBindingOrigins.Slot> declaration) {
+        this.binding = binding;
+        this.declaration = declaration;
         this.head = Objects.requireNonNull(head, "head");
         this.atom = atom == null ? "" : atom;
         this.slotType = Objects.requireNonNull(slotType, "slotType");
@@ -57,6 +69,22 @@ public final class AlloyTerm implements Comparable<AlloyTerm> {
         return new AlloyTerm("VAR", name, Collections.emptyList(), type);
     }
 
+    public static AlloyTerm parsedVariable(parser.ast.nodes.VarExpr original, String slotType) {
+        return new AlloyTerm("VAR", original.getName(), List.of(), slotType,
+                ResolvedBindingOrigins.read(original), List.of());
+    }
+
+    public static AlloyTerm parsedDeclaration(
+            is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter.ParsedDeclaration original) {
+        return new AlloyTerm(original.head(), "", original.children(), "", null, original.slots());
+    }
+
+    ResolvedBindingOrigins.Slot binding() { return binding; }
+
+    boolean owns(ResolvedBindingOrigins.Slot slot) {
+        return slot != null && declaration.contains(slot);
+    }
+
     public String slotType() {
         return slotType;
     }
@@ -65,18 +93,18 @@ public final class AlloyTerm implements Comparable<AlloyTerm> {
         if (!isVariable()) {
             throw new IllegalArgumentException("Only variable leaves can be renamed");
         }
-        return new AlloyTerm(head, name, children, slotType);
+        return new AlloyTerm(head, name, children, slotType, binding, List.of());
     }
 
     public AlloyTerm eraseSlotTypes() {
         if (isVariable() && !slotType.isEmpty()) {
-            return atom("VAR", atom);
+            return new AlloyTerm(head, atom, List.of(), "", binding, List.of());
         }
         List<AlloyTerm> erased = new ArrayList<>(children.size());
         for (AlloyTerm child : children) {
             erased.add(child.eraseSlotTypes());
         }
-        return withChildren(erased);
+        return rewrittenChildren(erased);
     }
 
     public String head() {
@@ -104,6 +132,12 @@ public final class AlloyTerm implements Comparable<AlloyTerm> {
             return this;
         }
         return new AlloyTerm(head, atom, replacement, slotType);
+    }
+
+    /** Only trusted source-preserving rewrites may transport a declaration. */
+    AlloyTerm rewrittenChildren(List<AlloyTerm> replacement) {
+        if (children.equals(replacement)) return this;
+        return new AlloyTerm(head, atom, replacement, slotType, binding, declaration);
     }
 
     @Override

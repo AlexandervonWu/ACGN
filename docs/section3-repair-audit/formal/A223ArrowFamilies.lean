@@ -1,4 +1,4 @@
-import Std
+import Init
 
 namespace ACGN.Eighth.A223
 variable {α : Type} {le lt : α → α → Prop}
@@ -235,7 +235,7 @@ def decode : List String → Option (List OperandSide)
      "lookup:right:inner","guard:ARROW",a,b,"add:product",
      "new:CombinationCase:leftIndex:rightIndex:CombinationDecision.ARROW_PRODUCT:null:product",
      "add:case","continue","admission:positive-uniform-width-and-compatible-authority",
-     "group:exact-product-key-prefer-authenticated-duplicate","prune:all-other-products-strict-coordinate-subtype",
+     "group:exact-product-key-prefer-authenticated-columns","prune:all-other-products-strict-coordinate-subtype",
      "sort:by-structural-product-type","type-order:int-before-nominal-UTF16-then-lex-columns",
      "freeze:rows-and-ordered-column-evidence","return:typed-empty-or-normalized-products-and-cases",
      "source:append-left-leaves-then-right-leaves"] => do return [← readSide a, ← readSide b]
@@ -287,14 +287,31 @@ abbrev AtomKey := List Nat
 def intKey : AtomKey := [0]
 def nominalKey (utf16 : List (Fin 65536)) : AtomKey := 1 :: utf16.map Fin.val
 
--- LinkedHashMap.put: an old key retains its position. Its representative
--- can be replaced with the newly encountered row only by the authority policy.
-def putRepresentative (k : ε → AtomKey) (auth : List ε → Bool) (xs : Family ε) (row : List ε) : Family ε :=
+-- Equal ordered keys keep their insertion position. Every retained port comes
+-- from the incumbent column or the incoming column at the very same position.
+def mergeColumns (auth : ε → Bool) : List ε → List ε → List ε
+  | a :: as, b :: bs => (if !auth a && auth b then b else a) :: mergeColumns auth as bs
+  | _, _ => []
+
+theorem mergeColumns_keys (k : ε → AtomKey) (auth : ε → Bool) {a b : List ε}
+    (h : keys k a = keys k b) : keys k (mergeColumns auth a b) = keys k a := by
+  induction a generalizing b with
+  | nil => cases b <;> rfl
+  | cons a as ih =>
+    cases b with
+    | nil => simp [keys] at h
+    | cons b bs =>
+      obtain ⟨ha,ht⟩ := List.cons.inj h
+      change k (if !auth a && auth b then b else a) :: keys k (mergeColumns auth as bs) = k a :: keys k as
+      split <;> simp_all
+
+#print axioms mergeColumns_keys
+def putRepresentative (k : ε → AtomKey) (auth : ε → Bool) (xs : Family ε) (row : List ε) : Family ε :=
   if keys k row ∈ xs.map (keys k) then
-    xs.map fun old => if keys k old = keys k row ∧ auth old = false ∧ auth row = true then row else old
+    xs.map fun old => if keys k old = keys k row then mergeColumns auth old row else old
   else xs ++ [row]
 
-theorem put_keys (k : ε → AtomKey) (auth : List ε → Bool) (xs : Family ε) (r : List ε) :
+theorem put_keys (k : ε → AtomKey) (auth : ε → Bool) (xs : Family ε) (r : List ε) :
     (putRepresentative k auth xs r).map (keys k) =
       if keys k r ∈ xs.map (keys k) then xs.map (keys k) else xs.map (keys k) ++ [keys k r] := by
   unfold putRepresentative
@@ -303,10 +320,10 @@ theorem put_keys (k : ε → AtomKey) (auth : List ε → Bool) (xs : Family ε)
     apply List.map_congr_left
     intro a _
     simp only [Function.comp_apply]
-    split <;> simp_all
+    split <;> rename_i same <;> simp_all [mergeColumns_keys]
   · simp
 
-theorem put_admits (k : ε → AtomKey) (auth : List ε → Bool) {xs : Family ε} {r : List ε}
+theorem put_admits (k : ε → AtomKey) (auth : ε → Bool) {xs : Family ε} {r : List ε}
     (nd : (xs.map (keys k)).Nodup) (w : Width n xs) (wr : r.length = n) :
     ((putRepresentative k auth xs r).map (keys k)).Nodup ∧ Width n (putRepresentative k auth xs r) := by
   constructor
@@ -316,13 +333,19 @@ theorem put_admits (k : ε → AtomKey) (auth : List ε → Bool) {xs : Family �
     unfold putRepresentative at ha
     split at ha
     · obtain ⟨old,ho,he⟩ := List.mem_map.mp ha
-      split at he <;> subst a <;> first | exact wr | exact w old ho
+      split at he
+      · rename_i equal
+        subst a
+        have len := congrArg List.length (mergeColumns_keys k auth equal)
+        simpa [keys,w old ho] using len
+      · subst a
+        exact w old ho
     · rcases List.mem_append.mp ha with hm|hm
       · exact w _ hm
       · simp only [List.mem_singleton] at hm
         simpa [hm] using wr
 
-theorem grouped_admits (k : ε → AtomKey) (auth : List ε → Bool) (raw acc : Family ε)
+theorem grouped_admits (k : ε → AtomKey) (auth : ε → Bool) (raw acc : Family ε)
     (wr : Width n raw) (wa : Width n acc) (nd : (acc.map (keys k)).Nodup) :
     let grouped := raw.foldl (putRepresentative k auth) acc
     (grouped.map (keys k)).Nodup ∧ Width n grouped := by
@@ -358,11 +381,11 @@ theorem sorted_keys (k : ε → AtomKey) (xs : Family ε) (nd : (xs.map (keys k)
   have pw : ((xs.mergeSort (keyOrder k)).map (keys k)).Pairwise (· ≤ ·) := List.pairwise_map.mpr ord
   exact (pw.and n).imp (fun h => Std.lt_of_le_of_ne h.1 h.2)
 
-noncomputable def admission (k : ε → AtomKey) (auth : List ε → Bool) (weak : ε → ε → Prop)
+noncomputable def admission (k : ε → AtomKey) (auth : ε → Bool) (weak : ε → ε → Prop)
     (raw : Family ε) : Family ε :=
   (prune k weak (raw.foldl (putRepresentative k auth) [])).mergeSort (keyOrder k)
 
-theorem constructor_invariants (k : ε → AtomKey) (auth : List ε → Bool) (weak : ε → ε → Prop)
+theorem constructor_invariants (k : ε → AtomKey) (auth : ε → Bool) (weak : ε → ε → Prop)
     (raw : Family ε) (wr : Width n raw) :
     let F := admission k auth weak raw
     Width n F ∧ AntiKeys k weak F ∧ (F.map (keys k)).Pairwise (List.Lex (· < ·)) := by
@@ -380,7 +403,7 @@ theorem constructor_invariants (k : ε → AtomKey) (auth : List ε → Bool) (w
     exact prune_antichain k weak xs x (List.mem_mergeSort.mp hx) y (List.mem_mergeSort.mp hy) equiv
   · exact sorted_keys k _ kept
 
-theorem constructor_arrow_exact (k : ε → AtomKey) (auth : List ε → Bool) (weak : ε → ε → Prop)
+theorem constructor_arrow_exact (k : ε → AtomKey) (auth : ε → Bool) (weak : ε → ε → Prop)
     (left right : Family ε) (wl : Width m left) (wr : Width n right) :
     let l := admission k auth weak left
     let r := admission k auth weak right
@@ -397,7 +420,7 @@ theorem constructor_arrow_exact (k : ε → AtomKey) (auth : List ε → Bool) (
 #print axioms constructor_invariants
 #print axioms constructor_arrow_exact
 
-theorem grouped_on_unique (k : ε → AtomKey) (auth : List ε → Bool) (raw acc : Family ε)
+theorem grouped_on_unique (k : ε → AtomKey) (auth : ε → Bool) (raw acc : Family ε)
     (nd : ((acc ++ raw).map (keys k)).Nodup) :
     raw.foldl (putRepresentative k auth) acc = acc ++ raw := by
   induction raw generalizing acc with
@@ -411,7 +434,7 @@ theorem grouped_on_unique (k : ε → AtomKey) (auth : List ε → Bool) (raw ac
     simp only [List.foldl_cons,putRepresentative,ite_eq_right (fun h => (fresh h).elim)]
     simpa [List.append_assoc] using ih _ tail
 
-theorem admission_fixed (k : ε → AtomKey) (auth : List ε → Bool) (weak : ε → ε → Prop)
+theorem admission_fixed (k : ε → AtomKey) (auth : ε → Bool) (weak : ε → ε → Prop)
     (xs : Family ε) (a : AntiKeys k weak xs) (s : (xs.map (keys k)).Pairwise (List.Lex (· < ·))) :
     admission k auth weak xs = xs := by
   classical
@@ -423,7 +446,7 @@ theorem admission_fixed (k : ε → AtomKey) (auth : List ε → Bool) (weak : �
   apply List.mergeSort_of_pairwise
   exact (List.pairwise_map.mp s).imp (fun h => decide_eq_true (List.le_of_lt h))
 
-theorem constructor_to_constructor (k : ε → AtomKey) (auth : List ε → Bool) (weak : ε → ε → Prop)
+theorem constructor_to_constructor (k : ε → AtomKey) (auth : ε → Bool) (weak : ε → ε → Prop)
     (left right : Family ε) (wl : Width m left) (wr : Width n right) :
     let l := admission k auth weak left
     let r := admission k auth weak right
@@ -493,7 +516,7 @@ theorem relation_product_comparator (x y : List AtomKey) : productLess x y ↔ x
   | cons a as ih => cases y <;> simp [productLess,List.cons_lt_cons_iff,ih]
 
 theorem registered_complete_result (stream : List String) (acceptedStream : accepted stream = true)
-    (k : ε → AtomKey) (auth : List ε → Bool) (weak : ε → ε → Prop)
+    (k : ε → AtomKey) (auth : ε → Bool) (weak : ε → ε → Prop)
     (left right : Family ε) (wl : Width m left) (wr : Width n right) :
     let l := admission k auth weak left
     let r := admission k auth weak right

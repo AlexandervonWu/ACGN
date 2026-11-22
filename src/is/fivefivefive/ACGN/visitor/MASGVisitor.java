@@ -1,4 +1,6 @@
 package is.fivefivefive.ACGN.visitor;
+
+import parser.ast.nodes.ResolvedBindingOrigins;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -582,11 +584,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         Integer graphId = forest.rget(graph);
         int variableScope = graphId == null ? -Math.max(1, arg.getId()) : graphId;
         List<AugmentedNode> declaredVariables = new ArrayList<>();
+        var declarationSlots = ResolvedBindingOrigins.declaration(n);
         for (String name : n.getNames()) {
             String lexicalIdentity = "var/scope:" + arg.getId()
                     + "/slot:" + arg.allocateBindingSlot();
             VarSymbol varSym = new VarSymbol(
-                    sigSymbol.getName(), name, lexicalIdentity, variableScope, exprNode);
+                    sigSymbol.getName(), name, lexicalIdentity, variableScope, exprNode,
+                    declarationSlots.isEmpty() ? null : declarationSlots.get(declaredVariables.size()));
             if (arg.getParent() == null) {
                 // it is rootscope
                 coarseToFineBin.get(DummySymbol.DUMMY_GLOBAL_VAR).add(varSym);
@@ -596,6 +600,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(varSym, varNode);
             varNode.setMaxDownlinks(0);
             declaredVariables.add(varNode);
+        }
+        if (!declarationSlots.isEmpty()) {
+            declRoot.retainBindingVisit(new BindingVisit(declRoot, graph, declarationTimeOfVisit, null, declarationSlots));
         }
         if (declaredVariables.size() != n.getVariables().size())
             throw new IllegalStateException("Declaration names and source positions disagree");
@@ -719,6 +726,25 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 ExactAlloyType.fromParser(source.getType(), parserModule));
     }
 
+    /** Only this model traversal can issue a binding observation at a concrete graph visit. */
+    public static final class BindingVisit {
+        private final AugmentedNode recipient;
+        public final Multigraph graph;
+        public final int visit;
+        public final ResolvedBindingOrigins.Slot read;
+        public final List<ResolvedBindingOrigins.Slot> declaration;
+
+        private BindingVisit(AugmentedNode recipient, Multigraph graph, int visit,
+                ResolvedBindingOrigins.Slot read, List<ResolvedBindingOrigins.Slot> declaration) {
+            this.recipient = recipient;
+            this.graph = graph;
+            this.visit = visit;
+            this.read = read;
+            this.declaration = List.copyOf(declaration);
+        }
+        public boolean belongsTo(AugmentedNode node) { return recipient == node; }
+    }
+
     private void recordLeafExactType(
             AugmentedNode node,
             ExprOrFormula source,
@@ -728,11 +754,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         Multigraph graph = scope.getAffliation();
         graph.addVertex(node);
-        recordExactType(
-                node,
-                source,
-                scope,
-                node.nextExactTypeVisit(graph));
+        int visit = node.nextExactTypeVisit(graph);
+        recordExactType(node, source, scope, visit);
+        if (node.getSymbol() instanceof VarSymbol var && var.parserBinding() != null) {
+            var leaf = parser.util.AlloyUtil.getFirstNonNOOPChild(source);
+            if (!(leaf instanceof VarExpr v) || ResolvedBindingOrigins.read(v) != var.parserBinding()) {
+                throw new IllegalStateException("Variable occurrence disagrees with its resolved binding");
+            }
+            node.retainBindingVisit(new BindingVisit(node, graph, visit, var.parserBinding(), List.of()));
+        }
     }
     private AugmentedNode visitTypeExpr(ExprOrFormula expr, ScopeTreeNode arg, int depth) {
         // TODO: Implement type expression visiting logic

@@ -25,11 +25,11 @@ final class A223CompilerContract {
             "DependentTypeDag.CombinationCase#<init>/5","DependentChainApplication#<init>/3",
             "GraphType#compareTo/1","GraphType#compareNullable/2","DependentColumnEvidence#isAdmittedAtomicColumn/1",
             "DependentColumnEvidence#requireAtomicColumn/2","DependentColumnEvidence#<init>/3");
-    private static final String PIN="0c6606038ea16d82893c9238d83de3e80e09cbb111e99f94611a9acaefb16a50";
+    private static final String PIN="7596cdb46b210f9e0e90c300439711574c752106791d224a3bbd9ed2cfb1f93b";
     private static final List<String> PROGRAM=List.of("outer:left:ascending-index","lookup:left:outer",
             "inner:right:ascending-index","lookup:right:inner","guard:ARROW","addAll:leftProduct","addAll:rightProduct","add:product",
             "new:CombinationCase:leftIndex:rightIndex:CombinationDecision.ARROW_PRODUCT:null:product","add:case","continue",
-            "admission:positive-uniform-width-and-compatible-authority","group:exact-product-key-prefer-authenticated-duplicate",
+            "admission:positive-uniform-width-and-compatible-authority","group:exact-product-key-prefer-authenticated-columns",
             "prune:all-other-products-strict-coordinate-subtype","sort:by-structural-product-type",
             "type-order:int-before-nominal-UTF16-then-lex-columns","freeze:rows-and-ordered-column-evidence",
             "return:typed-empty-or-normalized-products-and-cases","source:append-left-leaves-then-right-leaves");
@@ -152,7 +152,7 @@ final class A223CompilerContract {
         String lean=Objects.requireNonNull(System.getenv("ACGN_EIGHTH_LEAN"),"audited Lean executable");
         var log=Files.createTempFile("a223-lean-",".log");
         try {
-            var proc=new ProcessBuilder(lean,"--run",System.getenv().getOrDefault("ACGN_EIGHTH_PROOF",
+            var proc=new ProcessBuilder(lean,"-j1","-M512","--run",System.getenv().getOrDefault("ACGN_EIGHTH_PROOF",
                     "docs/section3-repair-audit/formal/A223ArrowFamilies.lean"),input.toString())
                     .redirectErrorStream(true).redirectOutput(log.toFile()).start();
             if(!proc.waitFor(45,TimeUnit.SECONDS)) {proc.destroyForcibly();proc.waitFor();throw new AssertionError("Lean decoder timeout");}

@@ -6,8 +6,8 @@
 
 - Scoped claims: 191
 - Matrix rows: 191
-- Fully ready rows: 117
-- Open diagnostics: 100
+- Fully ready rows: 122
+- Open diagnostics: 95
 - Assurance state: `INCOMPLETE`
 
 ## Common Proof Process
@@ -1237,15 +1237,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `4bf2b29d09a49228b6013a04ae6d04576b2e092719bf27e3b9a9d320d0fdd6d3`
 - Ledger line: 133
-- Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
-- Lean declarations: `union_absorbs_authenticated_subtype;union_retains_disjoint_siblings;union_eliminates_duplicate_products;demonstrated_normalization_is_idempotent;correlated_union_is_not_independent_column_widening`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#normalize;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#union`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/A221Normalization.lean`
+- Lean declarations: `sibling_retained;normalized_key_from_input;structural_order;merge_origin;fold_origin;representative_origin;edge_weak;weakRows_spec;strictRows_spec;run_normalizes;mem_distinct;distinct_keys;different_coordinates;survivors_incomparable;no_duplicate_keys;fold_foreign;single_occurrence;unique_row_survival;weak_unequal_iff_authenticated;member_maximal;maximal_preserves_denotation;pick_origin;pick_authority;merge_key;merge_covers;fold_presence;fold_key;fold_coverage;representative_present;representative_coverage;exact_group;exact_survival;absent_key_iff_strict`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#normalize;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#union;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#preferAuthenticated;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#productSubtypeOrEqual;src/is/fivefivefive/CanDis/theory/DependentBoundaryCorrespondence.java#derive;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#fromParser;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#sharesParserModuleAuthorityWith`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;docs/obligation-repair/ninth-five/java/A221NormalizationTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The standalone finite DAG model proves the named normalization witnesses, while Java checks correlated alternatives and parser-derived families. A universal normalization refinement over arbitrary parser hierarchies remains open.
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: For each admitted positive-width finite family, normalization groups by the entire ordered product, selects authority at the same source coordinate, removes a represented key exactly when another strictly dominates it, and retains incomparable maximal keys. Compiler attribution and independent Lean replay check the producer under its live module and compatible hierarchy requirements.
+- Current proof state: `READY`
 
 ### A2-22
 
@@ -1254,15 +1254,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `c4c3d3558acdd3162344346a38cf3f320b80486d1626ebdc8d7558cebf129a98`
 - Ledger line: 134
-- Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
-- Lean declarations: `subtype_boundary_has_specific_meet;sibling_boundary_is_explicitly_disjoint;sharing_only_univ_does_not_create_overlap;sharing_only_univ_has_no_meet;explicit_univ_is_an_exact_boundary;concrete_to_univ_uses_the_subtype_boundary;intersection_keeps_more_specific_product;intersection_omits_proven_disjoint_product`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentBoundaryCorrespondence.java#derive;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#intersection`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/A222Normalized.lean`
+- Lean declarations: `decoded_product;decoded_omission;decoded_explicit_univ;decoded_univ_divergence;decoded_gather;decoded_normalized_fold;product_fit;gathered_fit;fold_semantics;group_property;same_key;grouped_denotation;coordinate_below;order_properties;normalized_denotation;normalized_intersection`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentBoundaryCorrespondence.java#derive;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#intersection;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#intersectPair;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#moreSpecific;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#fromParser;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#ancestryOf;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#hasParserAuthenticatedParents;src/is/fivefivefive/CanDis/theory/DependentColumnEvidence.java#fromExactAlloyType`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;docs/obligation-repair/ninth-five/java/A222IntersectionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The standalone finite hierarchy distinguishes explicit-univ exact/subtype overlap from authenticated sibling disjointness whose only common ancestor is univ. Java independently exercises each bounded case; complete Alloy parser-to-nominal-DAG refinement remains open.
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: For admitted finite correlated families, the decoded coordinate fold takes exact or authenticated subtype meets and omits a pair precisely on a witnessed disjoint coordinate. The nominal parser forest distinguishes divergence at univ from explicit univ identity or subtype. Normalization preserves the intersection denotation through each operand, including an empty intermediate.
+- Current proof state: `READY`
 
 ### A2-23
 
@@ -1288,15 +1288,15 @@ Every claim follows the same bounded process:
 - Class: `U/I/P`
 - Claim SHA-256: `b8a2af71393a0d31b4a39ecaa99be26a9e24b47701ff53b7370fff22db8749c7`
 - Ledger line: 136
-- Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
-- Lean declarations: `complete_matrix_has_cartesian_cardinality;join_omits_disjoint_branch_pair;join_retains_exact_branch_pair;join_retains_subtype_branch_pair;two_by_two_join_has_only_correlated_results;univ_commonality_cannot_create_join_result;explicit_univ_join_is_certified;all_disjoint_join_retains_positive_empty_arity;nullary_join_is_outside_the_typed_family_slice`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainApplication.java#combinationCases`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/A224Compiled.lean`
+- Lean declarations: `registered_normalized_result;registered_matrix;registered_typed_empty`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainApplication.java#combinationCases;src/is/fivefivefive/CanDis/theory/DependentBoundaryCorrespondence.java#derive;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#normalize;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentCombinationCases;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireCombinationCasesWire;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireBoundaryWire`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;docs/obligation-repair/ninth-five/java/A224Qualification.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: A typed Lean matrix has exactly the Cartesian pair count; bounded JOIN decisions preserve correlation and all-disjoint positive-arity results retain their typed empty family. Producer and verifier tests reject omitted, reordered, altered, or malformed empty-family evidence; arbitrary implementation refinement remains open.
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: For each admitted positive-arity JOIN, the interpreted loop has one decision at i*n+j for each source pair. Authenticated overlaps contribute the ordered surviving columns, disjoint pairs retain a decision without a product, and omission of every product yields a typed empty of the calculated width. Independent public replay withholds FULL verification where JOIN hierarchy authority is unavailable.
+- Current proof state: `READY`
 
 ### A2-25
 
@@ -1305,15 +1305,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `a216882498a514d63ccf4a77326d4b68e46ca2296012892d295bb0ec23687c0a`
 - Ledger line: 137
-- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
-- Lean declarations: `schema_v10_admits_complete_contract;only_schema_v10_admits_complete_contract;historical_and_future_schemas_reject_complete_contract`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentTypeDag;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentCombinationCases;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#dependentTypeDag;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireCombinationCasesWire`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/A225WireCommitment.lean`
+- Lean declarations: `ref_roundtrip;path_roundtrip;column_roundtrip;read_mapped;product_roundtrip;indexed_roundtrip;dag_roundtrip;boundary_roundtrip;result_roundtrip;case_roundtrip;matrix_roundtrip;complete_commitment;admitted_payload_commitment;committed_pair_matrix;schema_bound_roundtrip;other_schema_cannot_reinterpret`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentTypeDag;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentCombinationCases;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#dependentTypeDag;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireCombinationCasesWire;certificate-verifier/src/org/acgn/cert/Codec.java#decode;certificate-verifier/src/org/acgn/cert/Bundle.java#parse;certificate-verifier/src/org/acgn/cert/Bundle.java#parseUnsignedLong;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#open`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;docs/obligation-repair/ninth-five/java/A225WireCommitmentTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The formal feature contract is admitted only at schema v10. Deterministic fixtures and one-field mutations cover the correlated DAG and complete pair matrix; universal codec refinement remains open.
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: The admitted schema-v10 payload commits every field and order in the correlated DAG and indexed decision matrix, including boundary paths and optional results. The independent reader and exact re-encoding recover the selected subtree. Every other schema fails admission. Structural commitment applies independently of external semantic authority, including when FULL reports missing hierarchy evidence.
+- Current proof state: `READY`
 
 ### A2-26
 
@@ -2257,15 +2257,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `44498c99ed4894a86433afcd0d0262fe25e136bb0da4574bebf4a2a4fd4ab25e`
 - Ledger line: 213
-- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
-- Lean declarations: `univ_requires_an_inhabitant_for_nonemptiness;empty_universe_is_not_nonempty;some_binding_proves_nonempty;one_binding_proves_nonempty;exactly_none_has_the_none_binding;exactly_binding_does_not_prove_nonempty;univ_without_inhabitant_witness_does_not_prove_nonempty;synthetic_label_never_proves_nonempty`
-- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyNonemptySet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty`
-- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkExactlyOfDoesNotMintNonemptiness;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/P506SourceNonempty.lean`
+- Lean declarations: `issue_exact;lookup_visible;decision_exact;authorized_has_original;authorized_admitted_value_is_nonempty;missing_read_never_authorizes;shadow_blocks_outer;bare_nonunary_not_positive;every_observation_matches;changed_observation_blocks;current_authorized_value_is_nonempty`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyNonemptySet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty;src/parser/ast/nodes/ResolvedBindingOrigins.java#declaration;src/parser/ast/nodes/ResolvedBindingOrigins.java#read;src/parser/ast/nodes/ResolvedBindingOrigins.java#effectiveMultiplicity;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/CanDis/core/NormalForm.java#sourceNonemptySlots;src/is/fivefivefive/CanDis/adapter/AlloyAstTermAdapter.java#fromAst;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#addDeclarationBindings`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkExactlyOfDoesNotMintNonemptiness;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main;docs/obligation-repair/ninth-five/java/P506SourceBindingTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `PARTIAL`
-- Claim-specific process/limits: Lean reconstructs Alloy EXACTLY-of as relation equality, proves that univ is nonempty only with an inhabitant, and limits guard authority to ONE/SOME; 253 source-rule checks include direct Fast Rewrite and five-arm EXACTLY-of attacks, while complete Java refinement and frozen review remain open
-- Current proof state: `INCOMPLETE`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: For a value satisfying its declaration, static binding nonemptiness requires a visible source-owned ONE or SOME slot and the matching read. Sealed observations cover the mutable adapter domain at sequential conversion. Canonical normalization and all six raw engine configurations check the guards. Phase5SourceRules supplies the EXACTLY-of, univ and synthetic-label semantic exclusions.
+- Current proof state: `READY`
 
 ### P5-07
 

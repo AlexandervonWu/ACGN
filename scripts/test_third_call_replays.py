@@ -127,6 +127,20 @@ class CallEncoderTests(unittest.TestCase):
                 with self.subTest(name=name, fields=tuple(edits)), self.assertRaises(Blocked):
                     call_program(self.observed, changed)
 
+    def test_pre_binding_origin_ir_build_pins_are_rejected(self):
+        previous = {
+            "shapeSha256": "cd34ac5be7e7f6e61122d517030dbe346858f4b753f2ed0dd0218bb39c93ce00",
+            "bindingsSha256": "118238307d8b3fed045e6ea9408e95259c075a240c222722fd9ffd7a36ecb61e",
+        }
+        for edits in ({"shapeSha256": previous["shapeSha256"]},
+                      {"bindingsSha256": previous["bindingsSha256"]}, previous):
+            changed = copy.deepcopy(self.extracted)
+            row = next(entry for entry in changed if entry["object"] == "ir-build")
+            row.update(edits)
+            with self.subTest(fields=tuple(edits)), self.assertRaisesRegex(
+                    Blocked, "unregistered source structure/resolution: ir-build"):
+                call_program(self.observed, changed)
+
     def test_superseded_ir_build_binding_rejected(self):
         changed = copy.deepcopy(self.extracted)
         row = next(row for row in changed if row["object"] == "ir-build")

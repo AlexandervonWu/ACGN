@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import importlib.util
 import json
+import os
 import re
 import subprocess
 import sys
@@ -90,6 +92,79 @@ def audit_supplemental_output(output: Path, stem: str, log: str, names: list[str
         raise SystemExit(f"supplemental axiom requests differ from observations: {stem}")
 
 
+class AssurancePhase:
+    """Run a registered phase with the standard assurance classes and evidence directory."""
+
+    def __init__(self, root: Path, output: Path, heap: str):
+        self.source = root
+        self.path = output
+        self.heap = heap
+        self.logs = output / "logs"
+        self.tmp = output / "tmp"
+        for folder in (self.logs, self.tmp):
+            folder.mkdir(parents=True, exist_ok=True)
+        self.record = {"claims": {}}
+
+    def run(self, name, args, cwd=None, *, expected=0, extra=None):
+        command = [str(arg) for arg in args]
+        if command[0] == "java":
+            command[command.index("-Xmx1g")] = "-Xmx" + self.heap
+            command.insert(1, "-Djava.io.tmpdir=" + str(self.tmp))
+        log = self.logs / (name + ".log")
+        with log.open("x", encoding="utf-8") as stream:
+            result = subprocess.run(command, cwd=cwd or self.source,
+                                    env=dict(os.environ, TMPDIR=str(self.tmp), **(extra or {})),
+                                    stdout=stream, stderr=subprocess.STDOUT)
+        if result.returncode != expected:
+            raise SystemExit(f"{name} exited {result.returncode}, expected {expected}; see {log}")
+        return log
+
+
+def run_ninth_phase(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description="Execute a sealed ninth witness on the assurance build.")
+    parser.add_argument("parent")
+    parser.add_argument("main_class")
+    parser.add_argument("root", type=Path)
+    parser.add_argument("output", type=Path)
+    parser.add_argument("lean", type=Path)
+    parser.add_argument("classpath")
+    parser.add_argument("heap")
+    parser.add_argument("provenance", nargs=argparse.REMAINDER)
+    args = parser.parse_args(argv)
+    root, output = args.root.resolve(), args.output.resolve()
+    package = Path("docs/obligation-repair/ninth-five")
+    spec = importlib.util.spec_from_file_location("section3_ninth", root / package / "verify_ninth.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    base = module.configure(root)
+    config, parents = base.read_registration(root)
+    phase = next(item for item in config["phases"] if item["parent"] == args.parent)
+    if phase["class"] != args.main_class:
+        raise SystemExit(f"global witness registration differs for {args.parent}")
+    governed = {item["source"] for item in config["leanModules"].values()
+                if Path(item["source"]).is_relative_to(package)}
+    discovered = {p.relative_to(root).as_posix() for p in (root / package).rglob("*.lean")}
+    if discovered != governed:
+        raise SystemExit(f"ninth supplemental Lean inventory differs: {sorted(discovered ^ governed)}")
+    with (output / "input-manifest.tsv").open(encoding="utf-8") as stream:
+        manifest = {r["path"]: r["sha256"] for r in csv.DictReader(stream, delimiter="\t")
+                    if r["type"] == "file"}
+    build = AssurancePhase(root, output / "ninth-witnesses", args.heap)
+    fixtures = output / "certificate-fixtures"
+    values = {"source": str(root), "fixtures": str(fixtures), "coverage": str(fixtures / "schema-v8-coverage"),
+              "verifierJar": str(output / "acgn-certificate-verifier.jar")}
+    claim = module.check_phase(base, build, phase, manifest, parents[args.parent], args.lean.resolve(),
+                               None, args.classpath, values, args.provenance)
+    base.write_json(build.path / (args.parent + "-claim.json"), claim)
+    # The generic mapped-proof and declaration checks use the same isolated imports.
+    # Publish this record only after the full phase passed.
+    primary = Path(phase["proof"]).stem
+    with (build.path / (primary + ".imports")).open("x", encoding="utf-8") as stream:
+        stream.write(args.parent + "-lean-imports\n")
+    print(f"{args.parent} {args.main_class}: {len(claim['leanImports'])} audited modules")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", required=True, type=Path)
@@ -98,6 +173,7 @@ def main() -> int:
     action.add_argument("--list-formal-files", action="store_true",
                         help="print the complete governed file inventory")
     parser.add_argument("--lean", type=Path)
+    parser.add_argument("--ninth-caches", type=Path)
     parser.add_argument(
         "--rewrite-only",
         action="store_true",
@@ -202,9 +278,18 @@ def main() -> int:
                 encoding="utf-8",
                 newline="\n",
             )
+            env = os.environ.copy()
+            if args.ninth_caches:
+                record = args.ninth_caches / (source_path.stem + ".imports")
+                if record.exists():
+                    cache = args.ninth_caches / record.read_text(encoding="utf-8").strip()
+                    if (cache.parent != args.ninth_caches or
+                            not (cache / (source_path.stem + ".olean")).is_file()):
+                        raise SystemExit(f"missing or invalid phase import cache for {relative}")
+                    env["LEAN_PATH"] = str(cache)
             completed = subprocess.run(
                 [str(args.lean), str(audit_source)],
-                cwd=root,
+                cwd=root, env=env,
                 text=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -225,4 +310,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    if sys.argv[1:2] == ["ninth-phase"]:
+        raise SystemExit(run_ninth_phase(sys.argv[2:]))
     raise SystemExit(main())

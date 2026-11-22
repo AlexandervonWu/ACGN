@@ -22,7 +22,7 @@ from run_submission_container_closure import Blocked, digest, unique_object, wri
 PACKAGE = Path("docs/obligation-repair/eighth-five")
 CONFIG = PACKAGE / "qualification.json"
 PROFILE = "eighth-public-certification-v1"
-CONFIG_SHA256 = "1c81d54797caf7fddb6269091ab3e45369de1ad3533accfd220e68bccc559474"
+CONFIG_SHA256 = "6e0102e06bdd37b36e0afff46e5ad3090425f507dcc126ab07c5ef73fbfa7108"
 DISTRIBUTION = Path("certificate-verifier/build/acgn-certificate-verifier.jar")
 PARENTS = {
     "P6-11": "e7ebd891d005c44dbaa58c5b4684fc9862849738159688111f38f8c1a7c09f8d",

@@ -666,11 +666,19 @@ public final class DependentTypeDag {
     private static List<DependentColumnEvidence> preferAuthenticated(
             List<DependentColumnEvidence> left,
             List<DependentColumnEvidence> right) {
-        boolean leftAuthenticated = left.stream().anyMatch(
-                DependentColumnEvidence::hasParserModuleAuthority);
-        boolean rightAuthenticated = right.stream().anyMatch(
-                DependentColumnEvidence::hasParserModuleAuthority);
-        return !leftAuthenticated && rightAuthenticated ? right : left;
+        // The caller has checked the complete product key, ancestry and module.
+        // Keep each original authenticated column without changing any carrier.
+        List<DependentColumnEvidence> merged = null;
+        for (int index = 0; index < left.size(); index++) {
+            if (!left.get(index).hasParserModuleAuthority()
+                    && right.get(index).hasParserModuleAuthority()) {
+                if (merged == null) {
+                    merged = new ArrayList<>(left);
+                }
+                merged.set(index, right.get(index));
+            }
+        }
+        return merged == null ? left : List.copyOf(merged);
     }
 
     private static boolean productSubtypeOrEqual(
