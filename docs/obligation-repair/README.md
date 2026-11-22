@@ -35,11 +35,18 @@ P3-12 and A2-12 with complete law/flat/container records, canonical wire tables
 and retained-source occurrence commitments. It separates general structural
 contracts from finite Java correspondence and retains every original claim hash.
 
-The current assessment reports **112 ready requirements and 105 diagnostics**.
-Twenty-eight original diagnostics are absent; their evidence belongs to the
-five separate five-claim packages. The original queue has 104 remaining diagnostics,
-plus the explicitly exposed A-01 missing-registry diagnostic. The full assurance
-matrix remains `INCOMPLETE`; its original 132-entry baseline is not rewritten.
+The sixth and seventh packages each qualified five bounded claims against their
+frozen inputs. [Sixth qualification](sixth-five-results.json) · [Seventh qualification](seventh-five-results.json)
+
+The eighth package verified five original rows in two independent builds.
+They cover exact schema-v10 admission, imported callable arity, shape-ID
+collisions, rooted binder occurrences and ordered dependent ARROW products.
+[Eighth batch and ranking](eighth-five/README.md) · [Verification results](eighth-five-results.json)
+
+The current assessment reports **117 of 191 requirements ready**. All 118
+executable steps passed. The overall result is `INCOMPLETE` with 100
+diagnostics. Of these, 99 are in the original queue and one records the
+missing A-01 low-level registry. [Current assessment](current.md)
 
 The [v2.14 candidate list](next-candidates-v2.14.md) records the original scope
 of that continuation; the [v2.16 list](next-candidates-v2.16.md) records the

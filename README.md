@@ -154,12 +154,17 @@ The [v2.17 assurance package](docs/release-v2.17.md) implements those tasks
 with 85 general Lean theorems and 538 replay propositions over 700 finite
 Java observations. Its [two-build closure](docs/obligation-repair/fifth-five/README.md)
 requires complete records, independent expected censuses, strict rejection
-controls, source bindings and deterministic evidence. The matrix is now
+controls, source bindings and deterministic evidence. The v2.17 matrix reported
 **112 ready requirements and 105 diagnostics**, with bounded direct conformance,
 not universal Java/parser refinement. Independent reviews and the retained
 integration failures are documented. All 898 existing experimental JAR classes
 remain byte-identical; this proof/test-only release retains the empirical
 snapshot below and the separate v2.16 validation run.
+
+The eighth public certification package verified five original requirements in
+two clean builds. The current Section 3 assessment has **117 of 191 requirements
+ready** and **100 open diagnostics**. All 118 bounded executable steps passed.
+[Assurance status](docs/obligation-repair/README.md) · [Eighth verification results](docs/obligation-repair/eighth-five-results.json)
 
 ## Headline Results
 

@@ -1378,6 +1378,18 @@
   ],
   "inputManifestFileSha256": "086c852bc7293b0d4741fb8bcc50704da88d8d6d1a9192bac7e99c3716d9a610",
   "inputRootHash": "8db565bd1c42d2de2a0e1a07f2c415ac64e82fbb5911873f819a766f3f955c19",
+  "normalRoutes": {
+    "bounded-java": {
+      "exitCode": 0,
+      "logSha256": "b52be2373f1bf164c51b20c7a3fe484cb99661ee2068d8990161f25561ee2206",
+      "script": "scripts/run_bounded_ci_java_tests.sh"
+    },
+    "certificates": {
+      "exitCode": 0,
+      "logSha256": "2c91b3748c98b14dd5a786319efb96b58888d34f6f730a2ac06952ca7c083dae",
+      "script": "scripts/run_certificate_bundle_writer_tests.sh"
+    }
+  },
   "observations": {
     "A2-23/arrow-families.tsv": [
       "case\toutcome\tvalue",
@@ -2060,6 +2072,213 @@
     }
   },
   "schemaVersion": 1,
+  "section3Assessment": {
+    "environment": "Set LEAN_BIN to the pinned 4.35.0 executable. Set PATH so the augmentation verifier independently resolves its pinned 4.33.0 launcher. Make the selected tracked models and the imported historical snapshot available.",
+    "executedSteps": 118,
+    "failedExecutableSteps": 0,
+    "inputManifestSha256": "25449c4579c53b06fbf86c29ad4ee05784462f0a6f8ab643e43bf212e36f351d",
+    "openDiagnostics": 100,
+    "outcome": "INCOMPLETE",
+    "outputManifestSha256": "81296fd084dff3eec98be638424c7e2da6a3aed9b1bc8b072b378d523bbd29c6",
+    "proofToolchains": {
+      "augmentation": "Lean (version 4.33.0, x86_64-unknown-linux-gnu, commit d8b18978322de05a8f3dba51ef03cf5461676c17, Release)",
+      "governedProofs": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)"
+    },
+    "ready": 117,
+    "requirements": 191,
+    "script": "scripts/run_section3_assurance.sh",
+    "stepResultsSha256": "ab961f2409613c7b594483ec1a24e139157ff3cfddb16c4bf2ea9031b0f7ce2d",
+    "supportingFilesSha256": "54e5dd441fb96e924c738ced97623f868fa4ef03d6afb1532fbffef00477d3f4",
+    "supportingModelCount": 41,
+    "traceabilityReportSha256": "166271798207ec3f052cae8f722e7025b422db3c2ce326364d8b4ac86f5145d1",
+    "witnessAndLogArchiveSha256": "32d6fa6f925873231e187fa0749cf2d9e789f193d3b8ca80301a1e2361c476ff"
+  },
+  "sharedRegressions": {
+    "fifth": {
+      "builds": [
+        {
+          "artifactManifestSha256": "c8eb6b87d67f84c2c10f628ef37f8b920b552faa44a61453cba6bc1fccc5bef6",
+          "commandCount": 184,
+          "evidenceFileSha256": "49bca89bf92e1ff4243d9d14ecab12d80f7583a0e31776a885c929d81f6aec05",
+          "negativeControls": 96,
+          "number": 1,
+          "sourceMutationControls": 60,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "c8eb6b87d67f84c2c10f628ef37f8b920b552faa44a61453cba6bc1fccc5bef6",
+          "commandCount": 184,
+          "evidenceFileSha256": "932f3aa77be81d7b4b8f25e5642064e6522f47a9863a127e4a01de5f728883e2",
+          "negativeControls": 96,
+          "number": 2,
+          "sourceMutationControls": 60,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "17426cd0ac52a7ea3f5a92f9ceae8810cb5811172b6d485a57bbcf6caac254f6",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "38b98bd83ae16ba5d300d5db93d410e15e359e89e2e75669baaec9aeae145cae",
+      "inputRootHash": "81b864c4205249d4b7504651f6a52598e04955d932b069f4e2f76f0d9aca7de3",
+      "reportFileSha256": "c7ebada8c8ce870c8172485688d7eb89bebb23d9e33b3b6fa68c59088184f8d0",
+      "script": "scripts/run_fifth_obligation_repairs.py",
+      "totalCommands": 377
+    },
+    "fourth": {
+      "builds": [
+        {
+          "artifactManifestSha256": "c58233c1d8b85bf73928800d9f54d7a559dae6e300de7437fcb10f6b81083a64",
+          "commandCount": 105,
+          "evidenceFileSha256": "0a56ededd4cbfc5ed3f5a25105f4e94549bd42b776ab83fcbda9bb71e2ae5676",
+          "negativeControls": 36,
+          "number": 1,
+          "sourceMutationControls": 45,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "c58233c1d8b85bf73928800d9f54d7a559dae6e300de7437fcb10f6b81083a64",
+          "commandCount": 105,
+          "evidenceFileSha256": "568054a6594e03d81f0ce15d5e7d833d410c5ad6f5a1d7a8021a2e2db3ce8be3",
+          "negativeControls": 36,
+          "number": 2,
+          "sourceMutationControls": 45,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "fe2c1586913aaa7c1b115ca6df688fe6d14d1d7d19bbe5582d07884283b89276",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "14405864c79db3dc3761d9973233fb00ff5c75fa45fdce9ee8cafea94bb6b8ea",
+      "inputRootHash": "67c49e7638c6d8a19f1d1287c807073c0a0e88649ef546a91fdc622137b07cad",
+      "reportFileSha256": "2bdd3dd3e13471d6e0ad0a825014076eafacdb7edf452c5ddd5a4f45be4f4bdc",
+      "script": "scripts/run_fourth_obligation_repairs.py",
+      "totalCommands": 218
+    },
+    "next": {
+      "builds": [
+        {
+          "artifactManifestSha256": "cfc55195b9d0dd2e7209fe34683ad4a322b22a83e59f013291474865662d29be",
+          "commandCount": 49,
+          "evidenceFileSha256": "2fe8018c88207cd545b1ea7f6a9cbea17d41d787f5c1d2ff64dfa27f14c37800",
+          "negativeControls": 12,
+          "number": 1,
+          "sourceMutationControls": 11,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "cfc55195b9d0dd2e7209fe34683ad4a322b22a83e59f013291474865662d29be",
+          "commandCount": 49,
+          "evidenceFileSha256": "dd1f7134b02e1c480a8297133200e07925d4cf1e1e322b20bed6bb49f4515c82",
+          "negativeControls": 12,
+          "number": 2,
+          "sourceMutationControls": 11,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "5c71bc6048f9709c9fd65319b492afaf2a038c15efc620f15adb5c04e8ebd7bd",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "28671623ece9d36cf4f1e0fd1d516d131b79ffeb3434738d57ae03e6c5b85e12",
+      "inputRootHash": "97b2c58ab5fc62226e2862ee2196bb11ab737cf2729796c6d58af760778633d4",
+      "reportFileSha256": "268cd5f9280bdd67f603af33c3735e6e8d8caaa396cd608a60e1ce7d28e38919",
+      "script": "scripts/run_next_obligation_repairs.py",
+      "totalCommands": 103
+    },
+    "seventh": {
+      "archiveSha256": "16be081d0a61034a859c1067e07be19ffd457291af22206ca33672309189c043",
+      "claimCounts": {
+        "qualified": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandsPerBuild": [
+        31,
+        31
+      ],
+      "decision": "VERIFIED",
+      "decisionScope": "five registered finite proof and observation surfaces",
+      "deterministic": true,
+      "inputFiles": 870,
+      "inputManifestFileSha256": "7b68d6a07a1332fa12b9b7be6330932d5593aafa2ac76ef2365422ef85a91602",
+      "inputRootHash": "ae0eb510dc55a7bbd898d054c34d07a3f5805059e20fe7f1bbe26a5d5f2b6442",
+      "receiptFileSha256": "9758bda6c2a8ed076e52daeffa26861720d714ce36acc8d0ca7d2e35c0769515",
+      "reportFileSha256": "ccbb727b9c1b86f0988c40e0a6fbc5229d7e1538d4a704f7fa70432afde885d1",
+      "script": "docs/obligation-repair/seventh-five/verify_seventh.py",
+      "theorems": 39
+    },
+    "sixth": {
+      "archiveSha256": "515a46d95bc13d060c7ec49b34e9b06cfcaa01096add3e7c738789464f54eafa",
+      "claimCounts": {
+        "qualified": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandsPerBuild": [
+        30,
+        30
+      ],
+      "decision": "VERIFIED",
+      "decisionScope": "five registered finite proof and observation surfaces",
+      "deterministic": true,
+      "inputFiles": 844,
+      "inputManifestFileSha256": "1a109869952b2d389e1448b07797677a399d502cc50bc1fbfd885c06ff23c260",
+      "inputRootHash": "1453b41ecab07629506cd078ee9be4f5dd87eadb97018f1a279d6c6ea5a2a830",
+      "receiptFileSha256": "575e13ed0fa860e905e7c53504d971a77720b84ae61fd00801252aa936e6c1f0",
+      "reportFileSha256": "ba161d962f12fef859c2006de3be0a6c064d8987beaf71b37e64c0839372e5f7",
+      "script": "scripts/verify_sixth_obligation_repair.py",
+      "theorems": 48
+    },
+    "third": {
+      "builds": [
+        {
+          "artifactManifestSha256": "dccb408f5652e02022a5c9cd1137c72bc439b8219391ec4eeb347f2f9aee76af",
+          "commandCount": 83,
+          "evidenceFileSha256": "43496b88d770d28b9021db9971618054908c3609b47450d319e68a8a4521ac44",
+          "negativeControls": 28,
+          "number": 1,
+          "sourceMutationControls": 26,
+          "status": "PASS"
+        },
+        {
+          "artifactManifestSha256": "dccb408f5652e02022a5c9cd1137c72bc439b8219391ec4eeb347f2f9aee76af",
+          "commandCount": 83,
+          "evidenceFileSha256": "1a80b23d742032e6aad619bdbe35df4a204549ecd4ae47857685d45d0ba7474e",
+          "negativeControls": 28,
+          "number": 2,
+          "sourceMutationControls": 26,
+          "status": "PASS"
+        }
+      ],
+      "claimCounts": {
+        "passed": 5,
+        "total": 5,
+        "unresolved": 0
+      },
+      "commandEvidenceArchiveSha256": "9a61e95f772adef815bd67daf890d67fd83e697b44d0a0c9b52d90bec071d559",
+      "decision": "VERIFIED",
+      "deterministic": true,
+      "inputManifestFileSha256": "2dc526e1afef1e1717f6906d09cd257b0a104303cce52d9a64bf73056c131ce1",
+      "inputRootHash": "ecb71949d66dc3848dfa771ff5975882c0ca28ae87df7d3291892a5aab110f7f",
+      "reportFileSha256": "107d7e107c4480438d5ea77cff0a0cad67233fb082bd3bbc446f416a01489bf8",
+      "script": "scripts/run_third_obligation_repairs.py",
+      "totalCommands": 174
+    }
+  },
   "status": "VERIFIED",
   "trusted": [
     "Lean 4.35.0 kernel and standard library with the named proof assumptions audited at runtime (propext, Quot.sound and Classical.choice where reported)",
