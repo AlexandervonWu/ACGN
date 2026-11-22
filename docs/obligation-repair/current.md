@@ -1,6 +1,6 @@
 # Ordered Obligation Repair Status
 
-Current diagnostics: **105**. Original diagnostics: **132**.
+Current diagnostics: **100**. Original diagnostics: **132**.
 
 Absence of a diagnostic is not proof of repair; verified evidence is required.
 
@@ -45,7 +45,7 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 37 | P1-08 | P1-08 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 38 | P1-09 | P1-09 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 39 | P1-10 | P1-10 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 40 | P1-15 | P1-15 formal_status is PARTIAL | OPEN |
+| 40 | P1-15 | P1-15 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 41 | P1-16 | P1-16 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 42 | P1-19 | P1-19 formal_status is PARTIAL | OPEN |
 | 43 | A2-01 | A2-01 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
@@ -68,7 +68,7 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 60 | A2-20 | A2-20 formal_status is PARTIAL | OPEN |
 | 61 | A2-21 | A2-21 formal_status is PARTIAL | OPEN |
 | 62 | A2-22 | A2-22 formal_status is PARTIAL | OPEN |
-| 63 | A2-23 | A2-23 formal_status is PARTIAL | OPEN |
+| 63 | A2-23 | A2-23 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 64 | A2-24 | A2-24 formal_status is PARTIAL | OPEN |
 | 65 | A2-25 | A2-25 formal_status is PARTIAL | OPEN |
 | 66 | A2-26 | A2-26 formal_status is PARTIAL | OPEN |
@@ -100,7 +100,7 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 92 | P4-06 | P4-06 formal_status is PARTIAL | OPEN |
 | 93 | P4-07 | P4-07 formal_status is PARTIAL | OPEN |
 | 94 | P4-08 | P4-08 formal_status is PARTIAL | OPEN |
-| 95 | P4-11 | P4-11 formal_status is PARTIAL | OPEN |
+| 95 | P4-11 | P4-11 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 96 | P5-05 | P5-05 conformance_status is PARTIAL | OPEN |
 | 97 | P5-06 | P5-06 conformance_status is PARTIAL | OPEN |
 | 98 | P5-07 | P5-07 conformance_status is PARTIAL | OPEN |
@@ -123,9 +123,9 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 115 | P6-07 | P6-07 formal_status is PARTIAL | OPEN |
 | 116 | P6-07 | P6-07 conformance_status is PARTIAL | OPEN |
 | 117 | P6-08 | P6-08 formal_status is PARTIAL | OPEN |
-| 118 | P6-09 | P6-09 conformance_status is PARTIAL | OPEN |
+| 118 | P6-09 | P6-09 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 119 | P6-10 | P6-10 formal_status is PARTIAL | OPEN |
-| 120 | P6-11 | P6-11 conformance_status is PARTIAL | OPEN |
+| 120 | P6-11 | P6-11 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 121 | P6-12 | P6-12 formal_status is PARTIAL | OPEN |
 | 122 | P6-12 | P6-12 conformance_status is PARTIAL | OPEN |
 | 123 | P6-13 | P6-13 formal_status is PARTIAL | OPEN |

@@ -87,6 +87,16 @@ class WireTablesReplayTest(unittest.TestCase):
         for changed in ([], full[:-1], full + full[-1:], list(reversed(full)), [full[0]] * 66):
             with self.assertRaises(Blocked): r.program(changed, sources())
 
+    def test_pre_shape_registry_writer_pins_are_rejected(self):
+        shape = "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46"
+        binding = "0807ef1b7acdba3a1c72c6f339a02ede7d8beebc969500c4e66de3c5983b1d21"
+        for stale in ({"shapeSha256": shape}, {"bindingsSha256": binding},
+                      {"shapeSha256": shape, "bindingsSha256": binding}):
+            changed = sources()
+            next(row for row in changed if row["object"] == "CertificateBundleWriter").update(stale)
+            with self.subTest(fields=tuple(stale)), self.assertRaises(Blocked):
+                r.validate_sources(changed)
+
     def test_source_census_fail_closed(self):
         full = sources()
         for changed in ([], full[:-1], full + full[-1:], list(reversed(full)), [full[0]] * 4):

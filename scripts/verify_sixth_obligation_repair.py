@@ -21,7 +21,7 @@ from run_submission_container_closure import Blocked, canonical_bytes, digest, u
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = Path("docs/obligation-repair/sixth-five")
 CONFIG = PACKAGE / "qualification.json"
-CONFIG_SHA256 = "8d15285e64c59223043dc615f01c4c453971401998253e46cd694c4365a4ac54"
+CONFIG_SHA256 = "1704e97be1ee661ff5c9b40bb1d448010e6c496771efa88998b641ed486dd38d"
 LEDGER = Path("docs/section3-repair-audit/claim-ledger.md")
 SCOPE = Path("docs/section3-repair-audit/assurance-scope.tsv")
 PARENTS = {

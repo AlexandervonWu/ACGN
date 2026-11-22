@@ -22,8 +22,8 @@ public final class SemanticProfileWireExtractor {
             "SemanticProfile", "2e7f3ce494388bbd2d7d983b2bee30f1a25a38c9fcd7c7dfa148b038ebe3c65c 3bb8166269c04aa1cb967873088cfdeaefc3bafdbc3399c01122f12e1b99334b",
             "StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",
             "AlloySemanticProfileFactory", "d9821e2209abefbbc39e5ca2ef3b44fb82a0720b0f89c824b5bde13b28bdafc2 e980db5ae20141c0f80954196610a284d59da5ef586ba0d4bd13108c4338cebd",
-            "CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46 0807ef1b7acdba3a1c72c6f339a02ede7d8beebc969500c4e66de3c5983b1d21",
-            "SemanticEvidenceVerifier", "b5112361b564655f391d9f9ce264bed924f79a9b3fcbd8b6f2039cc2ad24aa01 47dc4427500b1ef24863201ee627c2bb3905ecf4aaa2e15836a82ff0e9b87b3d",
+            "CertificateBundleWriter", "0c7358f17cbc534336696dec1d885130976602d2de0d520bea4ab3705cb812dd e69aff29b43f39f894de79e0470eb93e7d0bd5427a37f62ba9c4e1cbf23ba15e",
+            "SemanticEvidenceVerifier", "454ab4a9ae622571b4b1f5fc690cddddc50a811fb24c9806ac472b9a696302d6 0e1a6587d36c037fe55af80bdff163bd7816d0eec1dfc69c14dbf7aea60bcec8",
             "Wire", "5f62baead2c72f173aad5319a4c84a46d5e757f91c1b973e021e37b707a37e84 46015d7ca07b6ba13eb1b1fdebccb382f7492ee90d2827d9539bdde8853ad86e",
             "Codec", "c0869254cca18a781b4952ae50e4c752d015f3734347dc877c2d60f62bafb1ec 099694a8e4863290df0dbe1ef62e69237d728b92d2cfef1c5826cc5c28b1d77b");
 

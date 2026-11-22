@@ -120,7 +120,7 @@
         "{results}"
       ],
       "requiredLines": [
-        "P3-13 retained reads passed: 228 compiler rows, 12 controls"
+        "P3-13 retained reads passed: 229 compiler rows, 12 controls"
       ],
       "outputs": [
         "retained-reads.tsv",
@@ -135,7 +135,7 @@
         "ACGN.SixthFive.RetainedArtifactReads.wrong_occurrence_rejected"
       ],
       "outputPins": {
-        "retained-reads.tsv": "852eae4561dc1c5d1dbe9617d1309e735f733cf6546f52ec35e9cdd8fec1bbe3"
+        "retained-reads.tsv": "4060c2797d27e1622c281e994ccadaaabfce9f611d637d2cf743f6e0ec5cf25e"
       }
     },
     {

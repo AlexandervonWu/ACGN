@@ -6,8 +6,8 @@
 
 - Scoped claims: 191
 - Matrix rows: 191
-- Fully ready rows: 112
-- Open diagnostics: 105
+- Fully ready rows: 117
+- Open diagnostics: 100
 - Assurance state: `INCOMPLETE`
 
 ## Common Proof Process
@@ -795,15 +795,15 @@ Every claim follows the same bounded process:
 - Class: `I/P`
 - Claim SHA-256: `54d4d2121c0f1d04cc4fbfda65748f845b226da5cb8b89efc18491de910af381`
 - Ledger line: 102
-- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
-- Lean declarations: `accepted_import_is_exact_fixed_ledger_member;unlisted_import_is_rejected`
-- Implementation references: `src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#signatures;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#resolveCallable`
-- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/P115ImportedCallAdmission.lean`
+- Lean declarations: `last_field_decodes;field_injective;exact_tuple_key;lookup_exact;slash_member_never_admitted;imported_admission_exact;other_pinned_overload_rejected;foreign_open_rejected;same_request_preserves_original_arity_kind`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#signatures;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#resolveCallable;src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#key;src/parser/ast/nodes/ResolvedCallOrigins.java#original`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main;docs/obligation-repair/eighth-five/java/P115ImportedCallAdmissionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The formal admission model accepts exact fixed-ledger membership only and Java rejects unpinned or corrupted members; authenticity against upstream Alloy libraries remains external
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: The immutable fixed ledger admits the exact module, member, kind and arity bound by the originating parser call. The pinned Alloy distribution supplies the independent declaration census. Callers can supply module bodies with the same signature.
+- Current proof state: `READY`
 
 ### P1-16
 
@@ -1271,15 +1271,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `88cd036c148f8baf6ed019c18205184021f9e037772881eb81e1c081ee9c7a2a`
 - Ledger line: 135
-- Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
-- Lean declarations: `arrow_is_cartesian_over_correlated_products;correlated_union_is_not_independent_column_widening;arrow_preserves_duplicate_columns;arrow_preserves_order;explicit_univ_arrow_is_certified;right_univ_endpoint_chain_flattens;left_univ_endpoint_chain_flattens;interior_unary_chain_does_not_flatten;source_sequence_preserves_order;source_sequence_preserves_duplicates`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainApplication.java#DependentChainApplication`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/A223ArrowFamilies.lean`
+- Lean declarations: `arbitrary_reassociation;mapped_matrix;evidence_absorption;unique_evidence_on_keys;normalize_preserves_actual_evidence;pair_at;duplicate_columns;exact_rows;case_count;split_weak;no_new_absorption;lex_prefix;lex_suffix;row_major_is_sorted;unique_on_nodup;normalized_matrix_exact;row_width;empty_cases;inner_accumulator;outer_accumulator;accepted_compiler_stream_refines;put_keys;put_admits;grouped_admits;prune_antichain;sorted_keys;constructor_invariants;constructor_arrow_exact;grouped_on_unique;admission_fixed;constructor_to_constructor;source_occurrence_order;source_leaf_multiplicity;admitted_atomic_comparator;relation_product_comparator;registered_complete_result`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainApplication.java#DependentChainApplication;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#normalize;src/is/fivefivefive/CanDis/theory/GraphType.java#compareTo`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;docs/obligation-repair/eighth-five/java/A223ArrowFamiliesTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The standalone model checks a two-by-two correlated Cartesian product, explicit-univ endpoint chains, the unary-interior guard, and observable Seq order/multiplicity; Java checks the corresponding ARROW and parser-backed JOIN cases. Arbitrary-family Java-to-Lean refinement remains open.
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: For admitted finite product families, the proof derives canonical constructor order and shows that the compiled ARROW loop enumerates the ordered Cartesian product. Source columns and leaves retain order and repeated occurrences, including across nesting and typed-empty cases.
+- Current proof state: `READY`
 
 ### A2-24
 
@@ -2138,15 +2138,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `4d40daa73cffd3cc30363c0ddb3f0a5467907489b67460490c28157b37b52fe6`
 - Ledger line: 201
-- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
-- Lean declarations: `canonical_preimage_is_injective`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/ParentRecordKey.java#structuralKey;certificate-verifier/src/org/acgn/cert/CheckpointVerifier.java#verifyTransitions`
-- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;src/is/fivefivefive/CanDis/theory/Phase4ProducerTransitionEvidenceTest.java#testSnapshotRejectsMalformedParentTopology`
+- Lean file: `docs/section3-repair-audit/formal/P411ShapeIdentity.lean`
+- Lean declarations: `read32_u32;readFrame_frame;shape_roundtrip;shape_frame_injective;accepted_entry;accepted_preserves;run_preserves;run_contains_every_pair;observed_digest_nonaliasing;repeated_pair_idempotent;observed_collision_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ParentRecordKey.java#structuralKey;certificate-verifier/src/org/acgn/cert/CheckpointVerifier.java#verifyTransitions;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#shapeId;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#internManifest;certificate-verifier/src/org/acgn/cert/CheckpointVerifier.java#shapeId`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;src/is/fivefivefive/CanDis/theory/Phase4ProducerTransitionEvidenceTest.java#testSnapshotRejectsMalformedParentTopology;docs/obligation-repair/eighth-five/java/P411ShapeIdentityTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The owner-plus-term preimage is injective in the finite model and producer/verifier reject inconsistent identifiers and topology; no mathematical SHA-256 injectivity is assumed or proved
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: Length-framed owner and canonical-term bytes determine the preimage. The writer and checkpoint verifier recompute each observed ID and reject distinct preimages under an occupied digest across the bundle. The registry proof permits an arbitrary digest function.
+- Current proof state: `READY`
 
 ### P4-12
 
@@ -3056,15 +3056,15 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `6a274f121f2919d837dbc11d0f4e7aa20981d1512883b4ef1baa8a963e87e48a`
 - Ledger line: 265
-- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
-- Lean declarations: `distinct_roots_collide_under_rootless_key;rootless_key_is_not_injective;rooted_key_is_injective`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#create;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderRoot;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#derivedBinderOccurrenceKey`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testNestedSameDescriptorOccurrences;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/P609RootedBinder.lean`
+- Lean declarations: `splitDelimiter;noColon;decimal_inj;header_separates;field_separates;fields_separate;render_injective;nested_keys_injective;nested_children_injective;path_injective;identity_injective;rootless_substitution_refused;resolved_iff;no_dangling_empty_claim`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#create;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderRoot;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#derivedBinderOccurrenceKey;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireNoEmptyFixtureBinderClaims;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyBinderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyEvidenceCoverage`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testNestedSameDescriptorOccurrences;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;docs/obligation-repair/eighth-five/java/P609RootedBinderTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `PARTIAL`
-- Claim-specific process/limits: The rootless collision and rooted injectivity are proved abstractly and dual-root mutations pass; Java StructuralKey/content-ID refinement remains bounded
-- Current proof state: `INCOMPLETE`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The producer binds each occurrence to a typed enclosing root, path, descriptor occurrence and automorphism. Replay walks the decoded root, reconstructs the key, and requires exact orbit coverage even for the empty fixture envelope. The framing proof covers nested keys and UTF-16 lengths.
+- Current proof state: `READY`
 
 ### P6-10
 
@@ -3090,15 +3090,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `e7ebd891d005c44dbaa58c5b4684fc9862849738159688111f38f8c1a7c09f8d`
 - Ledger line: 267
-- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
-- Lean declarations: `schema_v10_admits_complete_contract;only_schema_v10_admits_complete_contract;historical_and_future_schemas_reject_complete_contract;rooted_key_is_injective;witness_unfold_is_definitional`
-- Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#SCHEMA_VERSION;certificate-verifier/src/org/acgn/cert/Bundle.java#parse;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
-- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Lean file: `docs/section3-repair-audit/formal/P611SchemaAdmission.lean`
+- Lean declarations: `exact_scalar_necessary;every_other_string_rejects;post_decode_admission;single_route;pair_route;all_admitted_roots`
+- Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#SCHEMA_VERSION;certificate-verifier/src/org/acgn/cert/Bundle.java#parse;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#open`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;docs/obligation-repair/eighth-five/java/P611SchemaAdmissionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `PARTIAL`
-- Claim-specific process/limits: One formal module admits the complete rooted/CALL/transition/witness/subtype-boundary/correlated-DAG contract only at v10; standalone mutations reject v5/v6/v7/v8/v9 relabeling, while source-hierarchy authority and complete Java-parser refinement remain open
-- Current proof state: `INCOMPLETE`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Exact v10 is necessary on every admitted root, including both operands of a pair. Compiler-resolved routes and separate source-built and distributed JVM executions cover verification, inspection, and source-bound entry points. Body and policy checks still govern v10 inputs.
+- Current proof state: `READY`
 
 ### P6-12
 

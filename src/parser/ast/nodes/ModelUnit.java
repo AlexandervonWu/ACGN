@@ -27,7 +27,7 @@ public class ModelUnit extends Node {
   protected List<Check> checkCmdList;
 
   public ModelUnit(Node parent, CompModule module) {
-    super(parent);
+    super(parent, new ResolvedCallOrigins(parent));
     addToNodeMap(module, this);
     this.moduleDecl = createModuleDecl(module.getModuleName());
     this.openDeclList = createOpenDeclList(module.getOpens());
@@ -63,6 +63,7 @@ public class ModelUnit extends Node {
     children.addAll(assertDeclList);
     children.addAll(runCmdList);
     children.addAll(checkCmdList);
+    ((ResolvedCallOrigins) getNodeMap()).seal();
   }
 
   public ModelUnit(Node parent) {

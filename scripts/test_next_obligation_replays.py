@@ -6,7 +6,7 @@ import unittest
 
 from next_obligation_replays import (
     Blocked, FLAT_FIELDS, flat_program, natural, rows, text, tree_program, associations,
-    CALL_ARITIES, CALL_FIELDS, CALL_CONTROLS, call_program, CHAIN_MODELS, chain_program,
+    CALL_ARITIES, CALL_FIELDS, CALL_CONTROLS, call_program, CHAIN_MODELS, CHAIN_REPLAY_FIELDS, CHAIN_REPLAY_OBJECTS, chain_program,
 )
 
 
@@ -67,6 +67,33 @@ class ReplayEncodingTest(unittest.TestCase):
             with self.assertRaises(Blocked):
                 tree_program(value, "join")
 
+    @staticmethod
+    def chain_sources():
+        extracted = [dict(object=name, model=model, owner="synthetic-unit-test", method="synthetic",
+                          arity="0", shapeSha256="0" * 64, bindingsSha256="1" * 64)
+                     for name, model in CHAIN_MODELS.items()]
+        for row in extracted:
+            if row["object"] in CHAIN_REPLAY_OBJECTS:
+                row.update(zip(CHAIN_REPLAY_FIELDS, CHAIN_REPLAY_OBJECTS[row["object"]]))
+        return extracted
+
+    def test_stale_chain_replay_sources(self):
+        previous = {
+            "replay-source": ("4cc45f14bf4ad74089ba62eae9a9f1daa4f612b9179dee4e7fe372bca2f7af74",
+                              "c03e4e9fd111db518c63997f8fb8ec9d3a043ee80de6ee32cdfd0b0edf0be5fe"),
+            "replay-certificate": ("a578ce184539c708e9f9b24b5757cfa9e048acfbe41296a8166089c82f51e38f",
+                                   "253f55eca20f1e12481db83947987977913183e792d073d88df895ec55b22390"),
+        }
+        for name, (shape, bindings) in previous.items():
+            for change in ({"shapeSha256": shape}, {"bindingsSha256": bindings},
+                           {"shapeSha256": shape, "bindingsSha256": bindings},
+                           {"owner": "foreign.owner"}, {"method": "foreignMethod"}, {"arity": "0"}):
+                with self.subTest(name=name, change=change):
+                    rows = self.chain_sources()
+                    next(row for row in rows if row["object"] == name).update(change)
+                    with self.assertRaisesRegex(Blocked, "unregistered chain replay source: " + name):
+                        chain_program([], rows)
+
     def test_chain_census_and_actual_output(self):
         observed = []
         def add(surface, profile, kind, fixture, tree, word):
@@ -83,9 +110,7 @@ class ReplayEncodingTest(unittest.TestCase):
                 add("pipeline", profile, kind, fixture, "(0,(1,0))", (0, 1, 0))
                 add("certificate", profile, kind, fixture, "(0,(1,0))", (0, 1, 0))
             add("barrier", profile, kind, "Barrier", "(0,1)", (0, 1))
-        extracted = [dict(object=name, model=model, owner="synthetic-unit-test", method="synthetic",
-                          arity="0", shapeSha256="0" * 64, bindingsSha256="1" * 64)
-                     for name, model in CHAIN_MODELS.items()]
+        extracted = self.chain_sources()
         code, count = chain_program(observed, extracted)
         self.assertEqual(count, 1900)
         self.assertEqual(code.count("#print axioms"), 1900)

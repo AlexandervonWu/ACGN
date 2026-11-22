@@ -18,7 +18,7 @@ from run_next_obligation_repairs import contained, require
 PACKAGE = Path("docs/obligation-repair/seventh-five")
 SIXTH = Path("docs/obligation-repair/sixth-five")
 ENGINE = ROOT / "scripts/verify_sixth_obligation_repair.py"
-ENGINE_SHA256 = "0e9c097f0b5a1e387227808c39602e89a9ca384652879315f636bffe33296b2a"
+ENGINE_SHA256 = "80b3c82538e1ef0b094ba48050451358cf8e7380edc956c445838af38399b351"
 CONFIG_SHA256 = "105a745daa153fe87b905574eaca13cb5dc6078e79ba8b50820467d73d527ad3"
 CALL_HELPER = SIXTH / "java/RawCallSourceAuthority.java"
 CALL_HELPER_SHA256 = "d775d10b0330c92a6b30324915035de06a8ea533edd620313eeb839cffea74b0"

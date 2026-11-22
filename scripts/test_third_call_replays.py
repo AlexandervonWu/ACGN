@@ -106,6 +106,27 @@ class CallEncoderTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(Blocked):
                 call_program(self.observed, changed)
 
+    def test_prior_import_admission_pins_rejected(self):
+        # The preceding release accepted a delimited tuple collision and mutable overload swaps.
+        previous = {
+            "declaration-resolve": (
+                "7c60f840f187c4ddf540075a02fe9f1222bf38cf3bf25a43f9be64b1528df13e",
+                "c943c1ea8f86971372c218ca4e29277126531288406f86100cbae6aad2d7c479",
+            ),
+            "ledger-key": (
+                "1a6bca531c66367bf3d68dcdcd6cd173ff4638408cbbb9a90ce5365390b1ca54",
+                "cc7de580c69bbb4b90bd293eb9d2463bc0cf93fef8a7c97f1cce37d2afab8844",
+            ),
+        }
+        for name, (shape, binding) in previous.items():
+            for edits in ({"shapeSha256": shape}, {"bindingsSha256": binding},
+                          {"shapeSha256": shape, "bindingsSha256": binding}):
+                changed = copy.deepcopy(self.extracted)
+                row = next(entry for entry in changed if entry["object"] == name)
+                row.update(edits)
+                with self.subTest(name=name, fields=tuple(edits)), self.assertRaises(Blocked):
+                    call_program(self.observed, changed)
+
     def test_superseded_ir_build_binding_rejected(self):
         changed = copy.deepcopy(self.extracted)
         row = next(row for row in changed if row["object"] == "ir-build")

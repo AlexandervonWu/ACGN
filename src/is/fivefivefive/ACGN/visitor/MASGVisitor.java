@@ -47,6 +47,7 @@ import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.test.Playground;
 import parser.ast.nodes.ModelUnit;
+import parser.ast.nodes.ResolvedCallOrigins;
 import parser.ast.nodes.OpenDecl;
 import parser.ast.nodes.SigDecl;
 import parser.ast.nodes.Predicate;
@@ -1510,6 +1511,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                             importedCall.member,
                             kind,
                             observedArity);
+            requireResolvedImport(call, importedCall, kind, signature.arity());
             return new CallableDescriptor(
                     sourceName,
                     importedCall.identity(),
@@ -1517,7 +1519,31 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                     kind,
                     CallSymbol.ArityAuthority.TYPECHECKED_IMPORT);
         }
+        // A mutable adapter spelling must not turn a compiler-selected import into a local.
+        var original = ResolvedCallOrigins.original(call);
+        if (original != null && !original.fun.label.startsWith("this/")
+                && !parserModule.getAllFunc().makeCopy().contains(original.fun)) {
+            throw new IllegalStateException("Imported call disagrees with its resolved declaration");
+        }
         return descriptor;
+    }
+
+    private void requireResolvedImport(Call call, ImportedCall imported, CallSymbol.Kind kind, int arity) {
+        var original = ResolvedCallOrigins.original(call);
+        if (original == null || !call.getName().equals(stripThisQualifier(original.fun.label))
+                || original.fun.isPred != (kind == CallSymbol.Kind.FORMULA)) {
+            throw new IllegalStateException("Imported call disagrees with its resolved declaration");
+        }
+        if (original.fun.count() != arity || original.args.size() != arity) {
+            throw new IllegalStateException("Call arity disagrees with imported declaration for " + call.getName());
+        }
+        for (var open : parserModule.getOpens()) {
+            if (open.filename.equals(imported.module.fileName) && open.args.equals(imported.module.arguments)
+                    && open.getRealModule() != null && open.getRealModule().getAllFunc().makeCopy().contains(original.fun)) {
+                return;
+            }
+        }
+        throw new IllegalStateException("Imported call disagrees with its resolved module");
     }
 
     private CallableDescriptor resolveDeclaredCallable(

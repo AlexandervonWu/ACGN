@@ -172,6 +172,7 @@ final class SemanticEvidenceVerifier {
                 && isExactEmptyTestFixture(evidence)) {
             if (expectedArrowDigest != null) throw new UncheckableException(FailureCode.MISSING_EVIDENCE,
                     "Empty test fixture contains no ARROW source evidence");
+            requireNoEmptyFixtureBinderClaims(bundle.proofs().values(), model);
             return Authorization.testOnlyFixture();
         }
 
@@ -427,6 +428,36 @@ final class SemanticEvidenceVerifier {
         section.requireTag(tag);
         if (!section.scalars().isEmpty()) {
             throw malformed(tag + " section carries scalars");
+        }
+    }
+
+    /** The synthetic empty evidence envelope supplies no rooted binder records.
+     * Generic alpha proofs over ports remain available when no orbit claims an occurrence. */
+    static void requireNoEmptyFixtureBinderClaims(Iterable<Wire.Node> proofs, KernelModel model) {
+        var roots = new ArrayDeque<String>();
+        for (Wire.Node proof : proofs) {
+            proof.requireShape("proof", 7, 2);
+            if (!proof.scalar(1).equals("CANONICAL_ORBIT")) continue;
+            Wire.Node orbit = proof.child(1).requireShape("canonical-orbit", 6, 4);
+            Wire.Node refs = orbit.child(3).requireTag("binder-occurrence-refs");
+            if (!refs.scalars().isEmpty() || !refs.children().isEmpty()) {
+                throw new FormatException(FailureCode.MISSING_EVIDENCE,
+                        "Empty test fixture cannot supply a referenced binder occurrence");
+            }
+            roots.add(orbit.scalar(1));
+        }
+        // Only existence matters in the empty case. Shared subterms need one visit.
+        Set<String> seen = new HashSet<>();
+        while (!roots.isEmpty()) {
+            String id = roots.removeFirst();
+            if (!seen.add(id)) continue;
+            KernelModel.Term term = model.term(id);
+            if (term.kind() == KernelModel.TermKind.BIND_BLOCK
+                    && !model.binder(model.schema(term.sort().value()).value()).generators().isEmpty()) {
+                throw new FormatException(FailureCode.MISSING_EVIDENCE,
+                        "Empty test fixture lacks a binder occurrence required by an orbit base");
+            }
+            roots.addAll(term.children());
         }
     }
 

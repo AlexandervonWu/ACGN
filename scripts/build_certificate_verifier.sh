@@ -13,7 +13,7 @@ mkdir -p "$classes"
 mapfile -t sources < <(find "$module/src" -name '*.java' -type f | sort)
 javac --release 17 -encoding UTF-8 -Xlint:all -Werror \
   -d "$classes" "${sources[@]}"
-jar --create --file "$jar_file" --main-class org.acgn.cert.Main -C "$classes" .
+"$repo_root/scripts/package_certificate_verifier_classes.sh" "$classes" "$jar_file"
 
 if rg -n '^import is\.fivefivefive\.CanDis\.(theory|adapter|canonical|metric)|CanonicalAlloyPipeline|CanonicalDistance' \
     "$module/src"; then

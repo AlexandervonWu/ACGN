@@ -20,12 +20,12 @@ public final class DependentChainWitnessesExtractor {
             Map.entry("DependentTypeDag", "b6c18c3ca66eba2bdaba5385211ab9f557419ac6dc6f807659fef0c33acb5c4e b52e7b1c6925e177d91e6202f01cd5ceb4786d0ce26d9c01ec8bf2972be90c42"),
             Map.entry("DependentColumnEvidence", "3aad8a1cfd9aa91431ec46ec25f3dbae94f82d8926e129d5702f9675ee495e54 11cf028d508997595a314cef1f0a36d411d1ba8f799e8c0e125bedecc02e6e47"),
             Map.entry("DependentBoundaryCorrespondence", "201590a925c01cd5a6e9f51dd7e9b9a497a7dcea5efbf499780da8dba263e67e c9763fd525bc78c86203a875e0e5063955dbe396d34dd30249b464cdd23da3da"),
-            Map.entry("CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46 dd7a20c04d4be208e9abacd5d37d4dee374ebadab21d8c3326251d9e5c708a8c"),
+            Map.entry("CertificateBundleWriter", "0c7358f17cbc534336696dec1d885130976602d2de0d520bea4ab3705cb812dd bd8746e6675235f0a46ec1e0e35d23d3175f836e48d193666990deb5e60a49b6"),
             Map.entry("TheoryKeys", "6996cae14018896b70e600cdc3252ba1654f49d0865927feb30626de2bb0be80 2e67b77018788888b9be5085d2f4bd8824af0079ee701a86dccf480325f02534"),
             Map.entry("TypedCertificateEndpoint", "76846373f9b57600804ee50fac435beccf9113bab8618b4032330483854a14ab 982db80170cfc6f8b512398267b23e3de3da05b46eb2ad26526ca01132353f0f"),
             Map.entry("TypedEqualityCertificate", "caf24a5b72dba9a657454c1ad98d95ac403e700dd6751626a9465ff852a180d8 c51e42addd6cee088acc72cafecdd0519602df3e40aef8400e1ee3c14db282ae"),
             Map.entry("SemanticProfile", "2e7f3ce494388bbd2d7d983b2bee30f1a25a38c9fcd7c7dfa148b038ebe3c65c 3bb8166269c04aa1cb967873088cfdeaefc3bafdbc3399c01122f12e1b99334b"),
-            Map.entry("SemanticEvidenceVerifier", "b5112361b564655f391d9f9ce264bed924f79a9b3fcbd8b6f2039cc2ad24aa01 3279c660456f16d9b160c97f2e0a859d5bad57a9c0239c6e50856e0349676ab8"));
+            Map.entry("SemanticEvidenceVerifier", "454ab4a9ae622571b4b1f5fc690cddddc50a811fb24c9806ac472b9a696302d6 c3eca7cea4ea918b262f8b03b132b90e5c83dc356e436cfc4b09f937ec95c26f"));
 
     private static void require(boolean ok, String message) {
         if (!ok) throw new IllegalArgumentException("UNMODELED_SOURCE:" + message);
