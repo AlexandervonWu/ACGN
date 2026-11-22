@@ -1,0 +1,163 @@
+{
+  "profile": "sixth-public-certification-v1",
+  "trusted": [
+    "JDK 17 javac, JVM and jar",
+    "Lean 4.35.0 kernel and standard library",
+    "SHA-256 collision resistance",
+    "Python, Git, Linux kernel, filesystem and hardware",
+    "registered finite witness drivers and source correspondence",
+    "Alloy parser and dependencies in frozen lib/"
+  ],
+  "excluded": [
+    "complete raw Alloy parser refinement",
+    "arbitrary certificate and concurrency inputs",
+    "whole-JVM refinement",
+    "parent status promotion, release provenance and corpus results"
+  ],
+  "phases": [
+    {
+      "parent": "P1-19",
+      "scope": "Selected raw Alloy predicate and ordered CALL occurrences through the supported wire fixtures.",
+      "proof": "docs/obligation-repair/sixth-five/RawCallSourceAuthority.lean",
+      "witness": "docs/obligation-repair/sixth-five/java/RawCallAuthorityRegressionTest.java",
+      "kind": "source-authority",
+      "class": "org.acgn.cert.RawCallAuthorityRegressionTest",
+      "args": [
+        "{results}/observations.tsv"
+      ],
+      "requiredLines": [
+        "RawCallAuthorityRegressionTest passed: cases=11"
+      ],
+      "outputs": [
+        "observations.tsv"
+      ],
+      "theorems": [
+        "ACGN.Sixth.RawCallSourceAuthority.walk_exact",
+        "ACGN.Sixth.RawCallSourceAuthority.walkArgs_exact",
+        "ACGN.Sixth.RawCallSourceAuthority.walk_count",
+        "ACGN.Sixth.RawCallSourceAuthority.walkArgs_count",
+        "ACGN.Sixth.RawCallSourceAuthority.nested_argument_owner",
+        "ACGN.Sixth.RawCallSourceAuthority.ordered_binary_ports",
+        "ACGN.Sixth.RawCallSourceAuthority.selected_unique",
+        "ACGN.Sixth.RawCallSourceAuthority.selected_name",
+        "ACGN.Sixth.RawCallSourceAuthority.verify_exact",
+        "ACGN.Sixth.RawCallSourceAuthority.verified_occurrence_count",
+        "ACGN.Sixth.RawCallSourceAuthority.verified_sites_exact",
+        "ACGN.Sixth.RawCallSourceAuthority.verified_argument_types",
+        "ACGN.Sixth.RawCallSourceAuthority.coordinated_omission_rejected",
+        "ACGN.Sixth.RawCallSourceAuthority.foreign_root_rejected",
+        "ACGN.Sixth.RawCallSourceAuthority.changed_order_or_types_rejected"
+      ],
+      "outputPins": {
+        "observations.tsv": "ba5db7026d7b896aa939af4428b72a004f4d87e0137355cca35ea8ec54be949a"
+      }
+    },
+    {
+      "parent": "A2-14",
+      "scope": "Retained certificate ownership, functional lineage and duplicate-root transfer rejections on the registered fixture.",
+      "proof": "docs/obligation-repair/sixth-five/SourceLineageOwnership.lean",
+      "witness": "docs/obligation-repair/sixth-five/SourceLineageOwnershipTest.java",
+      "kind": "producer",
+      "class": "is.fivefivefive.CanDis.theory.SourceLineageOwnershipTest",
+      "args": [],
+      "requiredLines": [
+        "A2-14 ownership checks passed: allocation, sibling swap, authorized copy, frozen source, phase swap"
+      ],
+      "outputs": [],
+      "theorems": [
+        "ACGN.SixthFive.SourceLineage.binding_seals_indexed_path",
+        "ACGN.SixthFive.SourceLineage.one_certificate_selects_one_path",
+        "ACGN.SixthFive.SourceLineage.allocation_fields",
+        "ACGN.SixthFive.SourceLineage.one_allocation_per_lineage",
+        "ACGN.SixthFive.SourceLineage.exhausted_allocation_rejects",
+        "ACGN.SixthFive.SourceLineage.built_has_allocation",
+        "ACGN.SixthFive.SourceLineage.descendants_same_lineage_same_original",
+        "ACGN.SixthFive.SourceLineage.transfer_fields",
+        "ACGN.SixthFive.SourceLineage.authorized_copy_matches",
+        "ACGN.SixthFive.SourceLineage.transfer_change_rejected",
+        "ACGN.SixthFive.SourceLineage.transferred_certificate_has_one_original",
+        "ACGN.SixthFive.SourceLineage.rechecking_two_images_identifies_one_original",
+        "ACGN.SixthFive.SourceLineage.indexed_certificate_keeps_owner"
+      ]
+    },
+    {
+      "parent": "P3-10",
+      "scope": "Kernel and rooted-orbit obligation derivation, coordinated omissions and cross-owner references for the bounded decoded evidence.",
+      "proof": "docs/obligation-repair/sixth-five/DecodedEvidenceCoverage.lean",
+      "witness": "certificate-verifier/test/org/acgn/cert/DecodedBinderCoverageTest.java",
+      "kind": "verifier",
+      "class": "org.acgn.cert.DecodedBinderCoverageTest",
+      "args": [
+        "{coverage}"
+      ],
+      "requiredLines": [
+        "flat-and\tVERIFIED\tFLAT\t1",
+        "container-equals\tVERIFIED\tCONTAINER\t1",
+        "relation-empty-interior\tVERIFIED\tCHAIN\t1",
+        "bind-block-dual\tVERIFIED\t2\t2\t[0];[0]",
+        "bind-block-nested-same-descriptor\tVERIFIED\t1\t2\t[0, 0];[0]"
+      ],
+      "outputs": [],
+      "theorems": [
+        "ACGN.Sixth.EvidenceCoverage.walk_exact",
+        "ACGN.Sixth.EvidenceCoverage.children_exact",
+        "ACGN.Sixth.EvidenceCoverage.orbit_omission_rejected",
+        "ACGN.Sixth.EvidenceCoverage.orbit_surplus_rejected",
+        "ACGN.Sixth.EvidenceCoverage.kernel_owner_substitution_rejected",
+        "ACGN.Sixth.EvidenceCoverage.repeated_reference_preserves_key_set",
+        "ACGN.Sixth.EvidenceCoverage.shared_child_path_and_generator_witness",
+        "ACGN.Sixth.EvidenceCoverage.coordinated_omission_witness"
+      ]
+    },
+    {
+      "parent": "P3-13",
+      "scope": "Registered consumer reads of retained artifact evidence and independent extraction on the frozen sources.",
+      "proof": "docs/section3-repair-audit/formal/RetainedArtifactReads.lean",
+      "witness": "scripts/check_sixth_retained_reads.py",
+      "kind": "python",
+      "args": [
+        "{source}",
+        "{results}"
+      ],
+      "requiredLines": [
+        "P3-13 retained reads passed: 217 compiler rows, 12 controls"
+      ],
+      "outputs": [
+        "retained-reads.tsv",
+        "retained-controls.tsv"
+      ],
+      "theorems": [
+        "ACGN.SixthFive.RetainedArtifactReads.complete_observation",
+        "ACGN.SixthFive.RetainedArtifactReads.missing_observation",
+        "ACGN.SixthFive.RetainedArtifactReads.detached_entry_rejected",
+        "ACGN.SixthFive.RetainedArtifactReads.wrong_owner_rejected",
+        "ACGN.SixthFive.RetainedArtifactReads.wrong_endpoint_rejected",
+        "ACGN.SixthFive.RetainedArtifactReads.wrong_occurrence_rejected"
+      ],
+      "outputPins": {
+        "retained-reads.tsv": "00d7452d7843111c4f488d6e9e299c9fd8ede38a023922925e73328568e2b779"
+      }
+    },
+    {
+      "parent": "P3-14",
+      "scope": "Projection ownership and digest binding on fixed source, foreign source, mutation and concurrency fixtures.",
+      "proof": "docs/obligation-repair/sixth-five/FrozenProjectionSnapshot.lean",
+      "witness": "src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java",
+      "kind": "producer",
+      "class": "is.fivefivefive.CanDis.CanonicalAlloyPipelineTest",
+      "args": [],
+      "requiredLines": [
+        "CanonicalAlloyPipelineTest passed: 2042 checks"
+      ],
+      "outputs": [],
+      "theorems": [
+        "Sixth.FrozenProjectionSnapshot.admission_iff",
+        "Sixth.FrozenProjectionSnapshot.successful_projection",
+        "Sixth.FrozenProjectionSnapshot.foreign_phase_order_rejects",
+        "Sixth.FrozenProjectionSnapshot.no_foreign_digest",
+        "Sixth.FrozenProjectionSnapshot.writes_preserve_frozen",
+        "Sixth.FrozenProjectionSnapshot.owned_observations_stable"
+      ]
+    }
+  ]
+}

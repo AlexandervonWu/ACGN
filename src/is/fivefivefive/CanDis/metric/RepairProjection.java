@@ -92,8 +92,11 @@ public final class RepairProjection {
 
     static Projection projectComponents(
             TheoryAlloyAdapter.Result evidence,
-            List<NormalForm> normalForms) {
+            List<NormalForm> requestedForms) {
         Objects.requireNonNull(evidence, "evidence");
+        // Validate and consume the same phase sequence even if its caller owns a mutable list.
+        List<NormalForm> normalForms = new ArrayList<>(
+                Objects.requireNonNull(requestedForms, "repair projection sources"));
         evidence.requireRepairProjectionSources(normalForms);
         CertifiedSemanticArtifact artifact = evidence.semanticArtifact();
         List<BinderBlockDescriptor> phaseDescriptors =
@@ -110,7 +113,6 @@ public final class RepairProjection {
         Map<EGraphNode, DependentChainSourceBinding> dependentChainSourceBindings =
                 evidence.dependentChainSourceBindings();
         Objects.requireNonNull(artifact, "artifact");
-        Objects.requireNonNull(normalForms, "normalForms");
         Objects.requireNonNull(phaseDescriptors, "phaseDescriptors");
         Objects.requireNonNull(phaseSourceCoordinates, "phaseSourceCoordinates");
         Objects.requireNonNull(localBinderDescriptors, "localBinderDescriptors");

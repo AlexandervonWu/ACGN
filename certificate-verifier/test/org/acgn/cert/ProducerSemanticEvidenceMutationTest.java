@@ -1060,7 +1060,7 @@ public final class ProducerSemanticEvidenceMutationTest {
                 Wire.node(section.tag(), section.scalars(), records));
     }
 
-    private static byte[] coordinatedCallOmission(
+    static byte[] coordinatedCallOmission(
             byte[] source,
             int recordIndex) {
         Wire.Node root = Codec.decode(source, Limits.defaults());
