@@ -28,7 +28,18 @@ Alloy theorem prover. A canonical distance of zero means equality under the
 implemented rewrite theory. Bounded Alloy checks and dataset labels provide
 separate semantic evidence.
 
-### Final experimental results (2026-11-21)
+### v3.2: Proven Rewrite Rules
+
+The [rule catalog and usage guide](docs/proven-rewrite-rules.md) covers the
+v3.1 static-domain `always` move and five new families of fixed-command rules.
+The former still runs during normalization. The latter run on request, with the
+actual command bounds; they do not alter default canonical forms or distances.
+
+Across all **4,496 correct references** in 181 question pools, the measured
+fixed-command rules reduced the total from **2,028 to 1,954** equivalence
+classes. [Inspect the evidence, reproduce the count, or replay the matches](docs/experimental-results/2026-11-25/README.md).
+
+### v3.1 full-corpus results (2026-11-21)
 
 The [v3.1 full-corpus report](docs/experimental-results/2026-11-21/README.md) and [headline data](docs/experimental-results/2026-11-21/headlines.json) describe frozen experiment `6648d7bd4148e6374a5446eaf12a3f1d7633db52`.
 
