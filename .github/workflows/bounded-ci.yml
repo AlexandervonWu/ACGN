@@ -36,6 +36,10 @@ jobs:
           printf 'ELAN_HOME=%s\n' "${ELAN_HOME}" >> "${GITHUB_ENV}"
       - name: Compile and audit cataloged rewrite obligations
         run: ./scripts/run_rewrite_rule_lean_checks.sh
+      - name: Exercise proven rewrite rule scopes and audit compiled Lean dependencies
+        run: bash scripts/proven-rules/test.sh
+      - name: Recount the published v3.2 pooled comparisons
+        run: python3 docs/experimental-results/2026-11-25/verify.py --live
       - name: Replay finite Java container traces in Lean from two clean builds
         run: python3 scripts/run_submission_container_closure.py /tmp/acgn-submission-container-closure
       - name: Refine the compiler-extracted Java selector and replay certified constructions
