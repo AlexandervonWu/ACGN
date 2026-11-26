@@ -1,0 +1,38 @@
+\documentclass[runningheads]{llncs}
+
+\usepackage{amsmath,amssymb}
+\usepackage{array,booktabs,float,graphicx,listings,multirow,xcolor,tikz,url}
+\usepackage{longtable,capt-of,needspace,xr}
+\usetikzlibrary{arrows.meta,backgrounds,fit}
+\emergencystretch=1.5em
+
+\definecolor{vanilla}{RGB}{75,105,145}
+\definecolor{flexible}{RGB}{0,125,120}
+\definecolor{slotblue}{RGB}{20,85,155}
+\definecolor{slotorange}{RGB}{180,80,10}
+\input{macros_compressed}
+
+\title{Typed Flexible-Arity Slotted E-Graphs:\\
+Supplementary Material}
+\titlerunning{Typed Flexible-Arity Slotted E-Graphs: Supplement}
+\author{Anonymous Author(s)}
+\institute{}
+
+\externaldocument{main_compressed}
+\begin{document}
+\raggedbottom
+\maketitle
+This supplement accompanies the paper. Appendix~\ref{app:formal-details}
+contains supporting calculations, exact Lean theorem mappings, proof
+dependencies, and implementation check boundaries;
+Appendix~\ref{app:evaluation-detail} gives the v3.3 results by invariant and the historical synthetic scaling study;
+and Appendix~\ref{app:canon-rules} collects the rewrite policy and side
+conditions. The proofs of the two main theorems and two supporting propositions
+appear in the main paper.
+\appendix
+\input{appendix_formal}
+\clearpage
+\input{appendix_eval}
+\clearpage
+\input{appendixC_vmcai_stage1}
+\end{document}

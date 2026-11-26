@@ -1,0 +1,292 @@
+{
+  "commands": {
+    "path": "[ARTIFACTS]/planned-commands.txt",
+    "sha256": "62963d96db136381e0dcc2279fbdab0f0b2c62c7d3ef6fef6ad82ed02a416cc3"
+  },
+  "completedAt": "2026-11-26T10:09:38.572648Z",
+  "configuration": {
+    "capabilityTarget": 500,
+    "heap": "8g",
+    "limit": 0,
+    "rewardPool": 100,
+    "seed": 55520260811,
+    "workers": 16
+  },
+  "dataset": {
+    "byteCount": 30141317,
+    "fileCount": 66080,
+    "root": "[CHECKOUT]/classified-data",
+    "sha256": "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689"
+  },
+  "dependencies": [
+    {
+      "path": "lib/AlloyASG-Release.jar",
+      "sha256": "fe672d7e54b75ce2e68fd512a3e0aa11f58cd8694b6b02b8da9606958a4847c4",
+      "sizeBytes": 85380
+    },
+    {
+      "path": "lib/AlloyASG.jar",
+      "sha256": "5adc247bae551739bb61db848eb8ba6ee3292300f126e2b286c3a298a22c9dc6",
+      "sizeBytes": 42535
+    },
+    {
+      "path": "lib/AlloyParser.jar",
+      "sha256": "be040bcd26ddcf042bb629f9c2a8c56e2f8bca0c829281c5cc0d07a047474fe3",
+      "sizeBytes": 121873
+    },
+    {
+      "path": "lib/alloy.jar",
+      "sha256": "8a8746b89d95f28762903c9acbd2bee8aca5014fe49a522b7184ba32ffcc5b58",
+      "sizeBytes": 20971507
+    },
+    {
+      "path": "lib/commons-cli-1.11.0.jar",
+      "sha256": "8f7f8605d68e15bf32db61ec94eac6fdafc51b1bdbe1e0e0802b57d23f387792",
+      "sizeBytes": 110167
+    },
+    {
+      "path": "lib/json-java.jar",
+      "sha256": "7dd2de1533e766e2b6c07d8194da85145ad313a167a4760050f5c9b6839604fe",
+      "sizeBytes": 89800
+    },
+    {
+      "path": "lib/slf4j-api-2.0.20.jar",
+      "sha256": "7e1446499b359675d8aabe6af2de86b85e72ae8a2a932c0b40d0e5ba57097439",
+      "sizeBytes": 70255
+    },
+    {
+      "path": "lib/slf4j-simple-2.0.20.jar",
+      "sha256": "8e701404786a4f87219d39d4853c86dfe4e86ae99376a39749df6c08e75022e0",
+      "sizeBytes": 15705
+    }
+  ],
+  "experimentJar": {
+    "path": "[ARTIFACTS]/build/acgn-experiments.jar",
+    "sha256": "aa497d2737078f75100c261cdf30d688df8405221477a622e107419d908d43d2",
+    "sizeBytes": 4986012
+  },
+  "fullManifestVerified": true,
+  "git": {
+    "commit": "d5c0c2a07504d53b13b28c61e9e64768c37eb984",
+    "dirty": false
+  },
+  "identitySha256": "6114103e3e589b2584914efe10fb9953c99654b078c9d93108d457f03a0cf1c7",
+  "manifestSha256": "fa75ee260af5afd80dd46e6e17c363eca0a3387bce861c3cae8557f9bbc15419",
+  "nativeOperationCounts": {
+    "attempted": 61598,
+    "certificationStatus": "BLOCKED",
+    "coverageUnit": "completed pair comparison attempts; workers may finish ahead of ordered result writing",
+    "errors": 0,
+    "examples": [],
+    "invalidReplay": 0,
+    "matched": 61598,
+    "mismatches": 0,
+    "schema": "acgn-native-operation-comparison-v1",
+    "unchecked": 0,
+    "uncheckedReasons": {}
+  },
+  "publishedPathPlaceholders": {
+    "[ARTIFACTS]": "New output directory",
+    "[CHECKOUT]": "Git worktree frozen at source commit",
+    "[RUN]": "Supervisor run directory"
+  },
+  "runId": "67a8e45b-0ba4-460e-9bae-215a814653fe",
+  "runtime": {
+    "cpu": "x86_64",
+    "java": "Picked up JAVA_TOOL_OPTIONS: -Xmx1g -XX:ActiveProcessorCount=16 -Djava.io.tmpdir=[RUN]/tmp\nopenjdk version \"17.0.21.1\" 2026-11-17\nOpenJDK Runtime Environment (build 17.0.21.1+2-1-24.04.1-Ubuntu)\nOpenJDK 64-Bit Server VM (build 17.0.21.1+2-1-24.04.1-Ubuntu, mixed mode, sharing)",
+    "logicalProcessors": 32,
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+  },
+  "source": {
+    "byteCount": 9391291,
+    "fileCount": 624,
+    "sha256": "437b841b9dc3060e6bfd7907bb7007e6348e3d8642b2bed3015623e0a9746ad7"
+  },
+  "stages": [
+    {
+      "commandSha256": "1bd14aa0fcc573cd2900411f2a0bab8625d6ec454ce7a7c7fb0a458b06b504b7",
+      "name": "canonical-batch",
+      "recordedAt": "2026-11-26T09:46:22.932016Z"
+    },
+    {
+      "commandSha256": "a883063b24f3ea38b5c648a80f0f94e1a6643d0a695a7d57af94044ac3a5d876",
+      "name": "augmenter",
+      "recordedAt": "2026-11-26T09:58:00.400679Z"
+    },
+    {
+      "commandSha256": "f04ca78d2c798af0c84593653d2813568ee6e79fc740fb3cf4cb7f2035300b18",
+      "name": "semantic",
+      "recordedAt": "2026-11-26T10:07:12.198958Z"
+    },
+    {
+      "commandSha256": "29ab2cc35b0b297bdef8d070592000ff90b0554757dde49344065e796369c95b",
+      "name": "capability-report",
+      "recordedAt": "2026-11-26T10:08:28.531053Z"
+    },
+    {
+      "commandSha256": "3b6f5fb4a14a0166f19433da5898be8b4d4c7d3928fff78fed7821beacdc447f",
+      "name": "slot-typing-natural",
+      "recordedAt": "2026-11-26T10:09:18.563472Z"
+    }
+  ],
+  "startedAt": "2026-11-26T09:22:36.850655Z",
+  "status": "complete",
+  "supervisor": [
+    {
+      "finishedAt": "2026-11-26T09:22:33.041119+00:00",
+      "name": "compile",
+      "startedAt": "2026-11-26T09:22:27.039680+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T09:22:35.042916+00:00",
+      "name": "jar",
+      "startedAt": "2026-11-26T09:22:33.042352+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T09:22:37.052081+00:00",
+      "name": "manifest-create",
+      "startedAt": "2026-11-26T09:22:35.051698+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T09:46:20.969848+00:00",
+      "name": "canonical-batch",
+      "startedAt": "2026-11-26T09:22:37.052849+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T09:46:22.971006+00:00",
+      "name": "record-canonical-batch",
+      "startedAt": "2026-11-26T09:46:20.970498+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T09:46:24.972513+00:00",
+      "name": "identity-after-canonical-batch",
+      "startedAt": "2026-11-26T09:46:22.971940+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T09:57:57.197776+00:00",
+      "name": "augmenter",
+      "startedAt": "2026-11-26T09:46:24.973322+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T09:58:01.199332+00:00",
+      "name": "record-augmenter",
+      "startedAt": "2026-11-26T09:57:57.198532+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T09:58:05.201607+00:00",
+      "name": "identity-after-augmenter",
+      "startedAt": "2026-11-26T09:58:01.200741+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:06:50.263579+00:00",
+      "name": "ablation",
+      "startedAt": "2026-11-26T09:58:05.202305+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:07:08.278025+00:00",
+      "name": "semantic",
+      "startedAt": "2026-11-26T10:06:50.264283+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:07:10.279240+00:00",
+      "name": "bind-semantic",
+      "startedAt": "2026-11-26T10:07:08.278720+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:07:12.280658+00:00",
+      "name": "record-semantic",
+      "startedAt": "2026-11-26T10:07:10.280104+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:07:16.282625+00:00",
+      "name": "identity-after-semantic",
+      "startedAt": "2026-11-26T10:07:12.281717+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:07:24.285069+00:00",
+      "name": "capability-generate",
+      "startedAt": "2026-11-26T10:07:16.283470+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:07:26.286662+00:00",
+      "name": "capability-soundness",
+      "startedAt": "2026-11-26T10:07:24.285912+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:08:24.386907+00:00",
+      "name": "capability-arms",
+      "startedAt": "2026-11-26T10:07:26.287334+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:08:26.388747+00:00",
+      "name": "capability-report",
+      "startedAt": "2026-11-26T10:08:24.387678+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:08:30.390265+00:00",
+      "name": "record-capability-report",
+      "startedAt": "2026-11-26T10:08:26.389442+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:08:34.392199+00:00",
+      "name": "identity-after-capability-report",
+      "startedAt": "2026-11-26T10:08:30.391079+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:16.674924+00:00",
+      "name": "slot-typing-natural",
+      "startedAt": "2026-11-26T10:08:34.393068+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:18.676335+00:00",
+      "name": "record-slot-typing-natural",
+      "startedAt": "2026-11-26T10:09:16.675738+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:22.678058+00:00",
+      "name": "identity-after-slot-typing-natural",
+      "startedAt": "2026-11-26T10:09:18.677116+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:24.679393+00:00",
+      "name": "bind-report-0",
+      "startedAt": "2026-11-26T10:09:22.678879+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:28.681269+00:00",
+      "name": "bind-report-1",
+      "startedAt": "2026-11-26T10:09:24.680366+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:30.682848+00:00",
+      "name": "bind-report-2",
+      "startedAt": "2026-11-26T10:09:28.682274+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:32.684172+00:00",
+      "name": "bind-report-3",
+      "startedAt": "2026-11-26T10:09:30.683655+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:34.685839+00:00",
+      "name": "bind-report-4",
+      "startedAt": "2026-11-26T10:09:32.685310+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:36.687574+00:00",
+      "name": "bind-report-5",
+      "startedAt": "2026-11-26T10:09:34.686930+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:44.691251+00:00",
+      "name": "manifest-finalize",
+      "startedAt": "2026-11-26T10:09:36.689777+00:00"
+    },
+    {
+      "finishedAt": "2026-11-26T10:09:50.693509+00:00",
+      "name": "manifest-final-verify",
+      "startedAt": "2026-11-26T10:09:44.692190+00:00"
+    }
+  ]
+}

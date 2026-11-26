@@ -1,0 +1,101 @@
+\section{Experimental Detail}
+\label{app:evaluation-detail}
+
+The natural, reference-pool and capability tables report the supervised
+\texttt{v3.3} run. The synthetic scaling table retains the v3 grid and its
+300-second deadline. Across all 132,032 reference pairs, 1,234
+matched a rule under a checked common command. All 132,032 reference pairs had a common command context.
+
+\subsection{Pipeline Variants}
+
+\begin{table}[H]
+\caption{Representation and equality discovery across the five distinct
+baselines and the two \CanDis{} implementations.}
+\label{tab:engine-boundary}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}%
+>{\raggedright\arraybackslash}p{2.45cm}%
+>{\raggedright\arraybackslash}p{2.7cm}%
+>{\raggedright\arraybackslash}p{3.05cm}%
+>{\raggedright\arraybackslash}p{3.25cm}@{}}
+\toprule
+Arm & Stored form & Equality discovery & Role\\
+\midrule
+Raw & ordered fixed-arity keys & bounded concrete rewrite frontier & fixed-arity baseline\\
+Raw + De Bruijn & fixed keys with DB leaves & same frontier & binding encoding added\\
+Java egglog & flattened concrete keys & same frontier & variadic internal baseline\\
+Java egglog + De Bruijn & flattened keys with DB leaves & same frontier & combined internal baseline\\
+Slotted & ordered invocations and integer slots & frontier plus bounded slot canonicalizer & untyped slot-aware baseline\\
+\CanDis{} (Fast Rewrite) & flexible Alloy repair view & staged normalization and reference metric & high-throughput canonical path\\
+\CanDis{} (Cert.-Integrated) & typed $\Seq/\Bag/\Set/\texttt{One}$ ports & certified graph, orbit, rebuild, finite unfolding & in-process certificate and invariant checks\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\input{figures/scoped-by-invariant}
+
+\subsection{Representation Sizes, Truth Pools, and Distance Distributions}
+
+\input{tables/table1_v3}
+\input{tables/table2_v3}
+\input{tables/table3_v3}
+
+\subsection{Complete Natural Ablation and Controlled Capability Tables}
+
+\input{tables/table6_v3}
+\input{tables/table7_v3}
+
+\subsection{Natural Slot Typing and Synthetic Scaling Summary}
+
+\input{tables/table8_v3_typing}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\linewidth]{figures/wall-speedup-surface.pdf}
+\caption{Synthetic typed-versus-untyped end-to-end JVM speedup surface
+($\log_{10}$ ratio across the 44/54 complete matched cells, without
+interpolating across censored timeout cells). Complements
+Figure~\ref{fig:synthetic-grid}.}
+\label{fig:synthetic-wall-surface}
+\end{figure}
+
+\subsection{Bounded Semantic Validation Checks}
+
+The natural checker evaluated 4,499 distinct zero
+claims in the source models and found no counterexamples at the recorded
+bounds. Each of the four deliberately invalid probes was refused by all
+seven ablation arms. The capability study ran 29 bounded
+sample checks across the generated families.
+
+\subsection{Reproduction Identifiers}
+
+\begingroup
+\def\UrlBreaks{\do\-\do\_\do\/\do0\do1\do2\do3\do4\do5\do6\do7\do8\do9%
+  \do\a\do\b\do\c\do\d\do\e\do\f}
+\Urlmuskip=0mu plus 1mu\relax
+The v3.3 experiment froze commit \path{d5c0c2a07504d53b13b28c61e9e64768c37eb984}.
+It used 16 workers, an 8\,GiB heap cap, reward pool 100 and seed
+\texttt{55520260811}. The following identifiers preserve the v3 synthetic
+and historical study configuration.
+\begin{itemize}
+\item Experiment commit: \path{2d70f89ab67241cd071387ecedd3b2f432821921}.
+\item Release commit (tag \texttt{v3}): \path{8770cb4b5f7133bad78058d9bc214f0ca36130d0}.
+\item Natural corpus SHA-256 (66,080 files):
+  \path{d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689}.
+\item Synthetic scaling dataset SHA-256 (270 pairs / 540 predicates):
+  \path{c490b2bb1e6199f2ed221aa3f1b2d22b1da5dd8604341f305302c27a45de6b5f}.
+\item Rule set: \texttt{canonical-equivalences-v3-explicit-laws};\\
+  repair metric manifest ID:\\
+  \texttt{certified-fast-rewrite-repair-distance-v25-}\\
+  \texttt{retained-phase-representation}.
+\item Natural and capability environment: AMD Ryzen~9 9950X3D (32 logical
+  processors), OpenJDK~17.0.21.0.3, 16 workers, 8\,GiB heap, seed
+  \texttt{55520260811}. Natural ablation run ID:
+  \path{8dfc4fcc-84f0-4e9e-a88f-218fe05439b6}.
+\item Synthetic grid environment: 8 concurrent isolated JVMs, 768\,MiB heap per
+  JVM, 300-second deadline per predicate per arm; run ID:
+  \path{e3d9bc4e-a514-471b-9e01-162562663f2e}.
+\end{itemize}
+\endgroup

@@ -1,0 +1,103 @@
+\section{Introduction}
+
+Relational specification languages such as Alloy~\cite{alloy,kodkod} let users
+express the same constraint in many syntactically distinct ways. Consider two
+Alloy predicates describing the same social-media visibility rule—a photo seen
+by a user must either come from a followed user or be an advertisement:
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}p{0.47\linewidth}@{\hspace{1.2em}}p{0.47\linewidth}@{}}
+\begin{minipage}[t]{\linewidth}\ttfamily
+pred left \{\\
+\hspace*{1em}all u: User, p: Photo |\\
+\hspace*{2em}p in u.sees implies\\
+\hspace*{3em}(p not in Ad) implies\\
+\hspace*{4em}p in u.follows.posts\\
+\hspace*{4em}or p in Ad\\
+\}
+\end{minipage}
+&
+\begin{minipage}[t]{\linewidth}\ttfamily
+pred right \{\\
+\hspace*{1em}all photo: Photo, user: User |\\
+\hspace*{2em}photo in user.sees implies\\
+\hspace*{3em}photo in Ad or\\
+\hspace*{3em}photo in user.follows.posts\\
+\}
+\end{minipage}
+\end{tabular}
+\end{center}
+To a raw abstract syntax tree (AST) comparator, \texttt{left} and \texttt{right}
+differ at almost every node: nested implications versus a single implication, a
+repeated \texttt{p in Ad} test, reversed disjunction operands, renamed bound
+variables (\texttt{u, p} vs.\ \texttt{user, photo}), and swapped declarations
+(\texttt{User, Photo} vs.\ \texttt{Photo, User}). Yet rewriting implications
+into disjunctions exposes three flat operands over the same two-variable body,
+allowing idempotence and commutativity to collapse \texttt{left} and
+\texttt{right} to the same canonical shape once their typed variables are
+aligned.
+
+This example illustrates a general coupling in e-graphs~\cite{ogEgraphs1,egraphsOG,egg,eqsat,eqsat-lmcs}
+between \emph{algebraic normalization} and \emph{open-term sharing}. Suppose an
+open expression is the conjunction
+\[
+ P(x,y)\land P(y,x),
+\]
+such as \texttt{u in v.follows and v in u.follows} inside a quantifier over
+\texttt{u, v: User}. Associativity and commutativity suggest storing
+conjunction as a flat container, and idempotence suggests a set. Yet
+\texttt{u in v.follows} and \texttt{v in u.follows} share the same open-term
+shape while assigning different caller variables to its argument positions. They
+can collapse into one set element only if the graph has proved $P(x,y)=P(y,x)$;
+otherwise, equating them would falsely turn an asymmetric relation into a
+symmetric one. Similarly, when simplification eliminates a variable (for
+instance, removing an unused binder), the canonical shape should contract to the
+remaining \emph{effective support} while preserving its embedding into the
+original caller context.
+
+We compose flexible-arity sequence, bag, and set ports with typed slotted
+interfaces. An invocation $m*a$ pairs an e-class $a$ with an injective,
+type-preserving map $m$ into the caller context, while recorded class symmetries
+justify specific slot rearrangements. Canonicalization extracts a kernel over
+its effective support, normalizes local invocation and binder-block orbits
+before deduplicating bags and sets, and selects a least representative modulo
+typed renaming. Types partition the renaming search space by variable sort, and
+separate licenses govern sibling laws and recursive flattening.
+
+Our formal argument establishes two guarantees over this abstract model:
+canonical shapes identify exactly the declared structural equivalence classes
+over effective supports (Theorem~\ref{thm:shape-exactness}), and equality
+judgments extracted from finite unfoldings hold in every model of the source
+equational theory (Propositions~\ref{thm:structural-soundness}
+and~\ref{thm:collision-soundness}, Theorem~\ref{thm:semantic-sound}). All four
+proofs appear in the main text, and Appendix~\ref{app:formal-details} records the
+exact mapping to our Lean~4.33.0 formalization.
+
+In Alloy, our canonical distance pipeline \CanDis{} distinguishes
+\emph{canonical equality} from \emph{repair distance}. For \texttt{left} and
+\texttt{right} above, both forms have distance zero under the implemented
+rewrite theory. If a student instead writes \texttt{photo in user.sees implies
+photo in user.follows.posts}—omitting \texttt{or photo in Ad}—canonical
+equality fails because the predicate is genuinely overconstrained, and
+\CanDis{} computes a positive structural edit distance over its normalized
+repair projection to locate nearby correct solutions.
+
+In the \texttt{v3.3} study of 66,080 Alloy4Fun files, both \CanDis{}
+rewrite paths recognized 4,499 of the 19,212 correct distinct-AST pairs,
+including all 2,228 original slotted zeros. They produced no incorrect zero
+among 42,386 labeled incorrect pairs. On complete invariant truth pools for
+those incorrect predicates, mean nearest distance was 12.267 for raw
+ASTs and 11.477 for \CanDis{}. On 5,500 controlled transformations, the
+slotted baseline and \CanDis{} recognized 5,500
+and 5,500 pairs, respectively. The historical
+540-predicate scaling grid isolates the cost of searching typed slot
+permutations. Certificate integration raises natural-ablation wall time
+from 26.683\,s to 398.186\,s.
+
+A further question arises when two correct submissions have different keys.
+A junction in the train-station exercise can be described as having more than
+one incoming track or as having neither zero nor one incoming track. Those
+conditions need not agree if the count overflows. Instead of installing an
+unconditional equation, the source comparison checks the rule against the
+actual Alloy command. Across 181 invariant pools, the 4,496 distinct raw ASTs yield 2,016 structural forms and 1,942 fixed-command components
+(Section~\ref{sec:scoped-pools}).

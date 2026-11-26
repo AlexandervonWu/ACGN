@@ -1,0 +1,459 @@
+\section{Typed Flexible-Arity Slotted E-Graphs}
+\label{sec:formalism}
+
+We fix a typed source signature and a choice of source equational laws. The
+representation separates three responsibilities: typed maps describe how an open
+expression is placed into a caller, ports describe the algebraic structure of
+an operator's children, and graph records track equations already proved.
+
+\paragraph{Two source equalities.}
+If both operands are unary relations, domain and range restriction select
+exactly the atoms in their intersection. This does not replace restriction
+of a binary relation: that operation selects tuples by one column.
+For a fixed domain $D$, $\forall x\in D.\,\Box P(x)$ and
+$\Box(\forall x\in D.\,P(x))$ both require $P(x)$ for every atom in $D$
+at every future instant. An empty $D$ is allowed. If $D$ can grow or
+shrink, the two formulas inspect different bindings; the rewrite is then
+not justified. The appendix gives the Lean statements and negative controls.
+
+\subsection{Contexts, invocations, and ports}
+
+A \emph{typed context} $\Gamma$ is a finite collection of distinct slots, each
+carrying a type. A \emph{typed embedding} is an injective, type-preserving map;
+a \emph{typed renaming} is an embedding with a typed inverse:
+\[
+ \TEmb(S,T)=\{m:S\hookrightarrow T\mid
+                    \operatorname{ty}(m(x))=\operatorname{ty}(x)\},
+\]
+and $\TRen(S,T)$ denotes the typed renamings. Identities and composites are
+embeddings, and renamings are closed under inverse and composition. Fixing a
+linear order on types defines a canonical context $\operatorname{Can}(S)$: list
+types in order and index the slots of each type from $0$. This preserves the
+slot count of each type without retaining original variable names.
+
+An e-class $a$ has interface $S_a$ and output type $\tau_a$. An
+\emph{invocation} of $a$ in caller $\Gamma$ is $m*a$, where
+$m\in\TEmb(S_a,\Gamma)$; its type is $\tau_a$. We abbreviate
+$\operatorname{id}_{S_a}*a$ by $a$. The map is part of the occurrence: two
+invocations of the same class can supply different caller variables.
+
+Each type-instantiated operator $f_\theta$ declares input \emph{ports} using
+containers $\Seq$, $\Bag$, or $\Set$ (sequences, multisets, or sets) paired
+with a nonempty set $J\subseteq\mathbb N$ of legal arities ($K^+$ for positive
+arities, $K^{=k}$ for arity $k$):
+\[
+ \kappa ::= \texttt{One}(\tau)\mid K^J(\kappa)
+ \mid\texttt{Bind}(\tau,\kappa)\mid\texttt{BindBlock}(\beta,\kappa),
+ \qquad K\in\{\Seq,\Bag,\Set\}.
+\]
+Checked syntax retains occurrence vectors even for bag and set ports so
+provenance can track duplicate removal and reordering; normalization then
+computes the sequence, multiset, or set key. A typed node has the form
+\[
+ n=f_\theta(q_1,\ldots,q_r),\qquad
+ q_i\in\operatorname{Port}_\Gamma(\kappa_i),\qquad
+ \operatorname{out}(n)=\tau_{f_\theta}.
+\]
+Port atoms are free slots, typed de Bruijn bound indices, or invocations.
+Binders extend the local de Bruijn scope. A binder-block descriptor $\beta$
+records types, domains, multiplicities, disjointness, and dependencies,
+together with an admitted subgroup $\operatorname{Aut}(\beta)$ of typed bound
+permutations whose elements preserve meaning under the descriptor's conditions.
+
+\paragraph{Licensed container laws.}
+A $\Seq$ port requires no sibling equation, $\Bag$ requires commutativity, and
+$\Set$ requires commutativity and idempotence. Recursive flattening is licensed
+separately: it applies only to a sole root container with matching element and
+result types, requires associativity for that exact operator instance, and
+requires arity closure:
+\begin{align*}
+ k\in J,\ 1\le j\le k &\implies j\in J &&(\text{for }\Set),\\
+ k,l\in J,\ k>0 &\implies k+l-1\in J &&(\text{for flat}).
+\end{align*}
+If a flat port admits zero operands, the source theory must also supply a unit.
+These laws must be justified by the source theory for the exact operator
+instance: conjunction uses a flat $\Set$, equality uses a commutative binary
+port without flattening, and integer addition uses a $\Bag$ whose flattening
+depends on whether arithmetic is modular or overflow-checked.
+
+\paragraph{Renaming and support.}
+The free support $\operatorname{slots}(v)$ collects the free slots in an
+expression: a free slot contributes itself, $m*a$ contributes $\operatorname{im}(m)$,
+bound indices contribute nothing, and composites take the union of their
+children. Any embedding $e\in\TEmb(\Gamma,\Gamma')$ acts componentwise, fixes
+bound indices, and maps $m*a$ to $(e\circ m)*a$. By structural induction,
+this action preserves schemas and output types and satisfies
+\begin{equation}
+ \operatorname{slots}(e\cdot v)=e[\operatorname{slots}(v)].
+ \label{eq:support-action}
+\end{equation}
+
+\subsection{A worked example: sharing without losing variables}
+\label{sec:worked-example}
+
+Let class $a$ represent the Alloy relation test $x\in y.\mathsf{follows}$ over
+$S_a=\{s:\mathsf{User},\,t:\mathsf{User}\}$, and let the caller have
+$x,y:\mathsf{User}$. The two maps
+$m(s)=x, m(t)=y$ and $m'(s)=y, m'(t)=x$ give invocations
+$m*a=(x\in y.\mathsf{follows})$ and $m'*a=(y\in x.\mathsf{follows})$. Inside
+a conjunction $\Set$ port $\{m*a,m'*a\}$, both invocations share class $a$ but
+remain distinct elements because $m\neq m'$. If the graph establishes
+$s\in t.\mathsf{follows}\iff t\in s.\mathsf{follows}$ and records the swap
+$\pi(s)=t, \pi(t)=s$ as a symmetry of $a$, then $m'=m\circ\pi$ puts both
+invocations in one local orbit. Normalizing that orbit before forming the set
+collapses $\{m*a,m'*a\}$ to one element; under a $\Bag$, both multiplicities
+remain, giving multiplicity~2; under a $\Seq$, both positions remain.
+
+A caller renaming acts globally on an entire kernel—renaming $(x,y)$ to
+$(u,v)$ preserves the relationship between $m$ and $m'$—whereas class
+symmetries act per invocation and binder-block permutations act only within a
+quantifier or comprehension block whose descriptor conditions admit them.
+
+\subsection{Graph structure and effective support}
+
+A finite graph stores class interfaces, typed node cases, parent links, and
+recorded interface symmetries. A parent link $a\xrightarrow{p}b$ carries
+$p\in\TEmb(S_b,S_a)$ between classes of equal output type. The parent forest has
+decreasing depths, so leader lookup terminates at a root $\ell$ with composite
+embedding $p_a\in\TEmb(S_\ell,S_a)$, sending $m*a$ to $\widehat m*\ell$ where
+$\widehat m=m\circ p_a$. Because $p_a$ need not be surjective,
+\begin{equation}
+ \operatorname{im}(m\circ p_a)\subseteq\operatorname{im}(m),
+ \label{eq:find-support}
+\end{equation}
+so leader normalization can contract the exposed support.
+
+Each leader $\ell$ records a group $G_\ell$ of justified typed symmetries. Two
+leader invocations align under a caller renaming $\rho\in\TRen(\Gamma,\Gamma')$
+when their leaders coincide and there exists $\pi\in G_\ell$ such that
+\begin{equation}
+ \rho\circ\widehat m=\widehat m'\circ\pi.
+ \label{eq:invocation-alignment}
+\end{equation}
+The structural equivalence relation compares sequences pointwise, bags by an
+occurrence bijection, sets by mutual forward and backward matching, unary
+binders by preserving the bound index, and binder blocks via admitted
+descriptor permutations, closed under reflexivity, symmetry, and transitivity.
+By composing~\eqref{eq:invocation-alignment} with inverses, caller renamings
+transport alignments via conjugation and leader symmetries preserve image
+supports.
+
+\subsection{Canonical shapes}
+\label{sec:algorithm}
+
+Canonicalization first follows parent links and applies licensed local
+simplifications to extract a \emph{kernel} $K_n$ over its effective support
+$\Delta_n\subseteq\Gamma_n$, retaining the support inclusion
+$\iota_n\in\TEmb(\Delta_n,\Gamma_n)$ and finite provenance between $n$ and
+$\iota_n\cdot K_n$. Within $K_n$, child and binder orbits are normalized before
+aggregating bags or deduplicating sets, and a least representative is chosen
+under free-slot renaming.
+
+To state exactness abstractly, a \emph{finite quotient presentation} fixes a
+linearly ordered carrier $X$, a local structural generator whose generated
+equivalence $\sim$ is decidable, a finite list enumerating every candidate in
+$X$ (\emph{carrier completeness}), and invariants asserting that each generator
+step preserves support, schema, leaf types, and output type. Define
+$Q(x)=\min\{y\in X\mid y\sim x\}$. An \emph{effective-support canonicalizer}
+additionally maps each node $n$ to an effective kernel $K_n$ over effective
+context $\Delta_n$, an inclusion $\iota_n\in\TEmb(\Delta_n,\Gamma_n)$, a
+constructive witness selector for $\sim$, and kernel preservation of support,
+schema, leaf types, and output type, such that $K_n$ and $K_{n'}$ are related
+by the presentation equivalence if and only if a typed renaming
+$\rho\in\TRen(\Delta_n,\Delta_{n'})$ carries a structural derivation
+$K_n\Rightarrow_\rho K_{n'}$. Put $\operatorname{Shape}(n)=Q(K_n)$.
+
+\begin{theorem}[Effective-support canonical-shape exactness]
+\label{thm:shape-exactness}
+Under a finite quotient presentation, $Q(x)\sim x$, $Q(Q(x))=Q(x)$,
+$Q(x)=Q(y)\iff x\sim y$, and $Q$ preserves support, schema, leaf types, and
+output type. Consequently, for any effective-support canonicalizer as above and
+nodes $n,n'$,
+\[
+ \operatorname{Shape}(n)=\operatorname{Shape}(n')
+ \quad\Longleftrightarrow\quad
+ \exists\rho\in\TRen(\Delta_n,\Delta_{n'}).\ K_n\Rightarrow_\rho K_{n'},
+\]
+and either side implies $\operatorname{out}(n)=\operatorname{out}(n')$.
+Moreover, the constructed canonical record supplies a witness
+$\sigma_n\in\TRen(C_n,\Delta_n)$ (where $C_n=\operatorname{Can}(\Delta_n)$)
+and ambient transport $\omega_n=\iota_n\circ\sigma_n\in\TEmb(C_n,\Gamma_n)$.
+\end{theorem}
+\begin{proof}
+For every $x\in X$, the finite orbit $\{y\in X\mid y\sim x\}$ is nonempty because
+$x\sim x$, so its minimum $Q(x)$ exists and satisfies $Q(x)\sim x$. If $x\sim y$,
+symmetry and transitivity identify their orbits, giving $Q(x)=Q(y)$;
+conversely, $Q(x)=Q(y)$ implies $x\sim Q(x)=Q(y)\sim y$. Setting $y=Q(x)$ yields
+idempotence. Induction on the reflexive--symmetric--transitive closure lifts
+support, schema, leaf-type, and output-type invariance from each generator to
+$\sim$, and hence to $Q(x)\sim x$.
+
+Applying this exactness to $K_n$ and $K_{n'}$ and composing with the
+presentation-to-derivation equivalence yields
+\[
+ \operatorname{Shape}(n)=\operatorname{Shape}(n')
+ \iff
+ \exists\rho\in\TRen(\Delta_n,\Delta_{n'}).\ K_n\Rightarrow_\rho K_{n'}.
+\]
+Either side puts $K_n$ and $K_{n'}$ in the same $\sim$-orbit, preserving
+$\operatorname{out}(K_n)=\operatorname{out}(n)$. Because $Q(K_n)\sim K_n$, the
+constructive selector yields a witness $\sigma_n\in\TRen(C_n,\Delta_n)$ and
+composing with $\iota_n$ yields $\omega_n=\iota_n\circ\sigma_n$.\qed
+\end{proof}
+
+\paragraph{Why carrier completeness and effective support matter.}
+If enumeration stops early under a heuristic budget instead of satisfying
+carrier completeness, equal shapes still witness equivalence ($\Rightarrow$),
+but two structurally equivalent expressions need not select the same minimum
+($\Leftarrow$). For example, in Alloy, \texttt{all u: User, p: Photo | p in Ad}
+drops the unused variable \texttt{u} during kernel extraction and contracts to
+effective support $\Delta=\{\texttt{p}:\mathsf{Photo}\}$, so its shape matches
+\texttt{all p: Photo | p in Ad} via a bijection between their one-slot
+effective contexts even though their ambient contexts have different sizes.
+
+\subsection{Building canonical records and search cost}
+\label{sec:canonicalization-procedure}
+
+A canonical record $(K_n,p_n,\sigma_n,\iota_n)$ stores the kernel $K_n$, least
+shape $p_n=\operatorname{Shape}(n)$, witness $\sigma_n:C_n\cong\Delta_n$,
+inclusion $\iota_n:\Delta_n\hookrightarrow\Gamma_n$, and extraction/normalization
+provenance. Construction proceeds in four steps:
+(1)~follow leaders, apply licensed local rules, and flatten visible matching
+operators;
+(2)~compute the effective support $\Delta_n$, forming $K_n$ and $\iota_n$;
+(3)~for each typed bijection $\sigma\in\TRen(C_n,\Delta_n)$, apply
+$\sigma^{-1}$ to $K_n$, normalize local invocation and binder orbits, and
+aggregate bags or deduplicate sets;
+(4)~select the least resulting shape $p_n$ and retain $\sigma_n$ and its
+derivation.
+Only $p_n$ acts as the collision key; the remaining fields place the shape in
+$\Gamma_n$.
+
+When a child merge or new symmetry triggers \emph{rebuilding}, affected parent
+records are recomputed and colliding keys are checked against output types and
+maps. Crucially, the exact enumeration in step~(3) searches
+$\prod_\tau|\Delta_{n,\tau}|!$ typed bijections, where $\Delta_{n,\tau}$ is
+the fibre of slots of type $\tau$. Slots of distinct types never mix in the
+permutation search, whereas $N$ slots of a single type retain the full $N!$
+search space—a scaling behavior we measure directly in Section~\ref{sec:eval-synthetic}.
+
+\input{figures/alloy-certificate-example}
+
+Figure~\ref{fig:alloy-certificate-example} returns to our opening Alloy
+example. Implication elimination exposes flat disjunctions, typed renaming and
+independent binder permutation align the \texttt{User} and \texttt{Photo}
+slots into $\Gamma_Q$, and $\Set$-port normalization removes operand order and
+the duplicate \texttt{p in Ad}, yielding distance~0 between \texttt{left} and
+\texttt{right} under the implemented rewrite theory. By contrast, \texttt{bug}
+omits \texttt{photo in Ad}, so canonical equality fails ($d>0$), and repair
+distance measures edits between its normalized repair projection and $Q$.
+
+\section{An Algebraic Soundness Argument}
+\label{sec:metatheory}
+
+We now connect structural derivations, shape collisions, and graph updates to
+the typed source equational theory $\mathcal T$, whose derivations
+$\mathcal T\vdash_\Gamma s=t$ are generated by primitive laws, forward
+congruence, reflexivity, symmetry, transitivity, and transport along embeddings
+$e\in\TEmb(\Gamma,\Gamma')$. In every typed model $\mathfrak M$ validating the
+primitive laws and congruence rules, environment restriction satisfies
+$\operatorname{eval}_{\mathfrak M}(e\cdot t,\eta')
+=\operatorname{eval}_{\mathfrak M}(t,\eta'\circ e)$, so every derivable
+certificate holds semantically in $\mathfrak M$.
+
+\subsection{From structural derivations to source equations}
+
+A \emph{typed structural realizer} $R$ interprets port atoms, containers,
+unary binders, binder blocks, and nodes as source terms and commutes with every
+embedding $e$. Constructor laws supply one-step equational certificates for
+$\Seq$ (positional bijection), $\Bag$ (occurrence bijection), $\Set$ (mutual
+forward and backward matching maps), unary binders (scope extension),
+descriptor-admissible binder-block permutations, and outer nodes, while leaf
+steps carry individual equational certificates.
+
+\begin{proposition}[Structural realization and congruence soundness]
+\label{thm:structural-soundness}
+Given a typed structural realizer $R$ commuting with embeddings, licensed
+constructor congruence laws, and per-leaf equational certificates, every direct
+structural derivation from $v$ to $v'$ under $e\in\TEmb(\Gamma,\Gamma')$ yields
+\[
+ \mathcal T\vdash_{\Gamma'} e\cdot R(v)=R(v'),
+ \qquad
+ \operatorname{eval}_{\mathfrak M}(e\cdot R(v),\eta)
+ =\operatorname{eval}_{\mathfrak M}(R(v'),\eta)
+\]
+in every typed model $\mathfrak M$ and environment $\eta$. The same holds for
+the indexed reflexive--symmetric--transitive closure under typed renamings
+$\rho\in\TRen(\Gamma,\Gamma')$, including descriptor-admissible binder-block
+permutations.
+\end{proposition}
+\begin{proof}
+Structural induction gives naturality $R(e\cdot v)=e\cdot R(v)$ from the
+supplied constructor commutation equations. Induction on the direct structural
+derivation then constructs the equational certificate: leaf steps use their
+supplied certificates; $\Seq$, $\Bag$, $\Set$, unary-binder, and binder-block
+cases apply the corresponding licensed constructor law to the inductive child
+certificates; and node steps apply node congruence.
+
+For the closure indexed by renamings, reflexivity supplies the identity
+certificate. Symmetry transports a $\rho$-indexed certificate along $\rho^{-1}$
+and applies certificate symmetry; transitivity transports the first certificate
+along $\rho_2$ and composes with the second, using naturality to match
+$\rho_2\circ\rho_1$. Induction over the resulting finite certificate establishes
+evaluation equality in every typed model $\mathfrak M$.\qed
+\end{proof}
+
+\paragraph{Why descriptor admissibility and constructor laws matter.}
+A type-preserving permutation cannot be applied blindly to every binder or
+operator. In Alloy, swapping \texttt{u: User, p: Photo} is admissible in
+\texttt{all u: User, p: Photo | ...}, but violates meaning in the dependent
+block \texttt{all u: User, p: u.sees | ...} or inside a set comprehension
+\texttt{\{u: User, p: Photo | ...\}} whose column order is observable.
+Likewise, under signed 4-bit Alloy arithmetic with overflow rejection,
+$(7+1)+(-1)$ fails at the first sum while $7+(1+(-1))$ evaluates to~$7$, so
+flattening requires an explicit operator-profile associativity law.
+
+\subsection{From a shape collision to an equation}
+
+A \emph{certified canonical record} over a shared canonical context $C$, output
+type $\tau$, shape carrier, and realization function $\operatorname{real}$
+comprises: (i)~a certified extraction $(n_i,K_i,\iota_i)$ with
+$\iota_i\in\TEmb(\Delta_i,\Gamma_i)$ and finite replayable provenance from
+$n_i$ to $\iota_i\cdot K_i$; (ii)~a typed support renaming
+$\sigma_i\in\TRen(C,\Delta_i)$; and (iii)~finite replayable provenance from
+$\sigma_i^{-1}\cdot K_i$ to $\operatorname{real}(p_i)$.
+
+\begin{proposition}[Compatible effective-shape collisions preserve equality]
+\label{thm:collision-soundness}
+Suppose two certified canonical records have $p_1=p_2$, and set
+$\rho=\sigma_2\circ\sigma_1^{-1}\in\TRen(\Delta_1,\Delta_2)$. Then
+\[
+ \mathcal T\vdash_{\Delta_2} \rho\cdot K_1 = K_2.
+\]
+Moreover, for any common context $\Omega$ and embeddings
+$e_i\in\TEmb(\Gamma_i,\Omega)$ satisfying the compatibility condition
+\begin{equation}
+ e_1\circ\iota_1 = e_2\circ\iota_2\circ\rho,
+ \label{eq:collision-compatible}
+\end{equation}
+we have $\mathcal T\vdash_\Omega e_1\cdot n_1 = e_2\cdot n_2$.
+\end{proposition}
+\begin{proof}
+Replaying each finite provenance by induction (using primitive laws,
+Proposition~\ref{thm:structural-soundness}, symmetry, and transitivity) yields
+$\mathcal T\vdash_{\Gamma_i} n_i=\iota_i\cdot K_i$ and
+$\mathcal T\vdash_C \sigma_i^{-1}\cdot K_i=\operatorname{real}(p_i)$. Since
+$p_1=p_2$, $\operatorname{real}(p_1)=\operatorname{real}(p_2)$, so composing
+the first normalization with the symmetric second gives
+$\mathcal T\vdash_C \sigma_1^{-1}\cdot K_1=\sigma_2^{-1}\cdot K_2$.
+Transporting along $\sigma_2$ yields $\mathcal T\vdash_{\Delta_2}\rho\cdot K_1=K_2$.
+
+For the ambient equation, transport the extraction certificates along $e_1$ and
+$e_2$, transport the kernel equation along $e_2\circ\iota_2$, and rewrite with
+the compatibility condition~\eqref{eq:collision-compatible}:
+\[
+ e_1\cdot n_1
+ =(e_1\circ\iota_1)\cdot K_1
+ =(e_2\circ\iota_2\circ\rho)\cdot K_1
+ =(e_2\circ\iota_2)\cdot K_2
+ =e_2\cdot n_2,
+\]
+producing a valid certificate in $\Omega$.\qed
+\end{proof}
+
+\paragraph{Why ambient compatibility matters.}
+Consider $\Omega=\{u,v:\mathsf{User},\,p:\mathsf{Photo}\}$ containing
+$n_1=(p\in u.\mathsf{sees})$ and $n_2=(p\in v.\mathsf{sees})$. Both share the
+canonical shape $q_1\in q_0.\mathsf{sees}$, inducing $\rho(u)=v$ and
+$\rho(p)=p$. Under $e_1=e_2=\operatorname{id}_\Omega$, however,
+$e_1(\iota_1(u))=u\neq v=e_2(\iota_2(\rho(u)))$, violating
+\eqref{eq:collision-compatible}. The compatibility premise allows both
+expressions to share a shape bucket without falsely equating $p\in u.\mathsf{sees}$
+with $p\in v.\mathsf{sees}$.
+
+\subsection{The graph invariant and finite-unfolding soundness}
+
+Assign each class $a$ a witness term $w_a$ over $S_a$. A stored case $c$ of
+$a$ has realization $r_c$ over $T_c$ and inclusion
+$\iota_c\in\TEmb(S_a,T_c)$. A graph state is \emph{coherent} when every live
+obligation carries a finite equational certificate in three families:
+\begin{align}
+ \text{(EC)}\qquad
+ &\mathcal T\vdash_{T_c} r_c=\iota_c\cdot w_a
+       &&\text{for each stored case }c\text{ of }a,\label{eq:EC}\\
+ \text{(PC)}\qquad
+ &\mathcal T\vdash_{S_a} w_a=p\cdot w_b
+       &&\text{for each parent edge }a\xrightarrow{p}b,\label{eq:PC}\\
+ \text{(SC)}\qquad
+ &\mathcal T\vdash_{S_a} w_a=\pi\cdot w_a
+       &&\text{for each symmetry generator }\pi\text{ of }a.\label{eq:SC}
+\end{align}
+We admit traces built from four evidence-preserving obligation transitions:
+addition of an obligation with a local certificate; rekeying an existing
+obligation via typed left and right endpoint bridges; composition of two
+existing obligations via three endpoint bridges; and removal or inheritance of
+already justified obligations. A \emph{certified finite unfolding} of $m*a$ to
+$t$ in $\Gamma$ picks a stored case $c$ of $a$, an extension
+$\bar m\in\TEmb(T_c,\Gamma)$ with $\bar m\circ\iota_c=m$, and finite provenance
+relating $t$ to $\bar m\cdot r_c$. Focusing on finite unfoldings lets the
+soundness theorem cover cyclic classes (such as $a=\{x,\,f(a)\}$) without
+requiring coinductive semantics for infinite trees.
+
+\begin{theorem}[Certificate-preserving reachability and finite-unfolding soundness]
+\label{thm:semantic-sound}
+Any finite trace of the four evidence-preserving obligation transitions
+starting from a state with no live obligations ends in a coherent state.
+Moreover, if two certified finite unfoldings in a caller context $\Gamma$
+produce $t$ and $u$ from classes $a$ and $b$ with caller maps $m,m'$, if parent
+paths reach a common leader $\ell$ with composite maps $\widehat m=m\circ p_a$
+and $\widehat m'=m'\circ p_b$, and if there exists a finite word $\pi$ in the
+recorded symmetry generators of $\ell$ (and their inverses) such that
+$\widehat m=\widehat m'\circ\pi$, then:
+\[
+ \mathcal T\vdash_\Gamma t=u,
+ \qquad
+ \operatorname{eval}_{\mathfrak M}(t,\eta)
+ =\operatorname{eval}_{\mathfrak M}(u,\eta)
+\]
+for every typed model $\mathfrak M$ and environment $\eta$, and for every
+common context $\Omega$ and equal embeddings $e_1=e_2\in\TEmb(\Gamma,\Omega)$,
+$\mathcal T\vdash_\Omega e_1\cdot t=e_2\cdot u$.
+\end{theorem}
+\begin{proof}
+The empty state is vacuously coherent. By induction on the trace, addition
+either inherits an existing certificate or uses the supplied local one;
+rekeying transports the source certificate and composes it with the left and
+right endpoint bridges; composition transports and chains two source
+certificates across the three endpoint bridges; and removal or inheritance
+retains existing certificates. Hence the final state satisfies (EC), (PC), and
+(SC).
+
+By induction on the parent path from $a$ to $\ell$, transporting each (PC)
+certificate into $\Gamma$ gives $\mathcal T\vdash_\Gamma m\cdot w_a=\widehat m\cdot w_\ell$.
+Replaying the unfolding provenance and transporting (EC) along $\bar m$ gives
+$\mathcal T\vdash_\Gamma t=\bar m\cdot r_c=m\cdot w_a=\widehat m\cdot w_\ell$,
+and likewise $\mathcal T\vdash_\Gamma u=\widehat m'\cdot w_\ell$. Induction on
+the symmetry word $\pi$ using (SC), symmetry, transitivity, and transport
+produces a certificate for $w_\ell=\pi\cdot w_\ell$. Transporting along
+$\widehat m'$ and using $\widehat m=\widehat m'\circ\pi$ gives
+\[
+ \mathcal T\vdash_\Gamma t
+ =\widehat m\cdot w_\ell
+ =(\widehat m'\circ\pi)\cdot w_\ell
+ =\widehat m'\cdot(\pi\cdot w_\ell)
+ =\widehat m'\cdot w_\ell
+ =u.
+\]
+Semantic equality in every typed model follows from certificate soundness, and
+transporting along $e_1=e_2$ yields the common-context certificate in $\Omega$.\qed
+\end{proof}
+
+\paragraph{Why recorded (SC) symmetry certificates matter.}
+Suppose leader $\ell$ represents $x\in y.\mathsf{follows}$ over
+$\{x,y:\mathsf{User}\}$. In $\Gamma=\{a,b:\mathsf{User}\}$, the two unfoldings
+$a\in b.\mathsf{follows}$ and $b\in a.\mathsf{follows}$ both reach $\ell$ and
+their embeddings differ by a type-preserving slot swap. Because \texttt{follows}
+is not symmetric, that swap has no (SC) certificate, so
+Theorem~\ref{thm:semantic-sound} does not equate them; once an expression is
+genuinely symmetric (such as $x\in y.\mathsf{follows}\land y\in x.\mathsf{follows}$),
+an (SC) certificate justifies the swap and the theorem validates the merge.

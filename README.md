@@ -35,6 +35,17 @@ CI replays all 2,228 original slotted zeros and a strict improvement witness.
 The full ablation checks the selected predicates on every measured file.
 [Slotted comparison and recovered pairs](docs/experimental-results/2026-11-26/README.md).
 
+### Latest results · v3.3
+
+In the supervised 66,080-file run, Fast Rewrite and Certificate-Integrated
+each returned zero on **4,499** correct AST-distinct
+student–oracle pairs, including **every one of the 2,228 original
+slotted e-graph zeros**. There were no incorrect zeros. Rules checked
+under the original Alloy command recognized **259**
+additional correct pairs at positive structural distance. The 181
+correct-reference pools yielded 2,016 structural forms and 1,942 fixed-command components.
+[Full results and paper](docs/experimental-results/v3.3/README.md).
+
 ### v3.2: Proven Rewrite Rules
 
 The [rule catalog and usage guide](docs/proven-rewrite-rules.md) covers the
@@ -190,7 +201,7 @@ snapshot below and the separate v2.16 validation run.
 
 ## Headline Results
 
-For the latest natural-corpus results, see the [v3.1 report](docs/experimental-results/2026-11-21/README.md). The previous full study suite ran on November 15-16, 2026, using commit
+For the latest natural-corpus results, see the [v3.3 report](docs/experimental-results/v3.3/README.md). The previous full study suite ran on November 15-16, 2026, using commit
 `2d70f89ab67241cd071387ecedd3b2f432821921`. The
 [v3 report](docs/experimental-results/2026-11-16/README.md) includes the
 full paired corpus, full-reference Augmenter, seven ablation and capability

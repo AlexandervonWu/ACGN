@@ -1,0 +1,36 @@
+{
+  "paired": 61598,
+  "skipped": 4482,
+  "zero": 4499,
+  "slottedRetained": 2228,
+  "newVsV31": 86,
+  "newVsSlotted": 2271,
+  "commands": {
+    "withCommand": 61598,
+    "commands": 61598,
+    "matches": 347,
+    "gain": 259
+  },
+  "rules": {
+    "fiber": 56,
+    "role": 30,
+    "difference": 1,
+    "mixedRole": 6,
+    "classifier": 254
+  },
+  "nativeOperations": {
+    "schema": "acgn-native-operation-comparison-v1",
+    "mismatches": 0,
+    "uncheckedReasons": {},
+    "examples": [],
+    "invalidReplay": 0,
+    "unchecked": 0,
+    "matched": 61598,
+    "attempted": 61598,
+    "certificationStatus": "BLOCKED",
+    "errors": 0,
+    "coverageUnit": "completed pair comparison attempts; workers may finish ahead of ordered result writing"
+  },
+  "rewards": 61598,
+  "rewardFailures": 0
+}

@@ -1,0 +1,34 @@
+\begin{table}[H]
+\centering
+\caption{Mean paired distance ($n=61{,}598$), nearest-reference distance
+($n=42{,}386$, across 1,894,168 recorded comparisons), and inclusive
+nearest-reference radius coverage. Coordinates use metric-specific edit units;
+a dash indicates a diagnostic not computed on the Augmenter pool.}
+\label{tab:distance-summary}
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+Coordinate & Unit & Paired mean & Nearest-truth mean\\
+& & ($n=61{,}598$) & ($n=42{,}386$)\\
+\midrule
+Levenshtein & characters & 39.261 & 28.055\\
+Raw Alloy AST & AST nodes & 17.087 & 12.267\\
+\CanDis{} & repair projection edits & 13.910 & 11.477\\
+Representative TED & finite-tree edits & 32.137 & ---\\
+\bottomrule
+\end{tabular}
+
+\medskip
+\begin{tabular}{@{}lrrrr|lrrrr@{}}
+\toprule
+Abs.\ radius & \multicolumn{2}{c}{Raw AST} & \multicolumn{2}{c|}{\CanDis{}} &
+Rel.\ radius & \multicolumn{2}{c}{Raw AST} & \multicolumn{2}{c}{\CanDis{}}\\
+\midrule
+$\le 1$ & 3,565 & (8.4\%) & 1,677 & (4.0\%) & $\le 5\%$ & 906 & (2.1\%) & 231 & (0.5\%)\\
+$\le 2$ & 5,895 & (13.9\%) & 4,336 & (10.2\%) & $\le 10\%$ & 3,305 & (7.8\%) & 1,163 & (2.7\%)\\
+$\le 5$ & 12,915 & (30.5\%) & 13,168 & (31.1\%) & $\le 20\%$ & 6,620 & (15.6\%) & 4,938 & (11.7\%)\\
+$\le 10$ & 23,087 & (54.5\%) & 25,298 & (59.7\%) & $\le 50\%$ & 17,088 & (40.3\%) & 16,046 & (37.9\%)\\
+\bottomrule
+\end{tabular}
+\end{table}

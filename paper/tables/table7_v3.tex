@@ -1,0 +1,30 @@
+\begin{table}[H]
+\centering
+\caption{Controlled capability benchmark across 11 transformation families of
+500 pairs each (5,500 total pairs). Var.\ denotes the variadic Java egglog
+core, DB denotes De Bruijn indexing, and \CanDis{} reports the shared recovery
+across both canonical implementations.}
+\label{tab:capability-benchmark}
+\scriptsize
+\setlength{\tabcolsep}{2.4pt}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Transformation family (500 pairs) & Raw & Raw+DB & Var. & Var.+DB & Slotted & \CanDis{}\\
+\midrule
+Alpha-equivalence & 0 & 500 & 0 & 500 & 500 & 500\\
+Associativity / commutativity / idempotence & 500 & 500 & 500 & 500 & 500 & 500\\
+Binder-block permutations & 1 & 22 & 1 & 22 & 500 & 500\\
+Safe prenex transformations & 500 & 500 & 500 & 500 & 500 & 500\\
+Negation / logical normalization & 500 & 500 & 500 & 500 & 500 & 500\\
+Temporal normalization & 500 & 500 & 500 & 500 & 500 & 500\\
+Composed: $\alpha$ + AC & 0 & 500 & 0 & 500 & 500 & 500\\
+Composed: $\alpha$ + binder permutation & 0 & 22 & 0 & 22 & 500 & 500\\
+Composed: binder permutation + prenex & 22 & 22 & 22 & 22 & 500 & 500\\
+Composed: AC + logical normalization & 500 & 500 & 500 & 500 & 500 & 500\\
+Composed: mixed 2--4 transformations & 62 & 62 & 62 & 62 & 500 & 500\\
+\midrule
+All composed (5 families / 2,500 pairs) & 584 & 1,106 & 584 & 1,106 & 2,500 & 2,500\\
+\textbf{All families (11 families / 5,500 pairs)} & 2,585 & 3,628 & 2,585 & 3,628 & 5,500 & 5,500\\
+\bottomrule
+\end{tabular}
+\end{table}

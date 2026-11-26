@@ -1,0 +1,214 @@
+\section{Supporting Calculations, Lean Correspondence, and Verification Scope}
+\label{app:formal-details}
+
+The main paper proves the four core theoretical results over the abstract
+formal model. This appendix provides the two elementary calculations referenced
+in Sections~\ref{sec:background} and~\ref{sec:formalism}, the exact
+paper-to-theorem map and proof dependency structure against the Lean~4.33.0
+development at tag \texttt{v3}, the remaining formalized lemmas, and the exact
+boundary between formal proofs and Java implementation checks.
+
+\subsection{Supporting Calculations}
+
+\paragraph{Size of binary AC closure.}
+Take $n$ distinct generators with no unit or additional equations. Square-free
+subproducts correspond to nonempty subsets of generators, yielding $2^n-1$
+classes. An ordered binary node corresponds to a pair of nonempty disjoint
+subsets: each generator is placed on the left, on the right, or in neither.
+Of the $3^n$ ternary assignments, $2^n$ leave the left side empty and $2^n$
+leave the right side empty, overlapping on the single all-absent assignment.
+Adding that overlap back yields $3^n+1-2^{n+1}$ ordered binary nodes.
+
+\paragraph{Changing caller names.}
+Suppose two leader invocations align via
+$\rho\circ\widehat m=\widehat m'\circ\pi$. After caller renamings $\eta$ and
+$\eta'$, the alignment transports via conjugation
+$\bar\rho=\eta'\circ\rho\circ\eta^{-1}$ because
+\[
+ \bar\rho\circ\eta\circ\widehat m
+ =\eta'\circ\rho\circ\widehat m
+ =\eta'\circ\widehat m'\circ\pi.
+\]
+When $\rho$ is the identity, $\widehat m=\widehat m'\circ\pi$. Because $\pi$ is
+a bijection, $\operatorname{im}(\widehat m)=\operatorname{im}(\widehat m')$, so
+any justified leader symmetry preserves the set of caller slots used.
+
+\subsection{Paper-to-Theorem Map and Proof Dependencies}
+
+Table~\ref{tab:lean-correspondence} maps each main-text result (plus the
+typed-slot partitioning property underlying Section~\ref{sec:eval-synthetic})
+to its exact file path and Lean declaration name(s) in the \texttt{v3}
+repository. Table~\ref{tab:lean-remaining} records the remaining supporting
+formal results.
+
+\begin{table}[ht]
+\centering
+\caption{Paper-to-theorem map against the Lean development at tag
+\texttt{v3}. Module paths under \texttt{TypedSlottedEGraphsPaper/} live in
+\texttt{paper-claims/formal/TypedSlottedEGraphsPaper/}.}
+\label{tab:lean-correspondence}
+\scriptsize
+\setlength{\tabcolsep}{2.2pt}
+\begin{tabular}{@{}%
+>{\raggedright\arraybackslash}p{3.0cm}%
+>{\raggedright\arraybackslash}p{3.0cm}%
+>{\raggedright\arraybackslash}p{5.75cm}@{}}
+\toprule
+Paper result & Repository file (\texttt{v3}) & Exact Lean declaration(s)\\
+\midrule
+Theorem~\ref{thm:shape-exactness}: Effective-support canonical-shape exactness &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak Normalization\allowbreak Bridge.lean} &
+\texttt{AmbientQuotient\allowbreak Presentation.\allowbreak ambientQuotientNormal\allowbreak FormExactness},
+\texttt{EffectiveSupport\allowbreak Canonicalizer.\allowbreak effectiveSupportCanonical\allowbreak ShapeExactness},
+\texttt{EffectiveSupport\allowbreak Canonicalizer.\allowbreak canonicalRecord\allowbreak Postconditions}\\[4pt]
+Proposition~\ref{thm:structural-soundness}: Structural realization and congruence soundness &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak StructuralContainer\allowbreak Adapter.lean};
+\texttt{Structural\allowbreak Semantics.lean} &
+\texttt{concreteTypedAlpha\allowbreak SemanticSoundness},
+\texttt{concretePortAndNode\allowbreak CongruenceCertificate},
+\texttt{concretePortAndNode\allowbreak CongruenceSemanticSoundness},
+\texttt{StructuralRealizer.\allowbreak structuralRealizationNaturality},
+\texttt{structuralAlphaBinderBlock\allowbreak SemanticSoundness},
+\texttt{structuralPortAndNode\allowbreak CongruenceSoundness}\\[4pt]
+Proposition~\ref{thm:collision-soundness}: Compatible effective-shape collisions &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak TheoremBridge.lean} &
+\texttt{paperF25CertifiedLeader\allowbreak KernelExtraction},
+\texttt{canonicalEqualityYields\allowbreak KernelCollision},
+\texttt{paperF26CertifiedEffective\allowbreak ShapeCollision},
+\texttt{paperAtom038Ambient\allowbreak CollisionCertificate}\\[4pt]
+Theorem~\ref{thm:semantic-sound}: Certificate-preserving reachability and finite-unfolding soundness &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak TheoremBridge.lean};
+\texttt{Reachability.lean}; \texttt{TraceSemantics.lean} &
+\texttt{paperF24FindAndFinite\allowbreak UnfoldingPreserve\allowbreak EquationalCertificates},
+\texttt{paperF27CertificatePreserving\allowbreak ReachabilityAndFinite\allowbreak UnfoldingSoundness},
+\texttt{certificatePreserving\allowbreak ReachabilityAndFinite\allowbreak UnfoldingSoundness},
+\texttt{obligationAddition\allowbreak PreservesCoherence},
+\texttt{obligationRekey\allowbreak PreservesCoherence},
+\texttt{obligationRemoval\allowbreak PreservesCoherence},
+\texttt{obligationComposition\allowbreak PreservesCoherence}\\[4pt]
+Section~\ref{sec:eval-synthetic}: Typed-slot partition search &
+\texttt{docs/slot-typing-\allowbreak ablation/\allowbreak Partitioned\allowbreak Permutation.lean} &
+\texttt{PartitionedPermutation.\allowbreak generated\_\allowbreak preserves\_\allowbreak key},
+\texttt{PartitionedPermutation.\allowbreak generated\_\allowbreak rejects\_\allowbreak cross\_\allowbreak partition},
+\texttt{PartitionedPermutation.\allowbreak every\_\allowbreak preserving\_\allowbreak mapping\_\allowbreak is\_\allowbreak represented}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Remaining formalized Lean results at tag \texttt{v3}.}
+\label{tab:lean-remaining}
+\scriptsize
+\setlength{\tabcolsep}{2.2pt}
+\begin{tabular}{@{}%
+>{\raggedright\arraybackslash}p{2.95cm}%
+>{\raggedright\arraybackslash}p{3.05cm}%
+>{\raggedright\arraybackslash}p{5.75cm}@{}}
+\toprule
+Topic & Repository file (\texttt{v3}) & Exact Lean declaration(s)\\
+\midrule
+Binary AC closure counts &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak ACClosureCounts.lean} &
+\texttt{ACClosureCounts.\allowbreak completeBinary\allowbreak ACClosureCounts},
+\texttt{ACClosureCounts.\allowbreak sizeOfComplete\allowbreak BinaryACClosure}\\[3pt]
+Category, support, rebuild quiescence &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak StructuralClaims.lean} &
+\texttt{typedEmbedding\allowbreak CategoryLaws},
+\texttt{leaderization\allowbreak ContractsSupport},
+\texttt{finiteRebuildQuiescence}\\[3pt]
+Concrete support and invocation safety &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak SyntaxSupport.lean} &
+\texttt{concreteTypedEmbeddings\allowbreak PreserveTypes},
+\texttt{concreteSlotSupportInvariance},
+\texttt{concreteTypeSafety\allowbreak OfInvocation}\\[3pt]
+Parent forest and collision index &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak ContextGraph.lean} &
+\texttt{FiniteTypedParentForest.\allowbreak find\_\allowbreak support\_\allowbreak contracts},
+\texttt{QuiescentFiniteTypedEGraph.\allowbreak graphInvocation\allowbreak Alignment\_\allowbreak transport},
+\texttt{QuiescentFiniteTypedEGraph.\allowbreak identityAligned\allowbreak LeaderSupport},
+\texttt{F10FiniteQuiescentGraph\allowbreak Environment.\allowbreak collisionIndexExact}\\[3pt]
+Source rule laws and arithmetic profile &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak ProfileRules.lean} &
+\texttt{tsgRule012\_\allowbreak phaseLocalPrenex\allowbreak AndDomainGuarding}--\texttt{tsgRule019\_\allowbreak implicationLocalSaturation},
+\texttt{tsgCe003\_\allowbreak overflowReassociation\allowbreak Counterexample},
+\texttt{tsgScope001\_\allowbreak zeroCanonical\allowbreak DistanceBoundary}\\[3pt]
+Worked abstract trace witness &
+\texttt{TypedSlottedEGraphs\allowbreak Paper/\allowbreak TraceEnvelope\allowbreak Witness.lean} &
+\texttt{TraceEnvelopeWitness.\allowbreak d1\_\allowbreak trace\_\allowbreak obligation},
+\texttt{TraceEnvelopeWitness.\allowbreak d2\_\allowbreak trace\_\allowbreak obligation},
+\texttt{TraceEnvelopeWitness.\allowbreak machineChecked\allowbreak EndToEndWitness}\\[3pt]
+Slot-typing grid \& negative controls &
+\texttt{docs/slot-typing-\allowbreak ablation/\allowbreak Model.lean}, \texttt{BalancedGrid.lean}, \texttt{Independent\allowbreak BindingBlocks.lean} &
+\texttt{different\_\allowbreak sorts\_\allowbreak distinct}, \texttt{erasure\_\allowbreak can\_\allowbreak collide},
+\texttt{typed\_\allowbreak mappings\_\allowbreak subset}, \texttt{allocation\_\allowbreak total}, \texttt{balanced},
+\texttt{mixed\_\allowbreak quantifier\_\allowbreak exchange\_\allowbreak is\_\allowbreak invalid},
+\texttt{dropping\_\allowbreak disjointness\_\allowbreak is\_\allowbreak invalid},
+\texttt{moving\_\allowbreak all\_\allowbreak across\_\allowbreak eventually\_\allowbreak is\_\allowbreak invalid}\\[3pt]
+Source normalization scheduling &
+\texttt{docs/distance-parity-\allowbreak 20261107/\allowbreak CapabilitySource\allowbreak Scheduling.lean} &
+\texttt{membership\_\allowbreak before\_\allowbreak distribution},
+\texttt{subcarrier\_\allowbreak membership\_\allowbreak elimination},
+\texttt{restriction\_\allowbreak universal\_\allowbreak neutral},
+\texttt{empty\_\allowbreak domain\_\allowbreak guard\_\allowbreak retained},
+\texttt{disjoint\_\allowbreak declarations\_\allowbreak retained}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Module dependency structure and trusted computing base.}
+The main formal development under \texttt{paper-claims/formal/} has an acyclic
+module graph:
+\begin{quote}\small
+\texttt{Core} $\to$ \{\texttt{SyntaxSupport}, \texttt{ContextGraph},
+\texttt{Certificates}\}\\
+$\to$ \{\texttt{FiniteNormalization} $\to$ \texttt{NormalizationBridge},\\
+\hspace*{1.2em}\texttt{StructuralSemantics} $\to$ \texttt{StructuralContainerAdapter},\\
+\hspace*{1.2em}\texttt{TraceSemantics} $\to$ \texttt{Reachability}\}\\
+$\to$ \texttt{TheoremBridge} $\to$ \texttt{ClaimLedger} / \texttt{PaperIndex}.
+\end{quote}
+Across the audited Lean~4.33.0 development (\texttt{tcb-manifest.json}
+under \texttt{paper-claims/formal/}),
+the 146 active mapped units depend solely on Lean's standard foundational
+axioms (\texttt{propext}, \texttt{Quot.sound}, \texttt{Classical.choice}),
+with zero project-defined axioms, zero \texttt{sorry} placeholders, and zero
+\texttt{native\_decide} or unsafe dependencies.
+
+\subsection{Formal Proofs vs.\ Implementation Checks and Empirical Evidence}
+
+To keep formal and empirical claims distinct:
+\begin{itemize}
+\item \textbf{Formal-model theorems} (Table~\ref{tab:lean-correspondence})
+  establish exactness, realization soundness, collision soundness, and
+  coherence-preserving finite-unfolding soundness over the Lean abstract
+  model, plus one concrete machine-checked abstract trace in
+  \texttt{TraceEnvelopeWitness}.
+\item \textbf{Java implementation checks} consist of (i)~in-process
+  strict-every-transition invariant and certificate checks in
+  Certificate-Integrated IR, (ii)~an independent Java certificate verifier and
+  adversarial suite covering support contraction, collision, union, symmetry,
+  rebuilding, path compression, container laws, binder orbits, and incomplete
+  evidence, (iii)~the native-operation comparison across all 61,598 eligible
+  paired comparisons (0 mismatches, 0 unchecked, 0 invalid replays, 0 errors),
+  and (iv)~bounded Alloy checks on the union of 4,499 natural zero claims and
+  29 capability subtype checks.
+\item \textbf{Open verification boundary:} The native-operation comparator
+  authenticates its \texttt{FROZEN\_NORMALIZED\_IR} boundary, while general
+  Java-to-Lean correspondence (\texttt{javaLeanCorrespondence\allowbreak Checked}),
+  source-to-certificate wire replay (\texttt{sourceCertificateWire\allowbreak ReplayChecked}),
+  and public repair-sequence linkage (\texttt{publicSequenceLinked}) remain
+  open. Likewise, observed zero-discrepancy agreement between Fast Rewrite and
+  Certificate-Integrated IR is an empirical check on the evaluated workloads,
+  not a universal equivalence theorem.
+\end{itemize}
+
+\paragraph{Source rewrites added in v3.1.}
+In \path{docs/section3-repair-audit/formal/Phase5SourceRules.lean},
+\path{unary_restrictions_are_intersection} treats unary restrictions, and
+\path{unary_image_of_domain_restriction} handles the typed join boundary.
+\path{static_all_commutes_with_always} fixes the domain across time;
+\path{changing_domain_blocks_all_always} refutes the unrestricted law.
+\path{next_fixed_binding_observation} keeps the bound value fixed and primes
+the observed carrier. The subdomain and difference lemmas restrict the
+binding at its original instant. These are results about the formal source
+semantics, not a proof of the whole Java frontend.

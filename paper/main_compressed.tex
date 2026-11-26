@@ -1,0 +1,73 @@
+\documentclass[runningheads]{llncs}
+
+\usepackage{amsmath,amssymb}
+\usepackage{array,booktabs,float,graphicx,listings,multirow,xcolor,tikz,url}
+\usepackage{longtable,capt-of,needspace,xr}
+\usetikzlibrary{arrows.meta,backgrounds,fit}
+\emergencystretch=1.5em
+
+\definecolor{vanilla}{RGB}{75,105,145}
+\definecolor{flexible}{RGB}{0,125,120}
+\definecolor{slotblue}{RGB}{20,85,155}
+\definecolor{slotorange}{RGB}{180,80,10}
+\input{macros_compressed}
+
+\title{Typed Flexible-Arity Slotted E-Graphs:\\
+Soundness and an Alloy Case Study}
+\titlerunning{Typed Flexible-Arity Slotted E-Graphs}
+\author{Anonymous Author(s)}
+\institute{}
+
+\ifdefined\FullDraft\else
+\externaldocument{supplement}
+\fi
+\begin{document}
+\maketitle
+\begin{abstract}
+Algebraic normalization and sharing of open expressions interact whenever an
+associative, commutative, or idempotent operator combines subterms whose free
+variables come from outer binders. We present typed flexible-arity slotted
+e-graphs, which compose sequence, bag, and set ports—whose sibling equations
+and recursive flattening licenses are certified separately—with explicit typed
+maps for open-term interfaces. Canonicalization separates an expression's
+effective-support kernel from its placement in the caller context. Over the
+abstract formal model, we prove four results formalized in Lean: complete
+finite quotient presentations yield exact canonical shapes; structural
+realization and compatible shape collisions preserve source equations; and
+graph updates preserving a local coherence invariant give sound judgments
+between finite unfoldings.
+
+We evaluate \CanDis{} in an Alloy case study across 66,080 student--oracle
+specification files (61,598 eligible distinct-AST comparisons and 4,482
+AST-identical paired rows) and a 5,500-pair controlled transformation suite.
+Both rewrite paths found 4,499 structural zeros among the correct
+distinct-AST pairs, retaining every one of the 2,228 original slotted
+zeros. Neither path assigned zero to a labeled incorrect pair. Five rule
+families tested under the original Alloy command recognized 259 additional
+correct pairs. Across 181 correct-reference pools, 4,496 unique raw ASTs
+yielded 2,016 structural forms and 1,942 fixed-command components. On a separate controlled suite,
+CanDis recognized 5,500 of 5,500 pairs, compared with
+3,628 for the De Bruijn baseline.
+\keywords{E-graphs \and Binding \and AC rewriting \and Alloy \and
+Canonical intermediate representations}
+\end{abstract}
+\input{intro_compressed}
+\input{prelims_compressed}
+\input{foundations_compressed}
+\input{eval_compressed}
+\input{conclusion_compressed}
+\clearpage
+\label{start:references}
+\bibliographystyle{splncs04}
+\bibliography{ref}
+\ifdefined\FullDraft
+\appendix
+\raggedbottom
+\clearpage
+\input{appendix_formal}
+\clearpage
+\input{appendix_eval}
+\clearpage
+\input{appendixC_vmcai_stage1}
+\fi
+\end{document}

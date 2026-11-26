@@ -1,0 +1,96 @@
+\section{Rewrite Policy and Side Conditions}
+\label{app:canon-rules}
+
+Section~\ref{sec:canonicalization-procedure} describes canonical-record
+construction. This appendix collects the rewrite choices used to expose and
+normalize operands. A rule applies only to a typed operator instance whose side
+conditions hold; the resulting source equation supplies the local certificate
+consumed by the soundness argument.
+
+\subsection{Rewrite Order and Side Conditions}
+\label{app:rule-order}
+
+The normalization order is parser cleanup, alpha normalization,
+capture-avoiding let substitution, branch elimination, negation normalization,
+phase-local prenexing and domain guarding, repeated negation and neutral
+cleanup after unused-binding removal, membership elimination prior to
+destructive distribution, container normalization, and local saturation with
+rebuilding. Quantifier motion stays within a temporal phase unless an explicit
+source law permits crossing its boundary.
+
+Parser aliases share an internal head only when the frontend establishes the
+same operator and type instance. Let substitution avoids capture via lifted de
+Bruijn substitution, which preserves newly introduced bound positions while
+substituting into outer scopes.
+
+\paragraph{Boolean rules.}
+Branch elimination uses
+\begin{align*}
+ A\Rightarrow B&=\neg A\lor B,\\
+ A\Leftrightarrow B&=(\neg A\lor B)\land(\neg B\lor A),\\
+ \operatorname{ite}(C,A,B)&=(C\land A)\lor(\neg C\land B)
+\end{align*}
+for formula-valued conditionals. Negation normalization applies double
+negation, constant negation, and De Morgan's laws. Local saturation adds
+Boolean identities, annihilators, idempotence, and complements:
+\begin{align*}
+ A\land\top&=A,& A\lor\bot&=A,&
+ A\land\bot&=\bot,& A\lor\top&=\top,\\
+ A\land A&=A,& A\lor A&=A,&
+ A\land\neg A&=\bot,& A\lor\neg A&=\top.
+\end{align*}
+Recognizing complementary atoms requires equality of the underlying normalized
+atoms, not merely matching operator names. Empty or singleton containers reduce
+to units or children only when the operator's laws license those endpoints.
+
+\paragraph{Temporal and atomic duals.}
+Negation exchanges always/eventually, historically/once, until/releases, and
+since/triggered with negated operands under the intended temporal semantics.
+Atomic duals include equality/inequality, membership/nonmembership, and
+complementary comparisons; unsupported operators keep an explicit negation.
+
+\paragraph{Quantifiers, domains, and scheduling.}
+Universal and existential negation swap the quantifier and negate the body,
+while multiplicity quantifiers use their own duals (e.g., negating
+\textsf{one} yields \textsf{notone}). Empty-domain laws handle each quantifier
+explicitly: \textsf{all}, \textsf{no}, and \textsf{lone} over an empty domain
+are true, whereas \textsf{some} and \textsf{one} are false. For finite
+carriers $C$, predicates $p,d$, and $r$ independent of the bound variable,
+\begin{align*}
+ (\exists_C p)\land r&=\exists_C(\lambda x.\,p(x)\land r),&
+ \exists_{\operatorname{filter}(d,C)}p&=\exists_C(\lambda x.\,d(x)\land p(x)),\\
+ (\forall_C p)\lor r&=\forall_C(\lambda x.\,p(x)\lor r),&
+ \forall_{\operatorname{filter}(d,C)}p&=\forall_C(\lambda x.\,\neg d(x)\lor p(x)).
+\end{align*}
+These identities hold even when $C$ is empty, whereas other quantifier/connective
+combinations may require nonemptiness and are not generalized by analogy.
+Unused-binder removal is followed by neutral cleanup so equivalent subterms
+reached by different simplification paths stabilize to the same shape, and
+membership elimination on relations runs before destructive distribution so
+source shapes needed by guarded rewrites are preserved.
+
+Binder-block permutations must preserve the full descriptor—types, domains,
+multiplicities, disjointness classes, and dependencies—rather than merely
+permuting slots of matching types.
+
+\subsection{Operator Profiles}
+
+The Alloy operator profile assigns carriers as follows:
+\begin{itemize}
+\item Boolean conjunction and disjunction, and relational union and
+  intersection, use $\Set$ ports with licensed flattening.
+\item Integer addition and multiplication use $\Bag$ ports; flattening is
+  licensed for modular $\operatorname{Fin}(2^w)$ arithmetic, whereas with
+  overflow rejection $(7+1)+(-1)$ fails in signed 4-bit arithmetic while
+  $7+(1+(-1))=7$, forbidding unguarded reassociation.
+\item Equality, inequality, and biconditional use commutative binary ports
+  without recursive flattening.
+\item Relational join, product, calls, and total-order predicates retain
+  positional ports; disjointness predicates use nonflat bags.
+\end{itemize}
+Under Alloy's subset semantics, $x\ \texttt{in}\ \texttt{none}$ reduces to false
+only when $x$ is known nonempty, since an empty relation is a subset of
+\texttt{none}. Finally, canonical equality ($d=0$ under a complete finite
+presentation) tests membership in the declared structural quotient, whereas
+repair distance ($d_{\mathrm{repair}}>0$) measures structural edits between
+repair projections; Section~\ref{sec:evaluation} reports them separately.
