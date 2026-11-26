@@ -28,6 +28,18 @@ Alloy theorem prover. A canonical distance of zero means equality under the
 implemented rewrite theory. Bounded Alloy checks and dataset labels provide
 separate semantic evidence.
 
+### Latest results · v3.3
+
+The supervised study covered all 66,080 Alloy4Fun files. Fast Rewrite and
+Certificate-Integrated each recognized **4,499 correct structural zeros**,
+including **all 2,228 original slotted zeros**. Each added **2,271** correct
+zeros over Slotted and produced zero incorrect merges. The fixed-command
+rules verified **259 additional correct pairs** at positive structural
+distance. The 181 correct-reference pools contain **4,496 unique ASTs,
+2,016 structural forms, and 1,942 fixed-command components**.
+[Full results and reproducibility data](https://github.com/AlexandervonWu/ACGN/blob/v3.3/docs/experimental-results/v3.3/README.md) ·
+[Paper and release assets](https://github.com/AlexandervonWu/ACGN/releases/tag/v3.3).
+
 ### v3.2: Proven Rewrite Rules
 
 The [rule catalog and usage guide](docs/proven-rewrite-rules.md) covers the
@@ -179,7 +191,7 @@ original requirements in two clean builds. The current Section 3 assessment has 
 
 ## Headline Results
 
-For the latest natural-corpus results, see the [v3.1 report](docs/experimental-results/2026-11-21/README.md). The previous full study suite ran on November 15-16, 2026, using commit
+For the latest natural-corpus results, see the [v3.3 report](https://github.com/AlexandervonWu/ACGN/blob/v3.3/docs/experimental-results/v3.3/README.md). The previous full study suite ran on November 15-16, 2026, using commit
 `2d70f89ab67241cd071387ecedd3b2f432821921`. The
 [v3 report](docs/experimental-results/2026-11-16/README.md) includes the
 full paired corpus, full-reference Augmenter, seven ablation and capability
