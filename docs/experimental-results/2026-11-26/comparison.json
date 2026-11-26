@@ -1,0 +1,214 @@
+{
+  "armDistanceDisagreements": 0,
+  "baseCommit": "97bb154f544a7dc68cee993590ffc72c67d1923e",
+  "candidateClassTreeSha256": "c186aa3ac65602f36b06cd195edea90e1fe4412744ff49d08b072d6b3f6269b7",
+  "certified": {
+    "canonicalZeroLosses": 0,
+    "changedDistances": 2129,
+    "correctZeros": 4499,
+    "distanceRowsSha256": "c581ca7b9a7e6cb8fa982f7e9f7bb12ad2baf2d36073f6c3164dae24ecdf1ae9",
+    "errors": 0,
+    "incorrectZeros": 0,
+    "slottedZeroLosses": 0,
+    "zeroGains": 86
+  },
+  "corpusGitTree": "7c70211db739ab913d78b030d11d90b58c57df6c",
+  "correct": 19212,
+  "deltaTableSha256": "306b8e4a6a340a183d2b82e83ebfe6feb85d182180d5e9df7cf31cefea240ed0",
+  "elapsedSeconds": 719.978900679,
+  "fast": {
+    "canonicalZeroLosses": 0,
+    "changedDistances": 2129,
+    "correctZeros": 4499,
+    "distanceRowsSha256": "c581ca7b9a7e6cb8fa982f7e9f7bb12ad2baf2d36073f6c3164dae24ecdf1ae9",
+    "errors": 0,
+    "incorrectZeros": 0,
+    "slottedZeroLosses": 0,
+    "zeroGains": 86
+  },
+  "first50Failures": [],
+  "historicalLosses": [
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/4mNN3z28SdwhfHtn2_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    },
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/7yf6otwpXhRdBn4Da_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    },
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/8YFbrPvDWYWciWG29_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    },
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/AEnqk4jM6mRwkWYQd_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    },
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/JfuyLyzR2QpPBuv7j_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    },
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/ZJR9GqfpqjJoThccT_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    },
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/aM4CAZYi4mPtGQmbW_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    },
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/vE6z9RXND8gZzbdgS_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    },
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/wFJJkTwS2M6tLmHGF_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    },
+    {
+      "certified": 0,
+      "fast": 0,
+      "oracle": "inv8c",
+      "path": "trainStationNew/correct/yS9bdPRSYkRtLGBSS_inv8.als",
+      "priorCanonical": 5,
+      "priorSlotted": 0,
+      "status": "CORRECT",
+      "student": "inv8"
+    }
+  ],
+  "incorrect": 42386,
+  "matrixSha256": "ba2e1a2dc7dd9bfda062ad0aab17a28a83646e8971097b9b07df48f32c7f5595",
+  "measured": 61598,
+  "mode": "all",
+  "nativeUNSAT": 86,
+  "numericComparisonWithSlotted": {
+    "equal": 10447,
+    "larger": 14319,
+    "smaller": 36832
+  },
+  "originalSlotted": {
+    "canonicalZeroLosses": 0,
+    "changedDistances": 0,
+    "correctZeros": 2228,
+    "distanceRowsSha256": "a2d87904eb2247101b1cdef186da28dbd53f3c2e3acfe6f16aa2dd461908827b",
+    "errors": 0,
+    "incorrectZeros": 0,
+    "slottedZeroLosses": 0,
+    "zeroGains": 0
+  },
+  "pass": true,
+  "preRepairClassTreeSha256": "ff244fdbc3bf05086ada5a2b8404114f1476eedea2e297795f41adc50b768e19",
+  "preRepairFast": {
+    "canonicalZeroLosses": 0,
+    "changedDistances": 0,
+    "correctZeros": 4413,
+    "distanceRowsSha256": "723736a0981323475658b0448366e8173f0a146293cecfe19c06ba6d9aa3aeb6",
+    "errors": 0,
+    "incorrectZeros": 0,
+    "slottedZeroLosses": 10,
+    "zeroGains": 0
+  },
+  "priorCanonicalZeros": 4413,
+  "priorSlottedZeros": 2228,
+  "recovered": 10,
+  "referenceReplay": {
+    "archiveHashes": {
+      "pairs.csv.gz": "c1869d9dcacc65439862742405e1fbf75de7de13aab0678fe82e271940d4603f",
+      "references.jsonl.gz": "a135caa38f3c6720fb5c00581fe4a72808068081c6e2a2d7b4f4e44ed3e51524"
+    },
+    "directions": 380,
+    "explicitSubsetDirections": 74,
+    "groups": [
+      [
+        3741,
+        3742,
+        3743,
+        3757,
+        3765,
+        3769,
+        3772,
+        3773,
+        3775,
+        3778,
+        3782,
+        3788
+      ],
+      [
+        3745,
+        3748,
+        3755,
+        3758,
+        3759,
+        3764,
+        3771,
+        3781
+      ]
+    ],
+    "matchedExplicitSubsetDirections": 74,
+    "newZeroDirections": 192,
+    "oldZeroDirectionsRetained": 188,
+    "operationStatuses": {
+      "MATCHED": 380
+    },
+    "pairs": 190,
+    "zeroInBothAndOperationsMatched": 380
+  },
+  "sourceSha256": {
+    "src/is/fivefivefive/CanDis/core/EGraphNode.java": "ce10a0e5d194004254ea11934fff11f429a9c59e86c388894463c13fc9068eef",
+    "src/is/fivefivefive/CanDis/core/NormalForm.java": "24f0aa60d41124fc0cadc8b5460e7f44c42c718eabb944e3692529e43ea6db8e"
+  },
+  "workers": 16
+}

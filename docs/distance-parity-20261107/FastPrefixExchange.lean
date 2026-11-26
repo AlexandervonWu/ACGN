@@ -4,8 +4,8 @@ namespace FastPrefixExchange
 
 -- Mirrored literally by FastPrefixSourceTest; its executable receipt checks the
 -- parsed typed coordinates, declaration owners, and actual Java transport.
-def source := "sig A {r:set A} pred p {all x:A | all y:A | x in y.r}"
-def sourceSha256 := "5365eba78a72ecb9952c98492691c14ef8a3683e704c08bc3808498ed4232ce0"
+def source := "sig A {r:set A} pred p {all x:A | all y:A | y->x in r}"
+def sourceSha256 := "44416ad3f03c8e9d3c5fd76d080f6adc683fc2e04c57bb696e03791f503317d0"
 def owners := ["root/predicate[0]/decl[0]@pos", "root/predicate[0]/body[1]/decl[0]@pos"]
 def typedSlots := ["root/predicate[0]/decl[0]@pos#0:ONE:A",
   "root/predicate[0]/body[1]/decl[0]@pos#0:ONE:A"]
@@ -48,7 +48,7 @@ theorem some_exchange {A : Type} (domain : A → Prop) (body : A → A → Prop)
   · rintro ⟨x,hx,y,hy,h⟩; exact ⟨y,hy,x,hx,h⟩
   · rintro ⟨y,hy,x,hx,h⟩; exact ⟨x,hx,y,hy,h⟩
 
--- x in y.r is r y x for singleton A-valued bindings. This theorem covers
+-- y->x in r is r y x for singleton A-valued bindings. This theorem covers
 -- every carrier/relation, not one selected finite valuation.
 theorem source_instance_sound {A : Type} (r : A → A → Prop) :
     (∀ x, True → ∀ y, True → r y x) ↔ (∀ y, True → ∀ x, True → r y x) :=

@@ -3080,6 +3080,47 @@ theorem all_admitted_positive_membership_iff_domain_subset
     exact domainSubset atom ((admitted_nonexact_implies_subset
       multiplicity domain candidate admitted nonexact) atom candidateMember)
 
+/-- The retained bindings before and after the selected slot are represented by
+    `p` and `s`. Their admissibility can encode dependencies within each block.
+    In particular, the suffix domain does not read the selected slot `x`.
+    Universal quantification over either block also covers empty domains. -/
+theorem universal_prefix_positive_membership
+    (prefixDomain : Rel β) (suffixDomain : β → Rel γ) (domain : β → Rel α)
+    (remainingGuard : β → γ → Prop) (target : β → γ → Rel α) :
+    (∀ p, prefixDomain p → ∀ x, admits .one (domain p) x →
+      ∀ s, suffixDomain p s → remainingGuard p s → subset x (target p s)) ↔
+    (∀ p, prefixDomain p → ∀ s, suffixDomain p s →
+      remainingGuard p s → subset (domain p) (target p s)) := by
+  constructor
+  · intro source p hp s hs hg
+    apply (all_admitted_positive_membership_iff_domain_subset .one (domain p) (target p s) (by decide)).mp
+    intro x hx
+    exact source p hp x hx s hs hg
+  · intro reduced p hp x hx s hs hg
+    exact (all_admitted_positive_membership_iff_domain_subset .one (domain p) (target p s) (by decide)).mpr
+      (reduced p hp s hs hg) x hx
+
+/-- A conjunctive membership guard narrows the selected slot to a subdomain.
+    The remaining guard and the observation's target do not read that slot.
+    Both remain in the original environment of all the other bindings. -/
+theorem universal_prefix_guarded_positive_membership
+    (prefixDomain : Rel β) (suffixDomain : β → Rel γ) (domain : β → Rel α)
+    (remainingGuard : β → γ → Prop) (filter target : β → γ → Rel α)
+    (subdomain : ∀ p s, subset (filter p s) (domain p)) :
+    (∀ p, prefixDomain p → ∀ x, admits .one (domain p) x →
+      ∀ s, suffixDomain p s →
+      (remainingGuard p s ∧ subset x (filter p s)) → subset x (target p s)) ↔
+    (∀ p, prefixDomain p → ∀ s, suffixDomain p s →
+      remainingGuard p s → subset (filter p s) (target p s)) := by
+  constructor
+  · intro source p hp s hs hg atom hf
+    have hx := singleton_admitted_for_every_nonexact_multiplicity .one (domain p) atom
+      (subdomain p s atom hf) (by decide)
+    exact source p hp (singletonRel atom) hx s hs
+      ⟨hg, singleton_subset (filter p s) atom hf⟩ atom rfl
+  · intro reduced p hp x _ s hs guard atom hx
+    exact reduced p hp s hs guard.1 atom (guard.2 atom hx)
+
 theorem some_set_positive_membership_is_true
     (domain target : Rel α) :
     ∃ candidate, admits .set domain candidate ∧ subset candidate target := by

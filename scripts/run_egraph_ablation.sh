@@ -10,9 +10,11 @@ if [[ -n "${ACGN_EXPERIMENT_JAR:-}" ]]; then
 else
   BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/acgn-egraph-ablation.XXXXXX")"
   trap 'rm -rf "$BUILD_DIR"' EXIT
-  mapfile -t sources < <(find "$ROOT/src" -name '*.java' -type f | sort)
-  javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" \
-    -d "$BUILD_DIR" "${sources[@]}"
+  ablation_src="$ROOT/src/is/fivefivefive/CanDis"
+  # EqualityCertificates.java also declares the package-private DerivedEqualityCertificate.
+  javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" -sourcepath "$ROOT/src" -d "$BUILD_DIR" \
+    "$ablation_src/EGraphAblationSuite.java" "$ablation_src/EGraphAblationStudy.java" \
+    "$ablation_src/theory/EqualityCertificates.java"
   classpath="$BUILD_DIR:$ROOT/lib/*"
 fi
 cd "$ROOT"

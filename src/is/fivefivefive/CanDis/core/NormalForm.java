@@ -3200,7 +3200,8 @@ public class NormalForm {
                     rewritten.addNormalizedChild(rewrittenChild);
                 }
             }
-            return rewritten;
+            return rewritten.getOpcode() == Opcode.FORALL
+                    ? eliminateUniversalMembership(rewritten) : rewritten;
         }
 
         Map<String, EGraphNode> scopedBindings = shadowsLetBindings(node) ? new HashMap<>(bindings) : bindings;
@@ -3478,6 +3479,159 @@ public class NormalForm {
         }
         node.setNormalizedChildren(rewritten);
         return node;
+    }
+
+    /**
+     * Project the member of a universal membership test out of a contiguous
+     * universal prefix. The other coordinates may occur in its domain and RHS,
+     * but their domains must not depend on the projected coordinate.
+     */
+    @LeanVerifiedRewrite("R0-BIND-002")
+    private static EGraphNode eliminateUniversalMembership(EGraphNode root) {
+        List<EGraphNode> prefix = new ArrayList<>();
+        EGraphNode body = root;
+        int slots = 0;
+        while (body.getOpcode() == Opcode.FORALL) {
+            List<EGraphNode> children = body.getChildren();
+            if (!EGraphNode.hasBooleanFormulaType(body)
+                    || !EGraphNode.hasParserQuantifierSourceAuthority(body, Opcode.FORALL)
+                    || children.size() < 2) return root;
+            for (int i = 0; i < children.size() - 1; i++) {
+                var declaration = children.get(i);
+                if (!isRelDecl(declaration.getOpcode()) || declaration.getChildren().size() < 2)
+                    return root;
+                slots += declaration.getChildren().size() - 1;
+            }
+            prefix.add(body);
+            body = children.get(children.size() - 1);
+        }
+        if (slots < 2) return root;
+
+        EGraphNode predicate = body;
+        EGraphNode guard = null;
+        if (body.getOpcode() == Opcode.IMPLIES && body.getChildren().size() == 2
+                && EGraphNode.hasBooleanRewriteAuthority(body)) {
+            guard = body.getChildren().get(0);
+            body = body.getChildren().get(1);
+        }
+        if (!isPositiveSourceMembership(body)) return root;
+        var member = body.getChildren().get(0);
+        var relation = body.getChildren().get(1);
+        String key = member.getAlphaName();
+        var memberType = member.getExactAlloyType();
+        if (member.getOpcode() != Opcode.VARIABLE || memberType == null
+                || memberType.kind() != is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
+                || memberType.relationArity() != 1 || key == null || !key.startsWith("@bind:")
+                || containsBindingReference(relation, key) || containsOpcode(root, Opcode.REF)) return root;
+
+        var selected = correlatedMembershipDeclaration(root, prefix, relation, key);
+        if (selected == null) return root;
+        var descriptor = domainDescriptor(selected.getChildren().get(0));
+        if (descriptor.cardinality != Cardinality.ONE || descriptor.domain == null) return root;
+        var guards = new ArrayList<EGraphNode>();
+        if (guard != null) collectUniversalGuards(guard, guards);
+        var domain = guardedMembershipDomain(descriptor.domain, guards, key);
+        if (domain == null) return root;
+
+        var result = EGraphNode.parserCertifiedMembershipQuantifierElimination(
+                root, Opcode.FORALL, Cardinality.ONE, member.getEClassRef(), domain.getEClassRef(),
+                relation.getEClassRef(), true);
+        if (result == null) return root;
+        if (!guards.isEmpty()) {
+            var implication = copyShallow(predicate, Opcode.IMPLIES);
+            implication.addNormalizedChild(conjoin(null, guards));
+            implication.addNormalizedChild(result);
+            result = implication;
+        }
+        return retainUniversalPrefix(prefix, selected, key, result);
+    }
+
+    private static EGraphNode correlatedMembershipDeclaration(EGraphNode root,
+            List<EGraphNode> prefix, EGraphNode relation, String key) {
+        // Leave dead slots to the liveness pass, which records their source positions.
+        Set<String> uses = new java.util.HashSet<>();
+        collectBindingUses(root, uses);
+        EGraphNode selected = null;
+        boolean correlated = false;
+        for (var owner : prefix) {
+            var children = owner.getChildren();
+            for (var decl : children.subList(0, children.size() - 1)) {
+                var terms = decl.getChildren();
+                if (containsBindingReference(terms.get(0), key)) return null;
+                for (var slot : terms.subList(1, terms.size())) {
+                    if (slot.getOpcode() != Opcode.VARIABLE || slot.getAlphaName() == null
+                            || !uses.contains(slot.getAlphaName())) return null;
+                    if (key.equals(slot.getAlphaName())) {
+                        if (selected != null || decl.getOpcode() != Opcode.GENERICRELDECL) return null;
+                        selected = decl;
+                    } else if (containsBindingReference(relation, slot.getAlphaName())) {
+                        correlated = true;
+                    }
+                }
+            }
+        }
+        return correlated ? selected : null;
+    }
+
+    private static EGraphNode guardedMembershipDomain(EGraphNode domain,
+            List<EGraphNode> guards, String key) {
+        for (var it = guards.iterator(); it.hasNext();) {
+            var term = it.next();
+            if (!containsBindingReference(term, key)) continue;
+            // A selected slot may be restricted by membership in a parser-proven sub-signature.
+            if (!isPositiveSourceMembership(term)
+                    || term.getChildren().get(0).getOpcode() != Opcode.VARIABLE
+                    || !key.equals(term.getChildren().get(0).getAlphaName())) return null;
+            var filter = term.getChildren().get(1);
+            var sub = filter.authenticatedSignature();
+            var carrier = domain.authenticatedSignature();
+            if (sub == null || carrier == null || !sub.isParserCertifiedSubsignatureOf(carrier))
+                return null;
+            domain = filter;
+            it.remove();
+        }
+        return domain;
+    }
+
+    private static EGraphNode retainUniversalPrefix(List<EGraphNode> prefix,
+            EGraphNode selected, String key, EGraphNode result) {
+        for (int i = prefix.size() - 1; i >= 0; i--) {
+            var owner = prefix.get(i);
+            var children = owner.getChildren();
+            var kept = new ArrayList<EGraphNode>();
+            for (var decl : children.subList(0, children.size() - 1)) {
+                if (decl != selected) {
+                    kept.add(decl);
+                } else if (decl.getChildren().size() > 2) {
+                    var reduced = copyShallow(decl, decl.getOpcode());
+                    reduced.addNormalizedChild(decl.getChildren().get(0));
+                    for (var slot : decl.getChildren().subList(1, decl.getChildren().size()))
+                        if (!key.equals(slot.getAlphaName())) reduced.addNormalizedChild(slot);
+                    kept.add(reduced);
+                }
+            }
+            if (!kept.isEmpty()) {
+                var quantifier = copyShallow(owner, Opcode.FORALL);
+                kept.forEach(quantifier::addNormalizedChild);
+                quantifier.addNormalizedChild(result);
+                result = quantifier;
+            }
+        }
+        return result;
+    }
+
+    private static boolean isPositiveSourceMembership(EGraphNode node) {
+        return node.getOpcode() == Opcode.IN && node.getChildren().size() == 2
+                && "BOP_IN".equals(node.getSourceName())
+                && "MIDDLENODE_BOP_IN".equals(node.getSourceType());
+    }
+
+    private static void collectUniversalGuards(EGraphNode guard, List<EGraphNode> terms) {
+        if (guard.getOpcode() == Opcode.AND && EGraphNode.hasBooleanRewriteAuthority(guard)) {
+            for (var child : guard.getChildren()) collectUniversalGuards(child, terms);
+        } else {
+            terms.add(guard);
+        }
     }
 
     @LeanVerifiedRewrite("R0-BIND-002")

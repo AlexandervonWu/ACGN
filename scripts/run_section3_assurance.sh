@@ -188,7 +188,7 @@ java_tests=(
 for test_class in "${java_tests[@]}"; do
   short="${test_class##*.}"
   run_step "java-$short" "$JAVA_TIMEOUT" \
-    java -ea -Xmx"$JAVA_HEAP" -cp "$OUTPUT/classes:$ROOT/lib/*" "$test_class"
+    java -ea -Xmx"$JAVA_HEAP" -Dacgn.test.repoRoot="$ROOT" -cp "$OUTPUT/classes:$ROOT/lib/*" "$test_class"
 done
 
 verifier_tests=(org.acgn.cert.VerifierTest)

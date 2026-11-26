@@ -15,7 +15,7 @@ import parser.ast.nodes.ModelUnit;
 
 public final class FastPrefixSourceTest {
     private static int checks;
-    private static final String SOURCE = "sig A {r:set A} pred p {all x:A | all y:A | x in y.r}";
+    private static final String SOURCE = "sig A {r:set A} pred p {all x:A | all y:A | y->x in r}";
     private record Endpoint(NormalForm source, NormalForm comparison) { }
     private static void check(boolean ok,String why) {
         checks++; if(!ok) throw new AssertionError(why);
@@ -98,7 +98,7 @@ public final class FastPrefixSourceTest {
                 .put("ownerPaths",qs.stream().map(QuantiVar::getBindingPath).toList())
                 .put("typedSlots",qs.stream().map(QuantiVar::getDeBruijnKey).toList())
                 .put("transport",transported).put("oldRejection","canon_G work exceeds configured bound 1");
-        check(receipt.getString("sourceSha256").equals("5365eba78a72ecb9952c98492691c14ef8a3683e704c08bc3808498ed4232ce0"),
+        check(receipt.getString("sourceSha256").equals("44416ad3f03c8e9d3c5fd76d080f6adc683fc2e04c57bb696e03791f503317d0"),
                 "Lean exact source hash");
         check(qs.stream().map(QuantiVar::getBindingPath).toList().equals(List.of(
                 "root/predicate[0]/decl[0]@pos","root/predicate[0]/body[1]/decl[0]@pos")),"Lean concrete owners");

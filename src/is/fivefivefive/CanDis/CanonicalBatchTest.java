@@ -356,6 +356,7 @@ public class CanonicalBatchTest {
             acquireMemoryIntensivePermit(memoryIntensivePermits);
             try {
                 options.parityGate.checkRunning();
+                result.commandComparisons = CanonicalAlloyPipeline.compareSourceCommands(module,pair.leftName,pair.rightName);
                 computeDistanceMetrics(left, right, result, file, options.parityGate);
             } finally {
                 memoryIntensivePermits.release();
@@ -930,6 +931,9 @@ public class CanonicalBatchTest {
             writer.write("      \"nativeOperationReason\": \""+escape(result.nativeOperationReason)+"\",\n");
         }
         if (result.success()) {
+            var decisions=new org.json.JSONArray();
+            for (var command:result.commandComparisons) decisions.put(command.json(result.distance));
+            writer.write("      \"commandComparisons\": "+decisions+",\n");
             writer.write("      \"leftPredicate\": \"" + escape(result.leftPredicate) + "\",\n");
             writer.write("      \"rightPredicate\": \"" + escape(result.rightPredicate) + "\",\n");
             writer.write("      \"leftGraphId\": " + result.leftGraphId + ",\n");
@@ -1367,6 +1371,7 @@ public class CanonicalBatchTest {
     }
 
     private static class FileResult {
+        List<is.fivefivefive.CanDis.augmentation.CommandComparison.Decision> commandComparisons = List.of();
         private final String fileName;
         private final String relativePath;
         private final String problemClass;

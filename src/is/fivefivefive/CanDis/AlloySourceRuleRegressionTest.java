@@ -12,6 +12,7 @@ import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.ErrorType;
 import edu.mit.csail.sdg.ast.Command;
 import edu.mit.csail.sdg.parser.CompModule;
+import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
@@ -192,12 +193,131 @@ public final class AlloySourceRuleRegressionTest {
             checkGenericLabelCannotMintNonemptiness();
             checkExactlyOfDoesNotMintNonemptiness();
             checkAblationBindingGuards(model);
+            checkReachabilityPairs(options);
+            checkUniversalMembershipGuards(options);
 
             System.out.println("AlloySourceRuleRegressionTest passed: "
                     + checks + " checks");
         } finally {
             Files.deleteIfExists(modelPath);
             Files.deleteIfExists(directory);
+        }
+    }
+
+    private static void checkReachabilityPairs(A4Options options) throws Exception {
+        Path dataset = Path.of(System.getProperty("acgn.test.repoRoot", "."), "classified-data", "trainStationNew");
+        // All ten slotted-only pairs in the published natural ablation.
+        for (String id : List.of("4mNN3z28SdwhfHtn2", "7yf6otwpXhRdBn4Da", "8YFbrPvDWYWciWG29",
+                "AEnqk4jM6mRwkWYQd", "JfuyLyzR2QpPBuv7j", "ZJR9GqfpqjJoThccT",
+                "aM4CAZYi4mPtGQmbW", "vE6z9RXND8gZzbdgS", "wFJJkTwS2M6tLmHGF",
+                "yS9bdPRSYkRtLGBSS",
+                // Previously recognized forms with Exit declared before Entry, nested and grouped.
+                "22RPNQY9iXbiMaZA2", "KBFj8uPSbz3cpPhE7")) {
+            checkReachabilityPair(dataset.resolve("correct").resolve(id + "_inv8.als"), true, true, options);
+        }
+        // The canonical arms previously recognized the same law expressed with explicit domain guards.
+        checkReachabilityPair(dataset.resolve("correct/sDBhbrabXnchXF545_inv8.als"), true, false, options);
+        // Existential Exit, the union of all reachable exits, and travel in the other direction.
+        for (String id : List.of("NYmTFx2CYwE9dQ6y9", "2dDe3wYYHwA9dT2jr", "Qsi89JsKh5Xp6Hxpi")) {
+            checkReachabilityPair(dataset.resolve("both").resolve(id + "_inv8.als"), false, false, options);
+        }
+    }
+
+    private static void checkUniversalMembershipGuards(A4Options options) throws Exception {
+        // Projecting x out of these formulas without its binding conditions would change their meaning.
+        String header = "sig A { r: set A } sig B, C in A {} ";
+        String unrestricted = "all y:A | A in y.r";
+        for (String[] pair : List.of(
+                new String[]{"all disj x,y:A | x in y.r", unrestricted},
+                new String[]{"all x:A | all y:x.r | x in y.r", unrestricted},
+                new String[]{"all x,y:A | x in (y.r + x)", unrestricted},
+                new String[]{"all x,y:A | (x in B and x in C) implies x in y.r", "all y:A | C in y.r"})) {
+            String source = header + "pred inv8 {" + pair[0] + "} pred inv8c {" + pair[1]
+                    + "} check correct {inv8 iff inv8c} for 3";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                    pair[0], false, false, options);
+        }
+        // A singleton tuple need not cover every atom of A. The whole A->B relation can.
+        for (String multiplicity : List.of("one", "some")) {
+            String arrow = "A -> " + multiplicity + " ";
+            for (String[] pair : List.of(
+                    new String[]{"all x:A->B, y:A | x in " + arrow + "y.r",
+                            "all y:A | (A->B) in " + arrow + "y.r"},
+                    new String[]{"all y:A | all x:A->B | x in " + arrow + "y.r",
+                            "all y:A | (A->B) in " + arrow + "y.r"},
+                    new String[]{"all x:A->B | x in " + arrow + "B",
+                            "(A->B) in " + arrow + "B"})) {
+                String source = "sig A {r:set B} sig B {} pred inv8 {" + pair[0] + "} pred inv8c {" + pair[1]
+                        + "} check correct {inv8c implies inv8} for exactly 2 A, exactly 1 B";
+                checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                        pair[0], false, false, options);
+            }
+        }
+        // This mixed-arity prefix is outside complete binder-orbit replay. The source rewrite
+        // must still retain x. The in-scope cases above check both numeric paths.
+        String mixed = "sig A {} sig B {} pred p {all x:A->B, y:B | x in A -> one y} "
+                + "pred q {all y:B | (A->B) in A -> one y} check correct {q implies p} for exactly 2 A, exactly 1 B";
+        var mixedModule = CompUtil.parseEverything_fromString(A4Reporter.NOP, mixed);
+        var counterexample = TranslateAlloyToKodkod.execute_command(A4Reporter.NOP, mixedModule.getAllReachableSigs(),
+                mixedModule.getAllCommands().get(0), options);
+        check(counterexample.satisfiable(), "qualified arrow admits a two-atom counterexample");
+        var visitor = new MASGVisitor(new GlobalVariables(), mixedModule);
+        visitor.visit(new ModelUnit(null, mixedModule), null);
+        var grouped = Canonical.prepare(graph(visitor, "p"));
+        check(grouped.normalizedForms().get(0).getMatrixQuantiVars().size() == 2,
+                "both source coordinates survive qualified arrow membership");
+        for (String[] pair : List.of(
+                new String[]{"all x,y:A | x in (one y.r)", "all y:A | A in (one y.r)"},
+                new String[]{"all x:A | x in (one B)", "A in (one B)"})) {
+            String source = header + "pred inv8 {" + pair[0] + "} pred inv8c {" + pair[1]
+                    + "} check correct {inv8 iff inv8c} for exactly 2 A";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                    pair[0], false, false, options);
+        }
+    }
+
+    private static void checkReachabilityPair(Path path, boolean equivalent, boolean slottedEquivalent,
+            A4Options options) throws Exception {
+        checkReachabilityPair(AlloyUtil.compileAlloyModule(path.toString()), path.toString(),
+                equivalent, slottedEquivalent, options);
+    }
+
+    private static void checkReachabilityPair(CompModule module, String description, boolean equivalent,
+            boolean slottedEquivalent, A4Options options) throws Exception {
+        Command correct = module.getAllCommands().get(0);
+        check(correct.check && correct.label.equals("correct"), "expected equivalence check in " + description);
+        var solution = TranslateAlloyToKodkod.execute_command(A4Reporter.NOP, module.getAllReachableSigs(),
+                correct, options);
+        check(solution.satisfiable() != equivalent, "bounded Alloy counterexample status for " + description);
+
+        var model = new ModelUnit(null, module);
+        var terms = new LinkedHashMap<String, AlloyTerm>();
+        for (var predicate : model.getPredDeclList()) {
+            terms.put(predicate.getName(), AlloyAstTermAdapter.fromPredicate(predicate));
+        }
+        check(new SlottedEGraph().compare(terms.get("inv8"), terms.get("inv8c")).equivalent == slottedEquivalent,
+                "original slotted e-graph result for " + description);
+
+        var visitor = new MASGVisitor(new GlobalVariables(), module);
+        visitor.visit(model, null);
+        var student = Canonical.prepare(graph(visitor, "inv8"));
+        var oracle = Canonical.prepare(graph(visitor, "inv8c"));
+        var certifiedStudent = CanonicalAlloyPipeline.prepare(student);
+        var certifiedOracle = CanonicalAlloyPipeline.prepare(oracle);
+        for (boolean reverse : List.of(false, true)) {
+            var left = reverse ? oracle : student;
+            var right = reverse ? student : oracle;
+            var fast = CanonicalRepairTraces.fast(left, right);
+            var certified = CanonicalRepairTraces.certified(reverse ? certifiedOracle : certifiedStudent,
+                    reverse ? certifiedStudent : certifiedOracle);
+            check((fast.replay(fast.json()) == 0) == equivalent, "Fast Rewrite distance for " + description);
+            check((certified.replay(certified.json()) == 0) == equivalent,
+                    "Certificate-Integrated distance for " + description);
+            if (equivalent) {
+                check(NativeOperationComparison.compare(left, right, fast, certified).status()
+                                == NativeOperationComparison.Status.MATCHED,
+                        "native replay must agree on the recovered zero for " + description);
+            }
         }
     }
 

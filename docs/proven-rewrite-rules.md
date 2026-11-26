@@ -18,6 +18,24 @@ entry does not establish that its premises hold for a particular Alloy term.
 
 ## Use
 
+No flag is required in the source-aware pipeline. `CanonicalBatchTest` reports
+one `commandComparisons` entry per applicable fixed check on the selected
+student and oracle. A positive rule result has comparison distance zero
+**for that command**; a nonmatch retains the measured structural distance.
+An empty list means no applicable check. This does not bypass the batch
+runner's structural replay or certification gates.
+
+`Alloy4FunAugmenter` applies the same comparison to the correct-reference
+pool, including pairs with different graph sizes. It rebinds the selected
+predicates and their local callees, verifying their typed bodies, facts,
+imports and effective command bounds. Its default results are
+`default_correct_pool_equivalences.jsonl` (pair decisions) and
+`default_correct_pool_counts.json` (counts by question set and invariant).
+`NO_COMMON_COMMAND` is distinct from `NO_RULE_MATCH`; a pool with a missing
+common command does not receive a complete scoped component count.
+Structural distance reports and incorrect-predicate rankings keep their
+original meaning.
+
 From the repository root, with JDK 17 and Bash:
 
 ```sh
@@ -34,8 +52,10 @@ alone is **not** a rule match. An unmatched equivalence is not proof of
 inequivalence.
 
 The command compiles into a temporary directory and uses a separate JVM with
-the call-aware parser and solver; ordinary Fast Rewrite does not invoke either
-this comparison or a certificate search. For repeated calls, compile once with
+the call-aware parser and solver. In production the source comparison uses
+the Analyzer's scope computation without SAT search to test rule premises;
+it runs the native solver only for a proposed match. Ordinary graph-only
+Fast Rewrite does not invoke this comparison or a certificate search. For repeated calls, compile once with
 `bash scripts/proven-rules/build.sh /path/to/new/classes` and run
 `is.fivefivefive.CanDis.augmentation.ProvenRulesCommand` with that directory
 first on the classpath, followed by `lib/*`.
@@ -49,3 +69,11 @@ axiom declarations and dependencies other than the named standard foundations
 (`propext`, `Quot.sound`, `Classical.choice`). This is not a general proof that
 the Java reader implements Alloy semantics. The [pooled study](experimental-results/2026-11-25/README.md)
 separately records what the implementation did on actual inputs.
+
+`bash scripts/run_bounded_ci_java_tests.sh` exercises both default runners
+against original natural examples using the production parser. To check the
+entire correct-reference pool, run
+`bash scripts/proven-rules/replay-default-pool.sh`. It verifies the sealed
+ledger and structural baseline, rebinds all 4,496 original reference sources,
+and compares current rule decisions with both recorded orientations of all
+132,032 pairs. It does not rerun structural distances or incorrect rankings.

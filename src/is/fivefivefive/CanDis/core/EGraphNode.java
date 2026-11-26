@@ -3355,8 +3355,8 @@ public final class EGraphNode {
 
     /**
      * Eliminates one quantified membership atom before prenexing. The caller
-     * proves that the declaration has exactly one binder and that the binder
-     * occurs only as the comparison's left operand.
+     * establishes a single selected coordinate and a pointwise subset test
+     * whose right operand and remaining context are independent of it.
      */
     @LeanVerifiedRewrite("R0-BIND-002")
     static EGraphNode parserCertifiedMembershipQuantifierElimination(
@@ -3376,6 +3376,8 @@ public final class EGraphNode {
                         && quantifier != Opcode.NO)
                 || cardinality == QuantiVar.Cardinality.EXACTLY
                 || !hasBooleanFormulaType(owner)
+                || !plainMembershipSet(domainInvocation.eClass.getRepresentative())
+                || !plainMembershipSet(memberSetInvocation.eClass.getRepresentative())
                 || !sameParserSetArity(binderInvocation, domainInvocation)
                 || !sameParserSetArity(binderInvocation, memberSetInvocation)
                 || !sameParserSetArity(domainInvocation, memberSetInvocation)
@@ -3427,6 +3429,19 @@ public final class EGraphNode {
         } catch (IllegalArgumentException | IllegalStateException rejected) {
             return null;
         }
+    }
+
+    // Alloy interprets a membership RHS such as "one S" or "A -> one B"
+    // as a constraint on the entire left relation. Only plain subset tests
+    // distribute over singleton assignments. Nested products carry qualifiers too.
+    private static boolean plainMembershipSet(EGraphNode node) {
+        return switch (node.opcode) {
+            case ONE, SOME, LONE, EXACTLY, SETOF -> false;
+            case ARROW -> node.getChildren().size() == 2
+                    && node.getChildren().stream().allMatch(EGraphNode::plainMembershipSet);
+            default -> node.opcode == Opcode.JOIN
+                    || !AlloyOperatorPolicy.isFixedBinaryTypedChainOperator(node.opcode);
+        };
     }
 
     static boolean hasParserQuantifierSourceAuthority(

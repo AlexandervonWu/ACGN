@@ -24,6 +24,7 @@ import is.fivefivefive.CanDis.theory.IndependentCertificateVerifier;
 import is.fivefivefive.CanDis.theory.RecordingCertificateTraceSink;
 import is.fivefivefive.CanDis.theory.SemanticProfile;
 import is.fivefivefive.CanDis.augmentation.AlloyEquivalenceValidator;
+import is.fivefivefive.CanDis.augmentation.CommandComparison;
 import is.fivefivefive.CanDis.augmentation.EquivalenceAugmenter;
 
 /**
@@ -38,13 +39,19 @@ import is.fivefivefive.CanDis.augmentation.EquivalenceAugmenter;
  * diagnostic baseline.
  */
 public final class CanonicalAlloyPipeline {
-    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v40-domain-variable-evidence";
+    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v41-universal-membership";
     public static final String MEASUREMENT_PROJECTION_VERSION = RepairProjection.VERSION;
     public static final String REPRESENTATIVE_TED_VERSION =
             CanonicalRepresentativeTreeDistance.VERSION;
     public static final String QUOTIENT_METRIC_VERSION = QuotientRepairDistance.VERSION;
 
     private CanonicalAlloyPipeline() {
+    }
+
+    /** Default source comparison. Each outcome belongs to its own resolved equivalence check. */
+    public static List<CommandComparison.Decision> compareSourceCommands(
+            edu.mit.csail.sdg.parser.CompModule module, String leftPredicate, String rightPredicate) {
+        return CommandComparison.compare(module, leftPredicate, rightPredicate);
     }
 
     /** Fixed-profile compatibility mode used by the historical experiment geometry. */

@@ -23,9 +23,9 @@ public final class ProvenRulesCommand {
             case STATIC_ALL_ALWAYS -> throw new IllegalArgumentException("R0-BIND-003 runs inside NormalForm.moveStaticUniversals");
         };
     }
-    private static Func endpoint(Expr expr) {
+    static Func endpoint(Expr expr) {
         if (expr.deNOP() instanceof ExprCall c && c.args.isEmpty() && c.fun.isPred && c.fun.decls.isEmpty()) return c.fun;
-        throw new IllegalArgumentException("Expected a call to a nullary predicate in the selected assertion");
+        return null;
     }
     public static JSONObject check(Path source, String label) throws Exception {
         var path=source.toRealPath(); var files=new HashMap<String,String>();
@@ -44,20 +44,12 @@ public final class ProvenRulesCommand {
                 || !(assertion.expr.deNOP() instanceof ExprBinary iff) || iff.op!=ExprBinary.Op.IFF)
             throw new IllegalArgumentException("Expected the selected check to assert a predicate equivalence");
         Func a=endpoint(iff.left), b=endpoint(iff.right);
-        if (a==b || !module.getAllFunc().contains(a) || !module.getAllFunc().contains(b))
+        if (a==null || b==null || a==b || !module.getAllFunc().contains(a) || !module.getAllFunc().contains(b))
             throw new IllegalArgumentException("Expected two different local predicates");
         var run=ScopedFiberRun.execute(module,ordinal);
         boolean sat=run.solution().satisfiable();
-        var hits=new JSONArray();
-        for (var rule:ProvenRewriteRule.values()) {
-            if (rule.scope()!=ProvenRewriteRule.Scope.FIXED_COMMAND) continue;
-            var forward=match(rule,run,a,b);
-            if (!forward.equals(match(rule,run,b,a))) throw new IllegalStateException("Asymmetric reader: "+rule.id());
-            if (forward.isPresent()) {
-                if (sat) throw new IllegalStateException("Native counterexample to "+rule.id());
-                hits.put(rule.id());
-            }
-        }
+        var hits=rules(run,a,b);
+        if (sat && !hits.isEmpty()) throw new IllegalStateException("Native counterexample to "+hits);
         var hashes=new JSONObject();
         for (var f:files.entrySet()) hashes.put(f.getKey(),HexFormat.of().formatHex(
                 MessageDigest.getInstance("SHA-256").digest(f.getValue().getBytes(StandardCharsets.UTF_8))));
@@ -66,6 +58,19 @@ public final class ProvenRulesCommand {
             .put("bitwidth",run.solution().getBitwidth()).put("traceMin",run.solution().getMinTrace())
             .put("traceMax",run.solution().getMaxTrace()).put("parsedSourceHashes",hashes)
             .put("result",hits.isEmpty()?"NO_RULE_MATCH":"SCOPED_EQUIVALENCE").put("rules",hits);
+    }
+
+    static List<String> rules(ScopedFiberRun run, Func a, Func b) {
+        var hits=new ArrayList<String>();
+        for (var rule:ProvenRewriteRule.values()) {
+            if (rule.scope()!=ProvenRewriteRule.Scope.FIXED_COMMAND) continue;
+            var forward=match(rule,run,a,b);
+            if (!forward.equals(match(rule,run,b,a))) throw new IllegalStateException("Asymmetric reader: "+rule.id());
+            if (forward.isPresent()) {
+                hits.add(rule.id());
+            }
+        }
+        return List.copyOf(hits);
     }
     public static void main(String[] args) throws Exception {
         if (args.length==1 && args[0].equals("list")) {

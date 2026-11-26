@@ -9,7 +9,7 @@ import edu.mit.csail.sdg.translator.*;
 import kodkod.engine.satlab.SATFactory;
 import java.util.*;
 
-/** Standalone analysis worker, deliberately outside the production validator classpath. */
+/** Parser-owned fixed command, its resolved predicate bodies and actual effective bounds. */
 public final class ScopedFiberRun {
     public record Match(Command command, Expr countedPredicate, Expr referencePredicate,
                         Sig.Field field, Sig.PrimSig varyingCarrier, int cap, int bitwidth,
@@ -28,6 +28,10 @@ public final class ScopedFiberRun {
 
     /** One ordinary Analyzer execution, regardless of how many predicate pairs are subsequently read. */
     public static ScopedFiberRun execute(CompModule module, int ordinal) throws Err {
+        return prepare(module, ordinal, true);
+    }
+
+    static ScopedFiberRun prepare(CompModule module, int ordinal, boolean solve) throws Err {
         Command cmd=module.getAllCommands().get(ordinal);
         if(cmd.parent!=null || !cmd.getGrowableSigs().isEmpty())
             throw new IllegalArgumentException("A scoped fiber run requires a single fixed command");
@@ -43,9 +47,35 @@ public final class ScopedFiberRun {
         }
         var bounds=new Bounds();
         var opts=new A4Options(); opts.solver=SATFactory.DEFAULT; opts.noOverflow=false;
-        var result=TranslateAlloyToKodkod.execute_command(bounds,module.getAllReachableSigs(),cmd,opts);
+        // The stock Analyzer's temporal detector does not descend into called predicates.
+        // Expose the same mode as the release parser, without changing any carrier or bound.
+        Command translated = cmd;
+        if (!CompUtil.isTemporalModel(module.getAllReachableSigs(), cmd)
+                && new TemporalCalls().visitThis(cmd.formula) != null)
+            translated = cmd.change(cmd.formula.and(ExprConstant.TRUE.after()));
+        var result=solve ? TranslateAlloyToKodkod.execute_command(bounds,module.getAllReachableSigs(),translated,opts)
+                : CommandScopeFrame.compute(bounds,opts,module.getAllReachableSigs(),translated);
         if(result==null) throw new IllegalStateException("No Alloy solution object for source command");
-        return new ScopedFiberRun(cmd,result,bodies,bounds.callbacks==1?bounds.caps:Map.of());
+        if (bounds.callbacks!=1) throw new IllegalStateException("Expected one actual scope callback");
+        return new ScopedFiberRun(cmd,result,bodies,bounds.caps);
+    }
+
+    private static final class TemporalCalls extends VisitQuery<Boolean> {
+        private final Set<Func> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+        @Override public Boolean visit(ExprCall call) {
+            if (super.visit(call) != null) return true;
+            if (!seen.add(call.fun)) return null;
+            Expr body = call.fun.getBody();
+            return body.hasTemporal() ? Boolean.TRUE : visitThis(body);
+        }
+    }
+
+    Map<String,Integer> carrierBounds() {
+        var result = new TreeMap<String,Integer>();
+        caps.forEach((sig, cap) -> {
+            if (result.put(sig.label,cap) != null) throw new IllegalStateException("Ambiguous carrier "+sig.label);
+        });
+        return Map.copyOf(result);
     }
 
     record Endpoints(Expr left, Expr right, List<ExprUnary.Op> frames, Map<Func,List<ExprUnary.Op>> sourceFrames) {}

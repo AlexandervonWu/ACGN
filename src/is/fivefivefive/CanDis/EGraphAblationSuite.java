@@ -6,15 +6,19 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +29,17 @@ import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
 
 /** Launches each ablation arm in a fresh JVM and combines time/RSS measurements. */
 public final class EGraphAblationSuite {
+    // Fingerprints of the original natural corpus and its sorted, LF-terminated slotted zero paths.
+    // The paths are taken from the 2026-11-21 natural ablation's pair-distances.csv.gz.
+    private static final String NATURAL_CORPUS_SHA256 =
+            "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689";
+    // Sorted path, status, left predicate, right predicate, NUL-delimited with LF per row.
+    private static final String MEASURED_COHORT_SHA256 =
+            "9f5ab3727bcb3395fa482f505ccee0bd3233e9b0cd076fbd6d55ad43266e753a";
+    private static final String ORIGINAL_ZEROS_SHA256 =
+            "b4ef549c055166745174c1856e7efa46ed1dfc75c422c07d8c85086d12917cf5";
+    // DatasetConventions.normalizeStatusFolder maps the corpus's negative labels to these values.
+    private static final Set<String> INCORRECT_STATUSES = Set.of("BOTH", "OVERCONSTRAINED", "UNDERCONSTRAINED");
     private static final List<String> ENGINES = List.of(
             "raw-egraph", "raw-egraph-debruijn",
             "java-egglog", "java-egglog-debruijn",
@@ -103,7 +118,8 @@ public final class EGraphAblationSuite {
                 throw new IllegalStateException("Paired source slot census differs between treatments");
             }
         }
-        writeComparisonJson(options.output.resolve("comparison.json"), options, context, runs);
+        JSONObject coverage = options.slotTyping ? null : slottedCoverage(context, runs);
+        writeComparisonJson(options.output.resolve("comparison.json"), options, context, runs, coverage);
         writeMinimumDistances(options.output.resolve("minimum_distances.csv"), runs);
         writeDisagreements(options.output.resolve("equivalence_disagreements.csv"), runs);
         if (options.slotTyping) {
@@ -113,7 +129,7 @@ public final class EGraphAblationSuite {
             writeSlotTypingMarkdown(options.output.resolve("summary.md"), options, context, runs);
         } else {
             writeCanonicalOnly(options.output.resolve("canonical_only_vs_slotted.md"), context, runs);
-            writeMarkdown(options.output.resolve("summary.md"), options, context, runs);
+            writeMarkdown(options.output.resolve("summary.md"), options, context, runs, coverage);
         }
         AblationRunManifest.writeRoot(
                 options.output, context, AblationRunManifest.allGeneratedOutputs(engines));
@@ -123,6 +139,9 @@ public final class EGraphAblationSuite {
         System.out.println("Wrote " + options.output.resolve("canonical_only_vs_slotted.md"));
         System.out.println("Wrote " + options.output.resolve("summary.md"));
         System.out.println("Wrote " + options.output.resolve(AblationRunManifest.ROOT_MANIFEST));
+        if (coverage != null && "FAILED".equals(coverage.getString("status"))) {
+            throw new IllegalStateException("Natural slotted-zero coverage failed: " + coverage);
+        }
     }
 
     private static RunMetrics runEngine(
@@ -191,7 +210,8 @@ public final class EGraphAblationSuite {
             Path path,
             Options options,
             AblationRunManifest.Context context,
-            List<RunMetrics> runs) throws IOException {
+            List<RunMetrics> runs,
+            JSONObject coverage) throws IOException {
         JSONObject root = new JSONObject();
         root.put("generatedAt", Instant.now().toString());
         root.put("runManifest", context.toJson());
@@ -219,6 +239,7 @@ public final class EGraphAblationSuite {
                     findRun(runs, transition[0]), findRun(runs, transition[1])));
         }
         root.put("equivalenceTransitions", transitions);
+        if (coverage != null) root.put("slottedZeroCoverage", coverage);
         root.put("equivalenceDisagreementPairs", disagreementCount(runs));
         Files.writeString(path, root.toString(2) + "\n", StandardCharsets.UTF_8);
     }
@@ -271,7 +292,7 @@ public final class EGraphAblationSuite {
             String status = canonical.statusByPath.getOrDefault(predicatePath, "");
             if ("CORRECT".equals(status)) {
                 correct++;
-            } else {
+            } else if (INCORRECT_STATUSES.contains(status)) {
                 incorrect++;
             }
             int slash = predicatePath.indexOf('/');
@@ -354,7 +375,8 @@ public final class EGraphAblationSuite {
             Path path,
             Options options,
             AblationRunManifest.Context context,
-            List<RunMetrics> runs) throws IOException {
+            List<RunMetrics> runs,
+            JSONObject coverage) throws IOException {
         RunMetrics fastRewrite = findRun(runs, "canonical");
         RunMetrics canonical = findRun(runs, "typed-slotted-port-egraph");
         StringBuilder markdown = new StringBuilder();
@@ -429,6 +451,17 @@ public final class EGraphAblationSuite {
         RunMetrics egglog = findRun(runs, "java-egglog");
         RunMetrics egglogDeBruijn = findRun(runs, "java-egglog-debruijn");
         RunMetrics slotted = findRun(runs, "slotted-egraph");
+        markdown.append("\n## Slotted zero coverage\n\n")
+                .append(coverage.getString("status")).append(" across ")
+                .append(coverage.getInt("requiredZeros")).append(" required zero pairs.\n\n");
+        for (Object value : coverage.getJSONArray("arms")) {
+            JSONObject arm = (JSONObject) value;
+            markdown.append("- ").append(arm.getString("engine")).append(" lost ")
+                    .append(arm.getJSONArray("lostPaths").length()).append(", added ")
+                    .append(arm.getInt("additionalCorrectZeros")).append(" correct zeros, and found ")
+                    .append(arm.getJSONArray("incorrectZeroPaths").length()).append(" incorrect zeros.\n");
+        }
+        markdown.append("\nExact loss and incorrect-zero paths are recorded in `comparison.json`.\n");
         markdown.append("\n## Observations\n\n");
         markdown.append("- De Bruijn storage adds ")
                 .append(differenceSize(rawDeBruijn.equivalentPaths, raw.equivalentPaths))
@@ -674,6 +707,101 @@ public final class EGraphAblationSuite {
                 .append("problem/status aggregates are in summary.json. Older runs without observations are unavailable.\n");
     }
 
+    private static JSONObject slottedCoverage(AblationRunManifest.Context context, List<RunMetrics> runs)
+            throws IOException {
+        RunMetrics slotted = findRun(runs, "slotted-egraph");
+        boolean originalCorpus = NATURAL_CORPUS_SHA256.equals(context.datasetSha256);
+        boolean defaultInput = Paths.get(context.datasetRoot).equals(
+                Paths.get("classified-data").toAbsolutePath().normalize());
+        boolean full = (context.limit == 0 || context.limit >= context.datasetFileCount)
+                && (defaultInput || originalCorpus);
+        Set<String> observed = slotted.observedZeros();
+        Set<String> required = new TreeSet<>(observed);
+        if (full || originalCorpus) {
+            Set<String> original = originalSlottedZeros();
+            if (full) {
+                required.addAll(original);
+            } else {
+                for (RunMetrics run : runs) {
+                    for (String path : run.statusByPath.keySet()) {
+                        if (original.contains(path)) required.add(path);
+                    }
+                }
+            }
+        }
+        List<String> issues = new ArrayList<>();
+        if (full) {
+            if (!originalCorpus) issues.add("Default natural corpus fingerprint differs from its baseline");
+            for (RunMetrics run : runs) {
+                if (!run.duplicatePaths.isEmpty()) {
+                    issues.add(run.engine + " has duplicate pair paths: " + run.duplicatePaths);
+                }
+                if (!MEASURED_COHORT_SHA256.equals(run.cohortSha256)) {
+                    issues.add(run.engine + " has different source paths, status labels or selected predicates"
+                            + " from the original corpus");
+                }
+                if (run.failures != 0 || run.files != context.datasetFileCount
+                        || run.files != run.successes + run.skipped
+                        || run.successes != run.statusByPath.size()
+                        || run.successes != run.distancePairs
+                        || !slotted.statusByPath.equals(run.statusByPath)) {
+                    issues.add(run.engine + " has incomplete or unmatched measured pairs");
+                }
+                if (!run.distanceByPath.keySet().equals(run.statusByPath.keySet())
+                        || run.distanceByPath.entrySet().stream().anyMatch(entry ->
+                                (entry.getValue() == 0) != run.equivalentPaths.contains(entry.getKey()))) {
+                    issues.add(run.engine + " has inconsistent equivalence and distance rows");
+                }
+            }
+        }
+        JSONArray arms = new JSONArray();
+        boolean passes = issues.isEmpty();
+        for (String engine : List.of("canonical", "typed-slotted-port-egraph")) {
+            RunMetrics arm = findRun(runs, engine);
+            Set<String> lost = new TreeSet<>(required);
+            lost.removeIf(path -> arm.equivalentPaths.contains(path)
+                    && Integer.valueOf(0).equals(arm.distanceByPath.get(path))
+                    && !slotted.duplicatePaths.contains(path) && !arm.duplicatePaths.contains(path)
+                    && (!slotted.identityByPath.containsKey(path)
+                        || slotted.identityByPath.get(path).equals(arm.identityByPath.get(path))));
+            Set<String> incorrect = new TreeSet<>();
+            int additionalCorrect = 0;
+            for (String path : arm.observedZeros()) {
+                String status = arm.statusByPath.get(path);
+                if (INCORRECT_STATUSES.contains(status)) {
+                    incorrect.add(path);
+                } else if ("CORRECT".equals(status) && !required.contains(path)) {
+                    additionalCorrect++;
+                }
+            }
+            passes &= lost.isEmpty() && incorrect.isEmpty() && (!full || additionalCorrect > 0);
+            arms.put(new JSONObject().put("engine", engine).put("additionalCorrectZeros", additionalCorrect)
+                    .put("lostPaths", new JSONArray(lost)).put("incorrectZeroPaths", new JSONArray(incorrect)));
+        }
+        return new JSONObject().put("status", !passes ? "FAILED" : full ? "PASSED" : "DESCRIPTIVE")
+                .put("requiredZeros", required.size()).put("liveSlottedZeros", observed.size())
+                .put("originalZeroPathsSha256", full || originalCorpus ? ORIGINAL_ZEROS_SHA256 : JSONObject.NULL)
+                .put("issues", new JSONArray(issues)).put("arms", arms);
+    }
+
+    private static Set<String> originalSlottedZeros() throws IOException {
+        Path path = Paths.get("scripts/testdata/natural-slotted-zero-paths.txt");
+        byte[] bytes = Files.readAllBytes(path);
+        String digest = HexFormat.of().formatHex(sha256().digest(bytes));
+        if (!ORIGINAL_ZEROS_SHA256.equals(digest)) {
+            throw new IOException("Original slotted zero path inventory has changed: " + path);
+        }
+        return Set.copyOf(new String(bytes, StandardCharsets.UTF_8).lines().toList());
+    }
+
+    private static MessageDigest sha256() {
+        try {
+            return MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException impossible) {
+            throw new IllegalStateException(impossible);
+        }
+    }
+
     private static RunMetrics findRun(List<RunMetrics> runs, String engine) {
         for (RunMetrics run : runs) {
             if (engine.equals(run.engine)) {
@@ -793,6 +921,9 @@ public final class EGraphAblationSuite {
         private long correctDistance;
         private long incorrectDistancePairs;
         private long incorrectDistance;
+        private String cohortSha256;
+        private final Map<String, String> identityByPath = new TreeMap<>();
+        private final Set<String> duplicatePaths = new TreeSet<>();
         private final Set<String> equivalentPaths = new HashSet<>();
         private final Map<String, String> statusByPath = new HashMap<>();
         private final Map<String, Integer> distanceByPath = new HashMap<>();
@@ -856,17 +987,18 @@ public final class EGraphAblationSuite {
             int distanceIndex = pairLines.isEmpty() ? -1 : parseCsv(pairLines.get(0)).indexOf("distance");
             for (int i = 1; i < pairLines.size(); i++) {
                 List<String> fields = parseCsv(pairLines.get(i));
-                if (fields.size() < 7 || !Boolean.parseBoolean(fields.get(5))) {
-                    continue;
-                }
-                boolean equivalent = Boolean.parseBoolean(fields.get(6));
+                if (fields.size() < 7) continue;
                 String predicatePath = fields.get(0);
                 String status = fields.get(2);
+                String identity = String.join("\0", predicatePath, status, fields.get(3), fields.get(4)) + "\n";
+                if (run.identityByPath.putIfAbsent(predicatePath, identity) != null) run.duplicatePaths.add(predicatePath);
+                if (!Boolean.parseBoolean(fields.get(5))) continue;
+                boolean equivalent = Boolean.parseBoolean(fields.get(6));
                 run.statusByPath.put(predicatePath, status);
                 if ("CORRECT".equals(status)) {
                     run.correctPairs++;
                     run.correctEquivalent += equivalent ? 1 : 0;
-                } else {
+                } else if (INCORRECT_STATUSES.contains(status)) {
                     run.incorrectPairs++;
                     run.incorrectEquivalent += equivalent ? 1 : 0;
                 }
@@ -883,13 +1015,24 @@ public final class EGraphAblationSuite {
                     if ("CORRECT".equals(status)) {
                         run.correctDistancePairs++;
                         run.correctDistance += distance;
-                    } else {
+                    } else if (INCORRECT_STATUSES.contains(status)) {
                         run.incorrectDistancePairs++;
                         run.incorrectDistance += distance;
                     }
                 }
             }
+            MessageDigest digest = sha256();
+            for (String identity : run.identityByPath.values()) digest.update(identity.getBytes(StandardCharsets.UTF_8));
+            run.cohortSha256 = HexFormat.of().formatHex(digest.digest());
             return run;
+        }
+
+        private Set<String> observedZeros() {
+            Set<String> zeros = new TreeSet<>(equivalentPaths);
+            distanceByPath.forEach((path, distance) -> {
+                if (distance == 0) zeros.add(path);
+            });
+            return zeros;
         }
 
         private double throughput() {

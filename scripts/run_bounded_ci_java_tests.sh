@@ -13,6 +13,8 @@ javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" \
 mapfile -t verifier_sources < <(find "$ROOT/certificate-verifier/src" -name '*.java' -type f | sort)
 javac --release 17 -encoding UTF-8 -d "$classes" "${verifier_sources[@]}"
 
+python3 "$ROOT/scripts/proven-rules/tests/default_pipeline.py" "$classes"
+
 printf 'Running %s\n' is.fivefivefive.CanDis.RewriteRuleTraceability
 printf '%s\n' \
   'Traceability scope: catalog reference presence only; this gate does not establish Java-Lean refinement or exhaustive executable-branch coverage.'
@@ -21,6 +23,9 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
 printf 'Running %s\n' is.fivefivefive.CanDis.RewriteRuleTraceabilityTest
 java -Xmx1g -cp "$classes:$ROOT/lib/*" \
   is.fivefivefive.CanDis.RewriteRuleTraceabilityTest "$ROOT"
+
+python3 "$ROOT/scripts/test_natural_slotted_coverage.py" "$classes"
+python3 "$ROOT/scripts/test_natural_slotted_retention.py" "$classes"
 
 tests=(
   is.fivefivefive.CanDis.CapabilitySourceSchedulingTest
@@ -106,7 +111,7 @@ LEAN_PATH="$work${LEAN_PATH:+:$LEAN_PATH}" "${LEAN_BIN:-lean}" \
 
 for test_class in "${tests[@]}"; do
   printf 'Running %s\n' "$test_class"
-  java -ea -Xmx1g -cp "$classes:$ROOT/lib/*" "$test_class"
+  java -ea -Xmx1g -Dacgn.test.repoRoot="$ROOT" -cp "$classes:$ROOT/lib/*" "$test_class"
 done
 
 "$ROOT/scripts/run_distance_artifact_regeneration_tests.sh" \

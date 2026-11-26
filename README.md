@@ -28,16 +28,32 @@ Alloy theorem prover. A canonical distance of zero means equality under the
 implemented rewrite theory. Bounded Alloy checks and dataset labels provide
 separate semantic evidence.
 
+On the natural student/oracle corpus, Fast Rewrite and Certificate-Integrated
+must each retain every zero-distance pair recognized by the original slotted
+e-graph, add at least one correct zero, and produce zero incorrect merges.
+CI replays all 2,228 original slotted zeros and a strict improvement witness.
+The full ablation checks the selected predicates on every measured file.
+[Slotted comparison and recovered pairs](docs/experimental-results/2026-11-26/README.md).
+
 ### v3.2: Proven Rewrite Rules
 
 The [rule catalog and usage guide](docs/proven-rewrite-rules.md) covers the
 v3.1 static-domain `always` move and five new families of fixed-command rules.
-The former still runs during normalization. The latter run on request, with the
-actual command bounds; they do not alter default canonical forms or distances.
+The static-domain rule runs during normalization. In the current source pipeline,
+the batch runner and correct-reference Augmenter also apply the five families
+by default when they can bind a comparison to a fixed Alloy command. A rule match
+is checked against the native solver before reporting command-local equality.
+Without a common command, the batch runner reports the structural comparison.
+The five command-scoped readers leave that structural distance available separately.
 
-Across all **4,496 correct references** in 181 question pools, the measured
-fixed-command rules reduced the total from **2,028 to 1,954** equivalence
-classes. [Inspect the evidence, reproduce the count, or replay the matches](docs/experimental-results/2026-11-25/README.md).
+Across the same 181 correct-reference pools: **4,496 unique raw ASTs,
+2,074 canonical forms in v3, and 1,954 in v3.2**. Counts are summed by
+invariant; v3.2 uses the matching Alloy command rather than a global
+equivalence. [Figure by invariant](docs/experimental-results/2026-11-25/forms-by-invariant.pdf)
+· [Exact counts](docs/experimental-results/2026-11-25/forms-by-invariant.csv)
+· [Evidence and replay](docs/experimental-results/2026-11-25/README.md).
+These measurements come from the tagged v3.2 study, in which the five readers
+were invoked separately; they are not a new end-to-end timing measurement.
 
 ### v3.1 full-corpus results (2026-11-21)
 

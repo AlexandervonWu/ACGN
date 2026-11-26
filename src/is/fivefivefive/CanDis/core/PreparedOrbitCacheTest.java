@@ -18,7 +18,8 @@ public final class PreparedOrbitCacheTest {
     }
     private static Canonical.Prepared[] pair()throws Exception {
         var module=CompUtil.parseEverything_fromString(A4Reporter.NOP,
-                "sig A { r: set A } pred p { all x,y:A | x in y.r } pred q { all y,x:A | y in x.r }");
+                // Tuple membership keeps both slots live for the cached permutation and budget checks.
+                "sig A { r: set A } pred p { all x,y:A | x->y in r } pred q { all y,x:A | y->x in r }");
         var visitor=new MASGVisitor(new GlobalVariables(),Set.of("p","q"),module);
         visitor.visit(new ModelUnit(null,module),null);
         return new Canonical.Prepared[]{Canonical.prepare(visitor.getForest().get(visitor.getForestId("p"))),

@@ -32,6 +32,10 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import edu.mit.csail.sdg.parser.CompModule;
+import edu.mit.csail.sdg.parser.CompUtil;
+import edu.mit.csail.sdg.alloy4.A4Reporter;
+import is.fivefivefive.CanDis.augmentation.CommandComparison;
+import is.fivefivefive.CanDis.augmentation.ScopedPoolEndpoint;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.learn.Rewarder;
 import is.fivefivefive.ACGN.util.GlobalVariables;
@@ -124,6 +128,10 @@ public class Alloy4FunAugmenter {
         stageStarted = beginStage("Comparing canonically equivalent correct pairs");
         CorrectPoolEquivalences correctPoolEquivalences =
                 correctAstDifferentCanonicalEquivalentPairs(groups, options.threadCount);
+        writeDefaultPoolComparisons(options.outputDir.resolve("default_correct_pool_equivalences.jsonl"),
+                correctPoolEquivalences);
+        writeDefaultPoolCounts(options.outputDir.resolve("default_correct_pool_counts.json"),
+                groups, correctPoolEquivalences);
         writeCorrectPoolEquivalenceJson(
                 options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"),
                 options,
@@ -397,7 +405,9 @@ public class Alloy4FunAugmenter {
             Semaphore canonicalPermits) {
         ModelRecord record = new ModelRecord(inputRoot, file);
         try {
-            CompModule module = AlloyUtil.compileAlloyModule(file.toString());
+            var loaded = new HashMap<String,String>();
+            CompModule module = CompUtil.parseEverything_fromFile(A4Reporter.NOP, loaded, file.toRealPath().toString());
+            record.sourceClosure = ScopedPoolEndpoint.closureDigest(loaded);
             if (module == null) {
                 record.error = "Alloy parser returned no module.";
                 return record;
@@ -1179,8 +1189,23 @@ public class Alloy4FunAugmenter {
     private static CorrectPoolEquivalences correctAstDifferentCanonicalEquivalentPairs(
             Map<String, QuestionGroup> groups,
             int threadCount) {
-        ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, threadCount));
+        int workers = ExperimentMemoryBudget.effectiveWorkers(threadCount);
+        ExecutorService executor = Executors.newFixedThreadPool(workers);
         try {
+            // Freeze source endpoints once per reference, not once per pair.
+            for (var group : groups.values()) {
+                for (int i=0; i<group.references.size(); i++) {
+                    var ref=group.references.get(i);
+                    var s=ref.source;
+                    boolean oracle=ref.kind.equals("oracle");
+                    try {
+                        ref.scoped=ScopedPoolEndpoint.read(s.file,oracle?s.rightPredicate:s.leftPredicate,
+                                oracle?s.leftPredicate:s.rightPredicate,i,s.sourceClosure);
+                    } catch (Exception ex) {
+                        throw new IllegalStateException("Cannot bind pool endpoint "+referenceLocation(ref),ex);
+                    }
+                }
+            }
             CompletionService<CorrectPoolBatch> completion =
                     new ExecutorCompletionService<>(executor);
             int taskCount = 0;
@@ -1195,13 +1220,14 @@ public class Alloy4FunAugmenter {
             }
             List<CorrectPoolPair> certificateIntegrated = new ArrayList<>();
             List<CorrectPoolPair> fastRewrite = new ArrayList<>();
+            List<ScopedPoolPair> scoped = new ArrayList<>();
             List<IllegalStateException> kernelViolations = new ArrayList<>();
             ExperimentProgress progress = ExperimentProgress.start(
                     System.err,
                     "Alloy4FunAugmenter/correct-pairs",
                     taskCount,
                     "tasks",
-                    "with " + Math.max(1, threadCount) + " workers");
+                    "with " + workers + " workers");
             int completed = 0;
             while (completed < taskCount) {
                 try {
@@ -1214,6 +1240,7 @@ public class Alloy4FunAugmenter {
                     CorrectPoolBatch batch = future.get();
                     certificateIntegrated.addAll(batch.certificateIntegrated);
                     fastRewrite.addAll(batch.fastRewrite);
+                    scoped.addAll(batch.scoped);
                     kernelViolations.addAll(batch.kernelViolations);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -1245,7 +1272,10 @@ public class Alloy4FunAugmenter {
                     .thenComparing(pair -> pair.right.augmentedName);
             certificateIntegrated.sort(pairOrder);
             fastRewrite.sort(pairOrder);
-            return new CorrectPoolEquivalences(certificateIntegrated, fastRewrite);
+            scoped.sort(Comparator.comparing((ScopedPoolPair p)->p.group.questionSet)
+                    .thenComparing(p->p.group.invariantId).thenComparing(p->p.left.augmentedName)
+                    .thenComparing(p->p.right.augmentedName));
+            return new CorrectPoolEquivalences(certificateIntegrated, fastRewrite,scoped);
         } finally {
             executor.shutdownNow();
         }
@@ -1258,11 +1288,20 @@ public class Alloy4FunAugmenter {
         List<CorrectPoolPair> certificateIntegrated = new ArrayList<>();
         List<CorrectPoolPair> fastRewrite = new ArrayList<>();
         List<IllegalStateException> kernelViolations = new ArrayList<>();
+        List<ScopedPoolPair> scoped = new ArrayList<>();
         Reference left = references.get(leftIndex);
         for (int j = leftIndex + 1; j < references.size(); j++) {
             Reference right = references.get(j);
             if (left.ast.fingerprint.equals(right.ast.fingerprint)) {
                 continue;
+            }
+            // Unequal structural sizes can still admit a fixed-command rule.
+            try {
+                var d=ScopedPoolEndpoint.compare(left.scoped,right.scoped);
+                scoped.add(new ScopedPoolPair(group,left,right,d.orElse(null)));
+            } catch (Exception ex) {
+                throw new IllegalStateException("Scoped pool comparison: "+referenceLocation(left)
+                        +" versus "+referenceLocation(right),ex);
             }
             boolean certificateCandidate = left.canonicalSize == right.canonicalSize;
             boolean fastRewriteCandidate = left.legacyCanonicalSize == right.legacyCanonicalSize;
@@ -1318,7 +1357,72 @@ public class Alloy4FunAugmenter {
                 fastRewrite.add(pair);
             }
         }
-        return new CorrectPoolBatch(certificateIntegrated, fastRewrite, kernelViolations);
+        return new CorrectPoolBatch(certificateIntegrated, fastRewrite, kernelViolations,scoped);
+    }
+
+    private record ScopedPoolPair(QuestionGroup group, Reference left, Reference right, CommandComparison.Decision rule) {}
+    private record PoolKey(QuestionGroup group,Reference left,Reference right) {}
+
+    private static void writeDefaultPoolComparisons(Path path,CorrectPoolEquivalences pairs) throws IOException {
+        var zero=new HashSet<PoolKey>();
+        for(var p:pairs.certificateIntegrated) zero.add(new PoolKey(p.group,p.left,p.right));
+        try (var out=outputWriter(path)) {
+            for(var p:pairs.scoped) {
+                boolean structural=zero.contains(new PoolKey(p.group,p.left,p.right));
+                var d=p.rule;
+                var row=new org.json.JSONObject().put("questionSet",p.group.questionSet).put("invariantId",p.group.invariantId)
+                        .put("left",p.left.augmentedName).put("right",p.right.augmentedName)
+                        .put("leftSource",p.left.source.relativePath).put("rightSource",p.right.source.relativePath)
+                        .put("structuralZero",structural).put("equivalent",structural || d!=null && d.matched())
+                        .put("scopeStatus",d==null?"NO_COMMON_COMMAND":d.matched()?"FIXED_COMMAND_RULE":"NO_RULE_MATCH");
+                if(d!=null) row.put("rules",d.rules()).put("bitwidth",d.bitwidth()).put("traceMin",d.traceMin())
+                        .put("carrierBounds",d.carrierBounds()).put("comparisonVersion",CommandComparison.VERSION)
+                        .put("traceMax",d.traceMax()).put("native",d.matched()?"UNSAT":"NOT_RUN");
+                out.write(row.toString());out.write('\n');
+            }
+        }
+    }
+
+    private static void writeDefaultPoolCounts(Path path, Map<String,QuestionGroup> groups,
+            CorrectPoolEquivalences pairs) throws IOException {
+        var structural = new java.util.IdentityHashMap<Reference,Reference>();
+        for (var group : groups.values())
+            for (var ref : group.references) structural.put(ref, ref);
+        for (var p : pairs.certificateIntegrated) unionCanonicalForms(structural, p.left, p.right);
+        var combined = new java.util.IdentityHashMap<>(structural);
+        var comparisons = new HashMap<QuestionGroup,Integer>();
+        var unavailable = new HashMap<QuestionGroup,Integer>();
+        var matched = new HashMap<QuestionGroup,Integer>();
+        for (var p : pairs.scoped) {
+            comparisons.merge(p.group, 1, Integer::sum);
+            if (p.rule == null) unavailable.merge(p.group, 1, Integer::sum);
+            else if (p.rule.matched()) {
+                matched.merge(p.group, 1, Integer::sum);
+                unionCanonicalForms(combined, p.left, p.right);
+            }
+        }
+        int before = 0, after = 0;
+        var rows = new org.json.JSONArray();
+        for (var group : groups.values()) {
+            var baseline = new HashSet<Reference>();
+            var scoped = new HashSet<Reference>();
+            for (var ref : group.references) {
+                baseline.add(canonicalRoot(structural, ref));
+                scoped.add(canonicalRoot(combined, ref));
+            }
+            int n = group.references.size(), seen = comparisons.getOrDefault(group, 0);
+            if ((long) n * (n - 1) / 2 != seen) throw new IllegalStateException("Incomplete distinct pool");
+            int missing = unavailable.getOrDefault(group, 0);
+            before += baseline.size();
+            after += scoped.size();
+            rows.put(new org.json.JSONObject().put("questionSet", group.questionSet).put("invariantId", group.invariantId)
+                    .put("references", n).put("pairs", seen).put("noCommonCommand", missing)
+                    .put("ruleMatches", matched.getOrDefault(group, 0)).put("structuralClasses", baseline.size())
+                    .put("commandScopedComponents", missing == 0 ? scoped.size() : org.json.JSONObject.NULL));
+        }
+        var report = new org.json.JSONObject().put("pools", rows).put("structuralClasses", before)
+                .put("commandScopedComponents", unavailable.isEmpty() ? after : org.json.JSONObject.NULL);
+        try (var out = outputWriter(path)) { out.write(report.toString(2)); out.write('\n'); }
     }
 
     private static IllegalStateException correctPoolKernelViolation(
@@ -1428,6 +1532,8 @@ public class Alloy4FunAugmenter {
             writer.write("  \"finiteUnfoldingVersion\": \""
                     + BoundedFiniteUnfoldingOracle.VERSION + "\",\n");
             writer.write("  \"fastRewriteCanonicalRetained\": true,\n");
+            writer.write("  \"defaultCorrectPoolCounts\": \"default_correct_pool_counts.json\",\n");
+            writer.write("  \"defaultCorrectPoolComparisons\": \"default_correct_pool_equivalences.jsonl\",\n");
             writer.write("  \"legacyCanonicalRetained\": true,\n");
             writer.write("  \"implementationFieldMapping\": {\"certificateIntegrated\": \"canonical*\", "
                     + "\"fastRewrite\": \"legacyCanonical*\"},\n");
@@ -1542,6 +1648,10 @@ public class Alloy4FunAugmenter {
 
         try (Writer writer = outputWriter(path)) {
             writer.write("# Alloy4Fun Augmented Dataset Summary\n\n");
+            writer.write("Default correct-reference comparison: [counts by invariant](default_correct_pool_counts.json)"
+                    + " and [all pair decisions](default_correct_pool_equivalences.jsonl). "
+                    + "Counts are components within each pool, not global normal forms. "
+                    + "The structural distance and repair rankings below remain command-independent.\n\n");
             writer.write("- Generated at: `" + Instant.now().toString() + "`\n");
             writer.write("- Input root: `" + options.inputDir + "`\n");
             writer.write("- Output root: `" + options.outputDir + "`\n");
@@ -3292,6 +3402,7 @@ public class Alloy4FunAugmenter {
     }
 
     private static class ModelRecord {
+        private String sourceClosure;
         private final Path file;
         private final String fileName;
         private final String relativePath;
@@ -3492,6 +3603,7 @@ public class Alloy4FunAugmenter {
     }
 
     private static class Reference {
+        private ScopedPoolEndpoint.Endpoint scoped;
         private final String augmentedName;
         private final String kind;
         private final String body;
@@ -3547,6 +3659,7 @@ public class Alloy4FunAugmenter {
     }
 
     private static final class CorrectPoolBatch {
+        private final List<ScopedPoolPair> scoped;
         private final List<CorrectPoolPair> certificateIntegrated;
         private final List<CorrectPoolPair> fastRewrite;
         private final List<IllegalStateException> kernelViolations;
@@ -3554,7 +3667,8 @@ public class Alloy4FunAugmenter {
         private CorrectPoolBatch(
                 List<CorrectPoolPair> certificateIntegrated,
                 List<CorrectPoolPair> fastRewrite,
-                List<IllegalStateException> kernelViolations) {
+                List<IllegalStateException> kernelViolations, List<ScopedPoolPair> scoped) {
+            this.scoped=scoped;
             this.certificateIntegrated = certificateIntegrated;
             this.fastRewrite = fastRewrite;
             this.kernelViolations = kernelViolations;
@@ -3562,12 +3676,14 @@ public class Alloy4FunAugmenter {
     }
 
     private static final class CorrectPoolEquivalences {
+        private final List<ScopedPoolPair> scoped;
         private final List<CorrectPoolPair> certificateIntegrated;
         private final List<CorrectPoolPair> fastRewrite;
 
         private CorrectPoolEquivalences(
                 List<CorrectPoolPair> certificateIntegrated,
-                List<CorrectPoolPair> fastRewrite) {
+                List<CorrectPoolPair> fastRewrite, List<ScopedPoolPair> scoped) {
+            this.scoped=scoped;
             this.certificateIntegrated = certificateIntegrated;
             this.fastRewrite = fastRewrite;
         }

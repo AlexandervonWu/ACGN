@@ -5,7 +5,7 @@ tmp=$(mktemp -d)
 trap 'rm -rf -- "$tmp"' EXIT
 bash scripts/proven-rules/build.sh "$tmp/classes"
 javac --release 17 -proc:none -encoding UTF-8 -sourcepath '' -cp "$tmp/classes:lib/*" -d "$tmp/classes" scripts/proven-rules/tests/*.java
-for test in ClassifierControls FiberWitnessControls SplitClassifierControls ClassifiedSetControls ReleaseRulesTest; do
+for test in ClassifierControls FiberWitnessControls SplitClassifierControls ClassifiedSetControls ReleaseRulesTest DefaultScopeTest; do
     java -ea -Xmx512m -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -cp "$tmp/classes:lib/*" \
         "is.fivefivefive.CanDis.augmentation.$test" "$tmp/fixture.als"
 done
