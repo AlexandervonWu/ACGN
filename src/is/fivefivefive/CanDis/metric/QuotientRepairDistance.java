@@ -618,7 +618,9 @@ public final class QuotientRepairDistance {
         if (stats.capture) {
             stats.quantification = quantification;
         }
-        if (stats.capture || left.phases().size()==1 && right.phases().size()==1) {
+        // A temporal tie also needs its real declaration path to distinguish a
+        // source-linked unpaid alignment from a paid one in scalar evaluation.
+        if (stats.capture || quantification.hasAlignedEdits || left.phases().size()==1 && right.phases().size()==1) {
             stats.activeDeclarationPaths = new ArrayList<>(java.util.Collections.nCopies(quantification.components.size(),List.of()));
         }
         int quantifiers = quantification.cost;
@@ -752,12 +754,14 @@ public final class QuotientRepairDistance {
     private static final class QuantificationAlignmentSpace {
         private final int cost;
         private final List<QuantifierEditComponent> components;
+        private final boolean hasAlignedEdits;
 
         private QuantificationAlignmentSpace(
                 int cost,
                 List<QuantifierEditComponent> components) {
             this.cost = cost;
             this.components = List.copyOf(components);
+            this.hasAlignedEdits = components.stream().anyMatch(component -> component.cost() > 0);
         }
 
         private static QuantificationAlignmentSpace create(
@@ -1111,7 +1115,10 @@ public final class QuotientRepairDistance {
                 boolean canonical = CertifiedDeclarationOrbit.isIdentity(choice);
                 int[] complete=selectedDeclarationMapping(quantification,leftBindings,rightBindings,choice,stats);
                 boolean linked=complete!=null && Arrays.equals(complete,stats.candidateMapping);
-                boolean existing=true;
+                // A temporal paid diagonal can tie the ordinary coherent matrix
+                // alignment. Retain the linked ordinary witness on equal cost.
+                boolean existing = !quantification.hasAlignedEdits || left.size()==1 && right.size()==1
+                        || preservesUnpaidTemporalAlignment(choice.correspondence(),leftBindings,rightBindings);
                 // A complete authenticated path fixes keeps and one-sided steps
                 // as well as paid updates. An unlinked cheaper map is not a
                 // replay of that path; score its actual constraints instead.
@@ -1172,6 +1179,19 @@ public final class QuotientRepairDistance {
                     "No minimum-cost quantifier alignment was evaluated");
         }
         return Math.addExact(fixedUnalignedCost, best[0]);
+    }
+
+    private static boolean preservesUnpaidTemporalAlignment(Map<Integer,Integer> correspondence,
+            GlobalBindingIndex source, GlobalBindingIndex target) {
+        // Zero-cost positional parameters also appear in the correspondence.
+        // Every other entry was issued for an actual declaration update.
+        for (var link : correspondence.entrySet()) {
+            var left = source.binding(link.getKey());
+            var right = target.binding(link.getValue());
+            if (!left.identity.parameter || !left.identity.equals(right.identity)
+                    || !left.binding.declaration().sameCertifiedPayload(right.binding.declaration())) return false;
+        }
+        return true;
     }
 
     private record MatrixAlignmentResult(Map<Integer, Integer> correspondence, int cost,

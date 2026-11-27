@@ -71,6 +71,7 @@ tests=(
   is.fivefivefive.CanDis.EGraphSaturationTest
   is.fivefivefive.CanDis.AlloySourceRuleRegressionTest
   is.fivefivefive.CanDis.DeclarationOrbitWitnessTest
+  is.fivefivefive.CanDis.TemporalDeclarationWitnessTest
   is.fivefivefive.CanDis.RetainedPaidCandidateReplayTest
   is.fivefivefive.CanDis.GroupedPaidOrbitReplayTest
   is.fivefivefive.CanDis.SeparatePrefixOrbitReplayTest
