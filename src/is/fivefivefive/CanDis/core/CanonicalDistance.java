@@ -1366,8 +1366,8 @@ public final class CanonicalDistance {
             }
             var distinctSources=FastGroupedDeclarationOrbit.quotientSources(a,b,
                     constrainPath?links:paid,paid,sourceOrders,targetOrders);
-            for (var order : FastGroupedDeclarationOrbit.pairedOrders(a, b, constrainPath ? links : paid,
-                    distinctSources, targetOrders, budget)) {
+            for (var order : FastGroupedDeclarationOrbit.pairedOrders(a, b, left.getMatrixQuantiVars(), right.getMatrixQuantiVars(),
+                    constrainPath ? links : paid, distinctSources, targetOrders, budget)) {
                 int[] p = order.source();
                 int[] q = order.target();
                 var moved=FastGroupedDeclarationOrbit.transport(a,b,constrainPath?links:paid,p,q);

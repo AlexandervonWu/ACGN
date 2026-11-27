@@ -16,6 +16,10 @@ public final class DeclarationOrbitWitnessTest {
             pred oneLast { all b:B | one a:A | b->a in sees }
             pred loneFirst { lone a:A | all b:B | b->a in sees }
             pred loneLast { all b:B | lone a:A | b->a in sees }
+            pred wider { all x,y:univ, z:A | x->z in r and y->z in r implies x=y }
+            pred typed { all z,x,y:A | z->x in r and z->y in r implies x=y }
+            pred sortedWider { all z:A, x,y:univ | x->z in r and y->z in r implies x=y }
+            pred middleWider { all x:univ, z:A, y:univ | x->z in r and y->z in r implies x=y }
             pred chain { all x,y,z:A | x->y in r and y->z in s }
             pred either { all a,b:A | some k:A | all c:A | b->a in r or a->c in s or k->a in t }
 
@@ -85,6 +89,23 @@ public final class DeclarationOrbitWitnessTest {
         }
     }
 
+    private static void checkedOrder(JSONObject evidence, java.util.List<Integer> source,
+            java.util.List<Integer> target) {
+        var chosen = evidence.getJSONArray("fastActions").getJSONObject(0);
+        check(chosen.getJSONArray("source").toList().equals(source)
+                && chosen.getJSONArray("target").toList().equals(target),
+                "Replay original occurrence coordinates for both endpoints");
+    }
+
+    private static void originalCoordinateOrder(MASGVisitor visitor) {
+        var wider = prepare(visitor,"wider");
+        var typed = prepare(visitor,"typed");
+        checkedOrder(replay(wider,typed,7),java.util.List.of(2,0,1),java.util.List.of(2,1,0));
+        checkedOrder(replay(typed,wider,7),java.util.List.of(1,0,2),java.util.List.of(2,0,1));
+        bothDirections(visitor,"sortedWider","typed",7);
+        bothDirections(visitor,"middleWider","typed",7);
+    }
+
     public static void main(String[] args) throws Exception {
         var module = CompUtil.parseEverything_fromString(A4Reporter.NOP, SOURCE);
         var visitor = new MASGVisitor(new GlobalVariables(), module);
@@ -94,6 +115,7 @@ public final class DeclarationOrbitWitnessTest {
         bothDirections(visitor, "paired", "longer", 8);    // A later existing map ties an earlier identity.
         crossingCountingPrefix(visitor, "oneFirst", "oneLast");
         crossingCountingPrefix(visitor, "loneFirst", "loneLast");
-        System.out.println("DeclarationOrbitWitnessTest: ten native ordered action programs matched");
+        originalCoordinateOrder(visitor);
+        System.out.println("DeclarationOrbitWitnessTest: sixteen native ordered action programs matched");
     }
 }

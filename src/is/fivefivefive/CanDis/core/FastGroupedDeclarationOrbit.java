@@ -116,10 +116,10 @@ final class FastGroupedDeclarationOrbit {
     }
     record PairedOrder(int[] source, int[] target) {}
 
-    /** Visit surviving declaration occurrences in source order. Each occurrence
-     * tries its own position first, then the remaining authorized coordinates.
-     * Keep every pair of independently authenticated full permutations. */
+    /** The edit DP can sort by type. Visit survivors in original occurrence order, trying
+     * identity first, then increasing original indices. Keep every admitted permutation. */
     static List<PairedOrder> pairedOrders(List<QuantiVar> source, List<QuantiVar> target,
+            List<QuantiVar> sourceOccurrences, List<QuantiVar> targetOccurrences,
             Map<String, String> links, List<int[]> left, List<int[]> right, Budget budget) {
         var pairs = new ArrayList<PairedOrder>();
         for (int[] p : left) for (int[] q : right) {
@@ -135,29 +135,55 @@ final class FastGroupedDeclarationOrbit {
             String name = links.get(source.get(i).getName());
             if (name != null) positions[i] = targetPositions.get(name);
         }
+        var sourceOrder = new CoordinateOrder(source, sourceOccurrences);
+        var targetOrder = new CoordinateOrder(target, targetOccurrences);
         pairs.sort((a, b) -> {
-            for (int i = 0; i < positions.length; i++) {
+            for (int i : sourceOrder.canonicalAtOriginal) {
                 int j = positions[i];
                 if (j < 0) continue;
-                int order = comparePosition(a.source()[i], b.source()[i], i);
-                if (order == 0) order = comparePosition(a.target()[j], b.target()[j], j);
+                int order = sourceOrder.comparePosition(a.source(), b.source(), i);
+                if (order == 0) order = targetOrder.comparePosition(a.target(), b.target(), j);
                 if (order != 0) return order;
             }
-            int order = compareCompletion(a.source(), b.source());
-            return order == 0 ? compareCompletion(a.target(), b.target()) : order;
+            int order = sourceOrder.compareCompletion(a.source(), b.source());
+            return order == 0 ? targetOrder.compareCompletion(a.target(), b.target()) : order;
         });
         return pairs;
     }
 
-    private static int comparePosition(int a, int b, int original) {
-        return Integer.compare(a == original ? -1 : a, b == original ? -1 : b);
-    }
+    private static final class CoordinateOrder {
+        private final int[] originalAtCanonical;
+        private final int[] canonicalAtOriginal;
 
-    private static int compareCompletion(int[] a, int[] b) {
-        for (int i = 0; i < a.length; i++) {
-            if ((a[i] == i) != (b[i] == i)) return a[i] == i ? -1 : 1;
+        CoordinateOrder(List<QuantiVar> canonical, List<QuantiVar> original) {
+            require(canonical.size() == original.size(), "Declaration occurrence count");
+            var ordinal = new IdentityHashMap<QuantiVar,Integer>();
+            for (int i = 0; i < original.size(); i++)
+                require(ordinal.put(original.get(i), i) == null, "Duplicate original occurrence");
+            originalAtCanonical = new int[canonical.size()];
+            canonicalAtOriginal = new int[canonical.size()];
+            for (int i = 0; i < canonical.size(); i++) {
+                var slot = ordinal.remove(canonical.get(i));
+                require(slot != null, "Foreign or duplicate canonical occurrence");
+                originalAtCanonical[i] = slot;
+                canonicalAtOriginal[slot] = i;
+            }
         }
-        return Arrays.compare(a, b);
+
+        int comparePosition(int[] a, int[] b, int i) {
+            return Integer.compare(a[i] == i ? -1 : originalAtCanonical[a[i]],
+                    b[i] == i ? -1 : originalAtCanonical[b[i]]);
+        }
+
+        int compareCompletion(int[] a, int[] b) {
+            for (int i : canonicalAtOriginal)
+                if ((a[i] == i) != (b[i] == i)) return a[i] == i ? -1 : 1;
+            for (int i : canonicalAtOriginal) {
+                int order = Integer.compare(originalAtCanonical[a[i]], originalAtCanonical[b[i]]);
+                if (order != 0) return order;
+            }
+            return 0;
+        }
     }
 
     private static boolean hasSwap(List<int[]> orders,int a,int b) {
