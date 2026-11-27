@@ -27,7 +27,23 @@ public final class RetainedPaidCandidateReplayTest {
         return new Pair(a,b,CanonicalAlloyPipeline.prepare(a),CanonicalAlloyPipeline.prepare(b));
     }
     private static Pair source(String stem,String name)throws Exception {
-        return prepare(Files.readString(Path.of("classified-data",stem.startsWith("xJnit")?"coursesOld":"classroom_fol","both",stem+".als")),name);
+        return prepare(Files.readString(Path.of(System.getProperty("acgn.test.repoRoot", "."), "classified-data",stem.startsWith("xJnit")?"coursesOld":"classroom_fol","both",stem+".als")),name);
+    }
+    private static Pair separateOwners() throws Exception {
+        // The intervening disjunction keeps the two existential scopes distinct.
+        return prepare("""
+                sig Person { Tutors: set Person, Teaches: set Class }
+                sig Group {}
+                sig Class { Groups: Person -> Group }
+                sig Teacher, Student in Person {}
+                pred inv14 {
+                    all s:Student | all t:Teacher | some g:Group |
+                        s->t in Tutors or (some c:Class | c->s->g in Groups and t->c in Teaches)
+                }
+                pred inv14c {
+                    all c:Class, p:Person | p in (c.Groups).Group implies Teaches.c->p in Tutors
+                }
+                """, "inv14");
     }
     private static boolean supports(String method,List<NormalForm> a,List<NormalForm> b) {
         try {
@@ -62,13 +78,13 @@ public final class RetainedPaidCandidateReplayTest {
         var p=source("Wq9Au27ys6iRip6CD_inv14","inv14");
         for(int direction=0;direction<2;direction++) {
             var q=direction==0?p:p.reverse();var a=views(q.a);var b=views(q.b);
-            check(!supports("supportsPair",a,b),"exclusive replacement route remains forbidden");
-            check(supports("supportsSupplementalPair",a,b),"additional actual paid candidate admitted");
+            check(supports("supportsPair", a, b), "one grouped local owner admits the direct path");
+            check(!supports("supportsSupplementalPair", a, b), "single local owner needs no supplemental path");
             var result=NativeOperationComparison.compare(q.a,q.b,q.ca,q.cb);var e=result.evidence();
             Files.writeString(out.resolve("after-"+direction+".json"),e.toString(2),StandardOpenOption.CREATE_NEW);
             check(result.status()==NativeOperationComparison.Status.MATCHED,"typed ordered actions match: "+e.opt("firstDifference"));
-            check(result.bindScanCosts(new int[]{36,0,1,35},new int[]{36,0,1,35}).status()==NativeOperationComparison.Status.MATCHED,"original scalar components");
-            check(e.getInt("fastActionCount")==21&&e.getInt("certifiedActionCount")==21,"actual21 actions, including identity permutation");
+            check(result.bindScanCosts(new int[]{35,0,1,34},new int[]{35,0,1,34}).status()==NativeOperationComparison.Status.MATCHED,"original scalar components");
+            check(e.getInt("fastActionCount")==23&&e.getInt("certifiedActionCount")==23,"actual 23 actions, including identity permutation");
             check(e.getJSONArray("fastActions").getJSONObject(0).similar(new JSONObject()
                     .put("stage","declarationPermutation").put("cost",0)
                     .put("source",new JSONArray(List.of(0,1))).put("target",new JSONArray(List.of(0,1)))),
@@ -90,7 +106,7 @@ public final class RetainedPaidCandidateReplayTest {
             bad=copy(report);bad.getJSONObject("fast").getJSONArray("phases").getJSONObject(0).getJSONObject("alphaMapping").put("_q0","_q1");invalid(q,bad,"matrix binding substitution");
             bad=copy(report);bad.getJSONObject("certified").getJSONArray("selectedGlobalMapping").put(0,999);invalid(q,bad,"foreign certified coordinate");
             bad=copy(report);bad.getJSONObject("fast").getJSONObject("declarationSlice").getJSONArray("components").getJSONObject(0).getJSONObject("receipt").getJSONArray("source").getJSONObject(0).getJSONArray("tuple").put(1,"ForeignType");invalid(q,bad,"declaration type substitution");
-            bad=copy(report);bad.getJSONObject("fast").getJSONArray("phases").getJSONObject(0).getJSONObject("receipt").put("cost",34);invalid(q,bad,"wrong matrix charge");
+            bad=copy(report);bad.getJSONObject("fast").getJSONArray("phases").getJSONObject(0).getJSONObject("receipt").put("cost",35);invalid(q,bad,"wrong matrix charge");
             var added=new JSONObject(fast.getJSONArray("phases").getJSONObject(0).getJSONObject("alphaMapping").toString());
             for(String paid:fast.getJSONObject("selectedPaidDeclarationCorrespondence").keySet())added.remove(paid);
             check(added.similar(new JSONObject(Map.of("_q1","_q1"))),"actual compatible base link beyond the paid map");
@@ -112,21 +128,28 @@ public final class RetainedPaidCandidateReplayTest {
         var identityFast=identity.evidence().getJSONObject("diagnostic").getJSONObject("fast");
         check(identityFast.getInt("distance")==0&&identityFast.has("selectedPaidDeclarationCorrespondence"),"canonical paid candidate wins the zero-cost tie");
         Files.writeString(out.resolve("both-local-identity.json"),identity.evidence().toString(2),StandardOpenOption.CREATE_NEW);
-        corrupt(p,f->field(owners(f).get(1),"sourceOccurrenceLineage",-1L),"foreign retained owner");
-        corrupt(p,f->field(f,"matrixEGraphRoot",owners(f).get(1)),"wrong parent edge");
-        corrupt(p,f->field(owners(f).get(1).getChildren().get(0),"sourceOccurrenceLineage",-1L),"foreign local declaration");
-        corrupt(p,f->field(owners(f).get(1).getChildren().get(0).getChildren().get(0),"sourceOccurrenceLineage",-1L),"foreign domain occurrence");
-        corrupt(p,f->field(owners(f).get(1).getChildren().get(0).getChildren().get(1),"alphaName","_q0"),"capture of original outer binder");
-        corrupt(p,f->field(owners(f).get(1),"opcode",EGraphNode.Opcode.LONE),"unsupported local kind");
-        corrupt(p,f->field(owners(f).get(1).getChildren().get(0).getChildren().get(0),"opcode",EGraphNode.Opcode.SETOF),"set multiplicity");
-        var foreign=source("Wq9Au27ys6iRip6CD_inv14","inv14");
-        corrupt(p,f->field(f,"certificationMatrixEGraphRoot",foreign.a.normalizedForms().get(0).getCertificationMatrixEGraph()),"foreign original source authority");
-        corrupt(p,f->field(owners(f).get(1).getChildren().get(0).getChildren().get(1),"exactAlloyType",owners(views(foreign.a).get(0)).get(1).getChildren().get(0).getChildren().get(1).getExactAlloyType()),"foreign parser module/type");
-        corrupt(p,f->field(f,"temporalOp",NormalForm.TemporalOp.ALWAYS),"temporal owner boundary");
-        corrupt(p,f->field(f,"params",List.of(f.getMatrixQuantiVars().get(0))),"parameter boundary");
-        corrupt(p,f->field(f,"inheritedQuantiVars",List.of(f.getMatrixQuantiVars().get(0))),"imported owner boundary");
+        var separate = separateOwners();
+        for (var q : List.of(separate, separate.reverse())) {
+            check(!supports("supportsPair", views(q.a), views(q.b)), "exclusive multi-owner route remains forbidden");
+            check(supports("supportsSupplementalPair", views(q.a), views(q.b)), "supplemental multi-owner path admitted");
+            check(NativeOperationComparison.compare(q.a, q.b, q.ca, q.cb).status()
+                    == NativeOperationComparison.Status.MATCHED, "retained two-owner native replay");
+        }
+        corrupt(separate,f->field(owners(f).get(1),"sourceOccurrenceLineage",-1L),"foreign retained owner");
+        corrupt(separate,f->field(f,"matrixEGraphRoot",owners(f).get(1)),"wrong parent edge");
+        corrupt(separate,f->field(owners(f).get(1).getChildren().get(0),"sourceOccurrenceLineage",-1L),"foreign local declaration");
+        corrupt(separate,f->field(owners(f).get(1).getChildren().get(0).getChildren().get(0),"sourceOccurrenceLineage",-1L),"foreign domain occurrence");
+        corrupt(separate,f->field(owners(f).get(1).getChildren().get(0).getChildren().get(1),"alphaName","_q0"),"capture of original outer binder");
+        corrupt(separate,f->field(owners(f).get(1),"opcode",EGraphNode.Opcode.LONE),"unsupported local kind");
+        corrupt(separate,f->field(owners(f).get(1).getChildren().get(0).getChildren().get(0),"opcode",EGraphNode.Opcode.SETOF),"set multiplicity");
+        var foreign=separateOwners();
+        corrupt(separate,f->field(f,"certificationMatrixEGraphRoot",foreign.a.normalizedForms().get(0).getCertificationMatrixEGraph()),"foreign original source authority");
+        corrupt(separate,f->field(owners(f).get(1).getChildren().get(0).getChildren().get(1),"exactAlloyType",owners(views(foreign.a).get(0)).get(1).getChildren().get(0).getChildren().get(1).getExactAlloyType()),"foreign parser module/type");
+        corrupt(separate,f->field(f,"temporalOp",NormalForm.TemporalOp.ALWAYS),"temporal owner boundary");
+        corrupt(separate,f->field(f,"params",List.of(f.getMatrixQuantiVars().get(0))),"parameter boundary");
+        corrupt(separate,f->field(f,"inheritedQuantiVars",List.of(f.getMatrixQuantiVars().get(0))),"imported owner boundary");
         var controls=new JSONArray();
-        for(var row:List.of(new String[]{"SASEHD8jPo2HgsuoJ_inv14","inv14","27"},new String[]{"85tWoTeBhoEDhCKmw_inv14","inv14","37"},new String[]{"4g8G2qHXAbDJFACM7_inv15","inv15","49"},new String[]{"JoNXaXfKNJzGh3BFa_inv12","inv12","22"},new String[]{"YKy8LYsKdapW3xqbn_inv14","inv14","22"},new String[]{"xJnitBpFv9K74WNvf_inv14","inv14","49"})) {
+        for(var row:List.of(new String[]{"SASEHD8jPo2HgsuoJ_inv14","inv14","27"},new String[]{"85tWoTeBhoEDhCKmw_inv14","inv14","39"},new String[]{"4g8G2qHXAbDJFACM7_inv15","inv15","49"},new String[]{"JoNXaXfKNJzGh3BFa_inv12","inv12","22"},new String[]{"YKy8LYsKdapW3xqbn_inv14","inv14","22"},new String[]{"xJnitBpFv9K74WNvf_inv14","inv14","35"})) {
             var control=source(row[0],row[1]);
             for(int d=0;d<2;d++) {
                 var q=d==0?control:control.reverse();var report=DistanceReplayDiagnostics.capture(q.a,q.b,q.ca,q.cb);
@@ -144,7 +167,7 @@ public final class RetainedPaidCandidateReplayTest {
             controls.put(new JSONObject().put("source",row[0]).put("distance",Integer.parseInt(row[2])));
         }
         Files.writeString(out.resolve("checks.json"),new JSONObject().put("checks",checks).put("controls",controls).put("certificationStatus","BLOCKED").toString(2),StandardOpenOption.CREATE_NEW);
-        System.out.println("RetainedPaidCandidateReplayTest: "+checks+" checks passed;36/actions21 both directions; prior SASE paid exchange preserved");
+        System.out.println("RetainedPaidCandidateReplayTest: "+checks+" checks passed;35/actions23 both directions; prior SASE paid exchange preserved");
     }
     private static void collectLocals(EGraphNode node,List<String> names){
         if(node.hasComparisonLocalCoordinate())names.add(node.getAlphaName());

@@ -114,6 +114,52 @@ final class FastGroupedDeclarationOrbit {
                 a.size(),b.size(),pairs,charged,(i,j)->hasSwap(left,i,j),(i,j)->hasSwap(right,i,j));
         return left.stream().filter(p->{for(int i=0;i<p.length;i++)if(fixed[i]&&p[i]!=i)return false;return true;}).toList();
     }
+    record PairedOrder(int[] source, int[] target) {}
+
+    /** Visit surviving declaration occurrences in source order. Each occurrence
+     * tries its own position first, then the remaining authorized coordinates.
+     * Keep every pair of independently authenticated full permutations. */
+    static List<PairedOrder> pairedOrders(List<QuantiVar> source, List<QuantiVar> target,
+            Map<String, String> links, List<int[]> left, List<int[]> right, Budget budget) {
+        var pairs = new ArrayList<PairedOrder>();
+        for (int[] p : left) for (int[] q : right) {
+            budget.spend();
+            pairs.add(new PairedOrder(p, q));
+        }
+        if (pairs.size() < 2) return pairs;
+        var targetPositions = new HashMap<String, Integer>();
+        for (int j = 0; j < target.size(); j++) targetPositions.put(target.get(j).getName(), j);
+        int[] positions = new int[source.size()];
+        Arrays.fill(positions, -1);
+        for (int i = 0; i < source.size(); i++) {
+            String name = links.get(source.get(i).getName());
+            if (name != null) positions[i] = targetPositions.get(name);
+        }
+        pairs.sort((a, b) -> {
+            for (int i = 0; i < positions.length; i++) {
+                int j = positions[i];
+                if (j < 0) continue;
+                int order = comparePosition(a.source()[i], b.source()[i], i);
+                if (order == 0) order = comparePosition(a.target()[j], b.target()[j], j);
+                if (order != 0) return order;
+            }
+            int order = compareCompletion(a.source(), b.source());
+            return order == 0 ? compareCompletion(a.target(), b.target()) : order;
+        });
+        return pairs;
+    }
+
+    private static int comparePosition(int a, int b, int original) {
+        return Integer.compare(a == original ? -1 : a, b == original ? -1 : b);
+    }
+
+    private static int compareCompletion(int[] a, int[] b) {
+        for (int i = 0; i < a.length; i++) {
+            if ((a[i] == i) != (b[i] == i)) return a[i] == i ? -1 : 1;
+        }
+        return Arrays.compare(a, b);
+    }
+
     private static boolean hasSwap(List<int[]> orders,int a,int b) {
         for(var p:orders) {
             boolean same=true;

@@ -1,0 +1,107 @@
+{
+  "cohorts": {
+    "referenceZeros": {
+      "status": "PASS",
+      "comparisons": 19271,
+      "replayStatuses": {
+        "MATCHED": 19271
+      }
+    },
+    "targetedPaidRankings": {
+      "status": "FAIL",
+      "comparisons": 4138,
+      "replayStatuses": {
+        "MATCHED": 4055,
+        "MISMATCH": 83
+      }
+    },
+    "doublyCrossedForwardControls": {
+      "status": "PASS",
+      "comparisons": 3,
+      "replayStatuses": {
+        "MATCHED": 3
+      }
+    },
+    "doublyCrossedReverseControls": {
+      "status": "PASS",
+      "comparisons": 3,
+      "replayStatuses": {
+        "MATCHED": 3
+      }
+    }
+  },
+  "status": "FAIL",
+  "sourceBoundary": "FROZEN_NORMALIZED_IR",
+  "jarSha256": "3cfd40fed17536a9b4ffcb295ff5595a231f7361c148db4d9b4ac4db0461b306",
+  "driverVariants": {
+    "ReferenceTrace.java": "ae1f26b77b2b797a64d3fc2854a4cd8b216ac74621df3933c381f4832f7add5b",
+    "phase2/ReferenceTrace.java": "fa6c5c98307c77e22c6475f650cc9f74f4513ff8a5b92ff4178588212a9fe867",
+    "phaseStreaming/ReferenceTrace.java": "6c1fd639c2d9bba14ca3712372190846c04a390ca725479dd6d6572098ccec8c"
+  },
+  "jobs": {
+    "zero0.tsv": "0ebad43d88d38f6368463a864b62e9553e9ce78b12422383f7c31c40b63ae157",
+    "zero1.tsv": "914a71d9f333d45ef8a1bc4e35b52bb40962809194684336b02b814ef430fa4c",
+    "paid-all.tsv": "002922864d9c69f81d47324b52c54ed1af8bc71a3e67528a3e40f1429b25bbd5"
+  },
+  "results": {
+    "runs/paid-all.jsonl": "f4f6ff472cbbe4b0409dfd6b292de27e80cbef3cc6400c5a1d404edc4a25acd5",
+    "runs/zero1.jsonl": "8ceba4d77b75e3f18e824b27e0e9d331a92615b3c48a3cb597f28444784eb22d",
+    "runs/zero0.jsonl": "c3bb2f0c4f7f976237de804b3a170debe6d87d7270e1d7857cc89debedfe25be",
+    "phasePaidW1/runs/2.jsonl": "0d6b67410cf1c01d5ecd8c8782d5d9c989a068fd8afe40aeb69f29ecb26248a9",
+    "phasePaidW1/runs/3.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "phasePaidW1/runs/0.jsonl": "4a8e536b56d24fea9c751fc73b0fa0f368c95612a302204408a7f658228cc570",
+    "phasePaidW1/runs/4.jsonl": "55d9bd9039a91efad4a03519c7cc175ade0277ca8407b1515f1eee62a03c907b",
+    "phasePaidW1/runs/5.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "phasePaidW1/runs/1.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "phasePaid1/runs/2.jsonl": "7b0811b15e4940fe71cdbd115d41e3e519826b446120d25374bbeede586ba5e6",
+    "phasePaid1/runs/0.jsonl": "15b96fb2fd1d1b3615b3136300060c548a6dc6f1a13b7c594453b1f986286d03",
+    "phasePaid1/runs/1.jsonl": "30fead2790a648dcb6f3ca5de8a9d5ac0e588ecbc85d98101357cb41e5cc131f",
+    "phase2/runs/2.jsonl": "96b6944132b970b8b4414ff897b2baa50add4dbcf3ce42a7d45438ec628c6dd8",
+    "phase2/runs/0.jsonl": "817354dd0ed4850d759aaeb4c8e5c8e58728f92dffcbed1b5d8ca5a8d40d536d",
+    "phase2/runs/1.jsonl": "0ea8fbded9a8179224458e84adc65b3dbaa390722c62a74a3ce5f27245350f43",
+    "phasePaidStable1/runs/2.jsonl": "13611a7d30fc41ab87417034256effc42d5249e51611d08e197ddec76ba4d602",
+    "phasePaidStable1/runs/3.jsonl": "85835bec3371ee7cd1cdd5fd8ab1410b5bd55797bdbe496c45a19bb378c12168",
+    "phasePaidStable1/runs/0.jsonl": "7ce2ae0e2ed5d4acce2c35339235dc41abb0735122066d7a748547a51e96a691",
+    "phasePaidStable1/runs/4.jsonl": "c2fc384c59dbf247dd11a3e375a0ea092bd816e4715ee7680cce3590929b96b7",
+    "phasePaidStable1/runs/5.jsonl": "be20afc0536124d3410e99a16ec671100e92e7c1bb954cf059a6e1fc8bde5eb4",
+    "phasePaidStable1/runs/1.jsonl": "8fda71aaa85ae28fe778c3b7959561c4d1e38b5b66e050d13a4bed30c06d8042",
+    "phasePaidW2/runs/2.jsonl": "79642f0eb61fda33ea4338c0746c4ed184caa8d2b75a74b12cc688d2b44d4305",
+    "phasePaidW2/runs/0.jsonl": "55cee34612624ec6c9df74ccd00aff4907802ede6be591d38a12db5ea551ee2b",
+    "phasePaidW2/runs/1.jsonl": "f2b330cf7f80785aac0e64fd2f7cf86bfbb598050a9475da1e435e1e2f470e7c"
+  },
+  "statusCounts": [
+    {
+      "cohort": "both",
+      "status": "MATCHED",
+      "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+      "observations": 3
+    },
+    {
+      "cohort": "paid",
+      "status": "MATCHED",
+      "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+      "observations": 4055
+    },
+    {
+      "cohort": "paid",
+      "status": "MISMATCH",
+      "reason": "CHECKED_NATIVE_ACTIONS_DIFFER",
+      "observations": 83
+    },
+    {
+      "cohort": "reverse",
+      "status": "MATCHED",
+      "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+      "observations": 3
+    },
+    {
+      "cohort": "zero",
+      "status": "MATCHED",
+      "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+      "observations": 19271
+    }
+  ],
+  "measured": 23415,
+  "nonmatching": 83,
+  "ledgerSha256": "fb3a1c28681def419b0711567ed90ac07c3351063c2059fefc7688141706a6f5"
+}

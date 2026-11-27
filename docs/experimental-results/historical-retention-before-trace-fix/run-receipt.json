@@ -1,0 +1,378 @@
+{
+  "commands": {
+    "path": "[ARTIFACTS]/planned-commands.txt",
+    "sha256": "003d154b128035db6badb268c821d3b62a98da3ab75cf4cb17b9f5754979bb69"
+  },
+  "completedAt": "2026-11-27T03:32:16.144291Z",
+  "configuration": {
+    "capabilityTarget": 500,
+    "heap": "8g",
+    "limit": 0,
+    "rewardPool": 100,
+    "seed": 55520260811,
+    "workers": 16
+  },
+  "dataset": {
+    "byteCount": 30141317,
+    "fileCount": 66080,
+    "root": "[CHECKOUT]/classified-data",
+    "sha256": "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689"
+  },
+  "dependencies": [
+    {
+      "path": "lib/AlloyASG-Release.jar",
+      "sha256": "fe672d7e54b75ce2e68fd512a3e0aa11f58cd8694b6b02b8da9606958a4847c4",
+      "sizeBytes": 85380
+    },
+    {
+      "path": "lib/AlloyASG.jar",
+      "sha256": "5adc247bae551739bb61db848eb8ba6ee3292300f126e2b286c3a298a22c9dc6",
+      "sizeBytes": 42535
+    },
+    {
+      "path": "lib/AlloyParser.jar",
+      "sha256": "be040bcd26ddcf042bb629f9c2a8c56e2f8bca0c829281c5cc0d07a047474fe3",
+      "sizeBytes": 121873
+    },
+    {
+      "path": "lib/alloy.jar",
+      "sha256": "8a8746b89d95f28762903c9acbd2bee8aca5014fe49a522b7184ba32ffcc5b58",
+      "sizeBytes": 20971507
+    },
+    {
+      "path": "lib/commons-cli-1.11.0.jar",
+      "sha256": "8f7f8605d68e15bf32db61ec94eac6fdafc51b1bdbe1e0e0802b57d23f387792",
+      "sizeBytes": 110167
+    },
+    {
+      "path": "lib/json-java.jar",
+      "sha256": "7dd2de1533e766e2b6c07d8194da85145ad313a167a4760050f5c9b6839604fe",
+      "sizeBytes": 89800
+    },
+    {
+      "path": "lib/slf4j-api-2.0.20.jar",
+      "sha256": "7e1446499b359675d8aabe6af2de86b85e72ae8a2a932c0b40d0e5ba57097439",
+      "sizeBytes": 70255
+    },
+    {
+      "path": "lib/slf4j-simple-2.0.20.jar",
+      "sha256": "8e701404786a4f87219d39d4853c86dfe4e86ae99376a39749df6c08e75022e0",
+      "sizeBytes": 15705
+    }
+  ],
+  "experimentJar": {
+    "path": "[ARTIFACTS]/build/acgn-experiments.jar",
+    "sha256": "3cfd40fed17536a9b4ffcb295ff5595a231f7361c148db4d9b4ac4db0461b306",
+    "sizeBytes": 5028569
+  },
+  "fullManifestVerified": true,
+  "git": {
+    "commit": "239fddc01a67477d222c31a6084702ce72083859",
+    "dirty": false
+  },
+  "identitySha256": "1106c30dfe4f2500b58541df387e37a6c67ec04a907c24c01d4c3f48570a45b7",
+  "manifestSha256": "c763fb6652d3611d0c6e609fa18402c1e5399a4ee9c81049a264032a3713c96e",
+  "nativeOperationCounts": {
+    "attempted": 61598,
+    "certificationStatus": "BLOCKED",
+    "coverageUnit": "completed pair comparison attempts; workers may finish ahead of ordered result writing",
+    "errors": 0,
+    "examples": [],
+    "invalidReplay": 0,
+    "matched": 61598,
+    "mismatches": 0,
+    "schema": "acgn-native-operation-comparison-v1",
+    "unchecked": 0,
+    "uncheckedReasons": {}
+  },
+  "publishedPathPlaceholders": {
+    "[ARTIFACTS]": "New output tree",
+    "[CHECKOUT]": "Measured Git checkout",
+    "[RUN]": "Supervised run directory"
+  },
+  "resources": {
+    "hostOomKillDelta": 0,
+    "minHostAvailableBytes": 9829089280,
+    "minRunVolumeFreeBytes": 252872704000,
+    "samples": 131
+  },
+  "runId": "c8b690a4-54af-4ad5-82fa-a9c3f8b477a9",
+  "runtime": {
+    "cpu": "x86_64",
+    "java": "Picked up JAVA_TOOL_OPTIONS: -Xmx1g -XX:ActiveProcessorCount=16 -Djava.io.tmpdir=[RUN]/tmp\nopenjdk version \"17.0.21.1\" 2026-11-17\nOpenJDK Runtime Environment (build 17.0.21.1+2-1-24.04.1-Ubuntu)\nOpenJDK 64-Bit Server VM (build 17.0.21.1+2-1-24.04.1-Ubuntu, mixed mode, sharing)",
+    "logicalProcessors": 32,
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+  },
+  "source": {
+    "byteCount": 9483655,
+    "fileCount": 627,
+    "sha256": "d7827dc5524e647dbf287c651df55ae2c92b0fb09ac10817c22ff28f5b8f1f03"
+  },
+  "stages": [
+    {
+      "commandSha256": "5563000b38bfbac101cbb38019c74e4d876fee14ccf027e474658188f9d0ef95",
+      "name": "historical-native-controls",
+      "recordedAt": "2026-11-27T02:27:34.488600Z"
+    },
+    {
+      "commandSha256": "ca00e3e359975f5373285b2c242b440b40085ab7b1d3bbeb05048eaeb3de0706",
+      "name": "canonical-batch",
+      "recordedAt": "2026-11-27T02:56:48.045888Z"
+    },
+    {
+      "commandSha256": "1781251ebeac7b36aa7bb46b3557f7ac10a318bf002f47b3ee61a916bdcb07d5",
+      "name": "augmenter",
+      "recordedAt": "2026-11-27T03:14:45.110066Z"
+    },
+    {
+      "commandSha256": "3ea42a0c31a96a2455da636ce8fd3766f72b90f7439fff0822004808ef64cc2b",
+      "name": "rank-score-parity",
+      "recordedAt": "2026-11-27T03:15:00.309051Z"
+    },
+    {
+      "commandSha256": "deba7cb4941db284fbd1ada0ba473b7a8bd01642430726b0d50dd8b36d96cb03",
+      "name": "semantic",
+      "recordedAt": "2026-11-27T03:28:15.709262Z"
+    },
+    {
+      "commandSha256": "5ca3f49b736a8d176be1fbf3dd8d8e2cd563dc0a15d29f1b9cee4f9bf13a12f3",
+      "name": "capability-report",
+      "recordedAt": "2026-11-27T03:29:44.041630Z"
+    },
+    {
+      "commandSha256": "743952d9aca537b618840f0df78a7ec75be9a8f72b4a27c9f2a685a8e10368ff",
+      "name": "slot-typing-natural",
+      "recordedAt": "2026-11-27T03:30:34.167846Z"
+    },
+    {
+      "commandSha256": "bb6ea75c8e1b8de654c1b48aa102dcd235313a87941de44c55502567580568a3",
+      "name": "historical-coverage",
+      "recordedAt": "2026-11-27T03:31:32.054415Z"
+    }
+  ],
+  "startedAt": "2026-11-27T02:27:26.513946Z",
+  "status": "complete",
+  "supervisor": [
+    {
+      "finishedAt": "2026-11-27T02:27:22.546829+00:00",
+      "name": "compile",
+      "startedAt": "2026-11-27T02:27:16.545604+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T02:27:24.548879+00:00",
+      "name": "jar",
+      "startedAt": "2026-11-27T02:27:22.548086+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T02:27:26.558382+00:00",
+      "name": "manifest-create",
+      "startedAt": "2026-11-27T02:27:24.557854+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T02:27:32.559988+00:00",
+      "name": "historical-native-controls",
+      "startedAt": "2026-11-27T02:27:26.558997+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T02:27:34.561207+00:00",
+      "name": "record-historical-native-controls",
+      "startedAt": "2026-11-27T02:27:32.560653+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T02:27:36.562356+00:00",
+      "name": "identity-after-historical-native-controls",
+      "startedAt": "2026-11-27T02:27:34.561856+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T02:56:45.460776+00:00",
+      "name": "canonical-batch",
+      "startedAt": "2026-11-27T02:27:36.563163+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T02:56:49.475410+00:00",
+      "name": "record-canonical-batch",
+      "startedAt": "2026-11-27T02:56:45.466706+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T02:56:53.477605+00:00",
+      "name": "identity-after-canonical-batch",
+      "startedAt": "2026-11-27T02:56:49.476213+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:14:42.043494+00:00",
+      "name": "augmenter",
+      "startedAt": "2026-11-27T02:56:53.478408+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:14:46.049390+00:00",
+      "name": "record-augmenter",
+      "startedAt": "2026-11-27T03:14:42.046388+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:14:50.052865+00:00",
+      "name": "identity-after-augmenter",
+      "startedAt": "2026-11-27T03:14:46.051097+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:14:58.058610+00:00",
+      "name": "rank-score-parity",
+      "startedAt": "2026-11-27T03:14:50.054656+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:15:02.061975+00:00",
+      "name": "record-rank-score-parity",
+      "startedAt": "2026-11-27T03:14:58.060182+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:15:06.065192+00:00",
+      "name": "identity-after-rank-score-parity",
+      "startedAt": "2026-11-27T03:15:02.063740+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:27:45.508283+00:00",
+      "name": "ablation",
+      "startedAt": "2026-11-27T03:15:06.066667+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:28:09.553542+00:00",
+      "name": "semantic",
+      "startedAt": "2026-11-27T03:27:45.512881+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:28:13.556503+00:00",
+      "name": "bind-semantic",
+      "startedAt": "2026-11-27T03:28:09.555459+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:28:17.559045+00:00",
+      "name": "record-semantic",
+      "startedAt": "2026-11-27T03:28:13.557750+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:28:21.561435+00:00",
+      "name": "identity-after-semantic",
+      "startedAt": "2026-11-27T03:28:17.560392+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:28:31.566106+00:00",
+      "name": "capability-generate",
+      "startedAt": "2026-11-27T03:28:21.562547+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:28:33.568542+00:00",
+      "name": "capability-soundness",
+      "startedAt": "2026-11-27T03:28:31.567385+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:29:39.680467+00:00",
+      "name": "capability-arms",
+      "startedAt": "2026-11-27T03:28:33.569684+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:29:41.683388+00:00",
+      "name": "capability-report",
+      "startedAt": "2026-11-27T03:29:39.681559+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:29:45.685511+00:00",
+      "name": "record-capability-report",
+      "startedAt": "2026-11-27T03:29:41.684315+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:29:49.688141+00:00",
+      "name": "identity-after-capability-report",
+      "startedAt": "2026-11-27T03:29:45.686744+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:30:31.993576+00:00",
+      "name": "slot-typing-natural",
+      "startedAt": "2026-11-27T03:29:49.689598+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:30:35.996055+00:00",
+      "name": "record-slot-typing-natural",
+      "startedAt": "2026-11-27T03:30:31.994615+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:30:39.998988+00:00",
+      "name": "identity-after-slot-typing-natural",
+      "startedAt": "2026-11-27T03:30:35.997596+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:31:20.013382+00:00",
+      "name": "slotted-reference-pools",
+      "startedAt": "2026-11-27T03:30:40.000463+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:31:30.017113+00:00",
+      "name": "historical-coverage",
+      "startedAt": "2026-11-27T03:31:20.014485+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:31:34.019165+00:00",
+      "name": "record-historical-coverage",
+      "startedAt": "2026-11-27T03:31:30.018085+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:31:38.021535+00:00",
+      "name": "identity-after-historical-coverage",
+      "startedAt": "2026-11-27T03:31:34.020242+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:31:42.024471+00:00",
+      "name": "bind-report-0",
+      "startedAt": "2026-11-27T03:31:38.023262+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:31:46.026312+00:00",
+      "name": "bind-report-1",
+      "startedAt": "2026-11-27T03:31:42.025390+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:31:50.028476+00:00",
+      "name": "bind-report-2",
+      "startedAt": "2026-11-27T03:31:46.027420+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:31:54.030854+00:00",
+      "name": "bind-report-3",
+      "startedAt": "2026-11-27T03:31:50.029677+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:31:58.033417+00:00",
+      "name": "bind-report-4",
+      "startedAt": "2026-11-27T03:31:54.032212+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:32:02.035516+00:00",
+      "name": "bind-report-5",
+      "startedAt": "2026-11-27T03:31:58.034461+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:32:06.037864+00:00",
+      "name": "bind-report-6",
+      "startedAt": "2026-11-27T03:32:02.036706+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:32:10.039899+00:00",
+      "name": "bind-report-7",
+      "startedAt": "2026-11-27T03:32:06.038939+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:32:14.042550+00:00",
+      "name": "bind-report-8",
+      "startedAt": "2026-11-27T03:32:10.041327+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:32:26.057845+00:00",
+      "name": "manifest-finalize",
+      "startedAt": "2026-11-27T03:32:14.054496+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:32:34.061494+00:00",
+      "name": "manifest-final-verify",
+      "startedAt": "2026-11-27T03:32:26.059331+00:00"
+    }
+  ]
+}

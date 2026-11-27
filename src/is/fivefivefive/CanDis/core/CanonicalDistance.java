@@ -1329,6 +1329,7 @@ public final class CanonicalDistance {
         for(var variable:b)targetCensus.add(variable.getName());
         var budget=new FastGroupedDeclarationOrbit.Budget();
         MatrixAlignment[] best = {null};
+        MatrixAlignment[] bestCompletion = {null};
         boolean[] bestLinked = {false};
         boolean[] bestExisting = {false};
         boolean[] bestPaidSupported = {true};
@@ -1345,18 +1346,30 @@ public final class CanonicalDistance {
             if(constrainPath) {
                 var retained=retainedDeclarationMatrixAlignment(left,right,a,b,paid,links,path,
                         sourceCensus,targetCensus,sourceOrders,leftMetadata,rightMetadata);
-                if(retained!=null && (best[0]==null || retained.distance<best[0].distance
-                        || retained.distance==best[0].distance && !bestExisting[0])) {
-                    best[0]=retained;
-                    bestLinked[0]=true;
-                    bestExisting[0]=true;
-                    bestPaidSupported[0]=true;
+                if (retained != null) {
+                    var candidate = retained.alignment();
+                    if (retained.exactPrior()) {
+                        if (best[0] == null || candidate.distance < best[0].distance
+                                || candidate.distance == best[0].distance
+                                    && (candidate.sourceOrder == null && best[0].sourceOrder != null
+                                        || (candidate.sourceOrder == null) == (best[0].sourceOrder == null)
+                                            && !bestExisting[0])) {
+                            best[0] = candidate;
+                            bestLinked[0] = true;
+                            bestExisting[0] = true;
+                            bestPaidSupported[0] = true;
+                        }
+                    } else if (bestCompletion[0] == null || candidate.distance < bestCompletion[0].distance) {
+                        bestCompletion[0] = candidate;
+                    }
                 }
             }
             var distinctSources=FastGroupedDeclarationOrbit.quotientSources(a,b,
                     constrainPath?links:paid,paid,sourceOrders,targetOrders);
-            for(var p:distinctSources)for(var q:targetOrders) {
-                budget.spend();
+            for (var order : FastGroupedDeclarationOrbit.pairedOrders(a, b, constrainPath ? links : paid,
+                    distinctSources, targetOrders, budget)) {
+                int[] p = order.source();
+                int[] q = order.target();
                 var moved=FastGroupedDeclarationOrbit.transport(a,b,constrainPath?links:paid,p,q);
                 Set<String> lockedLeft=constrainPath?sourceCensus:moved.keySet();
                 Set<String> lockedRight=constrainPath?targetCensus:new HashSet<>(moved.values());
@@ -1397,13 +1410,19 @@ public final class CanonicalDistance {
                 }
             }
         },true);
+        // Completing an old partial matrix map can produce a lower score. On a tie
+        // the ordinary declaration search owns the chosen path and its replay.
+        if (bestCompletion[0] != null && (best[0] == null || bestCompletion[0].distance < best[0].distance))
+            return bestCompletion[0];
         if (best[0] == null) throw new IllegalStateException("PAID_DECLARATION_NO_MINIMUM_PATH");
         return best[0];
     }
 
+    private record RetainedDeclarationAlignment(MatrixAlignment alignment, boolean exactPrior) {}
+
     /** Preserve an existing group exchange only with an attaining path and
      * unchanged matrix cost under its complete, source-authorized constraints. */
-    private static MatrixAlignment retainedDeclarationMatrixAlignment(NormalForm left,NormalForm right,
+    private static RetainedDeclarationAlignment retainedDeclarationMatrixAlignment(NormalForm left,NormalForm right,
             List<QuantiVar> a,List<QuantiVar> b,Map<String,String> paid,Map<String,String> links,
             List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move> path,
             Set<String> sourceCensus,Set<String> targetCensus,
@@ -1439,7 +1458,7 @@ public final class CanonicalDistance {
                 result.sourceOrder=order.clone();
                 result.targetOrder=FastGroupedDeclarationOrbit.identity(b.size());
             }
-            return result;
+            return new RetainedDeclarationAlignment(result, full.equals(prior.mapping));
         }
         return null;
     }

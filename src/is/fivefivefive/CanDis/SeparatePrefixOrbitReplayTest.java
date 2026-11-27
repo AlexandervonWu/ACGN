@@ -20,7 +20,7 @@ public final class SeparatePrefixOrbitReplayTest {
         var result=new ArrayList<Canonical.Prepared>();for(var name:names)result.add(Canonical.prepare(v.getForest().get(v.getForestId(name))));return result;
     }
     private static Pair source(String stem,String name)throws Exception {
-        var forms=prepare(Files.readString(Path.of("classified-data",stem.startsWith("xJnit")?"coursesOld":"classroom_fol","both",stem+".als")),name,name+"c");
+        var forms=prepare(Files.readString(Path.of(System.getProperty("acgn.test.repoRoot", "."), "classified-data",stem.startsWith("xJnit")?"coursesOld":"classroom_fol","both",stem+".als")),name,name+"c");
         return new Pair(forms.get(0),forms.get(1),CanonicalAlloyPipeline.prepare(forms.get(0)),CanonicalAlloyPipeline.prepare(forms.get(1)));
     }
     private static Object call(String name,Class<?>[] types,Object...args) {
@@ -103,7 +103,7 @@ public final class SeparatePrefixOrbitReplayTest {
             } else check(choices.size()==1,"no extra order for actual negative "+name);
         }
         var controls=new JSONArray();
-        for(var row:List.of(new String[]{"ft2Q8x9bQa59gFBR4_inv14","inv14","17"},new String[]{"Wq9Au27ys6iRip6CD_inv14","inv14","36"},new String[]{"SASEHD8jPo2HgsuoJ_inv14","inv14","27"},new String[]{"85tWoTeBhoEDhCKmw_inv14","inv14","37"},new String[]{"JoNXaXfKNJzGh3BFa_inv12","inv12","22"},new String[]{"8dTfKqTs26w6fL87K_inv15","inv15","18"},new String[]{"YKy8LYsKdapW3xqbn_inv14","inv14","22"},new String[]{"xJnitBpFv9K74WNvf_inv14","inv14","49"})) {
+        for(var row:List.of(new String[]{"ft2Q8x9bQa59gFBR4_inv14","inv14","17"},new String[]{"Wq9Au27ys6iRip6CD_inv14","inv14","35"},new String[]{"SASEHD8jPo2HgsuoJ_inv14","inv14","27"},new String[]{"85tWoTeBhoEDhCKmw_inv14","inv14","39"},new String[]{"JoNXaXfKNJzGh3BFa_inv12","inv12","22"},new String[]{"8dTfKqTs26w6fL87K_inv15","inv15","18"},new String[]{"YKy8LYsKdapW3xqbn_inv14","inv14","22"},new String[]{"xJnitBpFv9K74WNvf_inv14","inv14","35"})) {
             var control=source(row[0],row[1]);
             for(int d=0;d<2;d++){
                 var q=d==0?control:control.reverse();var report=DistanceReplayDiagnostics.capture(q.a,q.b,q.ca,q.cb);

@@ -27,6 +27,7 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
 python3 "$ROOT/scripts/test_natural_slotted_coverage.py" "$classes"
 python3 "$ROOT/scripts/test_natural_slotted_retention.py" "$classes"
 python3 -B "$ROOT/scripts/test_historical_pair_coverage.py"
+python3 -B "$ROOT/scripts/test_historical_rank_traces.py"
 
 tests=(
   is.fivefivefive.CanDis.CapabilitySourceSchedulingTest
@@ -69,6 +70,11 @@ tests=(
   is.fivefivefive.CanDis.CanonicalBacktranslatorTest
   is.fivefivefive.CanDis.EGraphSaturationTest
   is.fivefivefive.CanDis.AlloySourceRuleRegressionTest
+  is.fivefivefive.CanDis.DeclarationOrbitWitnessTest
+  is.fivefivefive.CanDis.RetainedPaidCandidateReplayTest
+  is.fivefivefive.CanDis.GroupedPaidOrbitReplayTest
+  is.fivefivefive.CanDis.SeparatePrefixOrbitReplayTest
+  is.fivefivefive.CanDis.ScopeBlockTieReplayTest
   is.fivefivefive.CanDis.MASGVisitorTypeRegressionTest
   is.fivefivefive.CanDis.SemanticProfileSourceCommandTest
   is.fivefivefive.CanDis.CapabilitySoundnessCheckTest
@@ -106,6 +112,8 @@ tests=(
 python3 -B "$ROOT/scripts/check_historical_cv_proofs.py"
 "${LEAN_BIN:-lean}" -o "$work/HistoricalCVPairs.olean" \
   "$ROOT/docs/section3-repair-audit/formal/HistoricalCVPairs.lean"
+"${LEAN_BIN:-lean}" -o "$work/SurvivorWitnessOrder.olean" \
+  "$ROOT/docs/section3-repair-audit/formal/SurvivorWitnessOrder.lean"
 "${LEAN_BIN:-lean}" -o "$work/Phase5SourceRules.olean" \
   "$ROOT/docs/section3-repair-audit/formal/Phase5SourceRules.lean"
 "${LEAN_BIN:-lean}" -o "$work/TemporalPhaseLocalBinding.olean" \

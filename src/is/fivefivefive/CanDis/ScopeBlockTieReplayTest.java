@@ -30,6 +30,26 @@ public final class ScopeBlockTieReplayTest {
         var right=Canonical.prepare(visitor.getForest().get(visitor.getForestId(name+"c")));
         return new Pair(left,right,CanonicalAlloyPipeline.prepare(left),CanonicalAlloyPipeline.prepare(right));
     }
+    private static void checkOriginalMapping(Pair pair, JSONArray mapping, String expected) {
+        var source = pair.exactLeft.repairView().phases().get(0).bindings();
+        var target = pair.exactRight.repairView().phases().get(0).bindings();
+        check(mapping.length() == source.size(), "all source coordinates represented");
+        for (var side : List.of(source, target)) {
+            check(side.stream().map(binding -> binding.originalBinding().getOriginalName()).distinct().count()
+                    == side.size(), "fixture identifies each original binder without shadowing");
+        }
+        var links = new TreeSet<String>();
+        for (int i = 0; i < source.size(); i++) {
+            int j = mapping.getInt(i);
+            check(j >= -1 && j < target.size(), "valid target coordinate");
+            if (j < 0) continue;
+            String left = source.get(i).originalBinding().getOriginalName();
+            String right = target.get(j).originalBinding().getOriginalName();
+            check(links.add(left + "->" + right), "distinct source-linked coordinate pair");
+        }
+        check(links.equals(Set.of(expected.split(" "))), "preserve original projected binder links " + expected);
+    }
+
     private static void invalid(Pair p,JSONObject report,String reason) {
         var result=NativeOperationComparison.compareCaptured(p.left,p.right,report);
         check(result.status()==NativeOperationComparison.Status.INVALID_REPLAY,reason+": "+result.reason());
@@ -42,7 +62,7 @@ public final class ScopeBlockTieReplayTest {
     public static void main(String[] args) throws Exception {
         Path out=args.length==0?Files.createTempDirectory("scope-block-tie-"):Path.of(args[0]);
         Files.createDirectories(out);
-        Path source=Path.of("classified-data/classroom_fol/both/4g8G2qHXAbDJFACM7_inv15.als");
+        Path source=Path.of(System.getProperty("acgn.test.repoRoot", "."), "classified-data/classroom_fol/both/4g8G2qHXAbDJFACM7_inv15.als");
         var p=prepare(source,"inv15");
         check(p.left.normalizedForms().get(0).getMatrixQuantiVars().stream().map(q->q.getQuantifier().name()).toList()
                 .equals(List.of("ALL","SOME","SOME","ALL")),"actual separated compatible source blocks");
@@ -91,15 +111,15 @@ public final class ScopeBlockTieReplayTest {
                 new String[]{"SASEHD8jPo2HgsuoJ_inv14","inv14","27",""},
                 new String[]{"JoNXaXfKNJzGh3BFa_inv12","inv12","22",""},
                 new String[]{"YKy8LYsKdapW3xqbn_inv14","inv14","22",""},
-                new String[]{"7KzgkuDqY7Q4ZfQ4Z_inv14","inv14","19","[-1,0,-1,1]"},
-                new String[]{"7TYSDPnXqtud3bjku_inv12","inv12","27","[-1,0,-1]"},
-                new String[]{"83RWHQkLc3bdocWg4_inv12","inv12","15","[-1,-1,0]"},
-                new String[]{"TA943B2hFMmbp96Pj_inv8","inv8","8","[-1,0]"},
-                new String[]{"8dTfKqTs26w6fL87K_inv15","inv15","18","[-1,-1,0]"},
-                new String[]{"2S5sD2BA5mvLdj46b_inv12","inv12","14","[0,-1,-1,-1]"},
-                new String[]{"xJnitBpFv9K74WNvf_inv14","inv14","49",""})) {
+                new String[]{"7KzgkuDqY7Q4ZfQ4Z_inv14","inv14","19","c->c q->p"},
+                new String[]{"7TYSDPnXqtud3bjku_inv12","inv12","27","s->x"},
+                new String[]{"83RWHQkLc3bdocWg4_inv12","inv12","15","c->x"},
+                new String[]{"TA943B2hFMmbp96Pj_inv8","inv8","8","t->t"},
+                new String[]{"8dTfKqTs26w6fL87K_inv15","inv15","18","p3->p"},
+                new String[]{"2S5sD2BA5mvLdj46b_inv12","inv12","14","t->x"},
+                new String[]{"xJnitBpFv9K74WNvf_inv14","inv14","35",""})) {
             String folder=row[0].startsWith("xJnit")?"coursesOld":"classroom_fol";
-            var control=prepare(Path.of("classified-data",folder,"both",row[0]+".als"),row[1]);
+            var control=prepare(Path.of(System.getProperty("acgn.test.repoRoot", "."), "classified-data",folder,"both",row[0]+".als"),row[1]);
             var comparison=NativeOperationComparison.compare(control.left,control.right,control.exactLeft,control.exactRight);
             check(comparison.status()==NativeOperationComparison.Status.MATCHED,"prior family native comparison "+row[0]);
             var report=comparison.evidence().getJSONObject("diagnostic");
@@ -111,7 +131,7 @@ public final class ScopeBlockTieReplayTest {
                 check(replay.getJSONObject("declarationSlice").getBoolean("selectedMatrixDeclarationLinksChecked"),"prior paid/zero action linkage "+row[0]);
             }
             var mapping=report.getJSONObject("certified").getJSONArray("selectedGlobalMapping");
-            if(!row[3].isEmpty())check(mapping.similar(new JSONArray(row[3])),"existing consumer map retained "+row[0]);
+            if (!row[3].isEmpty()) checkOriginalMapping(control, mapping, row[3]);
             controls.put(new JSONObject().put("source",row[0]).put("distance",Integer.parseInt(row[2])).put("certifiedMap",mapping));
         }
         Files.writeString(out.resolve("checks.json"),new JSONObject().put("checks",checks).put("controls",controls)

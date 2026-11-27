@@ -168,6 +168,11 @@ bind_report "$RUN_ROOT/summary.md" "$DISTANCE/summary.md" "$AUGMENTED/summary.md
 # Preserve the historical identities on full runs of the published corpus.
 if (( LIMIT == 0 )) && { [[ "$DATASET" == "$(realpath "$ROOT/classified-data")" ]] ||
   (cd "$ROOT/scripts" && python3 -B -c 'import sys; from pathlib import Path; from verify_historical_pair_coverage import historical_dataset; sys.exit(not historical_dataset(Path(sys.argv[1])))' "$MANIFEST"); }; then
+  paid="$RUN_ROOT/historical-rank-witnesses"
+  python3 -B "$ROOT/scripts/verify_historical_rank_traces.py" --artifacts "$RUN_ROOT" --dataset "$DATASET" --repo "$ROOT" --output "$paid"
+  record_stage historical-rank-witnesses "$paid" "verify_historical_rank_traces.py --artifacts $RUN_ROOT --dataset $DATASET"
+  bind_report "$paid/paid-rank-witnesses.json" "$AUGMENTED/index.json" "$paid/floor.jsonl" \
+    "$paid/measured-witnesses.jsonl" "$paid/native-replays.jsonl"
   python3 -B "$ROOT/scripts/verify_slotted_reference_pools.py" --artifacts "$RUN_ROOT" --dataset "$DATASET" --repo "$ROOT"
   bind_report "$RUN_ROOT/slotted-reference-pools.json" "$AUGMENTED/default_correct_pool_equivalences.jsonl" \
     "$RUN_ROOT/slotted-reference-pairs.csv.gz"

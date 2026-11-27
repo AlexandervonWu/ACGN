@@ -27,3 +27,26 @@ python3 -B scripts/import_v2_historical_pair_coverage.py
 ```
 
 [Original v3-to-v3.1 paired deltas](../experimental-results/2026-11-21/paired-zero-gains.json) · [Reference-pool deltas](../experimental-results/2026-11-21/correct-pool-gains.json) · [v3.2 reference archive](../experimental-results/2026-11-25/README.md)
+
+## Paid ranking witnesses
+
+The full publication run also replays the paid cross-file witnesses recorded in
+`paid-ranking-witnesses.jsonl`. Each entry identifies the submission predicate
+and the reference predicate by original file, predicate name, and file digest.
+The expected cost comes from both complete rankings in the current run. The gate
+replays each direction with the measured JAR and requires both costs to equal the
+recorded score. The two engines must produce matching native actions with
+checked source certificates, fixed choices, and endpoint correspondence.
+
+```sh
+python3 -B scripts/verify_historical_rank_traces.py --repo . \
+    --dataset classified-data --artifacts RUN/artifacts --output RUN/paid-witnesses
+```
+
+The output includes the copied input floor, current measured costs, a receipt for
+each direction, and a summary with input and output digests. The integer costs may
+change as rewrite rules evolve. The gate also reads every published
+`paid-rank-witnesses-floor.jsonl` and fails if the current suite drops or
+substitutes an archived endpoint.
+
+The paid-witness model in Lean proves that the full survivor key distinguishes different endpoint permutations, that reordering admitted choices preserves their scalar minima, and that a completed partial mapping yields to an ordinary witness on a cost tie. Its concrete 116-edit example checks the first kept position under both observed permutations. The executable replay gate verifies the original source predicates and the actual edit sequences. [Lean model](../section3-repair-audit/formal/SurvivorWitnessOrder.lean)
