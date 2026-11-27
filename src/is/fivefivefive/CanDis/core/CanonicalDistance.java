@@ -1337,7 +1337,10 @@ public final class CanonicalDistance {
         // Zero-charge paths retain their existing source-issued alpha orbit.
         // Mixed paid paths constrain every keep as well as each charged update.
         boolean constrainPath=dp[a.size()][b.size()]!=0;
+        boolean splitTarget = constrainPath && a.size() >= 2 && hasSplitTargetPrior(left,right);
         FastPaidDeclarationAlignment.enumerateSelected(a,b,dp,CanonicalDistance::quantifierUpdateCost,(paid,path) -> {
+            // A single remaining source variable already visits targets in prefix order.
+            boolean splitPrior = splitTarget && a.size() - paid.size() >= 2;
             // Keep every paired step fixed; one-sided slots cannot re-enter the
             // residual search. Zero keeps constrain selection but are not paid.
             var links=new java.util.LinkedHashMap<String,String>();
@@ -1345,7 +1348,7 @@ public final class CanonicalDistance {
                 links.put(a.get(move.left()).getName(),b.get(move.right()).getName());
             if(constrainPath) {
                 var retained=retainedDeclarationMatrixAlignment(left,right,a,b,paid,links,path,
-                        sourceCensus,targetCensus,sourceOrders,leftMetadata,rightMetadata);
+                        sourceCensus,targetCensus,sourceOrders,leftMetadata,rightMetadata,splitPrior);
                 if (retained != null) {
                     var candidate = retained.alignment();
                     if (retained.exactPrior()) {
@@ -1387,7 +1390,7 @@ public final class CanonicalDistance {
                     // certified path. Never reuse the old unconstrained score.
                     var fullPhase=capture==null?null:capture.lastPhase;
                     var priorMapping=new BestMapping();
-                    int prior=paidPriorDistance(left,right,paidMoved,leftMetadata,rightMetadata,priorMapping);
+                    int prior=paidPriorDistance(left,right,paidMoved,leftMetadata,rightMetadata,priorMapping,splitPrior);
                     existing=prior==distance && declarationPathMatches(a,b,p,q,path,priorMapping.mapping);
                     if(capture!=null)capture.lastPhase=fullPhase;
                 }
@@ -1426,7 +1429,7 @@ public final class CanonicalDistance {
             List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move> path,
             Set<String> sourceCensus,Set<String> targetCensus,
             List<int[]> sourceOrders,
-            EGraphMetadata leftMetadata,EGraphMetadata rightMetadata) {
+            EGraphMetadata leftMetadata,EGraphMetadata rightMetadata,boolean splitPrior) {
         var prior=new BestMapping();
         int previous=matrixDistance(left,right,paid,paid.keySet(),new HashSet<>(paid.values()),
                 leftMetadata,rightMetadata,prior);
@@ -1458,12 +1461,12 @@ public final class CanonicalDistance {
                 result.targetOrder=FastGroupedDeclarationOrbit.identity(b.size());
             }
             boolean exactPrior = full.equals(prior.mapping);
-            if (exactPrior && hasCountingPrior(left,right)) {
-                // Keep the numeric candidate even when its original lexical prior
-                // chose a different survivor. Only equal-score witness priority changes.
+            if (exactPrior && (hasCountingPrior(left,right) || splitPrior)) {
+                // Keep the attaining numeric path even when the source-linked
+                // prior chose a different scope or survivor on this tie.
                 var authenticated = new BestMapping();
                 var phase = capture == null ? null : capture.lastPhase;
-                int trustedCost = paidPriorDistance(left,right,paid,leftMetadata,rightMetadata,authenticated);
+                int trustedCost = paidPriorDistance(left,right,paid,leftMetadata,rightMetadata,authenticated,splitPrior);
                 exactPrior = trustedCost == distance && full.equals(authenticated.mapping);
                 if (capture != null) capture.lastPhase = phase;
             }
@@ -2640,13 +2643,51 @@ public final class CanonicalDistance {
                 && right.getMatrixQuantiVars().stream().anyMatch(FastPrefixSource::countingBinder);
     }
 
+    private static boolean hasSplitTargetPrior(NormalForm left, NormalForm right) {
+        var source = variableBindings(left).values();
+        var target = variableBindings(right).values();
+        return source.stream().allMatch(b -> b.role == BindingRole.MATRIX && b.exchangeBlock == 0)
+                && target.stream().allMatch(b -> b.role == BindingRole.MATRIX)
+                && target.stream().anyMatch(b -> b.exchangeBlock > 0);
+    }
+
     private static int paidPriorDistance(NormalForm left, NormalForm right, Map<String,String> paid,
-            EGraphMetadata leftMetadata, EGraphMetadata rightMetadata, BestMapping selected) {
+            EGraphMetadata leftMetadata, EGraphMetadata rightMetadata, BestMapping selected, boolean splitPrior) {
         boolean counting = hasCountingPrior(left,right);
-        return matrixDistance(left, right, paid, paid.keySet(), new HashSet<>(paid.values()),
-                leftMetadata, rightMetadata, selected,
-                variableBindings(left, counting ? leftMetadata.countingPrior(left) : Map.of()),
-                variableBindings(right, counting ? rightMetadata.countingPrior(right) : Map.of()));
+        var source = variableBindings(left, counting ? leftMetadata.countingPrior(left) : Map.of());
+        var target = variableBindings(right, counting ? rightMetadata.countingPrior(right) : Map.of());
+        var fixedTargets = new HashSet<>(paid.values());
+        if (!splitPrior) {
+            return matrixDistance(left,right,paid,paid.keySet(),fixedTargets,
+                    leftMetadata,rightMetadata,selected,source,target);
+        }
+
+        // A monotone residual mapping from a single source block uses at
+        // most one target block. On a tie keep the earliest attaining target
+        // block. The ordinary typed search chooses the actual links within it.
+        var blocks = new java.util.TreeMap<Integer,Map<String,BindingDescriptor>>();
+        target.forEach((name, binding) -> blocks
+                .computeIfAbsent(binding.exchangeBlock, unused -> new java.util.LinkedHashMap<>())
+                .put(name,binding));
+        int maximumMatches = -1;
+        int minimum = Integer.MAX_VALUE;
+        var capture = DECISIONS.get();
+        PhaseDecision phase = null;
+        for (var block : blocks.values()) {
+            var candidate = new BestMapping();
+            int cost = matrixDistance(left,right,paid,paid.keySet(),fixedTargets,leftMetadata,rightMetadata,
+                    candidate,new java.util.LinkedHashMap<>(source),block);
+            int matches = candidate.mapping.size();
+            if (matches > maximumMatches || matches == maximumMatches && cost < minimum) {
+                maximumMatches = matches;
+                minimum = cost;
+                selected.mapping = candidate.mapping;
+                selected.decision = candidate.decision;
+                if (capture != null) phase = capture.lastPhase;
+            }
+        }
+        if (capture != null) capture.lastPhase = phase;
+        return minimum;
     }
 
     private static int matrixDistance(NormalForm left, NormalForm right, Map<String,String> fixedMapping,

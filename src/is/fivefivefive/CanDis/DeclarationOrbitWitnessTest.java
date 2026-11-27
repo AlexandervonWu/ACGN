@@ -4,6 +4,8 @@ import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.parser.CompUtil;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.CanDis.core.CanonicalDistance;
+import is.fivefivefive.CanDis.core.NormalForm;
 import org.json.JSONObject;
 import parser.ast.nodes.ModelUnit;
 
@@ -28,6 +30,16 @@ public final class DeclarationOrbitWitnessTest {
 
             pred paired { all x,y:A | x->y in r and x->y in s }
             pred longer { all a,b:A | some k:A | all c:A | b->a in r and b->c in s and k->a in t }
+
+            sig Person { projects: set Project }
+            sig Student in Person {}
+            sig Project {}
+            pred incomplete { all a:Person,p:Project |
+                no (a & Student) implies p not in a.projects and some p & a.projects }
+            pred guarded { all a:Person-Student,p:Project | p not in a.projects
+                           all p:Project | some a:Student | p in a.projects }
+            pred assigned { all a:Person,p:Project | p in a.projects implies a in Student
+                            all p:Project | some a:Person | a->p in projects }
             """;
 
     private record Endpoint(Canonical.Prepared fast, CanonicalAlloyPipeline.Prepared certified) {}
@@ -106,6 +118,94 @@ public final class DeclarationOrbitWitnessTest {
         bothDirections(visitor,"middleWider","typed",7);
     }
 
+    private static void declarationMoves(Endpoint source, Endpoint target, int cost, String... expected) {
+        var actions = replay(source,target,cost).getJSONArray("fastActions");
+        var moves = new java.util.ArrayList<String>();
+        for (var value : actions) {
+            var action = (JSONObject)value;
+            if ("declaration".equals(action.getString("stage"))) {
+                moves.add(action.getString("kind") + "/" + action.get("source") + "/" + action.get("target"));
+            }
+        }
+        check(moves.equals(java.util.List.of(expected)), "Keep the attaining original declaration coordinates");
+    }
+
+    private static void singleSourceBlock(MASGVisitor visitor) {
+        var incomplete = prepare(visitor,"incomplete");
+        var guarded = prepare(visitor,"guarded");
+        var assigned = prepare(visitor,"assigned");
+        declarationMoves(incomplete,guarded,25,"delete/0/null","keep/1/0","insert/null/1","insert/null/2");
+        declarationMoves(guarded,incomplete,25,"insert/null/0","keep/0/1","delete/1/null","delete/2/null");
+        // The same declaration prefixes also admit an attaining paid update
+        // for this different matrix. Preserve its two actual update operations.
+        declarationMoves(incomplete,assigned,24,"update/0/0","update/1/1","insert/null/2");
+        declarationMoves(assigned,incomplete,24,"update/0/0","update/1/1","delete/2/null");
+    }
+
+    private static Object field(Object owner, String name) throws ReflectiveOperationException {
+        var field = owner.getClass().getDeclaredField(name);
+        field.setAccessible(true);
+        return field.get(owner);
+    }
+
+    // Inspect the prior independently of the final paid path, which can
+    // legitimately choose a lower matrix cost with charged declaration edits.
+    private static void originalPrior(Endpoint source, Endpoint target, int cost, int matches,
+            String competingTarget, int competingCost)
+            throws ReflectiveOperationException {
+        var a = (CanonicalDistance.Prepared)field(source.fast(),"delegate");
+        var b = (CanonicalDistance.Prepared)field(target.fast(),"delegate");
+        var left = a.comparisonForms().get(0);
+        var right = b.comparisonForms().get(0);
+        var owner = CanonicalDistance.class;
+        var admits = owner.getDeclaredMethod("hasSplitTargetPrior",NormalForm.class,NormalForm.class);
+        admits.setAccessible(true);
+        check((boolean)admits.invoke(null,left,right),"A genuine split target from the prepared original source");
+        var leftMeta = field(a,"metadata");
+        var rightMeta = field(b,"metadata");
+        var resultType = Class.forName(owner.getName()+"$BestMapping");
+        var constructor = resultType.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        var result = constructor.newInstance();
+        var prior = owner.getDeclaredMethod("paidPriorDistance",NormalForm.class,NormalForm.class,
+                java.util.Map.class,leftMeta.getClass(),rightMeta.getClass(),resultType,boolean.class);
+        prior.setAccessible(true);
+        int actual = (int)prior.invoke(null,left,right,java.util.Map.of(),leftMeta,rightMeta,result,true);
+        check(actual == cost && ((java.util.Map<?,?>)field(result,"mapping")).size() == matches,
+                "Rank the original residual matches before their matrix cost and target block order");
+        var from = new java.util.HashMap<String,String>();
+        var to = new java.util.HashMap<String,String>();
+        left.getMatrixQuantiVars().forEach(q -> from.put(q.getOriginalName(),q.getName()));
+        right.getMatrixQuantiVars().forEach(q -> to.put(q.getOriginalName(),q.getName()));
+        var alternative = java.util.Map.of(from.get("a"),to.get(competingTarget));
+        var fixed = owner.getDeclaredMethod("matrixDistance",NormalForm.class,NormalForm.class,
+                java.util.Map.class,java.util.Set.class,java.util.Set.class,leftMeta.getClass(),rightMeta.getClass());
+        fixed.setAccessible(true);
+        int other = (int)fixed.invoke(null,left,right,alternative,java.util.Set.copyOf(from.values()),
+                java.util.Set.copyOf(to.values()),leftMeta,rightMeta);
+        check(other == competingCost,"Retain the independently scored competing one-link path");
+    }
+
+    private static void scopeQualityControls() throws Exception {
+        var module = CompUtil.parseEverything_fromString(A4Reporter.NOP,"""
+                sig A {r,s,t,u,v:set A}
+                pred source { all a,b:A | a->a in r and a->a in s and a->a in t and a->b in u }
+                pred wider { all p,q:A | some k:A | all z:A |
+                    z->z in r and z->z in s and z->z in t and z->q in u and p->k in u and q->k in v }
+                pred later { all p:A | some k:A | all z:A |
+                    z->z in r and z->z in s and z->z in t and z->p in u and p->k in u }
+                """);
+        var visitor = new MASGVisitor(new GlobalVariables(),module);
+        visitor.visit(new ModelUnit(null,module),null);
+        var source = prepare(visitor,"source");
+        // Block zero keeps two links at cost 17. Block two costs 11 but keeps only one.
+        originalPrior(source,prepare(visitor,"wider"),17,2,"z",11);
+        // One link in either block. Block two costs 6 against block zero's 12.
+        originalPrior(source,prepare(visitor,"later"),6,1,"p",12);
+        bothDirections(visitor,"source","wider",12);
+        bothDirections(visitor,"source","later",6);
+    }
+
     public static void main(String[] args) throws Exception {
         var module = CompUtil.parseEverything_fromString(A4Reporter.NOP, SOURCE);
         var visitor = new MASGVisitor(new GlobalVariables(), module);
@@ -116,6 +216,8 @@ public final class DeclarationOrbitWitnessTest {
         crossingCountingPrefix(visitor, "oneFirst", "oneLast");
         crossingCountingPrefix(visitor, "loneFirst", "loneLast");
         originalCoordinateOrder(visitor);
-        System.out.println("DeclarationOrbitWitnessTest: sixteen native ordered action programs matched");
+        singleSourceBlock(visitor);
+        scopeQualityControls();
+        System.out.println("DeclarationOrbitWitnessTest: twenty-four native ordered action programs matched");
     }
 }
