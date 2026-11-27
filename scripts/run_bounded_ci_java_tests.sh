@@ -72,6 +72,8 @@ tests=(
   is.fivefivefive.CanDis.AlloySourceRuleRegressionTest
   is.fivefivefive.CanDis.DeclarationOrbitWitnessTest
   is.fivefivefive.CanDis.CoalescedDeclarationWitnessTest
+  is.fivefivefive.CanDis.core.FastLocalPaidScopeTest
+  is.fivefivefive.CanDis.core.RetainedPaidCompletionTest
   is.fivefivefive.CanDis.TemporalDeclarationWitnessTest
   is.fivefivefive.CanDis.RetainedPaidCandidateReplayTest
   is.fivefivefive.CanDis.GroupedPaidOrbitReplayTest

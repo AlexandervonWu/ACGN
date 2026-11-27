@@ -12,6 +12,7 @@ import parser.ast.nodes.ModelUnit;
 
 /** Actual source lineage, lexical ownership and immutable local seeds. */
 public final class FastLocalPaidScopeTest {
+    private static final Path REPO = Path.of(System.getProperty("acgn.test.repoRoot", "."));
     private static int checks;
     private static void check(boolean value,String why) { checks++; if(!value) throw new AssertionError(why); }
     private static void reject(Runnable action,String why) {
@@ -62,8 +63,67 @@ public final class FastLocalPaidScopeTest {
         }
         field(root.getEClass(),"slotsDirty",true);
     }
+    private static void retainedDisjointGroup(edu.mit.csail.sdg.parser.CompModule module) throws Exception {
+        var source = prepare(module, "disjoint");
+        var original = source.get(0);
+        var comparison = NormalForm.fastComparisonViews(source);
+        var owner = binder(original);
+        var decl = owner.getChildren().get(0);
+        check(owner.getOpcode() == EGraphNode.Opcode.EXISTS && decl.getOpcode() == EGraphNode.Opcode.DISJ
+                && decl.getChildren().size() == 3, "Original existential owns one disjoint pair");
+        // Normalization also retains inactive seeds. Resolve the two declared occurrences by their actual slots.
+        var locals = new ArrayList<QuantiVar>();
+        for (var slot : decl.getChildren().subList(1, 3)) {
+            var binding = original.getLocalQuantiVars().stream().filter(q -> q.getName().equals(slot.getAlphaName()))
+                    .findFirst().orElseThrow();
+            locals.add(binding);
+        }
+        check(locals.get(0) != locals.get(1) && original.getMatrixQuantiVars().stream()
+                .noneMatch(q -> q == locals.get(0) || q == locals.get(1)), "Local slots remain outside the paid prefix");
+        int group = locals.get(0).getDisjointnessClass();
+        check(group > 0 && locals.get(1).getDisjointnessClass() == group, "One positive original disjoint class");
+        var issued = original.originalDeclarationTransport(decl);
+        check(issued != null && issued.frames().size() == locals.size(), "Retained declaration has its original slot frames");
+        for (int i = 0; i < locals.size(); i++) {
+            var q = locals.get(i);
+            var frame = issued.frames().get(i);
+            check(original.ownsDeclarationFrame(frame) && frame.variable() == q && frame.tupleSlot() == i
+                    && original.matchesOriginalDeclarationDomain(frame, decl),
+                    "Each slot belongs to this declaration owner and its original domain");
+            check(q.getQuantifier() == QuantiVar.Quantifier.SOME && q.getCardinality() == QuantiVar.Cardinality.ONE
+                    && q.getName().equals(decl.getChildren().get(i + 1).getAlphaName())
+                    && q.getBindingPath().equals(locals.get(0).getBindingPath()),
+                    "The original disjoint declaration contains each ordered local slot");
+        }
+        check(FastLocalPaidScope.checkedOwnerCount(original) == 1
+                && FastLocalPaidScope.checkedOwnerCount(comparison.get(0)) == 1
+                && FastPaidDeclarationAlignment.supports(source) && FastPaidDeclarationAlignment.supports(comparison),
+                "One source-authenticated disjoint owner authorizes outer paid alignment");
+        corrupt(source, f -> field(binder(f).getChildren().get(0), "opcode", EGraphNode.Opcode.GENERICRELDECL),
+                "The comparison cannot erase the local disjoint guard");
+        corrupt(source, f -> {
+            var slots = binder(f).getChildren().get(0).getChildren();
+            field(slots.get(2), "sourceOccurrenceLineage", slots.get(1).getSourceOccurrenceLineage());
+        }, "A same-typed sibling cannot stand in for the second disjoint declaration occurrence");
+        try {
+            field(locals.get(1), "disjointnessClass", group + 1);
+            check(!FastPaidDeclarationAlignment.supports(source), "Mixed disjoint groups rejected");
+            field(locals.get(1), "disjointnessClass", 0);
+            check(!FastPaidDeclarationAlignment.supports(comparison), "A zeroed group member is rejected");
+        } finally {
+            field(locals.get(1), "disjointnessClass", group);
+        }
+        check(FastPaidDeclarationAlignment.supports(source), "Original disjoint authority restored");
+
+        var options = new edu.mit.csail.sdg.translator.A4Options();
+        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
+        var counterexample = edu.mit.csail.sdg.translator.TranslateAlloyToKodkod.execute_command(
+                A4Reporter.NOP, module.getAllReachableSigs(), module.getAllCommands().get(0), options);
+        check(counterexample.satisfiable(), "With one T the ordinary tuple may reuse it and the disjoint tuple cannot");
+    }
+
     private static void retainedInvocationMaps() throws Exception {
-        byte[] bytes=Files.readAllBytes(Path.of("docs/distance-parity-20261107/retained-domain-maps.als"));
+        byte[] bytes=Files.readAllBytes(REPO.resolve("docs/distance-parity-20261107/retained-domain-maps.als"));
         check(HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes))
                 .equals("fc175f27271e72d12ef8c0dcf2715b0807da318628e40a78b74686f53ba761a1"),"shared Lean map witness source");
         var module=CompUtil.parseEverything_fromString(A4Reporter.NOP,new String(bytes,java.nio.charset.StandardCharsets.UTF_8));
@@ -106,7 +166,7 @@ public final class FastLocalPaidScopeTest {
     }
 
     private static void siblingOwnerNames() throws Exception {
-        byte[] bytes=Files.readAllBytes(Path.of("classified-data/lts/both/4z8ZaMtoPgQmEBZrD_inv7.als"));
+        byte[] bytes=Files.readAllBytes(REPO.resolve("classified-data/lts/both/4z8ZaMtoPgQmEBZrD_inv7.als"));
         check(HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes))
                 .equals("56db843ecbc8042d5f61db6f31287f3d1ae483a5ab2076fd10ee8783e86a1cce"),"event248 source bound to Lean witness");
         var module=CompUtil.parseEverything_fromString(A4Reporter.NOP,new String(bytes,java.nio.charset.StandardCharsets.UTF_8));
@@ -168,7 +228,7 @@ public final class FastLocalPaidScopeTest {
                 +"; owner admission only, no selected-path acceptance claimed");
     }
     private static void retainedCallDomain() throws Exception {
-        byte[] bytes=Files.readAllBytes(Path.of("classified-data/productionLine_v1/over/qigwXZtriNfcmSNkQ_inv4.als"));
+        byte[] bytes=Files.readAllBytes(REPO.resolve("classified-data/productionLine_v1/over/qigwXZtriNfcmSNkQ_inv4.als"));
         check(HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes))
                 .equals("25767bf1348b465e7fe4765f16acc3457db759331e418c5d40ecc76c1788a677"),"Lean witness source hash");
         var module=CompUtil.parseEverything_fromString(A4Reporter.NOP,new String(bytes,java.nio.charset.StandardCharsets.UTF_8));
@@ -199,45 +259,79 @@ public final class FastLocalPaidScopeTest {
         check(FastPaidDeclarationAlignment.supportsPair(source,target),"source and prior candidate authority remain unchanged");
     }
 
-    private static void repeatedSourceOwners() throws Exception {
-        var source=Path.of("classified-data/lts/both/hFtGTLM2gs79Rewif_inv4.als");
-        var bytes=Files.readAllBytes(source);
-        check(HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes))
-                .equals("f4718370b6661156be755ecab3317b7d7d6f04d465a13d21566f9d679a6599fd"),"revisit Lean source binding");
-        var module=CompUtil.parseEverything_fromString(A4Reporter.NOP,new String(bytes,java.nio.charset.StandardCharsets.UTF_8));
-        for(String name:List.of("inv4","inv4c")) {
-            var originals=prepare(module,name);var view=NormalForm.fastComparisonViews(originals).get(0);
-            check(FastLocalPaidScope.checkedOwnerCount(originals.get(0))==2,"source owner census "+name);
-            check(FastLocalPaidScope.checkedOwnerCount(view)==2,"selected owner census "+name);
-        }
-        var originals=prepare(module,"inv4");
-        var owners=nodes(originals.get(0).getCertificationMatrixEGraph()).stream()
-                .filter(n->n.getOpcode()==EGraphNode.Opcode.COMPREHENSION).toList();
-        check(owners.size()==2 && owners.get(0)!=owners.get(1)
-                && owners.get(0).getSourceOccurrenceLineage()==owners.get(1).getSourceOccurrenceLineage(),
-                "old uniqueness gate rejects cloned uses of the same source owner");
-        for(String kind:List.of("owner","declaration","variable","domain","kind","body-read")) {
-            var form=NormalForm.fastComparisonViews(originals).get(0);
-            var repeated=nodes(form.getMatrixEGraph()).stream().filter(n->n.getOpcode()==EGraphNode.Opcode.COMPREHENSION).toList();
-            check(repeated.size()==2,"two selected invocations retained");
-            var owner=repeated.get(1);var decl=owner.getChildren().get(0);
-            if(kind.equals("owner"))field(owner,"sourceOccurrenceLineage",-1L);
-            if(kind.equals("declaration"))field(decl,"sourceOccurrenceLineage",-1L);
-            if(kind.equals("variable"))field(decl.getChildren().get(1),"sourceOccurrenceLineage",-1L);
-            if(kind.equals("domain"))field(decl.getChildren().get(0),"sourceOccurrenceLineage",-1L);
-            if(kind.equals("kind"))field(owner,"opcode",EGraphNode.Opcode.EXISTS);
-            if(kind.equals("body-read")) {
-                var read=nodes(owner.getChildren().get(owner.getChildren().size()-1)).stream()
-                        .filter(n->n.getOpcode()==EGraphNode.Opcode.VARIABLE).findFirst().orElseThrow();
-                field(read,"sourceOccurrenceLineage",-1L);
+    // Repeat an already-issued conjunct, including its actual invocation map. AND is idempotent.
+    // The real source now distributes the membership before issuing its two separate comprehensions.
+    private static EGraphNode repeatConjunct(EGraphNode root, long owner) {
+        var children = new ArrayList<>(root.getChildren());
+        for (int i = 0; i < children.size(); i++) {
+            var child = children.get(i);
+            if (nodes(child).stream().noneMatch(n -> n.getSourceOccurrenceLineage() == owner)) continue;
+            if (root.getOpcode() == EGraphNode.Opcode.AND) {
+                var indices = new ArrayList<Integer>();
+                for (int j = 0; j < children.size(); j++) indices.add(j);
+                indices.add(i);
+                children.add(EGraphNode.comparisonRenameSubtree(child, Map.of(), new int[]{4096}));
+                return EGraphNode.comparisonWithChildren(root, children, indices);
             }
-            check(FastLocalPaidScope.checkedOwnerCount(form)==0,"reject corrupt repeated invocation "+kind);
+            children.set(i, repeatConjunct(child, owner));
+            return EGraphNode.comparisonWithChildren(root, children);
         }
-        check(FastLocalPaidScope.checkedOwnerCount(originals.get(0))==2,"repeat controls preserve original source");
+        throw new AssertionError("No enclosing source conjunction for the repeated comprehension");
     }
 
+    private static NormalForm revisit(List<NormalForm> source, long owner) {
+        var form = NormalForm.fastComparisonViews(source).get(0);
+        field(form, "certificationMatrixEGraphRoot", repeatConjunct(form.getCertificationMatrixEGraph(), owner));
+        field(form, "matrixEGraphRoot", repeatConjunct(form.getMatrixEGraph(), owner));
+        return form;
+    }
+
+    private static void repeatedSourceOwners() throws Exception {
+        var source = REPO.resolve("classified-data/lts/both/hFtGTLM2gs79Rewif_inv4.als");
+        var bytes = Files.readAllBytes(source);
+        check(HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes))
+                .equals("f4718370b6661156be755ecab3317b7d7d6f04d465a13d21566f9d679a6599fd"), "revisit Lean source binding");
+        var module = CompUtil.parseEverything_fromString(A4Reporter.NOP, new String(bytes, java.nio.charset.StandardCharsets.UTF_8));
+        var originals = prepare(module, "inv4");
+        for (var forms : List.of(originals, prepare(module, "inv4c"))) {
+            int expected = forms == originals ? 4 : 2;
+            var view = NormalForm.fastComparisonViews(forms).get(0);
+            check(FastLocalPaidScope.checkedOwnerCount(forms.get(0)) == expected
+                    && FastLocalPaidScope.checkedOwnerCount(view) == expected, "Original and selected lexical owner census");
+        }
+        var owners = nodes(originals.get(0).getCertificationMatrixEGraph()).stream()
+                .filter(n -> n.getOpcode() == EGraphNode.Opcode.COMPREHENSION).toList();
+        check(owners.size() == 2 && owners.get(0).getSourceOccurrenceLineage() != owners.get(1).getSourceOccurrenceLineage(),
+                "Separate memberships have separately issued comprehension owners");
+        long lineage = owners.get(0).getSourceOccurrenceLineage();
+        var intact = revisit(originals, lineage);
+        for (var root : List.of(intact.getCertificationMatrixEGraph(), intact.getMatrixEGraph())) {
+            var repeated = nodes(root).stream().filter(n -> n.getSourceOccurrenceLineage() == lineage).toList();
+            check(repeated.size() == 2 && repeated.get(0) != repeated.get(1), "Distinct invocations of one issued owner");
+        }
+        check(FastLocalPaidScope.checkedOwnerCount(intact) == 4, "A valid revisit retains the original four owners");
+        for (String kind : List.of("owner", "declaration", "variable", "domain", "kind", "body-read")) {
+            var form = revisit(originals, lineage);
+            var repeated = nodes(form.getMatrixEGraph()).stream().filter(n -> n.getSourceOccurrenceLineage() == lineage).toList();
+            check(repeated.size() == 2, "Two selected invocations retained");
+            var owner = repeated.get(1);
+            var decl = owner.getChildren().get(0);
+            if (kind.equals("owner")) field(owner, "sourceOccurrenceLineage", -1L);
+            if (kind.equals("declaration")) field(decl, "sourceOccurrenceLineage", -1L);
+            if (kind.equals("variable")) field(decl.getChildren().get(1), "sourceOccurrenceLineage", -1L);
+            if (kind.equals("domain")) field(decl.getChildren().get(0), "sourceOccurrenceLineage", -1L);
+            if (kind.equals("kind")) field(owner, "opcode", EGraphNode.Opcode.EXISTS);
+            if (kind.equals("body-read")) {
+                var read = nodes(owner.getChildren().get(owner.getChildren().size() - 1)).stream()
+                        .filter(n -> n.getOpcode() == EGraphNode.Opcode.VARIABLE).findFirst().orElseThrow();
+                field(read, "sourceOccurrenceLineage", -1L);
+            }
+            check(FastLocalPaidScope.checkedOwnerCount(form) == 0, "Reject corrupt repeated invocation " + kind);
+        }
+        check(FastLocalPaidScope.checkedOwnerCount(originals.get(0)) == 4, "Repeat controls preserve original source");
+    }
     private static void normalizedOwnerSupport() throws Exception {
-        var bytes=Files.readAllBytes(Path.of("classified-data/coursesOld/both/yb4W6xJnxQXeQTxgY_inv14.als"));
+        var bytes=Files.readAllBytes(REPO.resolve("classified-data/coursesOld/both/yb4W6xJnxQXeQTxgY_inv14.als"));
         check(HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes))
                 .equals("2ea808111dbae11c034cc548698973ea26bbba8b31161338f253b779c6d0f77f"),"selected support Lean source binding");
         var module=CompUtil.parseEverything_fromString(A4Reporter.NOP,new String(bytes,java.nio.charset.StandardCharsets.UTF_8));
@@ -263,7 +357,7 @@ public final class FastLocalPaidScopeTest {
         check(FastLocalPaidScope.checkedOwnerCount(view)==2,"support corruption leaves original selected graph intact");
     }
     public static void main(String[] args) throws Exception {
-        String text=Files.readString(Path.of("classified-data/classroom_fol/both/7TYSDPnXqtud3bjku_inv12.als"));
+        String text=Files.readString(REPO.resolve("classified-data/classroom_fol/both/7TYSDPnXqtud3bjku_inv12.als"));
         var module=CompUtil.parseEverything_fromString(A4Reporter.NOP,text);
         var source=prepare(module,"inv12"); var target=prepare(module,"inv12c");
         check(FastPaidDeclarationAlignment.supportsPair(source,target),"actual source supports outer paid path");
@@ -308,15 +402,18 @@ public final class FastLocalPaidScopeTest {
                 pred retained { some p:S | p in p.r implies (some t:T | p in t.r) }
                 pred nested { some p:S | p in p.r implies (some t:T | p in t.r implies (some u:U | u in t.r and t in u.r)) }
                 pred disjoint { some p:P | p in p.r implies (some disj t,u:T | p in t.r and u in t.r) }
+                pred ordinary { some p:P | p in p.r implies (some t,u:T | p in t.r and u in t.r) }
                 pred setLocal { some p:P | p in p.r implies (some t:set T | p in t.r) }
                 pred parameter[p:P] { some q:P | q in p.r implies (some t:T | q in t.r) }
                 pred temporal { some p:P | always (p in p.r implies (some t:T | p in t.r)) }
+                run { one T and ordinary and not disjoint } for 3 but exactly 1 P
                 """);
         check(FastPaidDeclarationAlignment.supports(prepare(reduced,"retained")),"reduced retained local source");
         var nested=prepare(reduced,"nested");
         check(FastLocalPaidScope.checkedOwnerCount(nested.get(0))==2
                 && FastPaidDeclarationAlignment.supports(nested),"source-linked retained EXISTS chain admitted without hoisting");
-        for(String name:List.of("disjoint","setLocal","parameter","temporal")) {
+        retainedDisjointGroup(reduced);
+        for(String name:List.of("setLocal","parameter","temporal")) {
             var forms=prepare(reduced,name);
             check(!FastPaidDeclarationAlignment.supports(forms),"unsupported scope "+name+" "+CanonicalDistance.sourceIrTemporalFol(forms));
         }
