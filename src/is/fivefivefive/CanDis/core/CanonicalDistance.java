@@ -2618,20 +2618,26 @@ public final class CanonicalDistance {
                 leftNames, leftBindings, rightBindings);
         var capture=DECISIONS.get();
         if(capture!=null && selected==null)selected=new BestMapping();
-        int result=bestMappedDistance(
-                left.getMatrixEGraph(),
-                right.getMatrixEGraph(),
-                leftNames,
-                leftBindings,
-                rightBindings,
-                mapping,
-                new HashSet<>(lockedRightNames),
-                0,
-                0,
-                requiredMatches,
-                Integer.MAX_VALUE,
-                leftMetadata,
-                rightMetadata,selected);
+        // The type-compatible upper bound can span incompatible prefix blocks.
+        // Keep the largest feasible number of residual links before minimizing edit cost.
+        int result;
+        do {
+            result = bestMappedDistance(
+                    left.getMatrixEGraph(),
+                    right.getMatrixEGraph(),
+                    leftNames,
+                    leftBindings,
+                    rightBindings,
+                    mapping,
+                    new HashSet<>(lockedRightNames),
+                    0,
+                    0,
+                    requiredMatches,
+                    Integer.MAX_VALUE,
+                    leftMetadata,
+                    rightMetadata,selected);
+            requiredMatches--;
+        } while (result == Integer.MAX_VALUE && requiredMatches >= 0);
         if(capture!=null)capture.lastPhase=new PhaseDecision(selected.mapping,selected.decision);
         return result;
     }
@@ -2702,18 +2708,21 @@ public final class CanonicalDistance {
         BestMapping best = new BestMapping();
         int requiredMatches = maximumCompatibleMatches(
                 leftNames, leftBindings, rightBindings);
-        searchBestMapping(
-                left.getMatrixEGraph(),
-                right.getMatrixEGraph(),
-                leftNames,
-                leftBindings,
-                rightBindings,
-                new HashMap<>(fixedMapping),
-                new HashSet<>(lockedRightNames),
-                0,
-                0,
-                requiredMatches,
-                best);
+        do {
+            searchBestMapping(
+                    left.getMatrixEGraph(),
+                    right.getMatrixEGraph(),
+                    leftNames,
+                    leftBindings,
+                    rightBindings,
+                    new HashMap<>(fixedMapping),
+                    new HashSet<>(lockedRightNames),
+                    0,
+                    0,
+                    requiredMatches,
+                    best);
+            requiredMatches--;
+        } while (best.distance == Integer.MAX_VALUE && requiredMatches >= 0);
         return best.mapping;
     }
 
@@ -2745,7 +2754,8 @@ public final class CanonicalDistance {
         boolean mapped = false;
         for (Map.Entry<String, BindingDescriptor> rightEntry : rightBindings.entrySet()) {
             if (usedRightNames.contains(rightEntry.getKey())
-                    || !leftBinding.compatibleWith(rightEntry.getValue())) {
+                    || !leftBinding.compatibleWith(rightEntry.getValue())
+                    || !preservesBlockOrder(leftBinding, rightEntry.getValue(), leftBindings, rightBindings, mapping)) {
                 continue;
             }
             mapped = true;
@@ -2765,6 +2775,28 @@ public final class CanonicalDistance {
                     mapping, usedRightNames, index + 1,
                     matched, requiredMatches, best);
         }
+    }
+
+    private static boolean sameExchangeRun(QuantiVar previous, QuantiVar current) {
+        var kind = current.getQuantifier();
+        return kind == previous.getQuantifier() && (kind == QuantiVar.Quantifier.ALL
+                || kind == QuantiVar.Quantifier.SOME || previous.getBindingPath().equals(current.getBindingPath()));
+    }
+
+    /** A partial alpha alignment may skip a prefix block, but cannot split or reverse two blocks. */
+    private static boolean preservesBlockOrder(BindingDescriptor left, BindingDescriptor right,
+            Map<String, BindingDescriptor> leftBindings, Map<String, BindingDescriptor> rightBindings,
+            Map<String, String> mapping) {
+        if (left.role != BindingRole.MATRIX) return true;
+        for (var entry : mapping.entrySet()) {
+            var priorLeft = leftBindings.get(entry.getKey());
+            var priorRight = rightBindings.get(entry.getValue());
+            // A locked paid match is an edit, and is outside this residual alpha search.
+            if (priorLeft != null && priorRight != null && priorLeft.role == BindingRole.MATRIX
+                    && Integer.compare(left.exchangeBlock, priorLeft.exchangeBlock)
+                       != Integer.compare(right.exchangeBlock, priorRight.exchangeBlock)) return false;
+        }
+        return true;
     }
 
     private static int candidateCount(
@@ -2810,7 +2842,8 @@ public final class CanonicalDistance {
         boolean mapped = false;
         for (Map.Entry<String, BindingDescriptor> rightEntry : rightBindings.entrySet()) {
             if (usedRightNames.contains(rightEntry.getKey())
-                    || !leftBinding.compatibleWith(rightEntry.getValue())) {
+                    || !leftBinding.compatibleWith(rightEntry.getValue())
+                    || !preservesBlockOrder(leftBinding, rightEntry.getValue(), leftBindings, rightBindings, mapping)) {
                 continue;
             }
             mapped = true;
@@ -2916,9 +2949,11 @@ public final class CanonicalDistance {
             Map<String, BindingDescriptor> bindings,
             List<QuantiVar> variables,
             BindingRole role) {
+        int exchangeBlock = 0;
         for (int i = 0; i < variables.size(); i++) {
             QuantiVar variable = variables.get(i);
-            bindings.put(variable.getName(), new BindingDescriptor(variable, role, i));
+            if (i > 0 && !sameExchangeRun(variables.get(i - 1), variable)) exchangeBlock++;
+            bindings.put(variable.getName(), new BindingDescriptor(variable, role, i, exchangeBlock));
         }
     }
 
@@ -4120,11 +4155,13 @@ public final class CanonicalDistance {
         private final QuantiVar variable;
         private final BindingRole role;
         private final int ordinal;
+        private final int exchangeBlock;
 
-        private BindingDescriptor(QuantiVar variable, BindingRole role, int ordinal) {
+        private BindingDescriptor(QuantiVar variable, BindingRole role, int ordinal, int exchangeBlock) {
             this.variable = variable;
             this.role = role;
             this.ordinal = ordinal;
+            this.exchangeBlock = exchangeBlock;
         }
 
         private boolean compatibleWith(BindingDescriptor other) {

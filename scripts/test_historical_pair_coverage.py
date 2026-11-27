@@ -2,7 +2,7 @@
 import unittest
 from collections import defaultdict
 
-from verify_historical_pair_coverage import audit, context, pair, read_decisions
+from verify_historical_pair_coverage import audit, check_rankings, context, pair, read_decisions
 
 
 def edge(a, b):
@@ -23,6 +23,15 @@ class HistoricalPairTests(unittest.TestCase):
         self.assertEqual(report["status"], "FAIL")
         self.assertEqual(report["metrics"]["poolStructural"]["lost"], [ac])
         self.assertEqual(report["metrics"]["poolFixedComponents"]["lost"], [])
+
+    def test_non_nearest_score_is_checked_by_reference_identity(self):
+        a = dict(referenceSource="a.als", referenceName="a", distance=1)
+        b = dict(referenceSource="b.als", referenceName="b", distance=85)
+        row = dict(relativePath="query.als", legacyCanonicalRanking=[a, b], canonicalRanking=[b, a])
+        self.assertEqual(check_rankings([row], {"query.als"}), 2)
+        row["canonicalRanking"] = [a, dict(b, distance=87)]
+        with self.assertRaisesRegex(ValueError, "query.als.*b.als.*Fast 85.*87"):
+            check_rankings([row], {"query.als"})
 
     def test_reordering_references_preserves_source_identity(self):
         group = ("q", "inv1")

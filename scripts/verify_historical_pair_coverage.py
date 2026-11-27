@@ -7,6 +7,7 @@ import itertools
 import json
 import sys
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 
 CORPUS_SHA256 = "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689"
@@ -40,16 +41,16 @@ def records(path):
             yield json.loads(line)
 
 
-def batch_rows(path):
+def batch_rows(path, section="results"):
     # The producer pretty-prints one complete result object at a time. Stream
     # those objects, including their nested command decisions, without loading
     # the several-hundred-megabyte batch and reward data into memory.
     with path.open() as stream:
         for line in stream:
-            if line.strip() == '"results": [':
+            if line.strip() == f'"{section}": [':
                 break
         else:
-            raise ValueError(f"Missing result array in {path}")
+            raise ValueError(f"Missing {section} array in {path}")
         for line in stream:
             if line.strip() in ("]", "],"):
                 return
@@ -158,6 +159,35 @@ def positive_pool(path, field):
     return edges
 
 
+def ranking_scores(path, entries):
+    result = {}
+    for entry in entries:
+        endpoint = (entry["referenceSource"], entry["referenceName"])
+        value = entry["distance"]
+        require(endpoint not in result and type(value) is int and value > 0,
+                f"Invalid reference ranking on {path} against {endpoint}: {value}")
+        result[endpoint] = value
+    return result
+
+
+def check_rankings(rows, incorrect_paths):
+    """Check every paid score by reference identity, including references beyond the nearest."""
+    seen = set()
+    comparisons = 0
+    for row in rows:
+        path = row["relativePath"]
+        unique(seen, path)
+        fast = ranking_scores(path, row["legacyCanonicalRanking"])
+        certified = ranking_scores(path, row["canonicalRanking"])
+        require(fast and fast.keys() == certified.keys(), f"Different ranked reference cohorts on {path}")
+        for endpoint, score in fast.items():
+            require(score == certified[endpoint], f"Ranking differs on {path} against {endpoint}: "
+                    f"Fast {score}, Certificate-Integrated {certified[endpoint]}")
+        comparisons += len(fast)
+    require(seen == incorrect_paths, "Ranked submissions differ from the measured incorrect cohort")
+    return comparisons
+
+
 def load_candidate(directory, compact):
     receipt = directory / ("run-receipt.json" if compact else "run-manifest.json")
     dataset = json.loads(receipt.read_bytes())["dataset"]
@@ -178,6 +208,10 @@ def load_candidate(directory, compact):
         aug = directory / "alloy4fun-augmented"
         c["astIdentical"] = {(r["relativePath"],) for r in table(aug / "ast_identical_predicate_pairs.csv")}
         read_pool(c, aug / "default_correct_pool_equivalences.jsonl")
+        incorrect = {r["relativePath"] for r in table(directory / "egraph_ablation" / CERT / "pairs.csv")
+                     if r["status"] != "CORRECT"}
+        comparisons = check_rankings(batch_rows(aug / "index.json", "incorrectNearest"), incorrect)
+        require(comparisons == 1894168, f"Expected 1,894,168 ranked reference scores, found {comparisons}")
         for name, field in (("canonical", "certificateIntegratedDistance"), ("fast_rewrite", "fastRewriteCanonicalDistance")):
             zeros = positive_pool(aug / f"correct_ast_diff_{name}_equiv.json", field)
             require(zeros == c["poolStructural"], f"Direct pool {name} zero set disagrees with pool decisions")
@@ -282,14 +316,30 @@ def historical_dataset(manifest):
     return json.loads(manifest.read_bytes())["dataset"]["sha256"] == CORPUS_SHA256
 
 
+def latest_export():
+    dated = {}
+    for directory in sorted(p.parent for p in RESULTS.glob("*/paired-comparisons.jsonl.gz")):
+        receipt = json.loads((directory / "run-receipt.json").read_bytes())
+        require(receipt["status"] == "complete", f"Release has an incomplete run receipt: {directory}")
+        instant = datetime.fromisoformat(receipt["completedAt"].replace("Z", "+00:00"))
+        require(instant.tzinfo is not None and instant not in dated, f"Ambiguous release time: {directory}")
+        dated[instant] = directory
+    require(dated, "No complete release ledgers")
+    return dated[max(dated)]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--artifacts", type=Path, help="full publication run output")
     source.add_argument("--candidate", type=Path, help="compact v3.3-format release tables")
+    source.add_argument("--latest", action="store_true", help="check the most recent published full-run ledger")
     parser.add_argument("--output", type=Path, help="write counts and every lost identity as JSON")
     parser.add_argument("--write-floor", type=Path, help="save new positive claims for the next edition after passing")
     args = parser.parse_args()
+    if args.latest:
+        args.candidate = latest_export()
+        print(f"Checking latest release export {args.candidate.name}")
     candidate = load_candidate(args.candidate or args.artifacts, args.candidate is not None)
     report = audit(candidate, historical_floors())
     if args.output:

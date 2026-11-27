@@ -194,6 +194,7 @@ public final class AlloySourceRuleRegressionTest {
             checkExactlyOfDoesNotMintNonemptiness();
             checkAblationBindingGuards(model);
             checkLocalQuantifierRules(options);
+            checkRepeatedUniversalBlocksInRanking();
             checkSharedUniversalWitness(options);
             checkReachabilityPairs(options);
             checkUniversalMembershipGuards(options);
@@ -264,6 +265,29 @@ public final class AlloySourceRuleRegressionTest {
             check(NativeOperationComparison.compare(left, right, fast, certified).status()
                             == NativeOperationComparison.Status.MATCHED,
                     "paid operations agree for the grouped local declaration");
+        }
+    }
+
+    private static void checkRepeatedUniversalBlocksInRanking() throws Exception {
+        Path group = Path.of(System.getProperty("acgn.test.repoRoot", "."), "classified-data", "socialMedia");
+        var endpoints = new ArrayList<Canonical.Prepared>();
+        for (String file : List.of("over/xA8cXXtWbKB3ZC3iB_inv7.als", "correct/FenQC7rfPuuWaGAba_inv7.als")) {
+            var module = AlloyUtil.compileAlloyModule(group.resolve(file).toString());
+            var visitor = new MASGVisitor(new GlobalVariables(), module);
+            visitor.visit(new ModelUnit(null, module), null);
+            endpoints.add(Canonical.prepare(graph(visitor, "inv7")));
+        }
+        for (int side = 0; side < endpoints.size(); side++) {
+            var left = endpoints.get(side);
+            var right = endpoints.get(1 - side);
+            var fast = CanonicalRepairTraces.fast(left, right);
+            var certified = CanonicalRepairTraces.certified(CanonicalAlloyPipeline.prepare(left),
+                    CanonicalAlloyPipeline.prepare(right));
+            check(fast.replay(fast.json()) == 87 && certified.replay(certified.json()) == 87,
+                    "one universal block cannot split across an intervening existential block");
+            check(NativeOperationComparison.compare(left, right, fast, certified).status()
+                            == NativeOperationComparison.Status.MATCHED,
+                    "both paid traces preserve the selected universal blocks");
         }
     }
 

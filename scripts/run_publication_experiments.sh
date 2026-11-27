@@ -174,7 +174,7 @@ if (( LIMIT == 0 )) && { [[ "$DATASET" == "$(realpath "$ROOT/classified-data")" 
   python3 "$ROOT/scripts/verify_historical_pair_coverage.py" --artifacts "$RUN_ROOT" \
     --output "$RUN_ROOT/historical-coverage.json" --write-floor "$RUN_ROOT/historical-pairs.json.gz"
   bind_report "$RUN_ROOT/historical-coverage.json" "$DISTANCE/distances.json" \
-    "$AUGMENTED/default_correct_pool_equivalences.jsonl" "$RUN_ROOT/historical-pairs.json.gz"
+    "$AUGMENTED/default_correct_pool_equivalences.jsonl" "$AUGMENTED/index.json" "$RUN_ROOT/historical-pairs.json.gz"
 fi
 
 python3 "$ROOT/scripts/publication_manifest.py" finalize --manifest "$MANIFEST"
