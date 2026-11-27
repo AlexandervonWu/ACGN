@@ -13,6 +13,7 @@ import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
@@ -45,6 +46,19 @@ public final class HistoricalRankTraceReplay {
         return result;
     }
 
+    /** Preserve the native order while projecting temporal blocks to their checked effects. */
+    private static JSONArray program(JSONObject evidence, String arm, boolean temporal) {
+        if (!temporal) return evidence.optJSONArray(arm + "Actions");
+        JSONArray blocks = evidence.optJSONArray(arm + "Blocks");
+        if (blocks == null) return null;
+        var result = new JSONArray();
+        for (int i = 0; i < blocks.length(); i++) {
+            JSONObject block = blocks.getJSONObject(i);
+            result.put(new JSONArray().put(block.getString("component")).put(block.get("effect")));
+        }
+        return result;
+    }
+
     private static JSONObject replay(Prepared a, Prepared b, int expected) {
         var fast = CanonicalRepairTraces.fast(a.fast(), b.fast());
         var certified = CanonicalRepairTraces.certified(a.certified(), b.certified());
@@ -55,13 +69,24 @@ public final class HistoricalRankTraceReplay {
         boolean sources = evidence.optBoolean("sourceCertificatesChecked");
         boolean choices = evidence.optBoolean("fixedChoiceReplaysChecked");
         boolean endpoints = evidence.optBoolean("endpointCorrespondenceChecked");
-        boolean valid = comparison.status() == NativeOperationComparison.Status.MATCHED && sources && choices
-                && endpoints && fastCost == expected && certifiedCost == expected;
+        boolean temporal = evidence.has("fastBlocks") || evidence.has("certifiedBlocks");
+        JSONArray fastProgram = program(evidence, "fast", temporal);
+        JSONArray certifiedProgram = program(evidence, "certified", temporal);
+        boolean equal = fastProgram != null && certifiedProgram != null && fastProgram.similar(certifiedProgram);
+        boolean valid = comparison.status() == NativeOperationComparison.Status.MATCHED
+                && comparison.reason().equals("CHECKED_NATIVE_ACTIONS_EQUAL") && equal
+                && (!temporal || evidence.optBoolean("orderedBlockEffectsEqual"))
+                && !evidence.has("firstDifference") && sources && choices && endpoints && fastCost == expected && certifiedCost == expected;
         var row = new JSONObject().put("passed", valid).put("status", comparison.status().name())
                 .put("reason", comparison.reason()).put("fastDistance", fastCost).put("certifiedDistance", certifiedCost)
                 .put("sourceCertificatesChecked", sources).put("fixedChoiceReplaysChecked", choices)
-                .put("endpointCorrespondenceChecked", endpoints);
-        for (String key : List.of("fastActionCount", "certifiedActionCount", "firstDifference", "fastFirst", "certifiedFirst")) {
+                .put("endpointCorrespondenceChecked", endpoints).put("nativeSequencesEqual", equal)
+                .put("sequenceKind", temporal ? "TEMPORAL_BLOCK_EFFECTS" : "FLAT_ACTIONS");
+        String suffix = temporal ? "BlockCount" : "ActionCount";
+        if (fastProgram != null) row.put("fast" + suffix, fastProgram.length());
+        if (certifiedProgram != null) row.put("certified" + suffix, certifiedProgram.length());
+        if (temporal) row.put("orderedBlockEffectsEqual", evidence.optBoolean("orderedBlockEffectsEqual"));
+        for (String key : List.of("firstDifference", "fastFirst", "certifiedFirst")) {
             if (evidence.has(key)) row.put(key, evidence.get(key));
         }
         return row;

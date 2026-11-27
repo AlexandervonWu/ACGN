@@ -55,12 +55,20 @@ class PaidWitnessGateTest(unittest.TestCase):
         jobs = self.jobs()
         forward = {**jobs[0], "passed": True, "status": "MATCHED", "fastDistance": 8,
                    "certifiedDistance": 8, "sourceCertificatesChecked": True, "fixedChoiceReplaysChecked": True,
-                   "endpointCorrespondenceChecked": True, "direction": "forward"}
+                   "endpointCorrespondenceChecked": True, "direction": "forward",
+                   "nativeSequencesEqual": True, "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+                   "sequenceKind": "FLAT_ACTIONS", "fastActionCount": 4, "certifiedActionCount": 4}
         reverse = {**forward, "direction": "reverse"}
         self.assertEqual(inspect_results(jobs, [forward, reverse]), [])
+        timed = {**reverse, "sequenceKind": "TEMPORAL_BLOCK_EFFECTS", "orderedBlockEffectsEqual": True,
+                 "fastBlockCount": 6, "certifiedBlockCount": 6}
+        self.assertEqual(inspect_results(jobs, [forward, timed]), [])
+        for change in ({"orderedBlockEffectsEqual": False}, {"certifiedBlockCount": 5}, {"nativeSequencesEqual": False}):
+            self.assertEqual(len(inspect_results(jobs, [forward, {**timed, **change}])), 1)
         with self.assertRaisesRegex(ValueError, "Missing native replays"):
             inspect_results(jobs, [forward])
-        for mutation in ({"status": "UNKNOWN"}, {"status": "MISMATCH"}, {"endpointCorrespondenceChecked": False},
+        for mutation in ({"firstDifference": 1}, {"status": "UNKNOWN"}, {"status": "MISMATCH"}, {"reason": "unknown"},
+                         {"nativeSequencesEqual": False}, {"sequenceKind": "UNKNOWN"}, {"certifiedActionCount": 3}, {"endpointCorrespondenceChecked": False},
                          {"certifiedDistance": 7}, {"expected": 7}, {"passed": False}):
             with self.subTest(mutation=mutation):
                 self.assertEqual(len(inspect_results(jobs, [forward, {**reverse, **mutation}])), 1)

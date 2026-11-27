@@ -38,6 +38,12 @@ replays each direction with the measured JAR and requires both costs to equal th
 recorded score. The two engines must produce matching native actions with
 checked source certificates, fixed choices, and endpoint correspondence.
 
+The current floor contains 469 distinct paid pairs. It retains the 83 earlier
+regressions and adds the 386 pairs whose native traces differed in the exhaustive
+ranking audit. The release check compares the ordered actions for a static
+formula and the ordered component and effect of each block for a temporal
+formula. Both directions must pass for every pair. [Frozen source identities](../experimental-results/exhaustive-ranking-replay/paid-rank-witnesses-floor.jsonl)
+
 ```sh
 python3 -B scripts/verify_historical_rank_traces.py --repo . \
     --dataset classified-data --artifacts RUN/artifacts --output RUN/paid-witnesses

@@ -115,6 +115,13 @@ python3 -B "$ROOT/scripts/check_historical_cv_proofs.py"
   "$ROOT/docs/section3-repair-audit/formal/HistoricalCVPairs.lean"
 "${LEAN_BIN:-lean}" -o "$work/SurvivorWitnessOrder.olean" \
   "$ROOT/docs/section3-repair-audit/formal/SurvivorWitnessOrder.lean"
+"${LEAN_BIN:-lean}" -o "$work/DeclarationReplay.olean" \
+  "$ROOT/docs/distance-parity-20261107/DeclarationReplay.lean"
+for module in CrossedDeclarationReplay OriginalOccurrenceOrder TemporalDeclarationTie \
+              CoursesPaidData CoursesPaidAlignmentTie CoursesRepairedNative SingleSourceClassMinimum; do
+  LEAN_PATH="$work${LEAN_PATH:+:$LEAN_PATH}" "${LEAN_BIN:-lean}" -o "$work/$module.olean" \
+    "$ROOT/docs/section3-repair-audit/formal/$module.lean"
+done
 "${LEAN_BIN:-lean}" -o "$work/Phase5SourceRules.olean" \
   "$ROOT/docs/section3-repair-audit/formal/Phase5SourceRules.lean"
 "${LEAN_BIN:-lean}" -o "$work/TemporalPhaseLocalBinding.olean" \

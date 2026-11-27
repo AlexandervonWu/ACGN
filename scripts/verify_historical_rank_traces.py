@@ -93,8 +93,14 @@ def inspect_results(jobs, rows):
         require(key in expected and key not in observed, f"Unexpected or repeated witness {key}")
         observed.add(key)
         complete = all(row.get(field) is True for field in (
-            "sourceCertificatesChecked", "fixedChoiceReplaysChecked", "endpointCorrespondenceChecked"))
-        valid = (complete and row["passed"] is True and row["status"] == "MATCHED"
+            "sourceCertificatesChecked", "fixedChoiceReplaysChecked", "endpointCorrespondenceChecked", "nativeSequencesEqual"))
+        temporal = row.get("sequenceKind") == "TEMPORAL_BLOCK_EFFECTS"
+        count = "BlockCount" if temporal else "ActionCount"
+        sequence = (row.get("orderedBlockEffectsEqual") is True if temporal else row.get("sequenceKind") == "FLAT_ACTIONS")
+        valid = (complete and sequence and "firstDifference" not in row
+                 and all(type(row.get(arm + count)) is int for arm in ("fast", "certified"))
+                 and row["fast" + count] >= 0 and row["fast" + count] == row.get("certified" + count)
+                 and row["passed"] is True and row["status"] == "MATCHED" and row.get("reason") == "CHECKED_NATIVE_ACTIONS_EQUAL"
                  and row["expected"] == row["fastDistance"] == row["certifiedDistance"] == expected[key])
         if not valid:
             failures.append({"pair": key, "status": row["status"], "reason": row.get("reason")})
