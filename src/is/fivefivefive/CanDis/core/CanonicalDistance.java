@@ -1387,8 +1387,7 @@ public final class CanonicalDistance {
                     // certified path. Never reuse the old unconstrained score.
                     var fullPhase=capture==null?null:capture.lastPhase;
                     var priorMapping=new BestMapping();
-                    int prior=matrixDistance(left,right,paidMoved,paidMoved.keySet(),
-                            new HashSet<>(paidMoved.values()),leftMetadata,rightMetadata,priorMapping);
+                    int prior=paidPriorDistance(left,right,paidMoved,leftMetadata,rightMetadata,priorMapping);
                     existing=prior==distance && declarationPathMatches(a,b,p,q,path,priorMapping.mapping);
                     if(capture!=null)capture.lastPhase=fullPhase;
                 }
@@ -1458,7 +1457,17 @@ public final class CanonicalDistance {
                 result.sourceOrder=order.clone();
                 result.targetOrder=FastGroupedDeclarationOrbit.identity(b.size());
             }
-            return new RetainedDeclarationAlignment(result, full.equals(prior.mapping));
+            boolean exactPrior = full.equals(prior.mapping);
+            if (exactPrior && hasCountingPrior(left,right)) {
+                // Keep the numeric candidate even when its original lexical prior
+                // chose a different survivor. Only equal-score witness priority changes.
+                var authenticated = new BestMapping();
+                var phase = capture == null ? null : capture.lastPhase;
+                int trustedCost = paidPriorDistance(left,right,paid,leftMetadata,rightMetadata,authenticated);
+                exactPrior = trustedCost == distance && full.equals(authenticated.mapping);
+                if (capture != null) capture.lastPhase = phase;
+            }
+            return new RetainedDeclarationAlignment(result, exactPrior);
         }
         return null;
     }
@@ -2622,8 +2631,28 @@ public final class CanonicalDistance {
     private static int matrixDistance(NormalForm left,NormalForm right,Map<String,String> fixedMapping,
             Set<String> lockedLeftNames,Set<String> lockedRightNames,
             EGraphMetadata leftMetadata,EGraphMetadata rightMetadata,BestMapping selected) {
-        Map<String, BindingDescriptor> leftBindings = variableBindings(left);
-        Map<String, BindingDescriptor> rightBindings = variableBindings(right);
+        return matrixDistance(left, right, fixedMapping, lockedLeftNames, lockedRightNames,
+                leftMetadata, rightMetadata, selected, variableBindings(left), variableBindings(right));
+    }
+
+    private static boolean hasCountingPrior(NormalForm left, NormalForm right) {
+        return left.getMatrixQuantiVars().stream().anyMatch(FastPrefixSource::countingBinder)
+                && right.getMatrixQuantiVars().stream().anyMatch(FastPrefixSource::countingBinder);
+    }
+
+    private static int paidPriorDistance(NormalForm left, NormalForm right, Map<String,String> paid,
+            EGraphMetadata leftMetadata, EGraphMetadata rightMetadata, BestMapping selected) {
+        boolean counting = hasCountingPrior(left,right);
+        return matrixDistance(left, right, paid, paid.keySet(), new HashSet<>(paid.values()),
+                leftMetadata, rightMetadata, selected,
+                variableBindings(left, counting ? leftMetadata.countingPrior(left) : Map.of()),
+                variableBindings(right, counting ? rightMetadata.countingPrior(right) : Map.of()));
+    }
+
+    private static int matrixDistance(NormalForm left, NormalForm right, Map<String,String> fixedMapping,
+            Set<String> lockedLeftNames, Set<String> lockedRightNames,
+            EGraphMetadata leftMetadata, EGraphMetadata rightMetadata, BestMapping selected,
+            Map<String,BindingDescriptor> leftBindings, Map<String,BindingDescriptor> rightBindings) {
         leftBindings.keySet().retainAll(matrixVariableNames(left.getMatrixEGraph()));
         rightBindings.keySet().retainAll(matrixVariableNames(right.getMatrixEGraph()));
         leftBindings.keySet().removeAll(lockedLeftNames);
@@ -2954,25 +2983,31 @@ public final class CanonicalDistance {
     }
 
     private static Map<String, BindingDescriptor> variableBindings(NormalForm nf) {
+        return variableBindings(nf, Map.of());
+    }
+
+    private static Map<String, BindingDescriptor> variableBindings(NormalForm nf,
+            Map<QuantiVar,FastPrefixSource.CountingCoordinate> countingPrior) {
         // Equal candidate counts retain original declaration order, as in the
         // certified global index. Search coverage and the minimum are unchanged.
         Map<String, BindingDescriptor> bindings = new java.util.LinkedHashMap<>();
-        addBindings(bindings, nf.getParams(), BindingRole.PARAMETER);
-        addBindings(bindings, nf.getMatrixQuantiVars(), BindingRole.MATRIX);
-        addBindings(bindings, nf.getInheritedQuantiVars(), BindingRole.INHERITED);
-        addBindings(bindings, nf.getLocalQuantiVars(), BindingRole.LOCAL);
+        addBindings(bindings, nf.getParams(), BindingRole.PARAMETER, Map.of());
+        addBindings(bindings, nf.getMatrixQuantiVars(), BindingRole.MATRIX, countingPrior);
+        addBindings(bindings, nf.getInheritedQuantiVars(), BindingRole.INHERITED, Map.of());
+        addBindings(bindings, nf.getLocalQuantiVars(), BindingRole.LOCAL, Map.of());
         return bindings;
     }
 
     private static void addBindings(
             Map<String, BindingDescriptor> bindings,
             List<QuantiVar> variables,
-            BindingRole role) {
+            BindingRole role, Map<QuantiVar,FastPrefixSource.CountingCoordinate> countingPrior) {
         int exchangeBlock = 0;
         for (int i = 0; i < variables.size(); i++) {
             QuantiVar variable = variables.get(i);
             if (i > 0 && !sameExchangeRun(variables.get(i - 1), variable)) exchangeBlock++;
-            bindings.put(variable.getName(), new BindingDescriptor(variable, role, i, exchangeBlock));
+            bindings.put(variable.getName(), new BindingDescriptor(variable, role, i, exchangeBlock,
+                    countingPrior.get(variable)));
         }
     }
 
@@ -3288,6 +3323,7 @@ public final class CanonicalDistance {
 
     private static final class EGraphMetadata {
         private final IdentityHashMap<NormalForm,NormalForm> originals=new IdentityHashMap<>();
+        private Map<QuantiVar,FastPrefixSource.CountingCoordinate> countingPrior;
         private final IdentityHashMap<NormalForm,GroupedOrders> groupedOrders=new IdentityHashMap<>();
         private record GroupedOrders(List<QuantiVar> bindings,List<String> policy,List<int[]> orders) { }
         private final IdentityHashMap<EGraphNode, Integer> sizes = new IdentityHashMap<>();
@@ -3317,6 +3353,14 @@ public final class CanonicalDistance {
 
         private NormalForm original(NormalForm comparison) {
             return Objects.requireNonNull(originals.get(comparison),"Missing original metric source");
+        }
+
+        // The paid slice prepares one source and one phase per endpoint. Reuse its
+        // checked coordinates across reference comparisons and repeated DP paths.
+        private synchronized Map<QuantiVar,FastPrefixSource.CountingCoordinate> countingPrior(NormalForm comparison) {
+            NormalForm source = original(comparison);
+            if (countingPrior == null) countingPrior = FastPrefixSource.countingPrior(source, comparison);
+            return countingPrior;
         }
 
         private synchronized List<int[]> groupedOrders(NormalForm comparison,List<QuantiVar> order) {
@@ -4175,12 +4219,15 @@ public final class CanonicalDistance {
         private final BindingRole role;
         private final int ordinal;
         private final int exchangeBlock;
+        private final FastPrefixSource.CountingCoordinate countingPrior;
 
-        private BindingDescriptor(QuantiVar variable, BindingRole role, int ordinal, int exchangeBlock) {
+        private BindingDescriptor(QuantiVar variable, BindingRole role, int ordinal, int exchangeBlock,
+                FastPrefixSource.CountingCoordinate countingPrior) {
             this.variable = variable;
             this.role = role;
             this.ordinal = ordinal;
             this.exchangeBlock = exchangeBlock;
+            this.countingPrior = countingPrior;
         }
 
         private boolean compatibleWith(BindingDescriptor other) {
@@ -4202,7 +4249,8 @@ public final class CanonicalDistance {
                     || variable.getQuantifier() == QuantiVar.Quantifier.SOME) {
                 return true;
             }
-            return safeEquals(variable.getBindingPath(), other.variable.getBindingPath());
+            return safeEquals(variable.getBindingPath(), other.variable.getBindingPath())
+                    || countingPrior != null && countingPrior.licenses(variable, other.variable, other.countingPrior);
         }
 
         private int ownershipPriority() {

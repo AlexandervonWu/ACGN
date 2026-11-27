@@ -11,6 +11,11 @@ import parser.ast.nodes.ModelUnit;
 public final class DeclarationOrbitWitnessTest {
     private static final String SOURCE = """
             sig A { r, s, t: set A }
+            sig B { sees: set A }
+            pred oneFirst { one a:A | all b:B | b->a in sees }
+            pred oneLast { all b:B | one a:A | b->a in sees }
+            pred loneFirst { lone a:A | all b:B | b->a in sees }
+            pred loneLast { all b:B | lone a:A | b->a in sees }
             pred chain { all x,y,z:A | x->y in r and y->z in s }
             pred either { all a,b:A | some k:A | all c:A | b->a in r or a->c in s or k->a in t }
 
@@ -32,7 +37,7 @@ public final class DeclarationOrbitWitnessTest {
         if (!condition) throw new AssertionError(reason);
     }
 
-    private static void replay(Endpoint source, Endpoint target, int expected) {
+    private static JSONObject replay(Endpoint source, Endpoint target, int expected) {
         check(Canonical.distance(source.fast(), target.fast()) == expected, "Fast scalar minimum");
         check(CanonicalAlloyPipeline.distance(source.certified(), target.certified()) == expected,
                 "Certified scalar minimum");
@@ -56,6 +61,7 @@ public final class DeclarationOrbitWitnessTest {
         order.put(0, order.length());
         check(NativeOperationComparison.compareCaptured(source.fast(), target.fast(), forged).status()
                 == NativeOperationComparison.Status.INVALID_REPLAY, "Reject substituted declaration witness");
+        return evidence;
     }
 
     private static void bothDirections(MASGVisitor visitor, String left, String right, int expected) {
@@ -65,6 +71,20 @@ public final class DeclarationOrbitWitnessTest {
         replay(b, a, expected);
     }
 
+    private static void crossingCountingPrefix(MASGVisitor visitor, String earlier, String later) {
+        var a = prepare(visitor, earlier);
+        var b = prepare(visitor, later);
+        for (var evidence : java.util.List.of(replay(a,b,3), replay(b,a,3))) {
+            var actions = evidence.getJSONArray("fastActions");
+            check(actions.getJSONObject(1).getString("kind").equals("insert")
+                    && actions.getJSONObject(2).getString("kind").equals("keep")
+                    && actions.getJSONObject(2).getInt("source") == 0
+                    && actions.getJSONObject(2).getInt("target") == 1
+                    && actions.getJSONObject(3).getString("kind").equals("delete"),
+                    "Keep the earlier source block on a crossing tie");
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         var module = CompUtil.parseEverything_fromString(A4Reporter.NOP, SOURCE);
         var visitor = new MASGVisitor(new GlobalVariables(), module);
@@ -72,6 +92,8 @@ public final class DeclarationOrbitWitnessTest {
         bothDirections(visitor, "chain", "either", 10);    // Partial map gains an extra zero-cost keep.
         bothDirections(visitor, "repeated", "mixed", 8);   // Both endpoint orbits can move.
         bothDirections(visitor, "paired", "longer", 8);    // A later existing map ties an earlier identity.
-        System.out.println("DeclarationOrbitWitnessTest: six native ordered action programs matched");
+        crossingCountingPrefix(visitor, "oneFirst", "oneLast");
+        crossingCountingPrefix(visitor, "loneFirst", "loneLast");
+        System.out.println("DeclarationOrbitWitnessTest: ten native ordered action programs matched");
     }
 }

@@ -25,11 +25,97 @@ public final class FastPrefixSourceTest {
                 SOURCE);
         var visitor=new MASGVisitor(new GlobalVariables(),Set.of("p"),module);
         visitor.visit(new ModelUnit(null,module),null);
-        var agent=new IRAgent(visitor.getForest().get(visitor.getForestId("p")));
+        return endpoint(visitor,"p");
+    }
+    private static Endpoint endpoint(MASGVisitor visitor, String name) {
+        var agent=new IRAgent(visitor.getForest().get(visitor.getForestId(name)));
         agent.computeNormalForm();
         var forms=agent.normalForms();
         var prepared=CanonicalDistance.prepare(forms);
         return new Endpoint(forms.get(0),prepared.comparisonForms().get(0));
+    }
+
+    private static void countingPriorControls() throws Exception {
+        String model = """
+                sig A { r,s: set B } sig B {}
+                pred earlier { one a:A | all b:B | a->b in r }
+                pred later { all b:B | one a:A | a->b in r }
+                pred atMost { all b:B | lone a:A | a->b in r }
+                pred dependent { all a:A | one b:a.r | a->b in s }
+                pred rangeR { one b:A.r | some s.b }
+                pred rangeS { one b:A.s | some s.b }
+                pred retained { some a:A | (one b:B | a->b in r) iff some a.s }
+                pred comprehension { some { a:A | one b:B | a->b in r } }
+                pred shadow { one x:A | some x.r and (one x:B | some r.x) }
+                """;
+        var module = CompUtil.parseEverything_fromString(A4Reporter.NOP, model);
+        var visitor = new MASGVisitor(new GlobalVariables(), module);
+        visitor.visit(new ModelUnit(null,module), null);
+        var first = endpoint(visitor,"earlier");
+        var second = endpoint(visitor,"later");
+        var a = first.source.getMatrixQuantiVars().get(0);
+        var b = second.source.getMatrixQuantiVars().get(1);
+        var firstPrior = FastPrefixSource.countingPrior(first.source,first.comparison);
+        var ca = firstPrior.get(a);
+        var cb = FastPrefixSource.countingPrior(second.source,second.comparison).get(b);
+        check(!a.getBindingPath().equals(b.getBindingPath()) && ca != null && ca.licenses(a,b,cb),
+                "Differently presented independent ONE occurrences carry authentic source coordinates");
+        // Probe the two private search inputs on genuine prepared endpoints.
+        // Ordinary alpha search still sees lexical paths; only the paid prior
+        // supplies the source-issued coordinates exercised by the native test.
+        var ordinary = CanonicalDistance.class.getDeclaredMethod("variableBindings",NormalForm.class);
+        ordinary.setAccessible(true);
+        var ordinaryA = ((Map<?,?>)ordinary.invoke(null,first.comparison)).get(a.getName());
+        var ordinaryB = ((Map<?,?>)ordinary.invoke(null,second.comparison)).get(b.getName());
+        var compatible = ordinaryA.getClass().getDeclaredMethod("compatibleWith",ordinaryA.getClass());
+        compatible.setAccessible(true);
+        check(!(boolean)compatible.invoke(ordinaryA,ordinaryB) && (boolean)compatible.invoke(ordinaryA,ordinaryA),
+                "Ordinary residual alpha matching preserves lexical scope");
+        var paid = CanonicalDistance.class.getDeclaredMethod("variableBindings",NormalForm.class,Map.class);
+        paid.setAccessible(true);
+        var paidA = ((Map<?,?>)paid.invoke(null,first.comparison,firstPrior)).get(a.getName());
+        var paidB = ((Map<?,?>)paid.invoke(null,second.comparison,
+                FastPrefixSource.countingPrior(second.source,second.comparison))).get(b.getName());
+        check((boolean)compatible.invoke(paidA,paidB) && !(boolean)compatible.invoke(paidA,ordinaryB),
+                "Paid prior matching requires coordinates for both endpoints");
+        check(!ca.licenses(a,b,null) && FastPrefixSource.countingPrior(second.source,first.comparison).isEmpty(),
+                "A missing or foreign endpoint cannot erase a lexical path");
+        var foreign = endpoint(visitor,"earlier").source.getMatrixQuantiVars().get(0);
+        check(foreign != a && foreign.equals(a) && firstPrior.get(foreign) == null && !ca.licenses(foreign,b,cb),
+                "A matching numeric ID from a new preparation cannot borrow authority");
+
+        var atMost = endpoint(visitor,"atMost");
+        var lone = atMost.source.getMatrixQuantiVars().get(1);
+        var loneCoordinate = FastPrefixSource.countingPrior(atMost.source,atMost.comparison).get(lone);
+        check(loneCoordinate != null && !ca.licenses(a,lone,loneCoordinate),
+                "ONE and LONE preserve separate multiplicity");
+        var dependent = endpoint(visitor,"dependent");
+        var child = dependent.source.getMatrixQuantiVars().get(1);
+        check(!child.getDeclarationFrames().get(0).dependencies().isEmpty()
+                && !FastPrefixSource.countingPrior(dependent.source,dependent.comparison).containsKey(child),
+                "The original dependent domain blocks path erasure even after lowering to a carrier");
+
+        var rangeR = endpoint(visitor,"rangeR");
+        var rangeS = endpoint(visitor,"rangeS");
+        var r = rangeR.source.getMatrixQuantiVars().get(0);
+        var s = rangeS.source.getMatrixQuantiVars().get(0);
+        var cr = FastPrefixSource.countingPrior(rangeR.source,rangeR.comparison).get(r);
+        var cs = FastPrefixSource.countingPrior(rangeS.source,rangeS.comparison).get(s);
+        check(r.getCarrierTypeName().equals(s.getCarrierTypeName()) && cr != null && cs != null
+                && !cr.licenses(r,s,cs), "Distinct original domains with the same carrier remain distinct");
+
+        for (String name : List.of("retained","comprehension","shadow")) {
+            var scope = endpoint(visitor,name);
+            var local = scope.comparison.getLocalQuantiVars().stream()
+                    .filter(FastPrefixSource::countingBinder).findFirst().orElseThrow();
+            var prior = FastPrefixSource.countingPrior(scope.source,scope.comparison);
+            check(!prior.containsKey(local), "Nested and local occurrences cannot use prefix authority: "+name);
+            if (name.equals("shadow")) {
+                var outer = scope.source.getMatrixQuantiVars().get(0);
+                check(outer != local && outer.getOriginalName().equals(local.getOriginalName())
+                        && !ca.licenses(a,local,prior.get(outer)), "A shadowed spelling is a different occurrence");
+            }
+        }
     }
     private static void reject(Runnable work,String why) {
         checks++;
@@ -66,6 +152,7 @@ public final class FastPrefixSourceTest {
         return null;
     }
     public static void main(String[] args) throws Exception {
+        countingPriorControls();
         var e=endpoint();var foreign=endpoint();
         var full=TheoryAlloyAdapter.adapt(List.of(e.source));
         RepairProjection.project(full,List.of(e.source));
