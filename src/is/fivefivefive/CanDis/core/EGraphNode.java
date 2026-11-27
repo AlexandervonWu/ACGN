@@ -27,6 +27,7 @@ import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.ACGN.alloy.ConstSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import is.fivefivefive.ACGN.alloy.CallSymbol;
+import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.RelationEndpointPredicate;
 
 
@@ -73,6 +74,7 @@ public final class EGraphNode {
     private String semanticIdentity;
     private BuiltinConstantKind builtinConstantKind;
     private SigSymbol parserSignatureEvidence;
+    private ParserFieldOrigin parserFieldOrigin;
     /* Transfer-only identity: never participates in semantic keys or serialization. */
     private long sourceOccurrenceLineage;
     private NormalForm.UnusedBindingReduction unusedBindingReduction;
@@ -1062,6 +1064,25 @@ public final class EGraphNode {
         requireLiveNode();
         return sourceName;
     }
+    private record ParserFieldOrigin(FieldRelation field, long lineage, ExactAlloyType type) { }
+
+    public void attachFieldOccurrence(is.fivefivefive.CanDis.ir.IRAgent.FieldOccurrence occurrence) {
+        if (occurrence.node() != this) return;
+        arena.mutate(this, () -> {
+            if (opcode == Opcode.GLOBALBINDING && childClasses.isEmpty() && occurrence.field().getName().equals(sourceName)
+                    && occurrence.field().getType().equals(sourceType) && exactAlloyType != null)
+                parserFieldOrigin = new ParserFieldOrigin(occurrence.field(), sourceOccurrenceLineage, exactAlloyType);
+        });
+    }
+
+    FieldRelation authenticatedField() {
+        var origin = parserFieldOrigin;
+        return opcode == Opcode.GLOBALBINDING && childClasses.isEmpty() && origin != null
+                && origin.lineage == sourceOccurrenceLineage && origin.field.getName().equals(sourceName)
+                && origin.field.getType().equals(sourceType) && origin.type.sameOccurrenceEvidenceAs(exactAlloyType)
+                ? origin.field : null;
+    }
+
     private record EndpointCallOccurrence(CallSymbol source) { }
 
     /** Each call occurrence retains its own anchor, also when the predicate has an authenticated body. */
@@ -1469,6 +1490,8 @@ public final class EGraphNode {
                         "A source occurrence lineage must be positive");
             }
             sourceOccurrenceLineage = source.sourceOccurrenceLineage;
+            if (opcode == Opcode.GLOBALBINDING && source.opcode == Opcode.GLOBALBINDING)
+                parserFieldOrigin = source.parserFieldOrigin;
             if (opcode == Opcode.CALL && source.opcode == Opcode.CALL)
                 callSourceAnchor = source.callSourceAnchor;
             certificationOccurrenceLineage =
@@ -4025,6 +4048,7 @@ public final class EGraphNode {
         semanticIdentity = replacement.semanticIdentity;
         builtinConstantKind = replacement.builtinConstantKind;
         parserSignatureEvidence = replacement.parserSignatureEvidence;
+        parserFieldOrigin = replacement.parserFieldOrigin;
         sourceOccurrenceLineage = replacement.sourceOccurrenceLineage;
         callOccurrenceId = replacement.callOccurrenceId;
         callSourceAnchor = replacement.callSourceAnchor;
@@ -7333,6 +7357,7 @@ public final class EGraphNode {
                     && Objects.equals(a.semanticIdentity, b.semanticIdentity)
                     && a.builtinConstantKind == b.builtinConstantKind
                     && a.parserSignatureEvidence == b.parserSignatureEvidence
+                    && a.parserFieldOrigin == b.parserFieldOrigin
                     && a.sourceOccurrenceLineage == b.sourceOccurrenceLineage
                     && a.certificationOccurrenceLineage == b.certificationOccurrenceLineage
                     && a.unusedBindingReduction == b.unusedBindingReduction
@@ -7825,6 +7850,7 @@ public final class EGraphNode {
         copy.semanticIdentity = semanticIdentity;
         copy.builtinConstantKind = builtinConstantKind;
         copy.parserSignatureEvidence = parserSignatureEvidence;
+        copy.parserFieldOrigin = parserFieldOrigin;
         copy.sourceOccurrenceLineage = sourceOccurrenceLineage;
         copy.unusedBindingReduction = unusedBindingReduction;
         copy.certificationOccurrenceLineage = certificationOccurrenceLineage;
@@ -7878,6 +7904,7 @@ public final class EGraphNode {
         semanticIdentity = null;
         builtinConstantKind = null;
         parserSignatureEvidence = null;
+        parserFieldOrigin = null;
         sourceOccurrenceLineage = 0L;
         currentDeclarationSlot = null;
         domainGuardOrigin = null;

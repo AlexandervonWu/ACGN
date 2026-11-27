@@ -73,8 +73,8 @@ public final class RelationEndpointPredicate {
 
     public SigSymbol domain() { return domain; }
     public boolean incoming() { return incoming; }
-    public boolean matchesField(String name, ExactAlloyType type) {
-        return field.label.equals(name) && fieldType.sameOccurrenceEvidenceAs(type);
+    public boolean matchesField(FieldRelation source, ExactAlloyType type) {
+        return source != null && source.resolvesTo(field) && fieldType.sameOccurrenceEvidenceAs(type);
     }
     public boolean sameDirectedField(RelationEndpointPredicate other) {
         return other != null && field == other.field && incoming == other.incoming;

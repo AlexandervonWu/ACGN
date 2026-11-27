@@ -24,8 +24,8 @@ public final class SourceOccurrenceBindingsExtractor {
             "CertificateVerificationScope", "96cbb043b0b01bba17d547f3048e1fb93b4c4cf53553a4840c4c783b763deea4 40e9edc6e7d3909ffa2a28b08367c3c0850a8d5bc50aacb0df43e6d69674af32",
             "CertificateVerifier", "3d6c3503df22ddfb41c12c61916d90ef9c40efaa31ef4079510e99c5fc949d04 bffa5b50b8e99dca4b4dd59288a0d4d0fd0253d3145cad4816913efa22e5f8b8",
             "TheoryAlloyAdapter", "b583b8d4c87dc505d5391eafeffa3e2927c504dd29836a4a185481eb77f9e7c5 c7e96284672950a308c81ed1e6741ba5b626e0988cf58aa2dc9854b290500fec",
-            "EGraphNode", "fe73aa0635a329ae7dfac3affa1b280b552cf281686754f16b15224805bb8b0b 43fe46623478ca78fec3a58dd458d18ac582ebbc0eadd460e3a74964b2c7fa5f",
-            "NormalForm", "b23a7ccc51d1b76cc5e620d45b77caa83865ac503bdf50ac97c78f81ed033ece 5a96cf4becd07218e6bae673768804541b19a0ef0b61a030a609e1be1028fde0",
+            "EGraphNode", "8466f34c3689d8eb39ed0af062511a584d4dc3a5a4ebc3b1cfc4cdc7da8d53ca 575cc3225df0d67e7141177b5f9ff885beb0380bb1eb73708972deb0eb1033b2",
+            "NormalForm", "ee5d27de30f4e6883c1af17b33d0ab2c86597f95c0b4bec91c926dbb056c4edd aabd7539624904e4066fbee72f160ad816c98da057a177692b7b6656dc0ce2db",
             "StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",
             "DependentChainCertificate", "800b128e0f225b68f242d201009689bb5eeded3391250ef4259378dce034c35f 123b6c433070bf4455f1a888010e09bd51b45b584833ff884c6d71d48f0978e4");
 

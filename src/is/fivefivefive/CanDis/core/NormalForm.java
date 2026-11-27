@@ -3349,7 +3349,7 @@ public class NormalForm {
         var call = negatedEndpointCall(negative);
         var endpoint = call.endpointPredicate();
         if (tuple.getOpcode() != Opcode.ARROW || tuple.getChildren().size() != 2 || !field.getChildren().isEmpty()
-                || !endpoint.matchesField(field.getSourceName(), field.getExactAlloyType())) return root;
+                || !endpoint.matchesField(field.authenticatedField(), field.getExactAlloyType())) return root;
         var from = tuple.getChildren().get(0);
         var to = tuple.getChildren().get(1);
         if (from.getOpcode() != Opcode.VARIABLE || to.getOpcode() != Opcode.VARIABLE

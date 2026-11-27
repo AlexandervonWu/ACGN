@@ -99,7 +99,7 @@ public final class CallAuthorityTransitionsExtractor {
         Map.entry("visit-select", "2ef01c475fafe71a8ef3147e060a39994fb7be4c6fcd5eb7bbd820c6fc1fb749 abb9cbe0df10caeee4054872582cbdb7192462e84e16e9d291f86a9274afda03"),
         Map.entry("visit-validate", "e31285d22293db48dc79371b9a1356921f396fc45d8bdc675331daacdce52c1b f3f9239e2a1cde4517a8b6c7cc752c4cfa4f957441faabcef9241b3df811abde"),
         Map.entry("ir-build", "cd34ac5be7e7f6e61122d517030dbe346858f4b753f2ed0dd0218bb39c93ce00 118238307d8b3fed045e6ea9408e95259c075a240c222722fd9ffd7a36ecb61e"),
-        Map.entry("ir-metadata", "6e4217dd198f8fb85a07e216cbe1e4a60bd439a8030200be8c27c202f14c102b 10753fbd0c632148ee6ca6c50ac56f82ba94629f21c870f9be84d3d9371788f8"),
+        Map.entry("ir-metadata", "10a8903b3012d80f3cfe54d14991a61ea53ca90491c14c55775fd8c87213e3d8 c650f710fb2aa12769617eac9cce7e59c62a12a82f1442abdd28aad10625051c"),
         Map.entry("metadata-require", "69401097cfad53a7ec8c5b70ca96194e670b61fcb6202223ecf8f93451c538ec d446b5a1a33b8b09c53c5cb9c736eba858e4984fff54a55a0ce245a63ffbaef3"),
         Map.entry("call-policy", "6c40534b36a68b02d76f2bfb4fe81a34da3476f8bbe5c5a180c2f18e8cd1b908 fe86e671b326be1e6bdac868a85a4bfedc5ac8c3a891081426b7ae4c699b9326"),
         Map.entry("policy-nonflat", "bf8585a75accaa2103553160a214a177bf978ae5e561514d830b47bcfa930908 298778f57cdb1570636cc6b70aebff3111f0c540743e7dc0cb7087913aa20e03"),

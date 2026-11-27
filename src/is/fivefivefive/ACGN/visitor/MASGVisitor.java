@@ -2267,8 +2267,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 if (fieldSymbols.containsKey(key)) {
                     continue;
                 }
-                FieldRelation symbol = new FieldRelation(
-                        fieldName,
+                FieldRelation symbol = FieldRelation.fromParser(
+                        field,
                         source,
                         targetSignature(field.type()),
                         fieldConfiners(field));

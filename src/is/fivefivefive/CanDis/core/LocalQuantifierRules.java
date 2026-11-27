@@ -15,11 +15,6 @@ final class LocalQuantifierRules {
 
     private record Slot(EGraphNode declaration, EGraphNode variable, SigSymbol domain) {
         String key() { return variable.getAlphaName(); }
-
-        EGraphNode declarationForSlot() {
-            if (declaration.getChildren().size() == 2) return declaration;
-            return rebuild(declaration, List.of(declaration.getChildren().get(0), variable));
-        }
     }
 
     private record Block(EGraphNode root, List<Slot> slots, EGraphNode body) {
@@ -141,7 +136,11 @@ final class LocalQuantifierRules {
         if (sorted.get(0).domain.isSameParserSignatureAs(sorted.get(sorted.size() - 1).domain)
                 || containsNestedJoin(block.body, false)) return node;
         var children = new ArrayList<EGraphNode>();
-        for (var slot : sorted) children.add(slot.declarationForSlot());
+        // A grouped declaration owns one range occurrence. Both repair views must
+        // charge that range once when the quantifier remains inside the matrix.
+        for (var slot : sorted) {
+            if (!children.contains(slot.declaration)) children.add(slot.declaration);
+        }
         children.add(block.body);
         return rebuild(node, children);
     }

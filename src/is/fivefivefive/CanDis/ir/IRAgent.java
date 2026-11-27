@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.CallSymbol;
+import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.ConstSymbol;
 import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
@@ -884,6 +885,15 @@ public class IRAgent {
         public CallSymbol source() { return source; }
     }
 
+    /** The identity of the original graph vertex distinguishes a field from a shadowing variable. */
+    public static final class FieldOccurrence {
+        private final EGraphNode node;
+        private final FieldRelation field;
+        private FieldOccurrence(EGraphNode node, FieldRelation field) { this.node = node; this.field = field; }
+        public EGraphNode node() { return node; }
+        public FieldRelation field() { return field; }
+    }
+
     private void attachSourceMetadata(
             EGraphNode eGraphNode,
             AugmentedNode sourceNode,
@@ -916,6 +926,7 @@ public class IRAgent {
         }
         eGraphNode.setSourceType(symbol.getType());
         eGraphNode.setExactAlloyType(exactType);
+        if (symbol instanceof FieldRelation field) eGraphNode.attachFieldOccurrence(new FieldOccurrence(eGraphNode, field));
         if (symbol instanceof CallSymbol call && call.endpointPredicate() != null)
             eGraphNode.attachEndpointCall(new EndpointOccurrence(eGraphNode, call));
         if (eGraphNode.getOpcode() == Opcode.VARIABLE) {

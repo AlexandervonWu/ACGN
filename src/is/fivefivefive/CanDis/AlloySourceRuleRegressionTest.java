@@ -213,6 +213,7 @@ public final class AlloySourceRuleRegressionTest {
     }
 
     private static void checkLocalQuantifierRules(A4Options options) throws Exception {
+        checkGroupedLocalRepair();
         String schema = "sig User { follows, suggested: set User, posts: set Photo } sig Photo {} ";
         String outside = "all u,v:User | v in u.suggested iff (u!=v and "
                 + "(some z:User | z in u.follows and v in z.follows))";
@@ -242,6 +243,28 @@ public final class AlloySourceRuleRegressionTest {
                 + "check correct { inv8 iff inv8c } for 3";
         checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, disjoint),
                 disjoint, false, false, options);
+    }
+
+    private static void checkGroupedLocalRepair() throws Exception {
+        Path path = Path.of(System.getProperty("acgn.test.repoRoot", "."), "classified-data", "classroom_fol",
+                "both", "EuueiHypv4wm7zBZh_inv14.als");
+        var module = AlloyUtil.compileAlloyModule(path.toString());
+        var visitor = new MASGVisitor(new GlobalVariables(), module);
+        visitor.visit(new ModelUnit(null, module), null);
+        var student = Canonical.prepare(graph(visitor, "inv14"));
+        var reference = Canonical.prepare(graph(visitor, "inv14c"));
+        for (boolean reverse : List.of(false, true)) {
+            var left = reverse ? reference : student;
+            var right = reverse ? student : reference;
+            var fast = CanonicalRepairTraces.fast(left, right);
+            var certified = CanonicalRepairTraces.certified(CanonicalAlloyPipeline.prepare(left),
+                    CanonicalAlloyPipeline.prepare(right));
+            check(fast.replay(fast.json()) == 50 && certified.replay(certified.json()) == 50,
+                    "both repair views charge the two Teacher slots as one source declaration");
+            check(NativeOperationComparison.compare(left, right, fast, certified).status()
+                            == NativeOperationComparison.Status.MATCHED,
+                    "paid operations agree for the grouped local declaration");
+        }
     }
 
     private static void checkSharedUniversalWitness(A4Options options) throws Exception {
@@ -372,6 +395,12 @@ public final class AlloySourceRuleRegressionTest {
             checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
                     e.left() + " versus " + e.right(), e.equivalent(), false, options);
         }
+        String shadow = declarations + "one sig Holder { chosen:T->T } "
+                + "pred inv8[r:T->T]{all x,y:T | x->y in r implies not dst[x]} "
+                + "pred inv8c[r:T->T]{all x,y:T | x->y in r implies not src[y]} "
+                + "check correct {inv8[Holder.chosen] iff inv8c[Holder.chosen]} for 4";
+        checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, shadow),
+                "a shadowing relation parameter differs from the endpoint helper's field", false, false, options);
     }
 
     private static void checkScopedMembershipNegation(A4Options options) throws Exception {
