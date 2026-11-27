@@ -86,7 +86,7 @@ final class CanonicalPermutationPresentation {
                     "acgn.maxGroupPresentationWork must be positive");
         }
         if (work[0] > maximum) {
-            throw new CanonicalizationDomainException(
+            throw CanonicalizationDomainException.resourceLimit(
                     "Canonical group presentation exceeds configured work bound "
                             + maximum);
         }

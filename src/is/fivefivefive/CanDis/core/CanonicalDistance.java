@@ -12,6 +12,8 @@ import java.util.Set;
 
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
 import is.fivefivefive.CanDis.theory.AlloyTypeBridge;
+import is.fivefivefive.CanDis.theory.CanonicalizationDomainException;
+import is.fivefivefive.CanDis.metric.TraceResources;
 import is.fivefivefive.CanDis.theory.GraphType;
 import is.fivefivefive.CanDis.metric.MatrixDecision;
 import is.fivefivefive.CanDis.metric.FastTemporalReferences;
@@ -103,6 +105,9 @@ public final class CanonicalDistance {
         matrix = selectedPaidImportAlignment(left, right, matrix);
         if (temporalDistance == 0 && quantificationDistance == 0 && matrix.distance > 0)
             matrix = samePhasePrefixAlignment(left, right, matrix);
+        if (temporalDistance == 0 && quantificationDistance > 0 && matrix.declarationPath == null
+                && matrix.importDeclarations == null && left.normalForms.size() == 1 && right.normalForms.size() == 1)
+            completeCoalescedDeclarations(left, right, quantificationDistance, matrix);
         if (capture != null) capture.alignment = matrix;
         int matrixDistance = matrix.distance;
         return new DistanceBreakdown(
@@ -1313,6 +1318,45 @@ public final class CanonicalDistance {
         existing.phases=best.phases;
         existing.mappings=best.mappings;
         return existing;
+    }
+
+    /** Link a pure insertion/deletion prefix to the already selected matrix. Both endpoints must
+     * independently admit the declaration order. Keep the original matrix mapping and replay. */
+    private static void completeCoalescedDeclarations(Prepared left, Prepared right, int quantifierCost,
+            MatrixAlignment selected) {
+        var a = left.normalForms.get(0);
+        var b = right.normalForms.get(0);
+        int n = a.getMatrixQuantiVars().size(), m = b.getMatrixQuantiVars().size();
+        if (quantifierCost != Math.abs(n - m) || Math.max(n, m) > FastGroupedDeclarationOrbit.MAX_BINDINGS
+                || selected.mappings == null || selected.mappings.size() != 1
+                || selected.mappings.get(0).size() != Math.min(n, m)) return;
+
+        var capture = DECISIONS.get();
+        var originalPhase = capture == null ? null : capture.lastPhase;
+        try {
+            if (!FastPaidDeclarationAlignment.supportsCoalescedPair(left.normalForms, right.normalForms)) return;
+            var candidate = paidDeclarationMatrixAlignment(a, b, left.metadata, right.metadata);
+            if (candidate.distance == selected.distance && candidate.sourceOrder != null
+                    && candidate.paidCorrespondence.isEmpty() && selected.mappings.get(0).equals(candidate.mapping)
+                    && admittedOrder(left, a, candidate.sourceOrder) && admittedOrder(right, b, candidate.targetOrder)) {
+                selected.sourceOrder = candidate.sourceOrder;
+                selected.targetOrder = candidate.targetOrder;
+                selected.declarationPath = candidate.declarationPath;
+                selected.paidCorrespondence = candidate.paidCorrespondence;
+            }
+        } catch (TraceResources.Exhausted exhausted) {
+            // The original numeric decision and its native program are already available.
+            return;
+        } catch (CanonicalizationDomainException failure) {
+            if (!failure.isResourceLimit()) throw failure;
+        } finally {
+            if (capture != null) capture.lastPhase = originalPhase;
+        }
+    }
+
+    private static boolean admittedOrder(Prepared endpoint, NormalForm form, int[] proposed) {
+        var prefix = canonicalQuantifierOrder(form.getMatrixQuantiVars());
+        return endpoint.metadata.groupedOrders(form, prefix).stream().anyMatch(order -> java.util.Arrays.equals(order, proposed));
     }
 
     private static MatrixAlignment paidDeclarationMatrixAlignment(NormalForm left,NormalForm right,

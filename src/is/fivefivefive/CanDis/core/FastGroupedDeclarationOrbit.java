@@ -28,8 +28,8 @@ final class FastGroupedDeclarationOrbit {
     static List<int[]> orders(NormalForm source,NormalForm comparison,List<QuantiVar> order) {
         var result=new ArrayList<int[]>();result.add(identity(order.size()));
         if(order.size()>MAX_BINDINGS
-                || !FastPaidDeclarationAlignment.supports(List.of(source))
-                || !FastPaidDeclarationAlignment.supports(List.of(comparison))) return List.copyOf(result);
+                || !FastPaidDeclarationAlignment.supportsPrefixScope(source)
+                || !FastPaidDeclarationAlignment.supportsPrefixScope(comparison)) return List.copyOf(result);
         require(source.getCertificationMatrixEGraph()==comparison.getCertificationMatrixEGraph(),"Foreign grouped source ledger");
         var original=source.getMatrixQuantiVars();var current=comparison.getMatrixQuantiVars();
         require(original.size()==current.size()&&order.size()==original.size(),"Grouped occurrence coverage");

@@ -3,6 +3,7 @@ package is.fivefivefive.CanDis.core;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.ToIntBiFunction;
+import is.fivefivefive.CanDis.theory.StructuralKey;
 
 /** Paid edit links, never free alpha equivalences or certified source rewrites. */
 final class FastPaidDeclarationAlignment {
@@ -61,6 +62,44 @@ final class FastPaidDeclarationAlignment {
         return supports(forms, true);
     }
 
+    static boolean supportsCoalescedPair(List<NormalForm> left, List<NormalForm> right) {
+        boolean a = supportsCoalescedEndpoint(left);
+        boolean b = supportsCoalescedEndpoint(right);
+        return a && (b || supports(right)) || b && supports(left);
+    }
+
+    static boolean supportsPrefixScope(NormalForm form) {
+        var forms = List.of(form);
+        if (supports(forms)) return true;
+        // The lowered carrier can hide a dependent domain or two different ranges.
+        // Only exchange coalesced slots when their full source domains agree by type.
+        if (!supportsCoalescedEndpoint(forms)) return false;
+        var domains = new HashMap<String,StructuralKey>();
+        for (var q : form.getMatrixQuantiVars()) for (var frame : q.getDeclarationFrames()) {
+            var previous = domains.putIfAbsent(q.getTypeName(), frame.domain());
+            if (!frame.dependencies().isEmpty() || previous != null && !previous.equals(frame.domain())) return false;
+        }
+        return true;
+    }
+
+    private static boolean supportsCoalescedEndpoint(List<NormalForm> forms) {
+        if (forms.size() != 1) return false;
+        var form = forms.get(0);
+        if (!form.getLocalQuantiVars().isEmpty()) return false;
+        boolean distinctSlots = false;
+        for (var q : form.getMatrixQuantiVars()) {
+            if ((q.getQuantifier() != QuantiVar.Quantifier.ALL && q.getQuantifier() != QuantiVar.Quantifier.SOME)
+                    || q.getDisjointnessClass() != 0) return false;
+            var frames = q.getDeclarationFrames();
+            if (!distinctSlots && frames.size() > 1) {
+                int firstSlot = frames.get(0).tupleSlot();
+                distinctSlots = frames.stream().anyMatch(frame -> frame.tupleSlot() != firstSlot);
+            }
+        }
+        return distinctSlots && form.getCertificationMatrixEGraph() != null && form.matrixDeclarationsMatchSource()
+                && supports(forms, true, true) && declaredReadsMatchSource(form);
+    }
+
     // Broader rigid-group admission adds candidates; it must not select the
     // exclusive direct route in place of an existing coherent candidate.
     static boolean supportsDirectEndpoint(List<NormalForm> forms) {
@@ -68,6 +107,10 @@ final class FastPaidDeclarationAlignment {
     }
 
     private static boolean supports(List<NormalForm> forms, boolean rigidGroups) {
+        return supports(forms, rigidGroups, false);
+    }
+
+    private static boolean supports(List<NormalForm> forms, boolean rigidGroups, boolean occurrenceSlots) {
         if (forms.size() != 1) return false;
         NormalForm f = forms.get(0);
         if (!f.isFrozenForCertification() || f.getMatrixEGraph() == null
@@ -105,7 +148,7 @@ final class FastPaidDeclarationAlignment {
                     || !type.sharesParserModuleAuthorityWith(firstType)) return false;
             declarations.computeIfAbsent(q.getBindingPath(), ignored -> new ArrayList<>()).add(q);
         }
-        if (!groupedSlotsMatchSource(f, declarations, rigidGroups)) return false;
+        if (!groupedSlotsMatchSource(f, declarations, rigidGroups, occurrenceSlots)) return false;
         // ONE/LONE remain ordered prefix barriers. Admission beneath a retained
         // local binder requires its actual source kind, owner, domain and types;
         // the paid path changes neither that scope nor prefix ordering.
@@ -177,20 +220,21 @@ final class FastPaidDeclarationAlignment {
     // A shared declaration path is an owner, not a slot. Disjoint groups keep
     // their original payload and slot order; charged links are not exchanges.
     private static boolean groupedSlotsMatchSource(NormalForm form, Map<String,List<QuantiVar>> declarations) {
-        return groupedSlotsMatchSource(form, declarations, true);
+        return groupedSlotsMatchSource(form, declarations, true, false);
     }
 
     private static boolean groupedSlotsMatchSource(NormalForm form, Map<String,List<QuantiVar>> declarations,
-            boolean rigidGroups) {
+            boolean rigidGroups, boolean occurrenceSlots) {
         // Presentation paths may coalesce separate declarations during prefix
         // normalization. Only issued occurrences identify an original tuple.
-        if(form.matrixDeclarationsMatchSource()) {
-            declarations=new LinkedHashMap<>();
-            for(var q:form.getMatrixQuantiVars())for(var frame:q.getDeclarationFrames()) {
-                var group=declarations.computeIfAbsent(Long.toString(frame.declarationOccurrence()),
-                        ignored -> new ArrayList<>());
-                if(!group.contains(q))group.add(q);
+        Map<?, List<QuantiVar>> groups = declarations;
+        if (form.matrixDeclarationsMatchSource()) {
+            var issued = new LinkedHashMap<Long,List<QuantiVar>>();
+            for (var q : form.getMatrixQuantiVars()) for (var frame : q.getDeclarationFrames()) {
+                var group = issued.computeIfAbsent(frame.declarationOccurrence(), ignored -> new ArrayList<>());
+                if (!group.contains(q)) group.add(q);
             }
+            groups = issued;
         }
         Map<String,QuantiVar> grouped = new HashMap<>();
         Set<String> aliases = new HashSet<>();
@@ -198,7 +242,8 @@ final class FastPaidDeclarationAlignment {
         Map<QuantiVar,Integer> positions = new IdentityHashMap<>();
         boolean checkedRigidGroup = false;
         for (int i=0;i<form.getMatrixQuantiVars().size();i++) positions.put(form.getMatrixQuantiVars().get(i),i);
-        for (var group : declarations.values()) {
+        for (var entry : groups.entrySet()) {
+            var group = entry.getValue();
             if (group.size() < 2) {
                 if (group.get(0).getDisjointnessClass() != 0) return false;
                 continue;
@@ -223,7 +268,11 @@ final class FastPaidDeclarationAlignment {
                 if (type == null) return false;
                 if (type.startsWith("VAR_")) type = type.substring(4);
                 String expectedKey = q.getBindingPath()+"#"+slot+":"+q.getCardinality()+":"+type;
-                if (!q.getDeBruijnKey().equals(expectedKey)
+                // A representative can occupy different slots in separately issued tuples.
+                boolean correctSlot = occurrenceSlots
+                        ? entry.getKey() instanceof Long owner && hasIssuedSlot(form, q, owner, slot)
+                        : expectedKey.equals(q.getDeBruijnKey());
+                if (!correctSlot
                         || q.getQuantifier() != first.getQuantifier()
                         || q.getDisjointnessClass() != disjoint
                         || ((disjoint > 0 || rigid) && positions.get(q) != positions.get(first)+slot)
@@ -259,6 +308,11 @@ final class FastPaidDeclarationAlignment {
         }
         if (observed.equals(grouped.keySet()) && !checkedRigidGroup) return true;
         return form.matrixDeclarationsMatchSource() && declaredReadsMatchSource(form);
+    }
+
+    private static boolean hasIssuedSlot(NormalForm form, QuantiVar variable, long occurrence, int slot) {
+        return variable.getDeclarationFrames().stream().anyMatch(frame -> frame.declarationOccurrence() == occurrence
+                && frame.tupleSlot() == slot && form.ownsDeclarationFrame(frame));
     }
 
     private static boolean issuedTupleMatches(NormalForm form, List<QuantiVar> group) {

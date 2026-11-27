@@ -39,7 +39,7 @@ final class FinitePermutationTraversal {
         traverse(plan.root, plan.identity, candidate -> {
             count[0] = Math.addExact(count[0], 1L);
             if (count[0] > plan.maximumElements) {
-                throw new CanonicalizationDomainException(
+                throw CanonicalizationDomainException.resourceLimit(
                         "Permutation-group closure exceeds configured bound "
                                 + plan.maximumElements);
             }
@@ -84,7 +84,7 @@ final class FinitePermutationTraversal {
             }
             count[0] = Math.addExact(count[0], 1L);
             if (count[0] > plan.maximumElements) {
-                throw new CanonicalizationDomainException(
+                throw CanonicalizationDomainException.resourceLimit(
                         "Permutation-group search exceeds configured bound "
                                 + plan.maximumElements);
             }
@@ -252,11 +252,11 @@ final class FinitePermutationTraversal {
             groupOrder = Math.multiplyExact(
                     transversals.size(), stabilizerOrder);
         } catch (ArithmeticException overflow) {
-            throw new CanonicalizationDomainException(
+            throw CanonicalizationDomainException.resourceLimit(
                     "Permutation-group order exceeds the configured bound");
         }
         if (groupOrder > maximum) {
-            throw new CanonicalizationDomainException(
+            throw CanonicalizationDomainException.resourceLimit(
                     "Permutation-group closure exceeds configured bound " + maximum);
         }
         return new StabilizerLevel(
@@ -405,7 +405,7 @@ final class FinitePermutationTraversal {
         private void consume() {
             consumed = Math.addExact(consumed, 1L);
             if (consumed > maximum) {
-                throw new CanonicalizationDomainException(
+                throw CanonicalizationDomainException.resourceLimit(
                         "Stabilizer-chain construction exceeds configured work bound "
                                 + maximum);
             }

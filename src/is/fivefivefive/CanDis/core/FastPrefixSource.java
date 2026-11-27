@@ -64,8 +64,8 @@ final class FastPrefixSource {
     }
 
     static TheoryAlloyAdapter.PrefixBinderPlan checkedPlan(NormalForm source, NormalForm comparison) {
-        require(FastPaidDeclarationAlignment.supports(List.of(source))
-                && FastPaidDeclarationAlignment.supports(List.of(comparison)), "Unadmitted prefix scope");
+        require(FastPaidDeclarationAlignment.supportsPrefixScope(source)
+                && FastPaidDeclarationAlignment.supportsPrefixScope(comparison), "Unadmitted prefix scope");
         require(source.getCertificationMatrixEGraph() == comparison.getCertificationMatrixEGraph(),
                 "Foreign prefix source");
         var bindings = new HashMap<String,QuantiVar>();
