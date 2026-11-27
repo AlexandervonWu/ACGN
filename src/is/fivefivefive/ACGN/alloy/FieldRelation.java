@@ -20,7 +20,7 @@ public class FieldRelation extends RelationSet {
         return new FieldRelation(field.label.substring(field.label.lastIndexOf('/') + 1),
                 source, target, confiners, field);
     }
-    public boolean resolvesTo(Sig.Field declaration) {
+    public final boolean resolvesTo(Sig.Field declaration) {
         return parserField != null && parserField == declaration;
     }
     public Set<FieldConfiner> getConfiners() {
