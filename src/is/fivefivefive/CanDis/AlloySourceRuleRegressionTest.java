@@ -193,8 +193,16 @@ public final class AlloySourceRuleRegressionTest {
             checkGenericLabelCannotMintNonemptiness();
             checkExactlyOfDoesNotMintNonemptiness();
             checkAblationBindingGuards(model);
+            checkLocalQuantifierRules(options);
+            checkSharedUniversalWitness(options);
             checkReachabilityPairs(options);
             checkUniversalMembershipGuards(options);
+            checkGuardedImageMembership(options);
+            checkPointwiseClauses(options);
+            checkScopedMembershipNegation(options);
+            checkIndependentMembershipWitnesses(options);
+            checkRelationEndpointPredicates(options);
+            checkPointwiseClauseBindings(options);
 
             System.out.println("AlloySourceRuleRegressionTest passed: "
                     + checks + " checks");
@@ -202,6 +210,66 @@ public final class AlloySourceRuleRegressionTest {
             Files.deleteIfExists(modelPath);
             Files.deleteIfExists(directory);
         }
+    }
+
+    private static void checkLocalQuantifierRules(A4Options options) throws Exception {
+        String schema = "sig User { follows, suggested: set User, posts: set Photo } sig Photo {} ";
+        String outside = "all u,v:User | v in u.suggested iff (u!=v and "
+                + "(some z:User | z in u.follows and v in z.follows))";
+        String inside = "all x,y:User | y in x.suggested iff "
+                + "(some z:User | x!=y and z in x.follows and y in z.follows)";
+        String everyPhoto = "(all p:Photo | some u:User | u->p in posts)";
+        String pointwise = "(all p:Photo,y,z:User | y->p in posts and z->p in posts implies y=z)";
+        String premise = "(all y,z:User | (some p:Photo | y->p in posts and z->p in posts) implies y=z)";
+        for (var pair : List.of(List.of(outside,inside), List.of(everyPhoto + " and " + pointwise,
+                everyPhoto + " and " + premise))) {
+            String code = schema + "pred inv8 {" + pair.get(0) + "} pred inv8c {" + pair.get(1)
+                    + "} check correct { inv8 iff inv8c } for 4";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, code),
+                    code, true, true, options);
+        }
+        String projects = "sig Person { projects:set Project } sig Student in Person {} sig Project {} ";
+        String exists = "(all x:Project | some y:Student | y->x in projects)";
+        String ranged = "all x:Project, y:Person-Student | y->x not in projects";
+        String complement = "not some y:Person-Student | some x:Project | y->x in projects";
+        String checked = projects + "pred inv8 { (" + ranged + ") and " + exists + "} "
+                + "pred inv8c { (" + complement + ") and " + exists + "} "
+                + "check correct {inv8 iff inv8c} for 4";
+        checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, checked),
+                checked, true, false, options);
+        String disjoint = schema + "pred inv8 { some disj a,b:User, p:Photo | a=b and a->p in posts } "
+                + "pred inv8c { some p:Photo, a,b:User | a=b and a->p in posts } "
+                + "check correct { inv8 iff inv8c } for 3";
+        checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, disjoint),
+                disjoint, false, false, options);
+    }
+
+    private static void checkSharedUniversalWitness(A4Options options) throws Exception {
+        String schema = "sig Project, Other {} sig Person { projects: set Project, r: set Person } ";
+        String witness = "some s:Person | p in s.projects";
+        String independent = "all z:Person | no z.r";
+        String fused = "all p:Project | " + witness + " and (" + independent + ")";
+        String outer = "(all p:Project | " + witness + ")";
+        String split = "(all ignored:Project | " + independent + ") and " + outer;
+        for (String fixed : List.of("for 3", "for 3 but exactly 0 Project")) {
+            String code = schema + "pred inv8 {" + fused + "} pred inv8c {" + split + "} "
+                    + "check correct { inv8 iff inv8c } " + fixed;
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, code),
+                    code, true, false, options);
+        }
+        // A false independent condition is vacuous only inside a universal over an empty range.
+        for (String wrong : List.of("(" + independent + ") and " + outer,
+                "(all ignored:Other | " + independent + ") and " + outer)) {
+            String code = schema + "pred inv8 {" + fused + "} pred inv8c {" + wrong + "} "
+                    + "check correct { inv8 iff inv8c } for 3 but exactly 0 Project, exactly 1 Other";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, code),
+                    code, false, false, options);
+        }
+        String dependent = schema + "pred inv8 {" + outer + "} pred inv8c {"
+                + "(all p:Project | no p) and " + outer + "} "
+                + "check correct {inv8 iff inv8c} for 3 but exactly 1 Project";
+        checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, dependent),
+                dependent, false, false, options);
     }
 
     private static void checkReachabilityPairs(A4Options options) throws Exception {
@@ -220,6 +288,171 @@ public final class AlloySourceRuleRegressionTest {
         // Existential Exit, the union of all reachable exits, and travel in the other direction.
         for (String id : List.of("NYmTFx2CYwE9dQ6y9", "2dDe3wYYHwA9dT2jr", "Qsi89JsKh5Xp6Hxpi")) {
             checkReachabilityPair(dataset.resolve("both").resolve(id + "_inv8.als"), false, false, options);
+        }
+    }
+
+    private static void checkPointwiseClauseBindings(A4Options options) throws Exception {
+        String declarations = "sig A { next: set A } sig B,C in A {} ";
+        record Example(String first, String second, boolean equivalent, boolean slottedZero) {}
+        var common = " and (all w:A | w not in w.next)";
+        for (var e : List.of(
+                new Example("(all x,y:A | (x in B and x != y) implies y in x.next)" + common,
+                        "(all y,x:A | (x in B and y != x) implies y in x.next)" + common, true, true),
+                new Example("all x:B,y:C,w:A | x in w.next implies y not in w.next",
+                        "all x:B,y:C,w:A | (x in w.next implies y not in w.next)"
+                        + " and (y in w.next implies x not in w.next)", true, true),
+                new Example("all x:B,y:C,w:A | (x not in w.next or y not in w.next)"
+                        + " and (x not in w.next or y not in x.next)",
+                        "all x:B,y:C,w:A | x not in w.next or y not in w.next", false, false),
+                new Example("all x:B | no y:C | x->y in next",
+                        "all x:B, y:C | x->y not in next", true, true),
+                new Example("all x:B | no y:C | x->y in next",
+                        "no x:B | all y:C | x->y in next", false, false))) {
+            String source = declarations + "pred inv8 {" + e.first() + "} pred inv8c {" + e.second()
+                    + "} check correct {inv8 iff inv8c} for 3";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                    e.first(), e.equivalent(), e.slottedZero(), options);
+        }
+    }
+
+    private static void checkIndependentMembershipWitnesses(A4Options options) throws Exception {
+        record Example(String left, String right, boolean equivalent) {}
+        for (var example : List.of(
+                new Example("some e:A, f:B | e in T and f in T", "some A and some B", true),
+                new Example("no e:A, f:B | e in T and f in T", "no A or no B", true),
+                new Example("no e:A | e in T and some B", "no A or no B", true),
+                new Example("some disj x,y:T | x in T and y in T", "some T", false),
+                new Example("some x:T, y:x.r | x in A and y in T", "some A and some T.r", false),
+                new Example("all x:T,y:T | x in A iff x not in T.r",
+                        "(all x:T | x in A implies x not in T.r) and (all x:T | x not in T.r implies x in A)", true),
+                new Example("all x:A,y:B | x in B", "all x:A | x in B", false),
+                new Example("all x,y:T | x in A iff x not in T.^r",
+                        "all x:T | x in A implies x not in T.^r\nall x:T | x not in T.^r implies x in A", true))) {
+            String source = "sig T {r:set T} sig A,B in T {} pred inv8 {" + example.left()
+                    + "} pred inv8c {" + example.right() + "} check correct {inv8 iff inv8c} for 3";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                    example.left(), example.equivalent(), false, options);
+        }
+    }
+
+    private static void checkRelationEndpointPredicates(A4Options options) throws Exception {
+        String moduleStart = "module origin sig T {r:set T} pred endpoint[x:T]{";
+        String moduleEnd = "} pred sample {all x:T | not endpoint[x]}";
+        var local = CompUtil.parseEverything_fromString(A4Reporter.NOP,
+                moduleStart + "some y:T | x->y in r" + moduleEnd);
+        var foreign = CompUtil.parseEverything_fromString(A4Reporter.NOP, moduleStart + "no x.r" + moduleEnd);
+        for (var source : List.of(local, foreign)) {
+            var visitor = new MASGVisitor(new GlobalVariables(), local);
+            visitor.visit(new ModelUnit(null, source), null);
+            var calls = visitor.getUniqueNode().keys().stream()
+                    .filter(is.fivefivefive.ACGN.alloy.CallSymbol.class::isInstance)
+                    .map(is.fivefivefive.ACGN.alloy.CallSymbol.class::cast).toList();
+            check(calls.size() == 1 && (calls.get(0).endpointPredicate() != null) == (source == local),
+                    "endpoint evidence requires the exact parser module of the visited source");
+        }
+        String declarations = "sig T {r,s:set T} sig A in T {} "
+                + "pred src[x:T]{some y:T | x->y in r} pred dst[x:T]{some y:T | y->x in r} "
+                + "pred alias[z:T]{some w:T | w->z in r} pred other[x:T]{some y:T | y->x in s} "
+                + "pred restricted[x:T]{some y:T | y->x in r and y in A} ";
+        record Example(String left, String right, boolean equivalent) {}
+        for (var e : List.of(
+                new Example("all x:T | dst[x] implies x in A", "all x:T | alias[x] implies x in A", true),
+                new Example("all x:T | not dst[x]", "all x:T | not src[x]", true),
+                new Example("all x,y:T | dst[x] and dst[y] implies x->y not in r",
+                        "all x,y:T | x->y in r implies not src[y]", true),
+                new Example("all x:T | dst[x] implies x in A", "all x:T | src[x] implies x in A", false),
+                new Example("all x:T | not dst[x]", "all x:T | not restricted[x]", false),
+                new Example("all x:T | not dst[x]", "all x:T | not other[x]", false),
+                new Example("all x,y:T | x->y in s implies not dst[x]",
+                        "all x,y:T | x->y in s implies not src[y]", false),
+                new Example("all x,y:T | x->y in r implies not src[x]",
+                        "all x,y:T | x->y in r implies not src[y]", false))) {
+            String source = declarations + "pred inv8 {" + e.left() + "} pred inv8c {" + e.right()
+                    + "} check correct {inv8 iff inv8c} for 3";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                    e.left() + " versus " + e.right(), e.equivalent(), false, options);
+        }
+    }
+
+    private static void checkScopedMembershipNegation(A4Options options) throws Exception {
+        String staticSigs = "sig File {} sig Protected, Trash in File {} ";
+        String dynamicSigs = "var sig File {} var sig Protected, Trash in File {} ";
+        String noOverlap = "not some f:Protected | f in Trash";
+        record Example(String declarations, String left, String right, boolean slottedZero) {}
+        for (var example : List.of(
+                new Example(staticSigs, "all f:File | not (f in Trash)", "not some f:File | f in Trash", true),
+                new Example(staticSigs, "all f:File | f in Protected implies not (f in Trash)", noOverlap, false),
+                new Example(staticSigs, "no f:File | f in Protected and f in Trash", noOverlap, false),
+                new Example(staticSigs, "all f:File | (f in Protected implies f not in Trash)"
+                        + " and (f in Trash implies f not in Protected)", noOverlap, false),
+                new Example(staticSigs, "all f:File | f in Protected iff f not in Trash",
+                        "(all f:File | f in Protected or f in Trash) and no (Protected & Trash)", false),
+                new Example(dynamicSigs, "always (all f:File | f in Protected & Trash implies after f not in Protected)",
+                        "always (all f:Protected & Trash | after f not in Protected)", false),
+                new Example(dynamicSigs, "eventually (some f:File | f not in Trash implies f in Trash)",
+                        "eventually (some f:File | f in Trash)", true))) {
+            String source = example.declarations() + "pred inv8 {" + example.left() + "} pred inv8c {" + example.right()
+                    + "} check correct {inv8 iff inv8c} for 3";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                    example.left(), true, example.slottedZero(), options);
+        }
+        String counterexample = dynamicSigs
+                + "pred inv8 {all f:File | f in Protected' implies f not in Trash'} "
+                + "pred inv8c {all f:Protected' | f not in Trash'} "
+                + "check correct {inv8 iff inv8c} for 3 but 2 steps";
+        checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, counterexample),
+                "a future guard can escape the current domain", false, false, options);
+    }
+
+    private static void checkPointwiseClauses(A4Options options) throws Exception {
+        String declarations = "sig Item {} sig Featured in Item {} sig User { posts: set Item } ";
+        String expected = "all u:User | some (Featured & u.posts) implies u.posts in Featured";
+        String[] equivalent = {
+                "all x:Featured,u:User | x in u.posts implies all y:u.posts | y in Featured",
+                "all u:User | no x:Featured, y:Item - Featured | x in u.posts and y in u.posts",
+                "all u:User | (some x:Item | x in Featured and x in u.posts) implies u.posts in Featured"
+        };
+        for (String variant : equivalent) {
+            String source = declarations + "pred inv8 {" + variant + "} pred inv8c {" + expected
+                    + "} check correct {inv8 iff inv8c} for 4";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                    variant, true, false, options);
+        }
+        String wrongRange = declarations
+                + "pred inv8 {all u:User | all x:Featured | x in u.posts implies u.posts in Featured}"
+                + " pred inv8c {all u:User | some u.posts implies u.posts in Featured}"
+                + " check correct {inv8 iff inv8c} for 4";
+        checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, wrongRange),
+                "independent witnesses must retain the declared range", false, false, options);
+    }
+
+    private static void checkGuardedImageMembership(A4Options options) throws Exception {
+        String declarations = "sig Work {} sig VisibleWork in Work {} "
+                + "sig User {visible, profile: set Work} ";
+        String guarded = "w in u.visible implies w in u.profile";
+        String ranged = "all u:User, w:u.visible | w in u.profile";
+        for (String prefix : List.of("all u:User, w:Work | ", "all w:Work, u:User | ",
+                "all u:User | all w:Work | ")) {
+            String source = declarations + "pred inv8 {" + prefix + guarded + "} "
+                    + "pred inv8c {" + ranged + "} check correct {inv8 iff inv8c} for 3";
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                    prefix + guarded, true, false, options);
+        }
+
+        // A field declared in Work can contain atoms outside its subset VisibleWork.
+        String narrow = declarations + "pred inv8 {all u:User, w:VisibleWork | " + guarded
+                + "} pred inv8c {" + ranged + "} check correct {inv8 iff inv8c} for 3";
+        // The filter must also be independent of the selected binding.
+        String captured = "sig A {r,s: set A} pred inv8 {all y,x:A | x in x.r implies x in y.s} "
+                + "pred inv8c {all y:A | y.r in y.s} check correct {inv8 iff inv8c} for 3";
+        // A future image of a mutable field can exceed the current extent of its range.
+        String future = "var sig Work {} sig User {var visible, profile: set Work} "
+                + "pred inv8 {all u:User, w:Work | w in u.visible' implies w in u.profile} "
+                + "pred inv8c {all u:User | u.visible' in u.profile} "
+                + "check correct {inv8 iff inv8c} for 3 but 2 steps";
+        for (String source : List.of(narrow, captured, future)) {
+            checkReachabilityPair(CompUtil.parseEverything_fromString(A4Reporter.NOP, source),
+                    source, false, false, options);
         }
     }
 

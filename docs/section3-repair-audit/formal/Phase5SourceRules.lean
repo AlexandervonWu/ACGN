@@ -925,6 +925,61 @@ theorem safe_exists_conjunction_prenex
   · rintro ⟨value, member, external⟩
     exact ⟨⟨value, member⟩, external⟩
 
+/- Pointwise projection uses a conjunction of same-instant unary filters.
+   The outside proposition may depend on every surviving coordinate. -/
+theorem universal_filtered_clause (domain filter target : α → Prop) (outside : Prop) :
+    (∀ x, domain x → (¬ filter x ∨ target x ∨ outside)) ↔
+      ((∀ x, domain x ∧ filter x → target x) ∨ outside) := by
+  classical
+  constructor
+  · intro allx
+    by_cases h : outside
+    · exact Or.inr h
+    · left
+      rintro x ⟨hd, hf⟩
+      rcases allx x hd with hn | ht | ho
+      · exact False.elim (hn hf)
+      · exact ht
+      · exact False.elim (h ho)
+  · rintro (bounded | ho) x hd
+    · by_cases hf : filter x
+      · exact Or.inr (Or.inl (bounded x ⟨hd, hf⟩))
+      · exact Or.inl hf
+    · exact Or.inr (Or.inr ho)
+
+theorem universal_filtered_absence (domain filter : α → Prop) (outside : Prop) :
+    (∀ x, domain x → ¬ filter x ∨ outside) ↔
+      (¬ (∃ x, domain x ∧ filter x)) ∨ outside := by
+  classical
+  simpa using (universal_filtered_clause domain filter (fun _ => False) outside)
+
+theorem bound_signature_premise (domain : α → Prop) (x : α) (membership : domain x)
+    (body : Prop) : (domain x → body) ↔ body :=
+  ⟨fun h => h membership, fun h _ => h⟩
+
+theorem project_independent_singleton_witness (domain filterDomain : α → Prop) (outside : Prop) :
+    (∃ x, domain x ∧ (filterDomain x ∧ outside)) ↔
+    (∃ x, domain x ∧ filterDomain x) ∧ outside := by
+  constructor
+  · rintro ⟨x, hx, hm, ho⟩
+    exact ⟨⟨x, hx, hm⟩, ho⟩
+  · rintro ⟨⟨x, hx, hm⟩, ho⟩
+    exact ⟨x, hx, hm, ho⟩
+
+theorem project_no_independent_singleton_witness (domain filterDomain : α → Prop) (outside : Prop) :
+    (¬ ∃ x, domain x ∧ (filterDomain x ∧ outside)) ↔
+    ¬ (∃ x, domain x ∧ filterDomain x) ∨ ¬ outside := by
+  classical
+  rw [project_independent_singleton_witness]
+  constructor
+  · intro h
+    by_cases ho : outside
+    · exact Or.inl (fun hw => h ⟨hw, ho⟩)
+    · exact Or.inr ho
+  · rintro (hn | hn) ⟨hw, ho⟩
+    · exact hn hw
+    · exact hn ho
+
 theorem safe_forall_disjunction_prenex
     (predicate : α → Prop) (outside : Prop) :
     ((∀ value, predicate value) ∨ outside) ↔
@@ -2052,6 +2107,53 @@ def qLone (domain : β → Prop) (body : β → Prop) : Prop :=
     domain left → body left → domain right → body right → left = right
 def emptyBindingSet (domain : β → Prop) : Prop :=
   ∀ value, ¬ domain value
+
+/-- Both original universal premises range over the same domain, which may be empty. -/
+theorem independent_universal_ranges_commute (d : α → Prop) (e : β → Prop) (p : α → β → Prop) :
+    (∀ x, d x → ∀ y, e y → p x y) ↔ (∀ y, e y → ∀ x, d x → p x y) :=
+  ⟨fun h y hy x hx => h x hx y hy, fun h x hx y hy => h y hy x hx⟩
+
+theorem independent_existential_ranges_commute (d : α → Prop) (e : β → Prop) (p : α → β → Prop) :
+    (∃ x, d x ∧ ∃ y, e y ∧ p x y) ↔ (∃ y, e y ∧ ∃ x, d x ∧ p x y) := by
+  constructor <;> rintro ⟨a, ha, b, hb, h⟩ <;> exact ⟨b, hb, a, ha, h⟩
+
+theorem existential_premise_to_universal (d : α → Prop) (p : α → Prop) (q : Prop) :
+    ((∃ x, d x ∧ p x) → q) ↔ (∀ x, d x → p x → q) :=
+  ⟨fun h x hx hp => h ⟨x, hx, hp⟩, fun h ⟨x, hx, hp⟩ => h x hx hp⟩
+
+theorem shared_universal_witness_condition (d : α → Prop) (e : α → β → Prop)
+    (p : α → β → Prop) (q : α → Prop) :
+    ((∀ x, d x → q x) ∧ (∀ x, d x → ∃ y, e x y ∧ p x y)) ↔
+      (∀ x, d x → ∃ y, e x y ∧ p x y ∧ q x) := by
+  constructor
+  · rintro ⟨hq, hp⟩ x hx
+    obtain ⟨y, he, h⟩ := hp x hx
+    exact ⟨y, he, h, hq x hx⟩
+  · intro h
+    constructor
+    · intro x hx
+      obtain ⟨_, _, _, hq⟩ := h x hx
+      exact hq
+    · intro x hx
+      obtain ⟨y, he, hp, _⟩ := h x hx
+      exact ⟨y, he, hp⟩
+
+theorem common_universal_witness_conjunct (domain : α → Prop) (witness : α → β → Prop)
+    (condition : Prop) (body : α → β → Prop) :
+    ((∀ x, domain x → condition) ∧ (∀ x, domain x → ∃ y, witness x y ∧ body x y)) ↔
+      (∀ x, domain x → ∃ y, witness x y ∧ body x y ∧ condition) := by
+  constructor
+  · rintro ⟨fixed, witnesses⟩ x hx
+    obtain ⟨y, hy, h⟩ := witnesses x hx
+    exact ⟨y, hy, h, fixed x hx⟩
+  · intro combined
+    constructor
+    · intro x hx
+      obtain ⟨_, _, _, h⟩ := combined x hx
+      exact h
+    · intro x hx
+      obtain ⟨y, hy, h, _⟩ := combined x hx
+      exact ⟨y, hy, h⟩
 
 theorem empty_domain_all (domain : β → Prop) (body : β → Prop)
     (empty : emptyBindingSet domain) : qAll domain body := by
@@ -4783,6 +4885,15 @@ def unaryLeftJoin
     (right : BinaryRel β γ) : Rel γ :=
   fun last => ∃ middle, left middle ∧ right middle last
 
+/-- The range bound of the relation supplies the subdomain premise of
+    universal_prefix_guarded_positive_membership for a projected image. -/
+theorem unary_image_subset_of_range
+    (rows : Rel β) (field : BinaryRel β γ) (carrier : Rel γ)
+    (rangeBound : ∀ row, subset (field row) carrier) :
+    subset (unaryLeftJoin rows field) carrier := by
+  rintro atom ⟨row, _, member⟩
+  exact rangeBound row atom member
+
 def unaryRightJoin
     (left : BinaryRel α β)
     (right : Rel β) : Rel α :=
@@ -4878,6 +4989,42 @@ theorem guarded_singleton_subdomain (outer inner : Rel α) (h : subset inner out
     (observe : α → Prop) :
     (∀ x, outer x → inner x → observe x) ↔ (∀ x, inner x → observe x) :=
   ⟨fun all x hx => all x (h x hx) hx, fun all x _ hx => all x hx⟩
+
+theorem existential_guarded_singleton_subdomain (outer inner : Rel α) (h : subset inner outer)
+    (observe : α → Prop) :
+    (∃ x, outer x ∧ inner x ∧ observe x) ↔ (∃ x, inner x ∧ observe x) := by
+  constructor
+  · rintro ⟨x, _, hi, observed⟩
+    exact ⟨x, hi, observed⟩
+  · rintro ⟨x, hi, observed⟩
+    exact ⟨x, h x hi, hi, observed⟩
+
+theorem guarded_singleton_intersection (domain filter : Rel α) (observe : α → Prop) :
+    (∀ x, domain x → filter x → observe x) ↔
+      (∀ x, intersection domain filter x → observe x) :=
+  ⟨fun all x hx => all x hx.1 hx.2, fun all x hd hf => all x ⟨hd, hf⟩⟩
+
+/-- A shared universal distributes over all conjuncts, even on an empty domain. -/
+theorem universal_slot_conjuncts (domain : Rel α) (clause : ι → α → Prop) :
+    (∀ x, domain x → ∀ i, clause i x) ↔ (∀ i x, domain x → clause i x) :=
+  ⟨fun all i x hx => all x hx i, fun all x hx i => all i x hx⟩
+
+theorem universal_same_domain_exchange (domain : Rel α) (observe : α → α → Prop) :
+    (∀ x, domain x → ∀ y, domain y → observe x y) ↔
+      (∀ y, domain y → ∀ x, domain x → observe x y) :=
+  ⟨fun all y hy x hx => all x hx y hy, fun all x hx y hy => all y hy x hx⟩
+
+theorem universal_no_tuple_witness (outer : Rel α) (inner : Rel β) (test : α → β → Prop) :
+    (∀ x, outer x → ¬ ∃ y, inner y ∧ test x y) ↔
+      (∀ x, outer x → ∀ y, inner y → ¬ test x y) :=
+  ⟨fun all x hx y hy hxy => all x hx ⟨y, hy, hxy⟩,
+   fun all x hx ⟨y, hy, hxy⟩ => all x hx y hy hxy⟩
+
+theorem existential_guarded_singleton_intersection (domain filter : Rel α) (observe : α → Prop) :
+    (∃ x, domain x ∧ filter x ∧ observe x) ↔
+      (∃ x, intersection domain filter x ∧ observe x) :=
+  ⟨fun ⟨x, hd, hf, observed⟩ => ⟨x, ⟨hd, hf⟩, observed⟩,
+   fun ⟨x, hx, observed⟩ => ⟨x, hx.1, hx.2, observed⟩⟩
 
 theorem guarded_difference_domain (outer removed : Rel α) (observe : α → Prop) :
     (∀ x, outer x → difference outer removed x → observe x) ↔
@@ -5031,3 +5178,28 @@ theorem reflexive_transitive_closure_empty_relation :
     · exact False.elim (no_positive_empty_path path)
   · intro equality
     exact Or.inl equality
+
+
+/-- Both orientations characterize the empty relation, including an empty carrier. -/
+theorem no_relation_endpoints (edge : α → α → Prop) :
+    (∀ x, ¬ ∃ y, edge y x) ↔ (∀ x, ¬ ∃ y, edge x y) := by
+  constructor
+  · rintro h x ⟨y, xy⟩
+    exact h y ⟨x, xy⟩
+  · rintro h x ⟨y, yx⟩
+    exact h y ⟨x, yx⟩
+
+/-- An edge already witnesses an outgoing edge at its source and an incoming
+    edge at its target. Only the other endpoint can extend a path. -/
+theorem no_adjacent_incoming_endpoints (edge : α → α → Prop) :
+    (∀ x y, edge x y → ¬ ∃ z, edge z x) ↔
+      (∀ x y, edge x y → ¬ ∃ z, edge y z) := by
+  constructor
+  · rintro h x y xy ⟨z, yz⟩
+    exact h y z yz ⟨x, xy⟩
+  · rintro h x y xy ⟨z, zx⟩
+    exact h z x zx ⟨y, xy⟩
+
+theorem redundant_edge_endpoint (edge : α → α → Prop) (x y : α) (xy : edge x y) (p : Prop) :
+    ((∃ z, edge x z) ∧ p ↔ p) ∧ ((∃ z, edge z y) ∧ p ↔ p) := by
+  exact ⟨⟨And.right, fun hp => ⟨⟨y, xy⟩, hp⟩⟩, ⟨And.right, fun hp => ⟨⟨x, xy⟩, hp⟩⟩⟩

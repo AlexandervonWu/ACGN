@@ -26,6 +26,7 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
 
 python3 "$ROOT/scripts/test_natural_slotted_coverage.py" "$classes"
 python3 "$ROOT/scripts/test_natural_slotted_retention.py" "$classes"
+python3 -B "$ROOT/scripts/test_historical_pair_coverage.py"
 
 tests=(
   is.fivefivefive.CanDis.CapabilitySourceSchedulingTest
@@ -102,6 +103,9 @@ tests=(
 "${LEAN_BIN:-lean}" "$ROOT/docs/distance-parity-20261107/FastPrefixExchange.lean"
 "${LEAN_BIN:-lean}" -o "$work/UnusedGroupedBindings.olean" \
   "$ROOT/docs/section3-repair-audit/formal/UnusedGroupedBindings.lean"
+python3 -B "$ROOT/scripts/check_historical_cv_proofs.py"
+"${LEAN_BIN:-lean}" -o "$work/HistoricalCVPairs.olean" \
+  "$ROOT/docs/section3-repair-audit/formal/HistoricalCVPairs.lean"
 "${LEAN_BIN:-lean}" -o "$work/Phase5SourceRules.olean" \
   "$ROOT/docs/section3-repair-audit/formal/Phase5SourceRules.lean"
 "${LEAN_BIN:-lean}" -o "$work/TemporalPhaseLocalBinding.olean" \

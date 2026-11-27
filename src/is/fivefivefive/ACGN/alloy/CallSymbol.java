@@ -20,6 +20,7 @@ public final class CallSymbol extends AbstractSymbol {
     private final int declaredArity;
     private final long occurrenceId;
     private final ArityAuthority arityAuthority;
+    private RelationEndpointPredicate endpoint;
 
     public CallSymbol(
             Kind kind,
@@ -51,6 +52,13 @@ public final class CallSymbol extends AbstractSymbol {
         this.occurrenceId = occurrenceId;
         this.arityAuthority = Objects.requireNonNull(arityAuthority, "arityAuthority");
     }
+
+    public void attachEndpointDefinition(is.fivefivefive.ACGN.visitor.MASGVisitor.EndpointDefinition definition) {
+        if (definition.source() != this || endpoint != null) throw new IllegalArgumentException("Endpoint source mismatch");
+        endpoint = definition.predicate();
+    }
+
+    public RelationEndpointPredicate endpointPredicate() { return endpoint; }
 
     public Kind getKind() {
         return kind;

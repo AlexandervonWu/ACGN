@@ -15,6 +15,14 @@ public final class UnusedBindingD8Test {
         throw new AssertionError("Changed distance accepted");
     }
     public static void main(String[] args) throws Exception {
+        // The second pre-prenex pass sees two retained Event slots from an original group of four.
+        var lts = UnusedBindingDescopeTest.prepare("sig State { trans: Event -> State } sig Event {} "
+                + "pred p { all s1,s2:State, e1,e2,e3,e4:Event | "
+                + "s1->e1->s2 in trans implies s2->e2->s1 in trans }", "p");
+        var eventGroup = lts.normalizedForms().get(0).getUnusedBindingReductions().stream()
+                .filter(r -> r.sourceNames().equals(List.of("e1","e2","e3","e4"))).findFirst().orElseThrow();
+        require(eventGroup.retainedSourceSlots().equals(List.of(0,1)), "reordering must preserve the issued Event slot map");
+        CanonicalAlloyPipeline.prepare(lts);
         String prefix = "sig User {follows:set User,sees:set Photo,posts:set Photo,suggested:set User}\n"
                 + "sig Influencer extends User {} sig Photo {date:one Day} sig Ad extends Photo {} sig Day {}\npred inv4 {";
         String learner = prefix + "all x:User | some y:Photo | y in x.posts and y in Ad => (all p:Photo | p in x.posts and p in Ad)}";

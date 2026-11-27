@@ -1176,6 +1176,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 descriptor.arity,
                 nextCallOccurrenceId++,
                 descriptor.arityAuthority);
+        attachEndpointDefinition(callSymbol, n);
         CallVisitCapture capture = new CallVisitCapture(
                 syntactic, uniqueNode.size(), callSymbol);
         AugmentedNode callNode = capture.node();
@@ -1297,6 +1298,25 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         public long validatedVisits() {
             return validatedVisits;
         }
+    }
+
+    /** Only the declaration-resolving visitor can issue this occurrence-specific body evidence. */
+    public static final class EndpointDefinition {
+        private final CallSymbol source;
+        private final is.fivefivefive.ACGN.alloy.RelationEndpointPredicate predicate;
+        private EndpointDefinition(CallSymbol source, is.fivefivefive.ACGN.alloy.RelationEndpointPredicate predicate) {
+            this.source = source;
+            this.predicate = predicate;
+        }
+        public CallSymbol source() { return source; }
+        public is.fivefivefive.ACGN.alloy.RelationEndpointPredicate predicate() { return predicate; }
+    }
+
+    private void attachEndpointDefinition(CallSymbol source, Call call) {
+        if (source.getKind() != CallSymbol.Kind.FORMULA || source.getDeclaredArity() != 1
+                || !source.isDeclarationBound()) return;
+        var predicate = is.fivefivefive.ACGN.alloy.RelationEndpointPredicate.resolve(parserModule, source.getSourceName(), call);
+        if (predicate != null) source.attachEndpointDefinition(new EndpointDefinition(source, predicate));
     }
 
     /** A CALL node and its parser-owned identity captured in one construction step. */

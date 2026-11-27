@@ -165,5 +165,17 @@ bind_report "$CAPABILITY/REPORT.md" "$CAPABILITY/results.json" "$CAPABILITY/arms
 bind_report "$RUN_ROOT/summary.md" "$DISTANCE/summary.md" "$AUGMENTED/summary.md" \
   "$ABLATION/summary.md" "$ABLATION/semantic_soundness.md" "$CAPABILITY/REPORT.md"
 
+# Preserve the historical identities on full runs of the published corpus.
+if (( LIMIT == 0 )) && { [[ "$DATASET" == "$(realpath "$ROOT/classified-data")" ]] ||
+  (cd "$ROOT/scripts" && python3 -B -c 'import sys; from pathlib import Path; from verify_historical_pair_coverage import historical_dataset; sys.exit(not historical_dataset(Path(sys.argv[1])))' "$MANIFEST"); }; then
+  python3 -B "$ROOT/scripts/verify_slotted_reference_pools.py" --artifacts "$RUN_ROOT" --dataset "$DATASET" --repo "$ROOT"
+  bind_report "$RUN_ROOT/slotted-reference-pools.json" "$AUGMENTED/default_correct_pool_equivalences.jsonl" \
+    "$RUN_ROOT/slotted-reference-pairs.csv.gz"
+  python3 "$ROOT/scripts/verify_historical_pair_coverage.py" --artifacts "$RUN_ROOT" \
+    --output "$RUN_ROOT/historical-coverage.json" --write-floor "$RUN_ROOT/historical-pairs.json.gz"
+  bind_report "$RUN_ROOT/historical-coverage.json" "$DISTANCE/distances.json" \
+    "$AUGMENTED/default_correct_pool_equivalences.jsonl" "$RUN_ROOT/historical-pairs.json.gz"
+fi
+
 python3 "$ROOT/scripts/publication_manifest.py" finalize --manifest "$MANIFEST"
 printf 'Publication run completed and verified: %s\n' "$RUN_ROOT"

@@ -26,6 +26,8 @@ import is.fivefivefive.CanDis.theory.UnitLicense;
 import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.ACGN.alloy.ConstSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
+import is.fivefivefive.ACGN.alloy.CallSymbol;
+import is.fivefivefive.ACGN.alloy.RelationEndpointPredicate;
 
 
 /**
@@ -89,6 +91,8 @@ public final class EGraphNode {
     private String callArityAuthority;
     /* Internal derivation evidence; generic Bool metadata alone is not authority. */
     private Opcode derivedBooleanRewriteOpcode;
+    /* NNF negation of a source membership atom, valid across trusted normalization. */
+    private boolean dualSourceMembership;
     /* Owner-issued temporal REF provenance; excluded from semantic keys. */
     private String comparisonTemporalReferenceName;
     private long temporalReferenceAuthorityId = -1L;
@@ -547,6 +551,7 @@ public final class EGraphNode {
                     preserveDerivedAuthority && replacement.isEmpty()
                             ? parserSignatureEvidence : null;
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership &= preserveDerivedAuthority;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             parserSignatureEvidence = null;
@@ -644,6 +649,7 @@ public final class EGraphNode {
             Opcode authority = preserveDerivedAuthority
                     ? derivedBooleanRewriteOpcode : null;
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership &= preserveDerivedAuthority;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             parserSignatureEvidence = null;
@@ -661,6 +667,7 @@ public final class EGraphNode {
         arena.mutate(this, () -> {
             if (child == null) {
                 derivedBooleanRewriteOpcode = null;
+                dualSourceMembership = false;
                 temporalReferenceAuthorityId = -1L;
                 builtinConstantKind = null;
                 parserSignatureEvidence = null;
@@ -677,6 +684,7 @@ public final class EGraphNode {
             }
             requireExtensibleChildCount(Math.addExact(childClasses.size(), 1));
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership = false;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             parserSignatureEvidence = null;
@@ -1054,9 +1062,33 @@ public final class EGraphNode {
         requireLiveNode();
         return sourceName;
     }
+    private record EndpointCallOccurrence(CallSymbol source) { }
+
+    /** Each call occurrence retains its own anchor, also when the predicate has an authenticated body. */
+    public void attachEndpointCall(is.fivefivefive.CanDis.ir.IRAgent.EndpointOccurrence occurrence) {
+        var source = occurrence.source();
+        if (occurrence.node() != this || source.endpointPredicate() == null) return;
+        arena.mutate(this, () -> {
+            if (opcode == Opcode.CALL && source.getCallee().equals(semanticIdentity)
+                    && source.getSourceName().equals(sourceName) && source.getOccurrenceId() == callOccurrenceId
+                    && hasBooleanFormulaType(this)) callSourceAnchor = new EndpointCallOccurrence(source);
+        });
+    }
+
+    RelationEndpointPredicate endpointPredicate() {
+        if (!(callSourceAnchor instanceof EndpointCallOccurrence occurrence) || opcode != Opcode.CALL)
+            return null;
+        var source = occurrence.source();
+        return source.getCallee().equals(semanticIdentity) && source.getSourceName().equals(sourceName)
+                && source.getOccurrenceId() == callOccurrenceId && "call/formula".equals(sourceType)
+                && hasBooleanFormulaType(this)
+                ? source.endpointPredicate() : null;
+    }
+
     public void setSourceName(String sourceName) {
         arena.mutate(this, () -> {
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership = false;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             parserSignatureEvidence = null;
@@ -1073,6 +1105,7 @@ public final class EGraphNode {
     public void setSourceType(String sourceType) {
         arena.mutate(this, () -> {
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership = false;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             parserSignatureEvidence = null;
@@ -1086,6 +1119,7 @@ public final class EGraphNode {
     public void setExactAlloyType(ExactAlloyType exactAlloyType) {
         arena.mutate(this, () -> {
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership = false;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             parserSignatureEvidence = null;
@@ -1178,6 +1212,7 @@ public final class EGraphNode {
     public void setAlphaName(String alphaName) {
         arena.mutate(this, () -> {
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership = false;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             this.alphaName = alphaName;
@@ -1237,6 +1272,7 @@ public final class EGraphNode {
                         "Reserved Alloy constant identities require factory or derivation authority");
             }
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership = false;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             parserSignatureEvidence = null;
@@ -1476,6 +1512,7 @@ public final class EGraphNode {
                         "CALL occurrence id must be -1 or nonnegative");
             }
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership = false;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             this.callOccurrenceId = callOccurrenceId;
@@ -1487,6 +1524,7 @@ public final class EGraphNode {
                 throw new IllegalArgumentException("Declared arity must be -1 or nonnegative");
             }
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership = false;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             this.declaredArity = declaredArity;
@@ -1499,6 +1537,7 @@ public final class EGraphNode {
     public void setCallArityAuthority(String callArityAuthority) {
         arena.mutate(this, () -> {
             derivedBooleanRewriteOpcode = null;
+            dualSourceMembership = false;
             temporalReferenceAuthorityId = -1L;
             builtinConstantKind = null;
             this.callArityAuthority = callArityAuthority;
@@ -3431,6 +3470,57 @@ public final class EGraphNode {
         }
     }
 
+    void preserveMembershipDerivationFrom(EGraphNode source) {
+        boolean sameDerivation = opcode == source.opcode && source.dualSourceMembership;
+        boolean dual = opcode == Opcode.IN && source.opcode == Opcode.NOT_IN
+                || opcode == Opcode.NOT_IN && source.opcode == Opcode.IN;
+        String expected = "BOP_" + source.opcode;
+        boolean sourceAtom = dual && source.getChildren().size() == 2
+                && expected.equals(source.sourceName)
+                && ("MIDDLENODE_" + expected).equals(source.sourceType);
+        if ((sameDerivation || sourceAtom) && hasBooleanFormulaType(this)) {
+            arena.mutate(this, () -> dualSourceMembership = true);
+        }
+    }
+
+    boolean isDualSourceMembership() {
+        return dualSourceMembership && (opcode == Opcode.IN || opcode == Opcode.NOT_IN)
+                && getChildren().size() == 2;
+    }
+
+    @LeanVerifiedRewrite("R0-BIND-002")
+    static EGraphNode parserCertifiedWitnessClause(EGraphNode owner, EGraphNode binder,
+            EGraphNode domain, List<EGraphNode> memberSets, EGraphNode positive) {
+        if ((owner.opcode != Opcode.FORALL && owner.opcode != Opcode.EXISTS && owner.opcode != Opcode.NO)
+                || !hasParserQuantifierSourceAuthority(owner, owner.opcode) || !hasBooleanFormulaType(owner)
+                || !isExactRelationNode(binder) || binder.exactAlloyType.relationArity() != 1
+                || !binder.exactAlloyType.hasParserAuthenticatedAncestry()
+                || !plainMembershipSet(domain) || !sameParserSetArity(binder.getEClassRef(), domain.getEClassRef())
+                || memberSets.isEmpty() && positive == null
+                || positive != null && (owner.opcode != Opcode.FORALL || !plainMembershipSet(positive)
+                        || !sameParserSetArity(binder.getEClassRef(), positive.getEClassRef()))) {
+            return null;
+        }
+        try {
+            EClassRef intersection = domain.getEClassRef();
+            for (EGraphNode memberSet : memberSets) {
+                if (!plainMembershipSet(memberSet)
+                        || !sameParserSetArity(binder.getEClassRef(), memberSet.getEClassRef())) {
+                    return null;
+                }
+                intersection = buildDerivedMembershipRelation(
+                        owner, Opcode.INTERSECT, intersection, memberSet.getEClassRef());
+            }
+            if (positive != null) {
+                return buildDerivedRelationComparison(owner, Opcode.IN, intersection, positive.getEClassRef());
+            }
+            return buildDerivedRelationCardinality(
+                    owner, owner.opcode == Opcode.FORALL ? Opcode.NO : Opcode.SOME, intersection);
+        } catch (IllegalArgumentException | IllegalStateException rejected) {
+            return null;
+        }
+    }
+
     // Alloy interprets a membership RHS such as "one S" or "A -> one B"
     // as a constraint on the entire left relation. Only plain subset tests
     // distribute over singleton assignments. Nested products carry qualifiers too.
@@ -3444,25 +3534,18 @@ public final class EGraphNode {
         };
     }
 
-    static boolean hasParserQuantifierSourceAuthority(
-            EGraphNode owner,
-            Opcode quantifier) {
-        String prefix;
-        switch (quantifier) {
-            case FORALL:
-                prefix = "QT_FORMULA_ALL";
-                break;
-            case EXISTS:
-                prefix = "QT_FORMULA_SOME";
-                break;
-            case NO:
-                prefix = "QT_FORMULA_NO";
-                break;
-            default:
-                return false;
-        }
-        return owner.sourceName != null
-                && owner.sourceName.startsWith(prefix)
+    static String quantifierSourcePrefix(Opcode quantifier) {
+        return switch (quantifier) {
+            case FORALL -> "QT_FORMULA_ALL";
+            case EXISTS -> "QT_FORMULA_SOME";
+            case NO -> "QT_FORMULA_NO";
+            default -> null;
+        };
+    }
+
+    static boolean hasParserQuantifierSourceAuthority(EGraphNode owner, Opcode quantifier) {
+        String prefix = quantifierSourcePrefix(quantifier);
+        return prefix != null && owner.sourceName != null && owner.sourceName.startsWith(prefix)
                 && ("MIDDLENODE_" + owner.sourceName).equals(owner.sourceType);
     }
 
@@ -3682,14 +3765,62 @@ public final class EGraphNode {
         return coordinates == null ? null : coordinates.left;
     }
 
-    /** Closed, current-state filters only: a signature or a difference of two
-        signatures. In particular a captured variable or prime is not a carrier. */
+    /** For singleton membership projection, a relational image may read other
+     * bindings. Its inferred range is an upper bound only for a full, static
+     * carrier. A subset signature has to be checked by declaration identity. */
+    static boolean isProjectedMembershipSubdomain(EGraphNode filter, EGraphNode domain) {
+        SigSymbol carrier = domain.authenticatedSignature();
+        if (carrier == null || filter.arena != domain.arena) return false;
+        SigSymbol signature = filter.authenticatedSignature();
+        if (signature != null) return signature.isParserCertifiedSubsignatureOf(carrier);
+        if (filter.opcode != Opcode.JOIN || filter.childClasses.size() != 2
+                || !isParserAuthenticatedPrimitiveCarrier(domain, domain.exactAlloyType)
+                || carrier.isParserVariableSignature()
+                || !isParserCertifiedWithinSignature(filter, carrier)) return false;
+        var terms = filter.getChildren();
+        if (!hasExactRelationArity(terms.get(0), 1) || !hasExactRelationArity(terms.get(1), 2))
+            return false;
+        try {
+            ExactAlloyType imageType = ExactAlloyType.parserCertifiedRelationalJoin(
+                    terms.get(0).exactAlloyType, terms.get(1).exactAlloyType);
+            return filter.exactAlloyType.sameOccurrenceEvidenceAs(imageType);
+        } catch (IllegalArgumentException | IllegalStateException rejected) {
+            return false;
+        }
+    }
+
+    /** Intersect two currently evaluated signature expressions. If the
+     * declaration already contains the filter, the intersection is the filter. */
+    static EGraphNode intersectClosedMembershipGuard(EGraphNode owner, EGraphNode domain, EGraphNode filter) {
+        if (isClosedSignatureSubdomain(filter, domain)) return filter;
+        if (!isClosedSignatureIntersection(domain) || !isClosedSignatureIntersection(filter)) return null;
+        try {
+            return buildDerivedMembershipRelation(owner, Opcode.INTERSECT,
+                    domain.getEClassRef(), filter.getEClassRef()).getEClass().getRepresentative();
+        } catch (IllegalArgumentException | IllegalStateException rejected) {
+            return null;
+        }
+    }
+
+    static boolean isClosedSignatureIntersection(EGraphNode node) {
+        if (node.authenticatedSignature() != null) return true;
+        return node.opcode == Opcode.INTERSECT && isCertifiedLatticeOperator(node)
+                && node.getChildren().size() >= 2
+                && node.getChildren().stream().allMatch(EGraphNode::isClosedSignatureIntersection);
+    }
+
+    /** Closed, current-state filters only. A prime or captured variable
+     * cannot establish that a guard narrows the current declaration. */
     static boolean isClosedSignatureSubdomain(EGraphNode filter, EGraphNode domain) {
         var carrier = domain.authenticatedSignature();
         if (carrier == null || filter.arena != domain.arena) return false;
         var sig = filter.authenticatedSignature();
         if (sig != null) return sig.isParserCertifiedSubsignatureOf(carrier);
         var parts = filter.getChildren();
+        if (filter.opcode == Opcode.INTERSECT && isCertifiedLatticeOperator(filter) && parts.size() >= 2) {
+            return parts.stream().allMatch(part -> part.authenticatedSignature() != null
+                    && part.authenticatedSignature().isParserCertifiedSubsignatureOf(carrier));
+        }
         if (filter.opcode != Opcode.MINUS || parts.size() != 2
                 || parts.get(0).authenticatedSignature() == null
                 || parts.get(1).authenticatedSignature() == null) return false;
@@ -3900,6 +4031,7 @@ public final class EGraphNode {
         declaredArity = replacement.declaredArity;
         callArityAuthority = replacement.callArityAuthority;
         derivedBooleanRewriteOpcode = replacement.derivedBooleanRewriteOpcode;
+        dualSourceMembership = replacement.dualSourceMembership;
         temporalReferenceAuthorityId = replacement.temporalReferenceAuthorityId;
         temporalSnapshotBinding = replacement.temporalSnapshotBinding;
         metatype = replacement.metatype;
@@ -3923,6 +4055,7 @@ public final class EGraphNode {
         declaredArity = -1;
         callArityAuthority = null;
         derivedBooleanRewriteOpcode = null;
+        dualSourceMembership = false;
         temporalReferenceAuthorityId = -1L;
         temporalSnapshotBinding = false;
         metatype = Metatype.BOOLEAN;
@@ -3951,6 +4084,7 @@ public final class EGraphNode {
         declaredArity = -1;
         callArityAuthority = null;
         derivedBooleanRewriteOpcode = null;
+        dualSourceMembership = false;
         temporalReferenceAuthorityId = -1L;
         temporalSnapshotBinding = false;
         metatype = Metatype.SET;
@@ -7206,6 +7340,7 @@ public final class EGraphNode {
                     && a.callOccurrenceId == b.callOccurrenceId && a.callSourceAnchor == b.callSourceAnchor
                     && a.declaredArity == b.declaredArity && Objects.equals(a.callArityAuthority, b.callArityAuthority)
                     && a.derivedBooleanRewriteOpcode == b.derivedBooleanRewriteOpcode
+                    && a.dualSourceMembership == b.dualSourceMembership
                     && a.temporalReferenceAuthorityId == b.temporalReferenceAuthorityId
                     && a.temporalSnapshotBinding == b.temporalSnapshotBinding
                     && a.comparisonLocalCoordinate == b.comparisonLocalCoordinate
@@ -7698,6 +7833,7 @@ public final class EGraphNode {
         copy.declaredArity = declaredArity;
         copy.callArityAuthority = callArityAuthority;
         copy.derivedBooleanRewriteOpcode = derivedBooleanRewriteOpcode;
+        copy.dualSourceMembership = dualSourceMembership;
         copy.temporalReferenceAuthorityId = temporalReferenceAuthorityId;
         copy.temporalSnapshotBinding = temporalSnapshotBinding;
     }
@@ -7753,6 +7889,7 @@ public final class EGraphNode {
         declaredArity = -1;
         callArityAuthority = null;
         derivedBooleanRewriteOpcode = null;
+        dualSourceMembership = false;
         temporalReferenceAuthorityId = -1L;
         temporalSnapshotBinding = false;
         metatype = Metatype.CONTROL;

@@ -876,6 +876,14 @@ public class IRAgent {
         return -1;
     }
 
+    public static final class EndpointOccurrence {
+        private final EGraphNode node;
+        private final CallSymbol source;
+        private EndpointOccurrence(EGraphNode node, CallSymbol source) { this.node = node; this.source = source; }
+        public EGraphNode node() { return node; }
+        public CallSymbol source() { return source; }
+    }
+
     private void attachSourceMetadata(
             EGraphNode eGraphNode,
             AugmentedNode sourceNode,
@@ -908,6 +916,8 @@ public class IRAgent {
         }
         eGraphNode.setSourceType(symbol.getType());
         eGraphNode.setExactAlloyType(exactType);
+        if (symbol instanceof CallSymbol call && call.endpointPredicate() != null)
+            eGraphNode.attachEndpointCall(new EndpointOccurrence(eGraphNode, call));
         if (eGraphNode.getOpcode() == Opcode.VARIABLE) {
             if (symbol instanceof VarSymbol) {
                 String lexicalIdentity = ((VarSymbol) symbol).getHashName();

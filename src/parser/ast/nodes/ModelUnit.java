@@ -16,6 +16,7 @@ import parser.ast.visitor.VoidVisitor;
 public class ModelUnit extends Node {
 
   private static final long serialVersionUID = 5136736882329051449L;
+  private final transient CompModule parserModule;
   protected ModuleDecl moduleDecl;
   protected List<OpenDecl> openDeclList;
   protected List<SigDecl> sigDeclList;
@@ -28,6 +29,7 @@ public class ModelUnit extends Node {
 
   public ModelUnit(Node parent, CompModule module) {
     super(parent);
+    this.parserModule = module;
     addToNodeMap(module, this);
     this.moduleDecl = createModuleDecl(module.getModuleName());
     this.openDeclList = createOpenDeclList(module.getOpens());
@@ -67,6 +69,12 @@ public class ModelUnit extends Node {
 
   public ModelUnit(Node parent) {
     super(parent);
+    this.parserModule = null;
+  }
+
+  /** A detached or deserialized tree cannot authenticate a local predicate body. */
+  public final boolean wasParsedFrom(CompModule module) {
+    return module != null && parserModule == module;
   }
 
   private ModuleDecl createModuleDecl(String moduleName) {
