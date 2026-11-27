@@ -1,0 +1,9 @@
+{
+  "commit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "jarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "sourceFiles": 628,
+  "classFiles": 1575,
+  "identicalClassfiles": true,
+  "sortedClassfileManifestSha256": "f8017e93cf94003ecd74e1afe4a75198fa337c3249fccd0aa34c93f154a4b159",
+  "compiler": "javac 17.0.21.1"
+}

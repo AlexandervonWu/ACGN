@@ -1,0 +1,11 @@
+{
+  "controlsSha256": "dbcba7ce6c13fca1ad37ec94e150bdba15145fc52e7405fc1b77bbbd7ed194f9",
+  "historicalPairsSha256": "c1869d9dcacc65439862742405e1fbf75de7de13aab0678fe82e271940d4603f",
+  "jarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "matched": {
+    "SAT": 105,
+    "UNSAT": 1234
+  },
+  "total": 1339,
+  "verifierSha256": "718fd518eae788ae73d0b39996f5739468a44320abdc12bcb9a7c587f89119f6"
+}

@@ -1,0 +1,17 @@
+{
+  "archiveSha256": {},
+  "directions": 166,
+  "driverSha256": "f62498de6bf714480f69c7bf36c7fd36e9a5dae2e5e6903560cc05c4cc4d2b23",
+  "failures": [],
+  "floorSha256": "10c66cfbb1dc54736db337da524936eca5e8b758ad67928405ce96b14d1ed915",
+  "indexSha256": "5379250090615dd792c7345e4cf6b7ef4a6806b8aa4111cb9bcbe8b88c3f1d61",
+  "jarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "manifestIdentity": "ef824f42c55344416129e04ea75e51e9dd943d252f4f879973e4af077a38ad41",
+  "matched": 166,
+  "measuredSha256": "5af1b5fe83317ddeadea6ca2e2c108ff1c361002588d4896a69185427749a010",
+  "pairs": 83,
+  "replaysSha256": "07b8865b038ffcfbcf80fbdd5944145f959b18ab474fe59a09284c06d4073ad4",
+  "runId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "status": "PASS",
+  "verifierSha256": "70678468d3b8f5986f1685c6ac4678c34c62565604c32732de464991ac4eb8d5"
+}

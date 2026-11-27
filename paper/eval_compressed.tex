@@ -1,11 +1,11 @@
 \section{Implementation and Evaluation}
 \label{sec:evaluation}
 
-The \texttt{v3.3} experiment uses the Java implementation built on the
-Alloy~6 parser and Kodkod, SAT4J and Pardinus solver APIs. We reran the
-paired corpus, complete reference pools, natural ablation, controlled
-capabilities, and natural slot typing on a frozen source commit.
-The synthetic scaling grid is a historical v3 measurement.
+The Alloy case study uses the Alloy~6 parser, Kodkod, SAT4J and Pardinus.
+The supervised run completed on 27 November 2026 UTC from commit \texttt{9693595e}.
+It covers the paired corpus, full reference pools, natural ablation,
+controlled capability suite and natural slot-typing comparison. The
+synthetic scaling grid comes from the earlier v3 experiment.
 
 \subsection{Implementation and experimental setup}
 \label{sec:eval-setup}
@@ -22,15 +22,10 @@ source normalization rules and established repair distance metric:
   per-transition invariant checks, congruence rebuilding, and bounded
   finite-unfolding observation.
 \end{itemize}
-In the v3.3 paired and full-reference evaluations and the controlled
-capability benchmark, both
-implementations produced identical zero-distance sets, truth-pool components,
-and recorded repair distances. Because this cross-path
-agreement is an empirical observation on the evaluated benchmarks rather than a
-universal theorem, we treat it as diagnostic support; throughout the paper,
-effectiveness tables, plots, captions, and prose report one canonical \CanDis{}
-result, and we distinguish Fast Rewrite from Certificate-Integrated IR solely
-when measuring runtime and memory.
+Both implementations selected the same structural zeros on the paired
+corpus and correct-reference pools and gave equal scalar scores for all
+1,894,168 positive-distance ranking comparisons. We report their shared
+effectiveness and measure each implementation's resource use separately.
 
 To isolate representation choices, we compare \CanDis{} against five distinct
 ablation baselines sharing a common bounded explicit-law rewrite frontier
@@ -74,40 +69,31 @@ means both forms had distance zero under the implemented rewrite theory.
 \subsection{How many distinct-AST student--oracle equivalences does \CanDis{} recognize on the natural corpus?}
 \label{sec:eval-paired}
 
-\textbf{Answer:} Both paths returned zero on \textbf{4,499} distinct-AST
-correct pairs (23.42\% of the 19,212 correct pairs) and on
-zero of the 42,386 incorrect pairs. The paths agreed across all 61,598
-eligible pairs in the native-operation diagnostic. The separate 4,482
-AST-identical files are accounted for outside this measurement. Grouped
-and nested universal membership now normalize consistently, restoring
-all ten pairs previously lost to the slotted baseline. Projection requires independent remaining domains.
-Both paths retained all 4,413 earlier structural zeros.
+Both paths returned structural distance zero on \textbf{5,137} correct
+pairs (26.74\% of 19,212) and on zero of 42,386 incorrect pairs.
+The separate 4,482 AST-identical cases were excluded before measurement.
 
-The mean endpoint maxima were 19.669 raw AST nodes,
-17.893 repair projection units and
-33.187 nodes in the deterministic
-representative tree (Table~\ref{tab:compact}).
-Mean paired distance was 13.910 for the repair
-projection, 17.087 for raw AST edit distance,
-39.261 for Levenshtein distance and
-32.137 for representative-tree edit distance.
+Taking the larger endpoint of each pair, mean size was 19.669 raw AST
+nodes, 17.514 repair-projection units and 32.737 representative-tree
+nodes. Mean paired distance was 13.471 under the repair projection,
+17.087 under raw AST edits, 39.261 under Levenshtein edits, and
+31.383 under representative-tree edits.
 
 \subsection{How does canonicalization affect full-reference nearest-truth search and truth-pool consolidation?}
 \label{sec:eval-augmenter}
 
-\textbf{Answer:} The Augmenter searched all 42,386 incorrect submissions
-against the complete truth pools of 4,315 unique student and 181 oracle
-references. It recorded 1,894,168 distances and accounted for 21
-cross-file raw-AST identities separately. There was no incorrect zero.
-Mean nearest distance was 12.267 under raw AST edits and 11.477 under
-\CanDis{}.
+For each of 42,386 incorrect submissions the Augmenter searched its
+invariant's complete reference pool. The pools comprise 4,315 unique
+student references and 181 oracles. All 1,894,168 measured ranking
+comparisons had positive distance. The mean nearest distance was 12.267
+under raw AST edits and 11.478 under \CanDis{}.
 
-\input{figures/aci_canonicalization_distance}
+\input{historical-figure}
 
-Figure~\ref{fig:distance-coverage} shows cumulative coverage at inclusive
-edit radii. Each metric uses its own edit units and independently selects the
-nearest reference. Higher coverage at a radius describes structural proximity.
-The ranking does not execute automatic repairs.
+Figure~\ref{fig:distance-coverage} counts each submission once per metric
+at each inclusive edit radius. At ten edits, 23,087 submissions had a raw-AST
+reference within reach and 25,036 had a \CanDis{} reference within reach.
+The two metrics can select different nearest references.
 
 \subsection{What does checking a particular Alloy command add?}
 \label{sec:scoped-pools}
@@ -132,34 +118,35 @@ first checks that the relocated predicates retain their typed definitions,
 imports, facts and compatible command bounds. It never substitutes a scoped
 edge for an edit trace or writes that edge into the structural canonical key.
 
-The source comparison found a fixed check for 61,598 of the
-61,598 distinct-AST student--oracle pairs. It verified a rule match on
-347 pairs, of which 259 were still at positive structural distance.
-Among the 4,496 correct references, we measured all 132,032
-within-pool pairs, with 1,234 verified rule matches. The 181 pools
-sum to 2,016 structural forms and 1,942 fixed-command components. All 132,032 reference pairs had a common command context. All 105 v3.2
-counterexamples stayed in separate components. Compared with the previous
-structural pool study, 319 cross-file
-pairs gained a zero and 7 lost one.
-Each of those seven was at distance 16 in the original slotted engine.
-Figures~\ref{fig:scoped-by-invariant}--\ref{fig:scoped-by-invariant-last}
-give exact counts by invariant.
+Every eligible student--oracle pair had a fixed command. A rule matched
+347 pairs, recognizing 259 correct pairs beyond structural
+equality. Across the 132,032 pairs of correct references every comparison
+had a common command context and 1,234 pairs matched a rule.
+
+To count \emph{structural forms}, we connect references in an invariant pool
+when they have structural distance zero and count the connected components.
+For \emph{fixed-command components}, we add the verified command-specific
+edges and count again. A single new edge can join two entire components. The 4,496 references reduced to 1,816 structural forms
+and then to 1,743 fixed-command components. Both paths recognized
+all 8,952 original Slotted reference zeros and 10,319 more,
+for 19,271 direct structural zeros.
+
+\input{historical-addendum}
 
 \subsection{Which capabilities separate \CanDis{} from the baselines on controlled and natural predicates?}
 \label{sec:eval-capability}
 
-\textbf{Answer:} The seven-arm natural ablation found 4,499 correct
-zeros in each \CanDis{} path and 2,228 in the original slotted e-graph.
-Every slotted zero was retained, with 2,271 added by each canonical path.
-On the controlled suite of 5,500 pairs, slot-aware
-representations handled binder-block permutations that the De Bruijn
-baselines often missed.
+The seven-arm natural experiment found 5,137 correct zeros on each
+\CanDis{} path, including all 2,228 Slotted zeros and 2,909
+additional pairs. On the controlled suite, Slotted and both \CanDis{}
+paths recognized all 5,500 transformations.
 
 \begin{table}[t]
 \centering
-\caption{v3.3 ablation: effectiveness across the natural corpus ($n=61{,}598$ eligible pairs:
-19,212 \texttt{CORRECT}, 42,386 incorrect) and the 5,500-pair controlled
-capability suite (11 families of 500, including binder-block permutation).}
+\caption{Natural-corpus effectiveness (19,212 correct and 42,386
+incorrect distinct-AST pairs) and controlled capability coverage
+(11 families of 500, including binder permutation).}
+
 \label{tab:eval-effectiveness}
 \scriptsize
 \setlength{\tabcolsep}{2.7pt}
@@ -172,17 +159,16 @@ Raw + De Bruijn & 2,160 (11.243\%) & 0 & 16.145 & 3,628/5,500 & 22/500\\
 Java egglog & 820 (4.268\%) & 0 & 16.477 & 2,585/5,500 & 1/500\\
 Java egglog + De Bruijn & 2,160 (11.243\%) & 0 & 16.018 & 3,628/5,500 & 22/500\\
 Slotted & 2,228 (11.597\%) & 0 & 16.324 & 5,500/5,500 & 500/500\\
-\CanDis{} & 4,499 (23.418\%) & 0 & 13.910 & 5,500/5,500 & 500/500\\
+\CanDis{} & 5,137 (26.738\%) & 0 & 13.471 & 5,500/5,500 & 500/500\\
+
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:eval-effectiveness} summarizes the natural and controlled
-workloads. The bounded semantic checker evaluated the union of
-4,499 natural zero claims with zero counterexamples
-and rejected the four negative probes. The capability study also used
-29 sampled source checks. The solver results
-are scoped to the recorded Alloy commands.
+For the 5,137 distinct natural zero claims, bounded Alloy checks
+found no counterexample under the recorded commands. All seven arms rejected
+the 4 negative probes. The capability study checked 29 sampled
+transformations against their source models.
 
 \subsection{When do types reduce the cost of searching binder renamings?}
 \label{sec:eval-synthetic}
@@ -202,7 +188,7 @@ $10!=3{,}628{,}800$ search space in both arms, whereas partitioning evenly acros
 $M=2$ types cuts the permutation count to $5!\,5!=14{,}400$ ($252\times$ fewer),
 and $M=10$ distinct types reduces it to~$1$.
 
-We evaluate this mechanism on a complete synthetic grid of \textbf{270} paired
+The historical v3 experiment evaluated this mechanism on a complete synthetic grid of \textbf{270} paired
 predicates (\textbf{540} predicates, \textbf{1,080} trials) spanning
 $N\in\{2,\dots,10\}$ outer bindings and $M\in\{1,\dots,N\}$ types (54 cells, 10
 predicates per cell per arm; 8 isolated workers, 768\,MiB heap per JVM, and a
@@ -241,21 +227,15 @@ displays the completion grid and the engine speedup surface across the 44/54
 complete matched cells without interpolating missing cells (the end-to-end
 surface and per-$N$ summary appear in Appendix~\ref{app:evaluation-detail}).
 
-On the natural corpus, untyped and typed slots each found
-2,228 zero pairs. Preserving exact types changed
-summed engine CPU from 19.758\,s to
-10.294\,s. Process wall times were
-19.990\,s and
-19.340\,s, respectively.
+In the current natural slot-typing comparison, untyped and typed slots each recognized 2,228 pairs. Summed engine CPU time was 18.560\,s and 10.343\,s, respectively.
 
 \subsection{What is the runtime and memory cost of certificate integration?}
 \label{sec:eval-cost}
 
-\textbf{Answer:} Fast Rewrite completed the natural arm in 26.683\,s with
-2,115.7\,MiB maximum RSS. Certificate-Integrated took 398.186\,s
-and 8,595.6\,MiB. These observations are from the structural
-ablation. The batch and reference-pool runners additionally compare
-applicable Alloy commands.
+Fast Rewrite completed the natural arm in 27.910\,s with
+2,059.3\,MiB maximum RSS. Certificate-Integrated took 386.579\,s
+and 8,638.9\,MiB. These times cover each structural-ablation arm.
+The paired and reference-pool runners also compare applicable Alloy commands.
 
 \begin{table}[t]
 \centering
@@ -269,13 +249,14 @@ baselines and the two \CanDis{} implementations ($n=61{,}598$ eligible pairs).}
 Arm & Arm Wall (s) & Eng.\ CPU (s) & Max File (s) & Peak Heap & Max RSS\\
 & & & & (MiB) & (MiB)\\
 \midrule
-Raw & 18.233 & 3.284 & 0.113 & 802.4 & 1,532.9\\
-Raw + De Bruijn & 18.765 & 4.121 & 0.132 & 727.9 & 1,418.7\\
-Java egglog & 18.602 & 3.175 & 0.118 & 672.8 & 1,478.9\\
-Java egglog + De Bruijn & 18.715 & 3.939 & 0.137 & 787.5 & 1,508.5\\
-Slotted & 18.802 & 18.409 & 1.455 & 1,034.9 & 1,901.8\\
-\CanDis{} (Fast Rewrite) & 26.683 & 141.496 & 0.362 & 1,067.9 & 2,115.7\\
-\CanDis{} (Cert.-Integrated) & 398.186 & 5,676.430 & 3.697 & 6,483.8 & 8,595.6\\
+Raw & 17.531 & 3.842 & 0.158 & 696.1 & 1,347.6\\
+Raw + De Bruijn & 17.788 & 4.862 & 0.139 & 728.8 & 1,381.8\\
+Java egglog & 17.633 & 3.725 & 0.132 & 732.7 & 1,391.4\\
+Java egglog + De Bruijn & 17.699 & 4.659 & 0.159 & 711.5 & 1,383.2\\
+Slotted & 18.292 & 25.556 & 2.194 & 1,097.1 & 1,963.1\\
+\CanDis{} (Fast Rewrite) & 27.910 & 151.309 & 0.384 & 1,027.1 & 2,059.3\\
+\CanDis{} (Cert.-Integrated) & 386.579 & 5,512.368 & 3.962 & 6,303.3 & 8,638.9\\
+
 \bottomrule
 \end{tabular}
 \end{table}

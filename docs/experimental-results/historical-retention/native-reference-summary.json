@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "allComparisons": 23415,
+  "counts": [
+    {
+      "cohort": "both",
+      "status": "MATCHED",
+      "n": 3
+    },
+    {
+      "cohort": "paid",
+      "status": "MATCHED",
+      "n": 4138
+    },
+    {
+      "cohort": "reverse",
+      "status": "MATCHED",
+      "n": 3
+    },
+    {
+      "cohort": "zero",
+      "status": "MATCHED",
+      "n": 19271
+    }
+  ],
+  "thirdFailedPaid": 83,
+  "thirdFailedPaidRepaired": 83,
+  "allIncidents": 0,
+  "sourceBoundary": "FROZEN_NORMALIZED_IR",
+  "runId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "commit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "measuredJarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "inputReceiptSha256": "ed3fd03c098932df8e75bbda733a317a391b11de51995cbd5833a6b34a7ab21c",
+  "ledgerSha256": "8b345a28085d1b5e0f5ec2674ab0f2066f4fd9098463f1e6c5d50a9128322cd9",
+  "thirdFailureLedgerSha256": "67daa4f4360d9d5f7c8f264d6431ae5afb77829122f4050c4ce2312a30022743",
+  "rawCohortBinding": {
+    "referenceComparisons": 132032,
+    "referenceZeros": 19271,
+    "selectedPaidScores": 4138,
+    "fullPoolsSha256": "67cb87b20aec1eda8428320d0ae83c4a2810b38a0cc4c93e0620e4128da63ada",
+    "rankIndexSha256": "5379250090615dd792c7345e4cf6b7ef4a6806b8aa4111cb9bcbe8b88c3f1d61",
+    "rankParityReceiptSha256": "14fb06da9630f9db2208e1b4dfc4a88e3f5b4004cad516f5e8a49ebc4c187057"
+  }
+}

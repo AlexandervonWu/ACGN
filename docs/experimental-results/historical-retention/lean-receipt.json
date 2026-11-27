@@ -1,0 +1,41 @@
+{
+  "revision": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "lean": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+  "sourceSha256": {
+    "docs/section3-repair-audit/formal/HistoricalCVPairs.lean": "1ff0968f4479c4c58867798e1bcf5090964c72526ee46d9a15360b5ad3c1416e",
+    "docs/section3-repair-audit/formal/Phase5SourceRules.lean": "b6d9d8a152666dacf057f3b6994079c4c5a844e4581492cc906dc56d77accbb8",
+    "scripts/check_historical_cv_proofs.py": "f03bee9c8e0fec21beaaf118355406505d2243a9a66c57617de002dd2edd4ed7"
+  },
+  "rulesChecked": 20,
+  "sourceMatchedCvPairs": 7,
+  "sourceCheck": "Matched all seven CV Lean goals to the hash-checked original predicates.",
+  "axiomInventory": [
+    "'universal_filtered_clause' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'universal_filtered_absence' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'bound_signature_premise' does not depend on any axioms",
+    "'project_independent_singleton_witness' does not depend on any axioms",
+    "'project_no_independent_singleton_witness' depends on axioms: [propext, Classical.choice, Quot.sound]",
+    "'independent_universal_ranges_commute' does not depend on any axioms",
+    "'independent_existential_ranges_commute' does not depend on any axioms",
+    "'existential_premise_to_universal' does not depend on any axioms",
+    "'shared_universal_witness_condition' does not depend on any axioms",
+    "'common_universal_witness_conjunct' does not depend on any axioms",
+    "'unary_image_subset_of_range' does not depend on any axioms",
+    "'existential_guarded_singleton_subdomain' does not depend on any axioms",
+    "'guarded_singleton_intersection' does not depend on any axioms",
+    "'universal_slot_conjuncts' does not depend on any axioms",
+    "'universal_same_domain_exchange' does not depend on any axioms",
+    "'universal_no_tuple_witness' does not depend on any axioms",
+    "'existential_guarded_singleton_intersection' does not depend on any axioms",
+    "'no_relation_endpoints' does not depend on any axioms",
+    "'no_adjacent_incoming_endpoints' does not depend on any axioms",
+    "'redundant_edge_endpoint' does not depend on any axioms",
+    "'HistoricalCVPairs.pair_1484_1488' does not depend on any axioms",
+    "'HistoricalCVPairs.pair_1484_1489' does not depend on any axioms",
+    "'HistoricalCVPairs.pair_1486_1488' does not depend on any axioms",
+    "'HistoricalCVPairs.pair_1486_1489' does not depend on any axioms",
+    "'HistoricalCVPairs.pair_1487_1488' does not depend on any axioms",
+    "'HistoricalCVPairs.pair_1487_1489' does not depend on any axioms",
+    "'HistoricalCVPairs.pair_1524_1526' does not depend on any axioms"
+  ]
+}

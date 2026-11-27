@@ -1,0 +1,115 @@
+{
+  "status": "PASS",
+  "metrics": {
+    "astIdentical": {
+      "historical": 4482,
+      "observed": 4482,
+      "lost": [],
+      "gained": 0
+    },
+    "pairedCohort": {
+      "historical": 61598,
+      "observed": 61598,
+      "lost": [],
+      "gained": 0
+    },
+    "pairedStructural": {
+      "historical": 5137,
+      "observed": 5137,
+      "lost": [],
+      "gained": 0
+    },
+    "pairedFixedCommand": {
+      "historical": 347,
+      "observed": 347,
+      "lost": [],
+      "gained": 0
+    },
+    "poolCohort": {
+      "historical": 132032,
+      "observed": 132032,
+      "lost": [],
+      "gained": 0
+    },
+    "poolStructural": {
+      "historical": 19271,
+      "observed": 19271,
+      "lost": [],
+      "gained": 0
+    },
+    "poolFixedCommand": {
+      "historical": 1234,
+      "observed": 1234,
+      "lost": [],
+      "gained": 0
+    },
+    "poolCommandContexts": {
+      "historical": 1234,
+      "observed": 1234,
+      "lost": [],
+      "gained": 0
+    },
+    "poolStructuralComponents": {
+      "historical": 19271,
+      "observed": 19271,
+      "lost": [],
+      "gained": 0
+    },
+    "poolFixedComponents": {
+      "historical": 20629,
+      "observed": 20629,
+      "lost": [],
+      "gained": 0
+    }
+  },
+  "sources": {
+    "artifact-freeze-v1": {
+      "pairedStructural": 2317,
+      "poolFixedComponents": 10257,
+      "poolStructural": 10257,
+      "poolStructuralComponents": 10257
+    },
+    "artifact-freeze-v2 and v2.1-v2.17": {
+      "pairedStructural": 4088,
+      "poolFixedComponents": 11382,
+      "poolStructural": 11382,
+      "poolStructuralComponents": 11382
+    },
+    "v3 and v3.1 paired": {
+      "pairedCohort": 61598,
+      "pairedStructural": 4423
+    },
+    "v3.1 structural and v3.2 fixed-command pools": {
+      "poolCohort": 132032,
+      "poolFixedCommand": 1234,
+      "poolFixedComponents": 13241,
+      "poolStructural": 11882,
+      "poolStructuralComponents": 11882,
+      "satControls": 105
+    },
+    "v3.3": {
+      "astIdentical": 4482,
+      "pairedCohort": 61598,
+      "pairedFixedCommand": 347,
+      "pairedStructural": 4499,
+      "poolCohort": 132032,
+      "poolCommandContexts": 1234,
+      "poolFixedCommand": 1234,
+      "poolFixedComponents": 13553,
+      "poolStructural": 12194,
+      "poolStructuralComponents": 12194
+    },
+    "historical-retention-before-trace-fix ratchet": {
+      "astIdentical": 4482,
+      "pairedFixedCommand": 347,
+      "pairedStructural": 5137,
+      "poolCommandContexts": 1234,
+      "poolFixedCommand": 1234,
+      "poolFixedComponents": 20629,
+      "poolStructural": 19271,
+      "poolStructuralComponents": 19271
+    }
+  },
+  "historicalSatControls": 105,
+  "connectedSatControls": []
+}

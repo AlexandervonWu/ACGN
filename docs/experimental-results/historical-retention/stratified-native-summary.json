@@ -1,0 +1,26 @@
+{
+  "rows": 181,
+  "population": 1894168,
+  "pools": 181,
+  "emptyPools": [],
+  "statusCounts": {
+    "MATCHED": 181
+  },
+  "failures": [],
+  "times": {
+    "startUtc": "2026-11-27T03:44:24.275360+00:00",
+    "endUtc": "2026-11-27T03:55:45.137528+00:00",
+    "minSeconds": 1.317597,
+    "medianSeconds": 6.777983,
+    "maxSeconds": 31.371225
+  },
+  "evidenceModes": {
+    "actions": 143,
+    "orderedBlocks": 38
+  },
+  "seed": "ACGN-239fddc0-ranking-native-replay-stratified-v1",
+  "minimum": "unsigned lexicographic SHA-256 over NUL-separated UTF-8 [seed,left,leftPredicate,right,rightPredicate]",
+  "strata": "original questionSet and invariantId",
+  "measuredJarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "scoresMatchedToFinalLedger": 181
+}

@@ -1,0 +1,32 @@
+{
+  "submission": "socialMedia/over/xA8cXXtWbKB3ZC3iB_inv7.als",
+  "submissionPredicate": "inv7",
+  "reference": "socialMedia/correct/FenQC7rfPuuWaGAba_inv7.als",
+  "referencePredicate": "inv7",
+  "archivedReferenceId": 3278,
+  "releasedV33": {
+    "fast": 107,
+    "certified": 107
+  },
+  "stopped82816f68": {
+    "fast": 85,
+    "certified": 87,
+    "nearestFast": 40,
+    "nearestCertified": 40,
+    "rankWithin108": 105
+  },
+  "directionalRegressionCheck": {
+    "forward": {
+      "fast": 87,
+      "certified": 87,
+      "nativeOperationStatus": "MATCHED"
+    },
+    "reverse": {
+      "fast": 87,
+      "certified": 87,
+      "nativeOperationStatus": "MATCHED"
+    }
+  },
+  "cause": "Residual alpha alignment exchanged universal binders separated by an existential block. Fix preserves relative order and unity of the selected exchange blocks while allowing skipped blocks and arbitrary compatible permutations within an exchange block.",
+  "sourceTest": "src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java"
+}

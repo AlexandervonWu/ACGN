@@ -1,0 +1,13 @@
+{
+  "cohort": 132032,
+  "historicalSlottedZeros": 8952,
+  "liveSlottedZeros": 8952,
+  "canonicalZeros": 19271,
+  "gainsOverLive": 10319,
+  "missingHistorical": [],
+  "missingLive": [],
+  "slottedVersion": "slotted-independent-binding-blocks-v3",
+  "inventorySha256": "a135caa38f3c6720fb5c00581fe4a72808068081c6e2a2d7b4f4e44ed3e51524",
+  "replaySha256": "372e5e26ddda280573308f54c3dafd1ec05a4f671d7365f7d1f9ba677bd33a71",
+  "passed": true
+}

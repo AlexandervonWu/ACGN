@@ -35,7 +35,15 @@ CI replays all 2,228 original slotted zeros and a strict improvement witness.
 The full ablation checks the selected predicates on every measured file.
 [Slotted comparison and recovered pairs](docs/experimental-results/2026-11-26/README.md).
 
-### Latest results · v3.3
+### Latest results after v3.3
+
+Both rewrite paths returned structural distance zero on **5,137 correct student–oracle pairs** in the supervised 66,080-file run. They retained every one of the 2,228 original Slotted zeros, added 2,909 correct pairs, and assigned zero to none of the 42,386 incorrect submissions.
+
+Across the 181 correct-reference pools, both paths retained all 8,952 original Slotted zeros and found **19,271** direct structural zeros in total. The 4,496 reference ASTs yielded 1,816 structural forms and 1,743 components after verified fixed-command links were added. The full-run retention check protects the source identities of the historical pairs in both engines.
+
+Native operation replay matched on all 61,598 student–oracle comparisons, all 19,271 structural reference zeros, and all 4,138 paid reference pairs checked for the mixed-quantifier issue. One additional paid comparison in each of the 181 pools also matched. The 83 repaired paid witnesses matched in reverse. Both engines agreed on all 1,894,168 ranking distances. [Full results and verification](docs/experimental-results/historical-retention/README.md) · [Recovered reference pairs](docs/experimental-results/historical-retention/repaired-reference-pairs.csv) · [Updated paper](docs/experimental-results/historical-retention/paper-historical-retention.pdf)
+
+### v3.3 full-corpus results
 
 In the supervised 66,080-file run, Fast Rewrite and Certificate-Integrated
 each returned zero on **4,499** correct AST-distinct
@@ -201,7 +209,7 @@ snapshot below and the separate v2.16 validation run.
 
 ## Headline Results
 
-For the latest natural-corpus results, see the [v3.3 report](docs/experimental-results/v3.3/README.md). The previous full study suite ran on November 15-16, 2026, using commit
+The latest natural-corpus measurements are in the [historical retention report](docs/experimental-results/historical-retention/README.md). The previous full study suite ran on November 15-16, 2026, using commit
 `2d70f89ab67241cd071387ecedd3b2f432821921`. The
 [v3 report](docs/experimental-results/2026-11-16/README.md) includes the
 full paired corpus, full-reference Augmenter, seven ablation and capability

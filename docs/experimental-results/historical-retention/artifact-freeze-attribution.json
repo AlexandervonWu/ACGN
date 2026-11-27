@@ -1,0 +1,558 @@
+{
+  "schema": "historical-freeze-v1-selected-source-attribution-v1",
+  "scope": "Fourteen deliberately chosen, nonrandom examples from the 841 pre-v2-only missing reference pairs; direct pairwise distances on original source files at each revision.",
+  "jarChecksums": {
+    "artifact-freeze-v1": "2167064013b2c97de00dd08db9806daf06de2d0bbefe206939ffff38a1af101f",
+    "artifact-freeze-v2": "21b721e31b5270c1b5e63bca368eccee9323886fd5c571e6190c296a853abc52"
+  },
+  "method": "Use original frozen v1 and v2 endpoint JARs and v2 parser libraries. To reproduce the immediate parent of ebce8743, overlay its NormalForm, EGraphNode, and SigSymbol source compiled against the v2 JAR. Those are the only changed production classes on the direct Canonical/CanonicalAlloyPipeline path. Resolve original selected source predicates with the release pool producer numeric forest indexing. All v1 sample distances repeat the frozen ledger. Distances listed as [Fast Rewrite,Certificate-Integrated].",
+  "releasedDatasetSha256": "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689",
+  "pairs": [
+    {
+      "ids": [
+        39,
+        40
+      ],
+      "group": [
+        "classroom_fol",
+        "inv12"
+      ],
+      "endpoints": [
+        {
+          "source": "classroom_fol/correct/2h4i3iHBXinvTbPbw_inv12.als",
+          "name": "inv12_correct_0",
+          "operator": "inv12",
+          "sha": "90ab1ef4bcc57c1df4e5c370f4b0e9fe552928c7b0ba4999d8213165ec3de5ba"
+        },
+        {
+          "source": "classroom_fol/correct/3BH4wxf8WPaMPeo4z_inv12.als",
+          "name": "inv12_correct_1",
+          "operator": "inv12",
+          "sha": "b2450c6e6a9e08f3ebe8eb2c88996c45bf5f54ecd7b627811f543f5f32debf7f"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          0,
+          0
+        ],
+        "ebce8743": [
+          25,
+          24
+        ]
+      }
+    },
+    {
+      "ids": [
+        194,
+        205
+      ],
+      "group": [
+        "classroom_fol",
+        "inv6"
+      ],
+      "endpoints": [
+        {
+          "source": "classroom_fol/correct/3D6Pj47ECqYAmZsP5_inv6.als",
+          "name": "inv6_correct_1",
+          "operator": "inv6",
+          "sha": "fe56a5dae4aa7e39f6803cd7ec3ad1997a53d25a97b71ba6ebe901f82a8e911e"
+        },
+        {
+          "source": "classroom_fol/correct/xt4ADbs3dC4xJhn5p_inv6.als",
+          "name": "inv6_correct_12",
+          "operator": "inv6",
+          "sha": "07ff60a3720aa68e2439f8ca4567d3978189539a29c5e3442b39c2b2d0734796"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          0,
+          0
+        ],
+        "ebce8743": [
+          9,
+          9
+        ]
+      }
+    },
+    {
+      "ids": [
+        1378,
+        1402
+      ],
+      "group": [
+        "coursesOld",
+        "inv5"
+      ],
+      "endpoints": [
+        {
+          "source": "coursesOld/correct/RKE9aTzySTKSNprwY_inv5.als",
+          "name": "inv5_correct_100",
+          "operator": "inv5",
+          "sha": "9474eb1db095e123d684a413af14072e3b131f0a44fe7b0c4d240c0a91c2d09b"
+        },
+        {
+          "source": "coursesOld/correct/csQWYazt9CJRKcBuh_inv5.als",
+          "name": "inv5_correct_124",
+          "operator": "inv5",
+          "sha": "6c8d33a5c4e75bfa88969c2630d0a535d0beac1bf3d175407d2263f92c766f4f"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          43,
+          43
+        ],
+        "ebce8743": [
+          43,
+          43
+        ]
+      }
+    },
+    {
+      "ids": [
+        3013,
+        3021
+      ],
+      "group": [
+        "socialMedia",
+        "inv4"
+      ],
+      "endpoints": [
+        {
+          "source": "socialMedia/correct/HfPTJ7sPaoACcHi6N_inv4.als",
+          "name": "inv4_correct_100",
+          "operator": "inv4",
+          "sha": "7eef36192ed9cf02caedafb20ee8f0caa04612d79d69a4e1e4c94b6725a1d35b"
+        },
+        {
+          "source": "socialMedia/correct/KCiHovA68mpiNK82G_inv4.als",
+          "name": "inv4_correct_108",
+          "operator": "inv4",
+          "sha": "1a7c72cda3c010bce5e794186953447bc81a00393f17737e6cf62d70a1284635"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          9,
+          9
+        ],
+        "ebce8743": [
+          9,
+          9
+        ]
+      }
+    },
+    {
+      "ids": [
+        3250,
+        3339
+      ],
+      "group": [
+        "socialMedia",
+        "inv7"
+      ],
+      "endpoints": [
+        {
+          "source": "socialMedia/correct/5a8kJx3Ci7nMkhmjM_inv7.als",
+          "name": "inv7_correct_13",
+          "operator": "inv7",
+          "sha": "f83e0eec7ae725e48fd8c82451b27d8e9ab085b49343dc6132b1126864111e97"
+        },
+        {
+          "source": "socialMedia/correct/uDNrKeeuQgSgoabDT_inv7.als",
+          "name": "inv7_correct_102",
+          "operator": "inv7",
+          "sha": "7e029dcf83a896eccd66a748be7ad8a56efa78237a6ba597d05545f2815e6b8f"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          20,
+          20
+        ],
+        "ebce8743": [
+          20,
+          20
+        ]
+      }
+    },
+    {
+      "ids": [
+        3464,
+        3495
+      ],
+      "group": [
+        "trainStationNew",
+        "inv1"
+      ],
+      "endpoints": [
+        {
+          "source": "trainStationNew/correct/27o9r27ikhdsBnzwD_inv1.als",
+          "name": "inv1_correct_0",
+          "operator": "inv1",
+          "sha": "dbbe75fd1eb2fe6499c6bdce6c6a53fc05f814d5d6d7047205ebf60e0d68898b"
+        },
+        {
+          "source": "trainStationNew/correct/dswpyKwmNpKmNwiBw_inv1.als",
+          "name": "inv1_correct_31",
+          "operator": "inv1",
+          "sha": "032a54f247160348cc6fe2bc5e4c7f38136c6f8d5779b368d7051cc0f8cdbec3"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          12,
+          12
+        ],
+        "ebce8743": [
+          12,
+          12
+        ]
+      }
+    },
+    {
+      "ids": [
+        3955,
+        3956
+      ],
+      "group": [
+        "trash_fol",
+        "inv4"
+      ],
+      "endpoints": [
+        {
+          "source": "trash_fol/correct/2SYz3bDSyWDRCGsLQ_inv4.als",
+          "name": "inv4_correct_0",
+          "operator": "inv4",
+          "sha": "3a4020c9f842c013edbfb93a3c9ebdf73fbb8c2c83590f350774c803816d67c8"
+        },
+        {
+          "source": "trash_fol/correct/2ucbb5zsdgDZMKhta_inv4.als",
+          "name": "inv4_correct_1",
+          "operator": "inv4",
+          "sha": "64615852ed23fc73d8b6e7a41816700aada4fb443397c5aef8fb5c3d640154fa"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          7,
+          7
+        ],
+        "ebce8743": [
+          7,
+          7
+        ]
+      }
+    },
+    {
+      "ids": [
+        4071,
+        4072
+      ],
+      "group": [
+        "trash_fol",
+        "inv8"
+      ],
+      "endpoints": [
+        {
+          "source": "trash_fol/correct/7ibqpgEtaTYcuA4Dp_inv8.als",
+          "name": "inv8_correct_12",
+          "operator": "inv8",
+          "sha": "d014af19a607d93c7164768f13f3508f7eeef285d969e40bd4ee155c22a2d6bf"
+        },
+        {
+          "source": "trash_fol/correct/88po5Ly3NjywEMnkk_inv8.als",
+          "name": "inv8_correct_13",
+          "operator": "inv8",
+          "sha": "5d3aa86ec02378b04cf17c7e79631a1e8c9f5ed79410bf7c4a985f85b747160c"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          1,
+          1
+        ],
+        "ebce8743": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "ids": [
+        4191,
+        4192
+      ],
+      "group": [
+        "trash_ltl",
+        "inv14"
+      ],
+      "endpoints": [
+        {
+          "source": "trash_ltl/correct/6sc6JN22rpWT22s22_inv14.als",
+          "name": "inv14_correct_3",
+          "operator": "inv14",
+          "sha": "674f3cb6986ee90165c3e5c6fca3a950c820402940409793da630b57f75c4e45"
+        },
+        {
+          "source": "trash_ltl/correct/747zjNTiodknKQASK_inv14.als",
+          "name": "inv14_correct_4",
+          "operator": "inv14",
+          "sha": "654118a123d2ef822d6b55b0c38dcdcf6922f4c22336c377a4aa781837a18ac4"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          10,
+          10
+        ],
+        "ebce8743": [
+          10,
+          10
+        ]
+      }
+    },
+    {
+      "ids": [
+        4288,
+        4289
+      ],
+      "group": [
+        "trash_ltl",
+        "inv9"
+      ],
+      "endpoints": [
+        {
+          "source": "trash_ltl/correct/4qRdrz9S7o8HTkukc_inv9.als",
+          "name": "inv9_correct_0",
+          "operator": "inv9",
+          "sha": "6a9a869fd714ed4d769f7cdd5f583b211528f611291bbb0d9e8abca6c45c85a9"
+        },
+        {
+          "source": "trash_ltl/correct/4vnz5pEgzbEKP8iYf_inv9.als",
+          "name": "inv9_correct_1",
+          "operator": "inv9",
+          "sha": "54059ff17b8070030ba11b8ab537f7a1db098569b95ce5f93d3b8b893475fd37"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          7,
+          7
+        ],
+        "ebce8743": [
+          7,
+          7
+        ]
+      }
+    },
+    {
+      "ids": [
+        103,
+        113
+      ],
+      "group": [
+        "classroom_fol",
+        "inv2"
+      ],
+      "endpoints": [
+        {
+          "source": "classroom_fol/correct/2HS4YkQrXRkPNZand_inv2.als",
+          "name": "inv2_correct_0",
+          "operator": "inv2",
+          "sha": "1ded64481b5f6fa8d6cc8d41d1ae4fbaf0eddc78478a040d15808c74052f5906"
+        },
+        {
+          "source": "classroom_fol/correct/WqspDqEqi39kzijPP_inv2.als",
+          "name": "inv2_correct_10",
+          "operator": "inv2",
+          "sha": "ed69c91beaba2c81c9ac09491e988f2c64fb9819133d67388d9b4a173ff1dafd"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          3,
+          3
+        ],
+        "ebce8743": [
+          3,
+          3
+        ]
+      }
+    },
+    {
+      "ids": [
+        117,
+        132
+      ],
+      "group": [
+        "classroom_fol",
+        "inv3"
+      ],
+      "endpoints": [
+        {
+          "source": "classroom_fol/correct/2LaNPFTGEusSfavas_inv3.als",
+          "name": "inv3_correct_1",
+          "operator": "inv3",
+          "sha": "3bcb5b40d34b36ab55819a118995406776367d83b209c8336017a72a1ab2c500"
+        },
+        {
+          "source": "classroom_fol/correct/TkZr2ZdXH3ntJRfwd_inv3.als",
+          "name": "inv3_correct_16",
+          "operator": "inv3",
+          "sha": "6417796897f98509ba3bb7bd3d1a0e99dbdba94025347599c3d27bb3e5e0bec9"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          7,
+          7
+        ],
+        "ebce8743": [
+          7,
+          7
+        ]
+      }
+    },
+    {
+      "ids": [
+        813,
+        821
+      ],
+      "group": [
+        "coursesNew",
+        "inv5"
+      ],
+      "endpoints": [
+        {
+          "source": "coursesNew/correct/2MkcbBWxWsjpdqCjP_inv5.als",
+          "name": "inv5_correct_0",
+          "operator": "inv5",
+          "sha": "a96bc3b5ee6184a384c16b98a9b109d5b00dc2e535e995920e1a457bca6e177d"
+        },
+        {
+          "source": "coursesNew/correct/3wmoBBo9YnxRn3gmH_inv5.als",
+          "name": "inv5_correct_8",
+          "operator": "inv5",
+          "sha": "ab432142cd3905f118f8be28d681fc5279cc52753c6578d628d697eba33506a9"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          15,
+          18
+        ],
+        "ebce8743": [
+          15,
+          18
+        ]
+      }
+    },
+    {
+      "ids": [
+        334,
+        343
+      ],
+      "group": [
+        "classroom_rl",
+        "inv12"
+      ],
+      "endpoints": [
+        {
+          "source": "classroom_rl/correct/2w6uKJqxDKoENfiG7_inv12.als",
+          "name": "inv12_correct_1",
+          "operator": "inv12",
+          "sha": "b2450c6e6a9e08f3ebe8eb2c88996c45bf5f54ecd7b627811f543f5f32debf7f"
+        },
+        {
+          "source": "classroom_rl/correct/hgxPkBzGSBdvuBSkn_inv12.als",
+          "name": "inv12_correct_10",
+          "operator": "inv12",
+          "sha": "91febbc8f0e4acb2ecd7e6a7f96055c2d45e25e6ae8eed5ea78bdca78be671e9"
+        }
+      ],
+      "nativeV32": "UNSAT",
+      "distances": {
+        "f1bb1607": [
+          0,
+          0
+        ],
+        "5adcfb85": [
+          0,
+          0
+        ],
+        "ebce8743": [
+          25,
+          26
+        ]
+      }
+    }
+  ]
+}

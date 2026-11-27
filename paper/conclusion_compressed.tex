@@ -9,14 +9,13 @@ structural realization and compatible shape collisions preserve source
 equations, and updates satisfying a local coherence invariant give sound
 judgments between finite unfoldings.
 
-In the \texttt{v3.3} Alloy study, both rewrite paths retained all 2,228
-original slotted zeros and recognized 2,271 more correct pairs, without
-an incorrect zero. Comparing under the original command recognized 259
-further correct pairs using fixed-command rules. Nearest-reference search
-over 1,894,168 comparisons yielded mean distances of 12.267
-for the raw AST and 11.477 for the canonical projection. Certificate
-integration adds overhead for typed transitions, graph rebuilding and
-finite unfolding. The historical synthetic study isolates a complementary
-effect. Typed slot partitions reduce the renaming search when binders have
-different types. The scoped result remains tied to its command bounds.
+On the Alloy4Fun corpus both rewrite paths retained every recorded structural
+zero, including those found by original Slotted, and added 2,909 correct
+student--oracle pairs beyond Slotted. Neither path assigned zero to an
+incorrect submission. Command-specific rules recognized 259 further
+correct pairs. On full-reference search the paths agreed on all 1,894,168
+scalar scores. Native replay also agreed on the checked reference subsets.
+The historical synthetic grid shows how heterogeneous slot types can reduce
+the cost of searching binder renamings.
+
 \label{end:main-text}

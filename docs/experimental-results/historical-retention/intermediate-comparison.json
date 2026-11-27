@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "measurements": {
+    "ablation-distances.csv.gz": {
+      "observations": 61598,
+      "lost": 0,
+      "gained": 0,
+      "canonicalDigest": "3193c41079e7271fdc17302ea6e2799600e2a13dfea4d33b10ea84850ee9d26c"
+    },
+    "paired-comparisons.jsonl.gz": {
+      "observations": 61598,
+      "lost": 0,
+      "gained": 0,
+      "canonicalDigest": "ab1cb65f7ddb190b9d3fee7a4135dbe231522f39a5fedbb1bab96a9de2a229b3"
+    },
+    "correct-pool-pairs.jsonl.gz": {
+      "observations": 132032,
+      "lost": 0,
+      "gained": 0,
+      "canonicalDigest": "93a1ffc5cf6bc49771fac94b7d6758c65bf7d2c6a4bbeb416929ad12cf6ff85e"
+    },
+    "nearest-distances.csv.gz": {
+      "observations": 42386,
+      "lost": 0,
+      "gained": 0,
+      "canonicalDigest": "529951d956e4edcc8d567a5cd6244eede43f157acb3ca953b5d719e1dfa45fb4"
+    },
+    "correct-pools.csv": {
+      "observations": 181,
+      "lost": 0,
+      "gained": 0,
+      "canonicalDigest": "18d8d4b289510f52bcf2ba7363cd77865a8f19c5c7e5ad2065e8923a5192bd4f"
+    },
+    "ast-identical-paths.txt": {
+      "observations": 4482,
+      "lost": 0,
+      "gained": 0,
+      "canonicalDigest": "d84915842c6a3faa16a70c6029007e268bef197e819b9dcfad57e9b7bb6602fa"
+    },
+    "slotted-reference-pairs.csv.gz": {
+      "observations": 132032,
+      "lost": 0,
+      "gained": 0,
+      "canonicalDigest": "26427fe45fbe7c896e950916d57375bda28f4e4e0063376ce66a42b4d874c896"
+    },
+    "historical-native-controls.jsonl": {
+      "observations": 1339,
+      "lost": 0,
+      "gained": 0,
+      "canonicalDigest": "e2bdecce82a35771f81422f7ce782923603a72b086f8c454f716cb977767a1e7"
+    },
+    "historical-pairs.json.gz": {
+      "observations": 31705,
+      "lost": 0,
+      "gained": 0,
+      "canonicalDigest": "124ca3d20d9f498deba2bdea2f018609878fd90e80bbcefec8321f07f0d8d57b"
+    },
+    "all-ranking-scores": {
+      "submissions": 42386,
+      "scores": 1894168,
+      "mismatchingSubmissions": 0,
+      "sortedScoreDigest": "8eec5a2ee6f1622932ff4904fdf58616a1a14e795a5556b6fd033e94fac8cbf8"
+    }
+  },
+  "intermediateRunId": "c8b690a4-54af-4ad5-82fa-a9c3f8b477a9",
+  "finalRunId": "f49d49b0-2590-4fbf-b617-50c8358b0985"
+}

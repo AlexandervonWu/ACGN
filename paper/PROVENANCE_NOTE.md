@@ -1,5 +1,16 @@
 # Author-Facing Provenance Note
 
+The main manuscript reports the supervised run completed on 27 November 2026 UTC at
+commit `9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa`. The paired, complete reference-pool, structural ablation,
+controlled capability and slot-typing values come from that run. The primary
+coverage chart uses its per-submission nearest distances, with the v3.1
+figure style and the legend at bottom right. Appendix B retains the historical
+v3.3 tables and per-invariant panels from 26 November 2026. The synthetic
+scaling grid remains the v3 experiment. The release evidence records the exact
+cohorts for the native trace diagnostics.
+
+## Previous manuscript revisions
+
 The v3.3 paper uses the audited paired, reference-pool, ablation, capability and natural slot-typing measurements. The exact source commit is d5c0c2a07504d53b13b28c61e9e64768c37eb984. The historical 540-predicate synthetic grid remains bound to the v3 release. See the v3.3 headlines and replay data.
 
 **November 25, 2026 (fixed-command comparison).** The evaluation's correct-reference

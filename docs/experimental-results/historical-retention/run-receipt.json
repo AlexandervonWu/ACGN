@@ -1,0 +1,403 @@
+{
+  "commands": {
+    "path": "[ARTIFACTS]/planned-commands.txt",
+    "sha256": "79ee9fbf4ba917a3cfc34843d8379d54cd4f8c50ec66d5fdff8211a57bc9827e"
+  },
+  "completedAt": "2026-11-27T04:50:19.604543Z",
+  "configuration": {
+    "capabilityTarget": 500,
+    "heap": "8g",
+    "limit": 0,
+    "rewardPool": 100,
+    "seed": 55520260811,
+    "workers": 16
+  },
+  "dataset": {
+    "byteCount": 30141317,
+    "fileCount": 66080,
+    "root": "[CHECKOUT]/classified-data",
+    "sha256": "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689"
+  },
+  "dependencies": [
+    {
+      "path": "lib/AlloyASG-Release.jar",
+      "sha256": "fe672d7e54b75ce2e68fd512a3e0aa11f58cd8694b6b02b8da9606958a4847c4",
+      "sizeBytes": 85380
+    },
+    {
+      "path": "lib/AlloyASG.jar",
+      "sha256": "5adc247bae551739bb61db848eb8ba6ee3292300f126e2b286c3a298a22c9dc6",
+      "sizeBytes": 42535
+    },
+    {
+      "path": "lib/AlloyParser.jar",
+      "sha256": "be040bcd26ddcf042bb629f9c2a8c56e2f8bca0c829281c5cc0d07a047474fe3",
+      "sizeBytes": 121873
+    },
+    {
+      "path": "lib/alloy.jar",
+      "sha256": "8a8746b89d95f28762903c9acbd2bee8aca5014fe49a522b7184ba32ffcc5b58",
+      "sizeBytes": 20971507
+    },
+    {
+      "path": "lib/commons-cli-1.11.0.jar",
+      "sha256": "8f7f8605d68e15bf32db61ec94eac6fdafc51b1bdbe1e0e0802b57d23f387792",
+      "sizeBytes": 110167
+    },
+    {
+      "path": "lib/json-java.jar",
+      "sha256": "7dd2de1533e766e2b6c07d8194da85145ad313a167a4760050f5c9b6839604fe",
+      "sizeBytes": 89800
+    },
+    {
+      "path": "lib/slf4j-api-2.0.20.jar",
+      "sha256": "7e1446499b359675d8aabe6af2de86b85e72ae8a2a932c0b40d0e5ba57097439",
+      "sizeBytes": 70255
+    },
+    {
+      "path": "lib/slf4j-simple-2.0.20.jar",
+      "sha256": "8e701404786a4f87219d39d4853c86dfe4e86ae99376a39749df6c08e75022e0",
+      "sizeBytes": 15705
+    }
+  ],
+  "experimentJar": {
+    "path": "[ARTIFACTS]/build/acgn-experiments.jar",
+    "sha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+    "sizeBytes": 5036677
+  },
+  "fullManifestVerified": true,
+  "git": {
+    "commit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+    "dirty": false
+  },
+  "identitySha256": "ef824f42c55344416129e04ea75e51e9dd943d252f4f879973e4af077a38ad41",
+  "manifestSha256": "f8ce2a59dcbc076f87274f2b8293fb6237385b527920ce750b5c7dadde972e85",
+  "nativeOperationCounts": {
+    "attempted": 61598,
+    "certificationStatus": "BLOCKED",
+    "coverageUnit": "completed pair comparison attempts; workers may finish ahead of ordered result writing",
+    "errors": 0,
+    "examples": [],
+    "invalidReplay": 0,
+    "matched": 61598,
+    "mismatches": 0,
+    "schema": "acgn-native-operation-comparison-v1",
+    "unchecked": 0,
+    "uncheckedReasons": {}
+  },
+  "publishedPathPlaceholders": {
+    "[ARTIFACTS]": "New output tree",
+    "[CHECKOUT]": "Measured Git checkout",
+    "[RUN]": "Supervised run directory"
+  },
+  "resources": {
+    "hostOomKillDelta": 0,
+    "minHostAvailableBytes": 9668804608,
+    "minRunVolumeFreeBytes": 250711261184,
+    "samples": 134
+  },
+  "runId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "runtime": {
+    "cpu": "x86_64",
+    "java": "Picked up JAVA_TOOL_OPTIONS: -Xmx1g -XX:ActiveProcessorCount=16 -Djava.io.tmpdir=[RUN]/tmp\nopenjdk version \"17.0.21.1\" 2026-11-17\nOpenJDK Runtime Environment (build 17.0.21.1+2-1-24.04.1-Ubuntu)\nOpenJDK 64-Bit Server VM (build 17.0.21.1+2-1-24.04.1-Ubuntu, mixed mode, sharing)",
+    "logicalProcessors": 32,
+    "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+  },
+  "source": {
+    "byteCount": 9494278,
+    "fileCount": 628,
+    "sha256": "8e1289129fbaec4a245e2b38383549e44418497b95d75f97150dfdf3673bfdf9"
+  },
+  "stages": [
+    {
+      "commandSha256": "b83cf87d010a288c5d09f50c6a622a3452fa829eeb7fd0f0a111742f7a4bc59d",
+      "name": "historical-native-controls",
+      "recordedAt": "2026-11-27T03:44:11.951909Z"
+    },
+    {
+      "commandSha256": "ff8562f61704848c33309f0831f5442e9262346c27f42ffdb46ed69ce73625ba",
+      "name": "canonical-batch",
+      "recordedAt": "2026-11-27T04:18:08.297960Z"
+    },
+    {
+      "commandSha256": "124805eda6722baa6f85d55fb95a2c0cb43fd5f1a9f81bde4478f2262d6a799f",
+      "name": "augmenter",
+      "recordedAt": "2026-11-27T04:33:13.802574Z"
+    },
+    {
+      "commandSha256": "15db512e00033c70169541e8fb6755ef67b8e6d5db23ac33a9be2076d43e1ca4",
+      "name": "rank-score-parity",
+      "recordedAt": "2026-11-27T04:33:28.183685Z"
+    },
+    {
+      "commandSha256": "812fd71df15565fd5e2d73bea12b182dd623aba2e6d2edce1896e3a1ae145d63",
+      "name": "historical-rank-witnesses",
+      "recordedAt": "2026-11-27T04:37:48.345213Z"
+    },
+    {
+      "commandSha256": "1ead471f8c8e1ef97fb0bea0cae5151b4cf07869f68128756888676dbe4de9f2",
+      "name": "semantic",
+      "recordedAt": "2026-11-27T04:46:47.275624Z"
+    },
+    {
+      "commandSha256": "abded264fbda150e343691da4d3803402b82e7d2c3dd9aacb0265f065e83b44a",
+      "name": "capability-report",
+      "recordedAt": "2026-11-27T04:48:01.598818Z"
+    },
+    {
+      "commandSha256": "0e9c660c8d4ce81bf49a3271d257972878bde0e2e6fd501ff0d6d61de68b8689",
+      "name": "slot-typing-natural",
+      "recordedAt": "2026-11-27T04:48:51.654681Z"
+    },
+    {
+      "commandSha256": "d84378cd111ef3c09ac96fb40319ab0ce9b1f100995a566c72b23aaea24120dd",
+      "name": "historical-coverage",
+      "recordedAt": "2026-11-27T04:49:45.588372Z"
+    }
+  ],
+  "startedAt": "2026-11-27T03:44:03.824118Z",
+  "status": "complete",
+  "supervisor": [
+    {
+      "finishedAt": "2026-11-27T03:44:00.011209+00:00",
+      "name": "compile",
+      "startedAt": "2026-11-27T03:43:54.009757+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:44:02.015455+00:00",
+      "name": "jar",
+      "startedAt": "2026-11-27T03:44:00.012817+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:44:04.024998+00:00",
+      "name": "manifest-create",
+      "startedAt": "2026-11-27T03:44:02.024463+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:44:10.026986+00:00",
+      "name": "historical-native-controls",
+      "startedAt": "2026-11-27T03:44:04.025704+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:44:12.028483+00:00",
+      "name": "record-historical-native-controls",
+      "startedAt": "2026-11-27T03:44:10.027936+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T03:44:14.029851+00:00",
+      "name": "identity-after-historical-native-controls",
+      "startedAt": "2026-11-27T03:44:12.029331+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:18:05.771137+00:00",
+      "name": "canonical-batch",
+      "startedAt": "2026-11-27T03:44:14.030609+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:18:09.773920+00:00",
+      "name": "record-canonical-batch",
+      "startedAt": "2026-11-27T04:18:05.772303+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:18:13.776438+00:00",
+      "name": "identity-after-canonical-batch",
+      "startedAt": "2026-11-27T04:18:09.775052+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:33:10.230402+00:00",
+      "name": "augmenter",
+      "startedAt": "2026-11-27T04:18:13.779421+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:33:14.232298+00:00",
+      "name": "record-augmenter",
+      "startedAt": "2026-11-27T04:33:10.231195+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:33:18.234313+00:00",
+      "name": "identity-after-augmenter",
+      "startedAt": "2026-11-27T04:33:14.233206+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:33:26.237069+00:00",
+      "name": "rank-score-parity",
+      "startedAt": "2026-11-27T04:33:18.235209+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:33:28.238761+00:00",
+      "name": "record-rank-score-parity",
+      "startedAt": "2026-11-27T04:33:26.238157+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:33:32.241719+00:00",
+      "name": "identity-after-rank-score-parity",
+      "startedAt": "2026-11-27T04:33:28.239957+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:37:46.311878+00:00",
+      "name": "historical-rank-witnesses",
+      "startedAt": "2026-11-27T04:33:32.242728+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:37:50.313979+00:00",
+      "name": "record-historical-rank-witnesses",
+      "startedAt": "2026-11-27T04:37:46.312909+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:37:54.316099+00:00",
+      "name": "identity-after-historical-rank-witnesses",
+      "startedAt": "2026-11-27T04:37:50.315000+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:46:25.369671+00:00",
+      "name": "ablation",
+      "startedAt": "2026-11-27T04:37:54.317085+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:46:43.387512+00:00",
+      "name": "semantic",
+      "startedAt": "2026-11-27T04:46:25.370489+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:46:45.388984+00:00",
+      "name": "bind-semantic",
+      "startedAt": "2026-11-27T04:46:43.388442+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:46:47.390276+00:00",
+      "name": "record-semantic",
+      "startedAt": "2026-11-27T04:46:45.389762+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:46:51.392142+00:00",
+      "name": "identity-after-semantic",
+      "startedAt": "2026-11-27T04:46:47.391134+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:46:59.394581+00:00",
+      "name": "capability-generate",
+      "startedAt": "2026-11-27T04:46:51.393084+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:47:01.396382+00:00",
+      "name": "capability-soundness",
+      "startedAt": "2026-11-27T04:46:59.395599+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:47:57.492985+00:00",
+      "name": "capability-arms",
+      "startedAt": "2026-11-27T04:47:01.397335+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:47:59.494676+00:00",
+      "name": "capability-report",
+      "startedAt": "2026-11-27T04:47:57.493662+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:48:03.496686+00:00",
+      "name": "record-capability-report",
+      "startedAt": "2026-11-27T04:47:59.495311+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:48:07.498289+00:00",
+      "name": "identity-after-capability-report",
+      "startedAt": "2026-11-27T04:48:03.497460+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:48:49.780238+00:00",
+      "name": "slot-typing-natural",
+      "startedAt": "2026-11-27T04:48:07.499129+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:48:51.781643+00:00",
+      "name": "record-slot-typing-natural",
+      "startedAt": "2026-11-27T04:48:49.780999+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:48:55.783359+00:00",
+      "name": "identity-after-slot-typing-natural",
+      "startedAt": "2026-11-27T04:48:51.782523+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:49:33.792421+00:00",
+      "name": "slotted-reference-pools",
+      "startedAt": "2026-11-27T04:48:55.784384+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:49:43.795335+00:00",
+      "name": "historical-coverage",
+      "startedAt": "2026-11-27T04:49:33.793409+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:49:45.796813+00:00",
+      "name": "record-historical-coverage",
+      "startedAt": "2026-11-27T04:49:43.796269+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:49:49.798645+00:00",
+      "name": "identity-after-historical-coverage",
+      "startedAt": "2026-11-27T04:49:45.797783+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:49:51.800126+00:00",
+      "name": "bind-report-0",
+      "startedAt": "2026-11-27T04:49:49.799511+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:49:55.802045+00:00",
+      "name": "bind-report-1",
+      "startedAt": "2026-11-27T04:49:51.801139+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:49:57.803820+00:00",
+      "name": "bind-report-2",
+      "startedAt": "2026-11-27T04:49:55.803026+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:49:59.805159+00:00",
+      "name": "bind-report-3",
+      "startedAt": "2026-11-27T04:49:57.804639+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:50:01.806786+00:00",
+      "name": "bind-report-4",
+      "startedAt": "2026-11-27T04:49:59.806086+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:50:03.808694+00:00",
+      "name": "bind-report-5",
+      "startedAt": "2026-11-27T04:50:01.808184+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:50:05.810114+00:00",
+      "name": "bind-report-6",
+      "startedAt": "2026-11-27T04:50:03.809623+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:50:09.811992+00:00",
+      "name": "bind-report-7",
+      "startedAt": "2026-11-27T04:50:05.811143+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:50:13.814046+00:00",
+      "name": "bind-report-8",
+      "startedAt": "2026-11-27T04:50:09.813073+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:50:17.815804+00:00",
+      "name": "bind-report-9",
+      "startedAt": "2026-11-27T04:50:13.814943+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:50:27.824123+00:00",
+      "name": "manifest-finalize",
+      "startedAt": "2026-11-27T04:50:17.822387+00:00"
+    },
+    {
+      "finishedAt": "2026-11-27T04:50:35.827309+00:00",
+      "name": "manifest-final-verify",
+      "startedAt": "2026-11-27T04:50:27.825183+00:00"
+    }
+  ]
+}

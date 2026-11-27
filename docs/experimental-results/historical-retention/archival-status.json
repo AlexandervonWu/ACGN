@@ -1,0 +1,741 @@
+{
+  "sourceComparison": "Each of 83 original Java/Python entry points run separately. Same four focused test amendments used for both candidate overlays (ordered and frozen); v3.3 invoked its own original archived classes. The unmodified fail-fast master run stops at the temporal UNCHECKABLE expectation.",
+  "resultSummary": {
+    "correctedForOneGitProvenanceFailure": {
+      "v33": {
+        "passed": 53,
+        "failed": 30
+      },
+      "frozen": {
+        "passed": 38,
+        "failed": 45
+      },
+      "ordered": {
+        "passed": 38,
+        "failed": 45
+      }
+    },
+    "archivalStatusChangeOrderedVersusFrozen": 0,
+    "alreadyFailedOnV33WithProvenance": 30,
+    "firstFailedAfterV33ByFrozen": 15,
+    "rawCrossTab": {
+      "allPass": 37,
+      "allFail": 31,
+      "v33PassFrozenOrderedFail": 15
+    }
+  },
+  "summaryByFirstFailure": {
+    "archived distance or phase components": 12,
+    "normalized input or proof shape required by fixture": 12,
+    "particular paid witness, permutation, or source map": 9,
+    "earlier internal admission or orbit restriction": 8,
+    "archived native UNCHECKABLE expectation now MATCHED": 4,
+    "repository provenance prerequisite": 1
+  },
+  "nativeResults": {
+    "sourceEvents": {
+      "MATCHED": 68,
+      "INVALID_REPLAY": 86,
+      "UNCHECKABLE": 7
+    },
+    "forgedFailures": {
+      "deliberatelyCorrupted": 85,
+      "realMatchedReceiptBoundToArchivedWrongScalar": 1
+    },
+    "unchecked": {
+      "fourIntentionallyRemovedReceipts": 4,
+      "genuineParameterOrImportedScopeUnsupported": 3
+    },
+    "unexpectedMismatchesOrInvalidReceiptsOnSupportedUntamperedInputs": 0,
+    "sourceResultObserver": "Single instrumentation statement in the NativeOperationComparison.Result constructor reports status, callsite and reason. It preserves verdict, guard and equality code. Records all constructor events reached before the first failing assertion, including explicit result rebinding. Counts are construction events, not independent pairs.",
+    "freshSourceChecks": {
+      "67DirectlyNamedOriginalFiles": 134,
+      "2NamedCrossFilePairs": 4,
+      "directionsMatched": 138,
+      "scalarDifferences": 0
+    },
+    "naturalBatch": {
+      "nativeMatched": 61598,
+      "other": 0
+    }
+  },
+  "limits": "An entry may fail before later assertions. Only matching literal corpus IDs were selected for the separate source replay. Derived fixtures or sources hidden in external manifests are not claimed as exhaustive. Internal admission and proof-shape failures are preserved as open archive incompatibilities. Native agreement alone does not prove semantic equivalence, completeness, or general correctness.",
+  "rows": [
+    {
+      "entry": "test_native_operation_scan.py",
+      "group": "archived native UNCHECKABLE expectation now MATCHED",
+      "firstError": "AssertionError: ('temporal', 'MATCHED')",
+      "assertionOrContext": "test_native_operation_scan.py:77",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "Temporal 4J8sS2Kr fixture now replays MATCHED. Archive expected UNCHECKABLE."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.RetainedTupleCallReplayTest",
+      "group": "archived distance or phase components",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: expected native costs 7Xiq",
+      "assertionOrContext": "RetainedTupleCallReplayTest.java:118",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.DistanceDerivedTraceTest",
+      "group": "archived distance or phase components",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: frozen family cost 7Xiq-nested 0 62/62",
+      "assertionOrContext": "DistanceDerivedTraceTest.java:82",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.LocalOwnerTraceTest",
+      "group": "archived distance or phase components",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: 7Xiq51 preserved",
+      "assertionOrContext": "LocalOwnerTraceTest.java:262",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": "Hard-coded original 7Xiq source expected 51."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.RetainedPaidCompletionTest",
+      "group": "earlier internal admission or orbit restriction",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: no scalar candidate expansion or fabricated selected paid map",
+      "assertionOrContext": "RetainedPaidCompletionTest.java:86",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "Pins a negated low-level supportsPair result and absence of an explicitly selected paid map after scalar 27 and numerical coverage assertions pass."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.PartialJoinCompositionTest",
+      "group": "repository provenance prerequisite",
+      "firstError": "Exception in thread \"main\" java.io.UncheckedIOException: Certificate provenance could not be recorded",
+      "assertionOrContext": "PartialJoinCompositionTest.java:115",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "All three unmodified implementations pass this test after setting read-only acgn.repo.root to the measured source checkout. No model/source changes.",
+      "withProvenanceExit": {
+        "candidate": 0,
+        "frozen": 0,
+        "v33": 0
+      }
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.LocalDomainSingletonTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: domain is an actual support-bearing port outside the local binder",
+      "assertionOrContext": "LocalDomainSingletonTest.java:47",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.ProductShorterReplayTest",
+      "group": "particular paid witness, permutation, or source map",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: archived scoped mapping",
+      "assertionOrContext": "ProductShorterReplayTest.java:125",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.ScopedTemporalShorterReplayTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: actual admitted source phase counts",
+      "assertionOrContext": "ScopedTemporalShorterReplayTest.java:118",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.TemporalOccurrenceAccountingTest",
+      "group": "archived distance or phase components",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: 21=[1,0,20] fast",
+      "assertionOrContext": "TemporalOccurrenceAccountingTest.java:63",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.InjectiveVariableReplayTest",
+      "group": "particular paid witness, permutation, or source map",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: selected compatible source is q1, not q0",
+      "assertionOrContext": "InjectiveVariableReplayTest.java:119",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.PaidDeclarationShorterReplayTest",
+      "group": "particular paid witness, permutation, or source map",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: source-certified attaining mapping",
+      "assertionOrContext": "PaidDeclarationShorterReplayTest.java:201",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.ClosedTemporalPhaseTest",
+      "group": "archived distance or phase components",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: same inherited binding Fast0 both directions: is.fivefivefive.CanDis.core.CanonicalDistance$DistanceBreakdown@2443abd6 counts=2,2 left=[root normal form := ALL x : one A . scoped(temporal",
+      "assertionOrContext": "ClosedTemporalPhaseTest.java:51",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "The scoped and scopedOnce formulas are equivalent by idempotence. The Fast zero expected by this archived fixture is genuinely absent. Separate direct scalar/native results for original model and both directions are in native-observer/synthetic-*.jsonl."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.DistanceReplayDiagnosticsTest",
+      "group": "archived distance or phase components",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: check 5",
+      "assertionOrContext": "DistanceReplayDiagnosticsTest.java:32",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.CertifiedSingletonCompositionTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: insertion-linked exposure retained",
+      "assertionOrContext": "CertifiedSingletonCompositionTest.java:146",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.FastRewriteParityTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: original certification input text: classified-data/classroom_rl/correct/JciokBgXnkPdk9czg_inv2.als",
+      "assertionOrContext": "FastRewriteParityTest.java:176",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.FastLocalPaidScopeTest",
+      "group": "earlier internal admission or orbit restriction",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: unsupported scope disjoint [root normal form := SOME p : one P . disjoint((QT_FORMULA_SOME2(DECLROOT_disj((ONE T), t, u), ((u in (t . r)) && (p in (t . r)) && (t in T) && (u in T))) || (p",
+      "assertionOrContext": "FastLocalPaidScopeTest.java:321",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.LocalPaidDeclarationShorterReplayTest",
+      "group": "particular paid witness, permutation, or source map",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: archived scoped mapping",
+      "assertionOrContext": "LocalPaidDeclarationShorterReplayTest.java:241",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.LonePaidDeclarationAlignmentTest",
+      "group": "earlier internal admission or orbit restriction",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: unsupported declaration lone disj t,u: Teacher",
+      "assertionOrContext": "LonePaidDeclarationAlignmentTest.java:86",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.LonePaidDeclarationShorterReplayTest",
+      "group": "particular paid witness, permutation, or source map",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: only inner independent SOME coordinates exchange",
+      "assertionOrContext": "LonePaidDeclarationShorterReplayTest.java:189",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.DeclarationOrbitShorterReplayTest",
+      "group": "particular paid witness, permutation, or source map",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: native shorter alpha choice",
+      "assertionOrContext": "DeclarationOrbitShorterReplayTest.java:171",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.OnePaidDeclarationAlignmentTest",
+      "group": "earlier internal admission or orbit restriction",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: genuinely unobserved grouped slot stays unsupported",
+      "assertionOrContext": "OnePaidDeclarationAlignmentTest.java:120",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "Asserts rejection of a grouped slot recorded as unobserved by this fixture."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.BoundVariableShorterReplayTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: source typed original binder order",
+      "assertionOrContext": "BoundVariableShorterReplayTest.java:191",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.FastNestedPaidScopeTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: original endpoints both directions",
+      "assertionOrContext": "FastNestedPaidScopeTest.java:36",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.NestedPaidDeclarationReplayTest",
+      "group": "archived distance or phase components",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: matrix47 with explicit original paid endpoints",
+      "assertionOrContext": "NestedPaidDeclarationReplayTest.java:282",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": "Combined assertion pins the matrix distance to 47 and requires an explicit saved map."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.ScopedPaidAdmissionTest",
+      "group": "earlier internal admission or orbit restriction",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: unsupported disjoint",
+      "assertionOrContext": "ScopedPaidAdmissionTest.java:152",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.UnusedDeclarationCompletionTest",
+      "group": "archived distance or phase components",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: consumer scalar and declaration components coursesOld/both/xJnitBpFv9K74WNvf_inv14.als fast",
+      "assertionOrContext": "UnusedDeclarationCompletionTest.java:107",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    },
+    {
+      "entry": "test_batch_parity_stop.py",
+      "group": "archived distance or phase components",
+      "firstError": "AssertionError: {'schema': 'acgn-parity-incident-v1', 'reason': 'REPLAY_WITNESS_UNAVAILABLE', 'certifiedReplayPlan': None, 'observedAt': '2026-11-27T03:16:58.709212366Z', 'scanMode': 'STRICT_CERTIFIED', 'sourceText': 'var sig File {\\n\\tvar ",
+      "assertionOrContext": "test_batch_parity_stop.py:42",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "The expected STOP / REPLAY_WITNESS_UNAVAILABLE occurred. First failure is a literal archived four-component cost, not an incorrect exit or an invalid native receipt."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.NativeOperationComparisonTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: negative fixture actually retains mixed-multiplicity prefix run",
+      "assertionOrContext": "NativeOperationComparisonTest.java:99",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.core.RetainedExistentialAdmissionTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: actual two-owner original chain",
+      "assertionOrContext": "RetainedExistentialAdmissionTest.java:35",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.RetainedExistentialReplayTest",
+      "group": "archived distance or phase components",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: native scalar unchanged both directions",
+      "assertionOrContext": "RetainedExistentialReplayTest.java:31",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "Current independently matched 85t source scalar is 39. Test next binds the genuinely matched receipt to the explicitly archived 37 vector. Checker rejects this false scalar (RECAPTURED_COMPONENT_DRIFT)."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.MixedRetainedAdmissionReplayTest",
+      "group": "particular paid witness, permutation, or source map",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: actual nonidentity descriptor coordinate bridge",
+      "assertionOrContext": "MixedRetainedAdmissionReplayTest.java:116",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.CertifiedSetEncounterOrderReplayTest",
+      "group": "particular paid witness, permutation, or source map",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: unchanged certified trace order is the original divergence",
+      "assertionOrContext": "CertifiedSetEncounterOrderReplayTest.java:50",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "Asserts pre-projection order of an internal certificate partition was [1,3],[0,2]. Its actual direct source-native comparison is separately tested."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.GuardedJoinOccurrenceReplayTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: distinct proofs share ancestry",
+      "assertionOrContext": "GuardedJoinOccurrenceReplayTest.java:102",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.DisjointPaidDeclarationReplayTest",
+      "group": "earlier internal admission or orbit restriction",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: no incidental new free disjoint permutation route",
+      "assertionOrContext": "DisjointPaidDeclarationReplayTest.java:103",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "Asserts a specific low-level exchange predicate returns false; earlier tests also returned true. Equality of native actions does not decide the semantic admissibility of the internal route."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.EmptyBindingEvidenceReplayTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: reduced some preserves original empty slot",
+      "assertionOrContext": "EmptyBindingEvidenceReplayTest.java:96",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": "Fixture expects an empty recorded SOME slot after normalization."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.GroupedDomainEvidenceReplayTest",
+      "group": "earlier internal admission or orbit restriction",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: no new free disjoint permutation",
+      "assertionOrContext": "GroupedDomainEvidenceReplayTest.java:86",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "Asserts a reflected low-level inter-slot permutation predicate returns false. No semantic admissibility conclusion is inferred from matched native actions."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.ClosedCallPaidReplayTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: old negative actually normalizes to closed max[A]",
+      "assertionOrContext": "ClosedCallPaidReplayTest.java:70",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.RetainedDifferenceDomainReplayTest",
+      "group": "particular paid witness, permutation, or source map",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: same paid path includes zero keep, deletion/insertion and two paid updates",
+      "assertionOrContext": "RetainedDifferenceDomainReplayTest.java:85",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.GroupedRetainedScopeReplayTest",
+      "group": "earlier internal admission or orbit restriction",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: grouped retained orbit remains identity-only",
+      "assertionOrContext": "GroupedRetainedScopeReplayTest.java:49",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "Requires exactly one enumerated internal order."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.BoundCallPaidReplayTest",
+      "group": "archived native UNCHECKABLE expectation now MATCHED",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: unsupported remains unchecked",
+      "assertionOrContext": "BoundCallPaidReplayTest.java:79",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "The comparison reaches MATCHED where a synthetic call expression is expected to be UNCHECKABLE."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.ImportedBoundCallPaidReplayTest",
+      "group": "archived native UNCHECKABLE expectation now MATCHED",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: unsupported remains unchecked",
+      "assertionOrContext": "ImportedBoundCallPaidReplayTest.java:78",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "The parameter-bearing synthetic fixture returns UNCHECKABLE as intended. The next nested call comparison returns MATCHED where the test expects UNCHECKABLE."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.EmptyCallArgumentPaidReplayTest",
+      "group": "archived native UNCHECKABLE expectation now MATCHED",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: retained expression gaps versus checked temporal imported-call owner",
+      "assertionOrContext": "EmptyCallArgumentPaidReplayTest.java:115",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": "Parameter-bearing expression remains unsupported. Nested call comparison produces MATCHED where the fixture expects UNCHECKABLE."
+    },
+    {
+      "entry": "is.fivefivefive.CanDis.GuardedJoinErasureReplayTest",
+      "group": "normalized input or proof shape required by fixture",
+      "firstError": "Exception in thread \"main\" java.lang.AssertionError: D3n2 retains both shared surviving proofs",
+      "assertionOrContext": "GuardedJoinErasureReplayTest.java:111",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "test_diagnostic_parity_scan.py",
+      "group": "archived distance or phase components",
+      "firstError": "AssertionError",
+      "assertionOrContext": "test_diagnostic_parity_scan.py:82",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 1
+      },
+      "note": ""
+    },
+    {
+      "entry": "test_distance_replay_diagnostics.py",
+      "group": "archived distance or phase components",
+      "firstError": "AssertionError: Source-linked local-domain singleton regression",
+      "assertionOrContext": "test_distance_replay_diagnostics.py:66",
+      "rawExit": {
+        "ordered": 1,
+        "frozen": 1,
+        "v33": 0
+      },
+      "note": ""
+    }
+  ],
+  "syntheticScopedTemporalCheck": {
+    "frozen": [
+      {
+        "left": "scoped",
+        "right": "scopedOnce",
+        "fast": 2,
+        "certified": 2,
+        "status": "MATCHED"
+      },
+      {
+        "left": "scopedOnce",
+        "right": "scoped",
+        "fast": 2,
+        "certified": 2,
+        "status": "MATCHED"
+      },
+      {
+        "left": "dependent",
+        "right": "dependentOnce",
+        "fast": 0,
+        "certified": 0,
+        "status": "MATCHED"
+      },
+      {
+        "left": "dependentOnce",
+        "right": "dependent",
+        "fast": 0,
+        "certified": 0,
+        "status": "MATCHED"
+      }
+    ],
+    "ordered": [
+      {
+        "left": "scoped",
+        "right": "scopedOnce",
+        "fast": 2,
+        "certified": 2,
+        "status": "MATCHED"
+      },
+      {
+        "left": "scopedOnce",
+        "right": "scoped",
+        "fast": 2,
+        "certified": 2,
+        "status": "MATCHED"
+      },
+      {
+        "left": "dependent",
+        "right": "dependentOnce",
+        "fast": 0,
+        "certified": 0,
+        "status": "MATCHED"
+      },
+      {
+        "left": "dependentOnce",
+        "right": "dependent",
+        "fast": 0,
+        "certified": 0,
+        "status": "MATCHED"
+      }
+    ],
+    "v33": [
+      {
+        "left": "scoped",
+        "right": "scopedOnce",
+        "fast": 2,
+        "certified": 2,
+        "status": "MATCHED"
+      },
+      {
+        "left": "scopedOnce",
+        "right": "scoped",
+        "fast": 2,
+        "certified": 2,
+        "status": "MATCHED"
+      },
+      {
+        "left": "dependent",
+        "right": "dependentOnce",
+        "fast": 0,
+        "certified": 0,
+        "status": "MATCHED"
+      },
+      {
+        "left": "dependentOnce",
+        "right": "dependent",
+        "fast": 0,
+        "certified": 0,
+        "status": "MATCHED"
+      }
+    ]
+  },
+  "sourceVersions": {
+    "releasedV33": {
+      "commit": "d5c0c2a07504d53b13b28c61e9e64768c37eb984",
+      "jarSha256": "aa497d2737078f75100c261cdf30d688df8405221477a622e107419d908d43d2"
+    },
+    "thirdMeasuredRun": {
+      "commit": "239fddc01a67477d222c31a6084702ce72083859",
+      "jarSha256": "3cfd40fed17536a9b4ffcb295ff5595a231f7361c148db4d9b4ac4db0461b306"
+    },
+    "orderedPreflight": {
+      "baseCommit": "239fddc01a67477d222c31a6084702ce72083859",
+      "patchSha256": "9955f820efa36de43d04266803e155575e73ae3c731c5964a7e22eb4e021a1d3",
+      "focusedTestAmendmentSha256": "02ef489617b9a95e7b18ef097fb717de7cfbfaa4ce6954ed9c6743efdba48b37",
+      "overlayManifestSha256": "902074c963cc700af961d951f7ee49040dfeb1c9aec1064d1a61273a0fbe8685"
+    }
+  },
+  "inputAndAuditDigests": {
+    "nativeSourceCorpusManifest": "95166d2483df76eb1c10f49929d47da6d95ff43a8aaeeb1caa525c4be2b99b5b",
+    "nativeSourceCorpus138Replays": "9206a8ae4652cb4c7b11cdc727d6b3a3d485492f89e94b77c6e586c6511cc2cf",
+    "allReachedNativeResultConstructions": "5fa39f84c3644492d5562162f874ea2d7d986c15e2886c31a89de1bc8b0973cd",
+    "externalNonMutatingObserver": "28aaf44c06ed971111ebe62a8e74058b852e8fe0f4760d68883075bd31c6bd54",
+    "83EntryPointsRawExits": {
+      "ordered": "ddf6ff25ee4260b8801ba4ddbd134fb117caee78ea6809b821c8f219ff007a88",
+      "239fddc0": "ddf6ff25ee4260b8801ba4ddbd134fb117caee78ea6809b821c8f219ff007a88",
+      "releasedV33": "37c039da1faf30528ba79c2a5204bba0d96ab272a9f27d18d5778a791db3d8d6"
+    }
+  }
+}

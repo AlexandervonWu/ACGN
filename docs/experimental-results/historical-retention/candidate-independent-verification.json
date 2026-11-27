@@ -1,0 +1,162 @@
+{
+  "revision": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "jarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "repositoryCleanAtStartAndEnd": true,
+  "source": {
+    "commit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+    "jarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+    "sourceFiles": 628,
+    "classFiles": 1575,
+    "identicalClassfiles": true,
+    "sortedClassfileManifestSha256": "f8017e93cf94003ecd74e1afe4a75198fa337c3249fccd0aa34c93f154a4b159",
+    "compiler": "javac 17.0.21.1"
+  },
+  "lean": {
+    "revision": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+    "lean": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+    "sourceSha256": {
+      "docs/section3-repair-audit/formal/HistoricalCVPairs.lean": "1ff0968f4479c4c58867798e1bcf5090964c72526ee46d9a15360b5ad3c1416e",
+      "docs/section3-repair-audit/formal/Phase5SourceRules.lean": "b6d9d8a152666dacf057f3b6994079c4c5a844e4581492cc906dc56d77accbb8",
+      "scripts/check_historical_cv_proofs.py": "f03bee9c8e0fec21beaaf118355406505d2243a9a66c57617de002dd2edd4ed7"
+    },
+    "rulesChecked": 20,
+    "sourceMatchedCvPairs": 7,
+    "sourceCheck": "Matched all seven CV Lean goals to the hash-checked original predicates.",
+    "axiomInventory": [
+      "'universal_filtered_clause' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'universal_filtered_absence' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'bound_signature_premise' does not depend on any axioms",
+      "'project_independent_singleton_witness' does not depend on any axioms",
+      "'project_no_independent_singleton_witness' depends on axioms: [propext, Classical.choice, Quot.sound]",
+      "'independent_universal_ranges_commute' does not depend on any axioms",
+      "'independent_existential_ranges_commute' does not depend on any axioms",
+      "'existential_premise_to_universal' does not depend on any axioms",
+      "'shared_universal_witness_condition' does not depend on any axioms",
+      "'common_universal_witness_conjunct' does not depend on any axioms",
+      "'unary_image_subset_of_range' does not depend on any axioms",
+      "'existential_guarded_singleton_subdomain' does not depend on any axioms",
+      "'guarded_singleton_intersection' does not depend on any axioms",
+      "'universal_slot_conjuncts' does not depend on any axioms",
+      "'universal_same_domain_exchange' does not depend on any axioms",
+      "'universal_no_tuple_witness' does not depend on any axioms",
+      "'existential_guarded_singleton_intersection' does not depend on any axioms",
+      "'no_relation_endpoints' does not depend on any axioms",
+      "'no_adjacent_incoming_endpoints' does not depend on any axioms",
+      "'redundant_edge_endpoint' does not depend on any axioms",
+      "'HistoricalCVPairs.pair_1484_1488' does not depend on any axioms",
+      "'HistoricalCVPairs.pair_1484_1489' does not depend on any axioms",
+      "'HistoricalCVPairs.pair_1486_1488' does not depend on any axioms",
+      "'HistoricalCVPairs.pair_1486_1489' does not depend on any axioms",
+      "'HistoricalCVPairs.pair_1487_1488' does not depend on any axioms",
+      "'HistoricalCVPairs.pair_1487_1489' does not depend on any axioms",
+      "'HistoricalCVPairs.pair_1524_1526' does not depend on any axioms"
+    ]
+  },
+  "witnessLean": {
+    "revision": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+    "source": "docs/section3-repair-audit/formal/SurvivorWitnessOrder.lean",
+    "sourceSha256": "5646fd1a5bc97850381bc88883b6dfa9d3b168a15b183fab66049f09ef3fcb8c",
+    "lean": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+    "axiomInventory": [
+      "'SurvivorWitnessOrder.same_key_same_orders' depends on axioms: [propext]",
+      "'SurvivorWitnessOrder.first_survivor_in_116_case' depends on axioms: [propext]",
+      "'SurvivorWitnessOrder.reordered_minima' depends on axioms: [propext]",
+      "'SurvivorWitnessOrder.completion_cost' depends on axioms: [propext]",
+      "'SurvivorWitnessOrder.ordinary_witness_owns_tie' depends on axioms: [propext]",
+      "'SurvivorWitnessOrder.selected_witness_replays' does not depend on any axioms"
+    ]
+  },
+  "boundedCi": {
+    "exit": 0,
+    "RunningLines": 70
+  },
+  "stratified": {
+    "jarLabel": "final",
+    "rows": 181,
+    "population": 1894168,
+    "pools": 181,
+    "emptyPools": [],
+    "statusCounts": {
+      "MATCHED": 181
+    },
+    "reasons": [
+      {
+        "status": "MATCHED",
+        "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+        "rows": 181
+      }
+    ],
+    "failures": [],
+    "times": {
+      "startUtc": "2026-11-27T03:44:24.275360+00:00",
+      "endUtc": "2026-11-27T03:55:45.137528+00:00",
+      "minSeconds": 1.317597,
+      "medianSeconds": 6.777983,
+      "maxSeconds": 31.371225
+    },
+    "evidenceModes": {
+      "actions": 143,
+      "orderedBlocks": 38
+    },
+    "inputHashes": {
+      "/home/augustus/.local/state/acgn-experiments/historical-retention-trace-inlpdlhb/preflight/stratified-ranking-traces/seed.txt": "2d0e9682db29acd667958c941b54b8386d861f6e58f6b3faa4235a24f16cb18f",
+      "/home/augustus/.local/state/acgn-experiments/historical-retention-trace-inlpdlhb/preflight/stratified-ranking-traces/sample.jsonl": "99c40cedc811336c9780ec198a15b28021c39844d80f688fa48b879ff7bcb33e",
+      "/home/augustus/.local/state/acgn-experiments/historical-retention-trace-inlpdlhb/preflight/stratified-ranking-traces/select.py": "549cf53d07f9147ed2255c29146ee58fed7d31c263ffa7a65894aed4dbf6c24d",
+      "/home/augustus/.local/state/acgn-experiments/historical-retention-trace-inlpdlhb/preflight/stratified-ranking-traces/replay.py": "1e9bc19aef7419bac6a887e83e9537174a5f514073be013b5723f01e3b5c21d1",
+      "/home/augustus/.local/state/acgn-experiments/historical-retention-trace-inlpdlhb/preflight/stratified-ranking-traces/summarize_traces.py": "97efc8eac1d0041a45d53718c9e80b1da00ea98c2d67921c0608368f83ff34b9",
+      "/home/augustus/.local/state/acgn-experiments/historical-retention-trace-inlpdlhb/preflight/stratified-ranking-traces/driver/ReferenceTrace.java": "ae1f26b77b2b797a64d3fc2854a4cd8b216ac74621df3933c381f4832f7add5b",
+      "/home/augustus/.local/state/acgn-experiments/historical-retention-trace-inlpdlhb/run/artifacts/build/acgn-experiments.jar": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e"
+    },
+    "rowsSha256": "b2acda384e1c50007f5c69a58dc7a9c2a32f06cebe0806622911fb054114a515"
+  },
+  "commit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "gitStatusIncludingUntracked": "",
+  "checks": {
+    "candidate-bounded-ci": {
+      "exit": 0,
+      "started": "2026-11-27T03:44:23.060614+00:00",
+      "finished": "2026-11-27T04:07:32.972755+00:00",
+      "logSha256": "9ba324d9cbe8b1c93c6111f3f3cc89f43a55a066b9e84f294d5003a4d9c86bdb"
+    },
+    "candidate-final-lean": {
+      "exit": 0,
+      "started": "2026-11-27T03:46:25.207833+00:00",
+      "finished": "2026-11-27T03:46:57.005783+00:00",
+      "logSha256": "8868fecfec6b19e4c2ecdcc1cc621a550d229087f74785451c52e3998c234cc7"
+    },
+    "candidate-reproducible-build": {
+      "exit": 0,
+      "started": "2026-11-27T03:44:23.060429+00:00",
+      "finished": "2026-11-27T03:46:25.207670+00:00",
+      "logSha256": "4016296236e81b7ab6d20ce289d654295099eff35efe5b3cd67dea0b4ecf7dac"
+    },
+    "candidate-stratified-native": {
+      "exit": 0,
+      "started": "2026-11-27T03:44:23.060794+00:00",
+      "finished": "2026-11-27T03:55:45.389698+00:00",
+      "logSha256": "ecbd9ffc66ddc39675aab4a3c70b6b22ce74318ebccd980c7824af75a851bd4b"
+    },
+    "candidate-survivor-lean": {
+      "exit": 0,
+      "started": "2026-11-27T03:46:57.005953+00:00",
+      "finished": "2026-11-27T03:47:01.760749+00:00",
+      "logSha256": "89a07757aba44b5e83ebc5bfcf4ee8cfa056d1439f88bab4eb60625c18ded637"
+    },
+    "candidate-witness-model": {
+      "exit": 0,
+      "started": "2026-11-27T03:47:01.760989+00:00",
+      "finished": "2026-11-27T03:47:06.212018+00:00",
+      "logSha256": "5ceec1abd0339589926452c0ac9c04eca6d2c9cdf282cb54afac05ff84943b9b"
+    }
+  },
+  "measuredJarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "rebuildReceiptSha256": "76dd830b4ad37551bdb4fd5170aa9280f8af6041c4a68c7d8a49488aad7118ea",
+  "leanReceiptSha256": "d4e3309d6e6979edf80d30e6ba2aacb180e1917538fb9eb7cc78ee9875b06f2e",
+  "witnessLeanReceiptSha256": "e8e466a6e807290e4b615fd7089194fb35089cdf1ad2c870b445db9659984867",
+  "stratifiedReceiptSha256": "c338219692645f6b88b683b17f65ea64689c372a58b6dd7531ee55d66f1cac0c",
+  "oleanSha256": {
+    "HistoricalCVPairs.olean": "2be0817964cc9522f94aee424f6c0d7c296b8ba4bdb24ccfb32c054d44ff04b0",
+    "Phase5SourceRules.olean": "3c49f58d694e9862ec85b8403941655667af1df8b66c2e12ff0c29da5228fe8a",
+    "SurvivorWitnessOrder.olean": "712831cd98c752b2b701cfc8ddb43d44d691941632fff0a14d167a183801f3fd"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "references": "docs/experimental-results/2026-11-25/references.jsonl.gz",
+  "design": "Complete original-Slotted structural zero pairs absent from both v3.3 structural paths, matched by frozen reference ID; same Alloy command, varying overall scope.",
+  "scopes": [
+    0,
+    4,
+    5
+  ],
+  "engine": "v3.3",
+  "sourceTree": "d5c0c2a07504d53b13b28c61e9e64768c37eb984",
+  "originalSlottedPairs": 781,
+  "attempts": 2343,
+  "UNSAT": 2343,
+  "SAT": 0,
+  "timeout": 0,
+  "errors": 0,
+  "scopeSweepSha256": "e2232f15e51a2dcc790d826a608d77583b92ed625a2c31e5b10196d464f569e7",
+  "sourceChallengesSha256": "8fb75932cd82cb4cb940e88afdd3e2324e09923b256dfc612e5d87136d894d91",
+  "driverSha256": "e51ad357fabbf3a8187515906a1f262a7ab8c56981e2acfc091c595f31109416"
+}

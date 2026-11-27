@@ -1,0 +1,10 @@
+{
+  "runId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "git": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "observedZeroPairs": 19271,
+  "observedSelectedPaidPairs": 4138,
+  "referenceFile": "correct-pool-pairs.jsonl.gz",
+  "referenceLedgerSha256": "da470f79361d72e8a9e1e6feb8e68a4658c0b6152b8f89cb8ec61c49f48fccb4",
+  "paidFile": "ranking-scores.jsonl.gz",
+  "paidLedgerSha256": "5ca73249a44b97f9290a4bd12923802c808fddbf168564daaf8c04d373b14778"
+}

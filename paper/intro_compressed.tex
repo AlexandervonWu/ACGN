@@ -82,22 +82,13 @@ equality fails because the predicate is genuinely overconstrained, and
 \CanDis{} computes a positive structural edit distance over its normalized
 repair projection to locate nearby correct solutions.
 
-In the \texttt{v3.3} study of 66,080 Alloy4Fun files, both \CanDis{}
-rewrite paths recognized 4,499 of the 19,212 correct distinct-AST pairs,
-including all 2,228 original slotted zeros. They produced no incorrect zero
-among 42,386 labeled incorrect pairs. On complete invariant truth pools for
-those incorrect predicates, mean nearest distance was 12.267 for raw
-ASTs and 11.477 for \CanDis{}. On 5,500 controlled transformations, the
-slotted baseline and \CanDis{} recognized 5,500
-and 5,500 pairs, respectively. The historical
-540-predicate scaling grid isolates the cost of searching typed slot
-permutations. Certificate integration raises natural-ablation wall time
-from 26.683\,s to 398.186\,s.
-
-A further question arises when two correct submissions have different keys.
-A junction in the train-station exercise can be described as having more than
-one incoming track or as having neither zero nor one incoming track. Those
-conditions need not agree if the count overflows. Instead of installing an
-unconditional equation, the source comparison checks the rule against the
-actual Alloy command. Across 181 invariant pools, the 4,496 distinct raw ASTs yield 2,016 structural forms and 1,942 fixed-command components
-(Section~\ref{sec:scoped-pools}).
+In a supervised run over 66,080 Alloy4Fun files, both \CanDis{} paths
+recognized 5,137 of 19,212 correct distinct-AST student--oracle
+pairs. They retained all 2,228 original Slotted zeros, recognized
+2,909 additional pairs, and assigned positive distances to all
+42,386 incorrect pairs. Across 181 invariant pools, the
+4,496 distinct correct reference ASTs reduced to 1,816 structural
+forms. Adding equalities verified under the exercise commands connected these
+forms into 1,743 components (Section~\ref{sec:scoped-pools}).
+For incorrect submissions, the mean distance to the nearest correct reference
+was 12.267 raw-AST edits or 11.478 edits under \CanDis{}.

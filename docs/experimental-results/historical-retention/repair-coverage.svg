@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="620" viewBox="0 0 980 620">
+<rect width="100%" height="100%" fill="white" />
+<text x="490" y="34" text-anchor="middle" font-family="sans-serif" font-size="20">Nearest-reference distance coverage</text>
+<line x1="88" y1="534" x2="938" y2="534" stroke="#222" stroke-width="1" />
+<line x1="88" y1="70" x2="88" y2="534" stroke="#222" stroke-width="1" />
+<line x1="88" y1="534.000000" x2="938" y2="534.000000" stroke="#e8e8e8" />
+<line x1="83" y1="534.000000" x2="88" y2="534.000000" stroke="#222" />
+<text x="78" y="538.000000" text-anchor="end" font-family="sans-serif" font-size="17">0%</text>
+<line x1="88" y1="441.200000" x2="938" y2="441.200000" stroke="#e8e8e8" />
+<line x1="83" y1="441.200000" x2="88" y2="441.200000" stroke="#222" />
+<text x="78" y="445.200000" text-anchor="end" font-family="sans-serif" font-size="17">20%</text>
+<line x1="88" y1="348.400000" x2="938" y2="348.400000" stroke="#e8e8e8" />
+<line x1="83" y1="348.400000" x2="88" y2="348.400000" stroke="#222" />
+<text x="78" y="352.400000" text-anchor="end" font-family="sans-serif" font-size="17">40%</text>
+<line x1="88" y1="255.600000" x2="938" y2="255.600000" stroke="#e8e8e8" />
+<line x1="83" y1="255.600000" x2="88" y2="255.600000" stroke="#222" />
+<text x="78" y="259.600000" text-anchor="end" font-family="sans-serif" font-size="17">60%</text>
+<line x1="88" y1="162.800000" x2="938" y2="162.800000" stroke="#e8e8e8" />
+<line x1="83" y1="162.800000" x2="88" y2="162.800000" stroke="#222" />
+<text x="78" y="166.800000" text-anchor="end" font-family="sans-serif" font-size="17">80%</text>
+<line x1="88" y1="70.000000" x2="938" y2="70.000000" stroke="#e8e8e8" />
+<line x1="83" y1="70.000000" x2="88" y2="70.000000" stroke="#222" />
+<text x="78" y="74.000000" text-anchor="end" font-family="sans-serif" font-size="17">100%</text>
+<line x1="88.000000" y1="70" x2="88.000000" y2="534" stroke="#f0f0f0" />
+<line x1="88.000000" y1="534" x2="88.000000" y2="539" stroke="#222" />
+<text x="88.000000" y="558" text-anchor="middle" font-family="sans-serif" font-size="17">0</text>
+<line x1="258.000000" y1="70" x2="258.000000" y2="534" stroke="#f0f0f0" />
+<line x1="258.000000" y1="534" x2="258.000000" y2="539" stroke="#222" />
+<text x="258.000000" y="558" text-anchor="middle" font-family="sans-serif" font-size="17">10</text>
+<line x1="428.000000" y1="70" x2="428.000000" y2="534" stroke="#f0f0f0" />
+<line x1="428.000000" y1="534" x2="428.000000" y2="539" stroke="#222" />
+<text x="428.000000" y="558" text-anchor="middle" font-family="sans-serif" font-size="17">20</text>
+<line x1="598.000000" y1="70" x2="598.000000" y2="534" stroke="#f0f0f0" />
+<line x1="598.000000" y1="534" x2="598.000000" y2="539" stroke="#222" />
+<text x="598.000000" y="558" text-anchor="middle" font-family="sans-serif" font-size="17">30</text>
+<line x1="768.000000" y1="70" x2="768.000000" y2="534" stroke="#f0f0f0" />
+<line x1="768.000000" y1="534" x2="768.000000" y2="539" stroke="#222" />
+<text x="768.000000" y="558" text-anchor="middle" font-family="sans-serif" font-size="17">40</text>
+<line x1="938.000000" y1="70" x2="938.000000" y2="534" stroke="#f0f0f0" />
+<line x1="938.000000" y1="534" x2="938.000000" y2="539" stroke="#222" />
+<text x="938.000000" y="558" text-anchor="middle" font-family="sans-serif" font-size="17">50</text>
+<path d="M 88.000000 534.000000 L 105.000000 494.973906 L 122.000000 469.467371 L 139.000000 444.223564 L 156.000000 416.418157 L 173.000000 392.619355 L 190.000000 368.557826 L 207.000000 349.083093 L 224.000000 327.024867 L 241.000000 302.810079 L 258.000000 281.266362 L 275.000000 263.039589 L 292.000000 243.499174 L 309.000000 227.297598 L 326.000000 214.161185 L 343.000000 198.922946 L 360.000000 187.242486 L 377.000000 177.050819 L 394.000000 167.515972 L 411.000000 158.813099 L 428.000000 149.770868 L 445.000000 141.363563 L 462.000000 133.339405 L 479.000000 126.793092 L 496.000000 120.958335 L 513.000000 115.189261 L 530.000000 110.405417 L 547.000000 107.208890 L 564.000000 104.176568 L 581.000000 101.604020 L 598.000000 98.932950 L 615.000000 96.349455 L 632.000000 94.192894 L 649.000000 92.167697 L 666.000000 89.660831 L 683.000000 87.953098 L 700.000000 86.409569 L 717.000000 84.920776 L 734.000000 83.421035 L 751.000000 82.129288 L 768.000000 81.155004 L 785.000000 80.093144 L 802.000000 79.370641 L 819.000000 78.746662 L 836.000000 77.684802 L 853.000000 77.279762 L 870.000000 76.841882 L 887.000000 76.425895 L 904.000000 76.108432 L 921.000000 75.714340 L 938.000000 75.353088" fill="none" stroke="#ff7f0e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="105.000000" cy="494.973906" r="5" fill="#ff7f0e"><title>Raw AST, radius 1: 3,565 of 42,386</title></circle>
+<circle cx="122.000000" cy="469.467371" r="5" fill="#ff7f0e"><title>Raw AST, radius 2: 5,895 of 42,386</title></circle>
+<circle cx="173.000000" cy="392.619355" r="5" fill="#ff7f0e"><title>Raw AST, radius 5: 12,915 of 42,386</title></circle>
+<circle cx="258.000000" cy="281.266362" r="5" fill="#ff7f0e"><title>Raw AST, radius 10: 23,087 of 42,386</title></circle>
+<path d="M 88.000000 534.000000 L 105.000000 516.222054 L 122.000000 488.942104 L 139.000000 454.119662 L 156.000000 426.620771 L 173.000000 396.319445 L 190.000000 370.112301 L 207.000000 340.413061 L 224.000000 312.925117 L 241.000000 284.462889 L 258.000000 259.930637 L 275.000000 239.426886 L 292.000000 222.831218 L 309.000000 208.195064 L 326.000000 194.883499 L 343.000000 182.940310 L 360.000000 170.219884 L 377.000000 161.735951 L 394.000000 151.029774 L 411.000000 141.626292 L 428.000000 132.080498 L 445.000000 125.829755 L 462.000000 120.870759 L 479.000000 115.605247 L 496.000000 111.500118 L 513.000000 106.935214 L 530.000000 102.600198 L 547.000000 98.845373 L 564.000000 95.933469 L 581.000000 93.284292 L 598.000000 91.248148 L 615.000000 89.222951 L 632.000000 87.909310 L 649.000000 86.705138 L 666.000000 85.511914 L 683.000000 84.099750 L 700.000000 82.775162 L 717.000000 81.877507 L 734.000000 80.859435 L 751.000000 79.917992 L 768.000000 78.615298 L 785.000000 77.673855 L 802.000000 77.082716 L 819.000000 76.524418 L 836.000000 75.944227 L 853.000000 75.681499 L 870.000000 75.188883 L 887.000000 74.740056 L 904.000000 74.433539 L 921.000000 73.875242 L 938.000000 73.503043" fill="none" stroke="#1f77b4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="105.000000" cy="516.222054" r="5" fill="#1f77b4"><title>CanDis, radius 1: 1,624 of 42,386</title></circle>
+<circle cx="122.000000" cy="488.942104" r="5" fill="#1f77b4"><title>CanDis, radius 2: 4,116 of 42,386</title></circle>
+<circle cx="173.000000" cy="396.319445" r="5" fill="#1f77b4"><title>CanDis, radius 5: 12,577 of 42,386</title></circle>
+<circle cx="258.000000" cy="259.930637" r="5" fill="#1f77b4"><title>CanDis, radius 10: 25,036 of 42,386</title></circle>
+<line x1="660" y1="82" x2="684" y2="82" stroke="#ff7f0e" stroke-width="3" transform="translate(155 395)" />
+<circle cx="672" cy="82" r="4" fill="#ff7f0e" transform="translate(155 395)" />
+<text x="692" y="86" font-family="sans-serif" font-size="17" fill="#333" transform="translate(155 395)">Raw AST</text>
+<line x1="660" y1="104" x2="684" y2="104" stroke="#1f77b4" stroke-width="3" transform="translate(155 395)" />
+<circle cx="672" cy="104" r="4" fill="#1f77b4" transform="translate(155 395)" />
+<text x="692" y="108" font-family="sans-serif" font-size="17" fill="#333" transform="translate(155 395)">CanDis</text>
+<text x="513" y="594" text-anchor="middle" font-family="sans-serif" font-size="18">Absolute edit-distance repair radius</text>
+<text x="22" y="302" transform="rotate(-90 22 302)" text-anchor="middle" font-family="sans-serif" font-size="18">Incorrect predicates with a reference within radius</text>
+</svg>

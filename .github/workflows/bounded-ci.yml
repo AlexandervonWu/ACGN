@@ -54,6 +54,8 @@ jobs:
         run: python3 -B scripts/run_third_obligation_repairs.py /tmp/acgn-third-five
       - name: Compile and run bounded Java tests
         run: ./scripts/run_bounded_ci_java_tests.sh
+      - name: Check the latest full-run ledger against historical pair coverage
+        run: python3 -B scripts/verify_historical_pair_coverage.py --latest
       - name: Run clean producer and standalone verifier harness
         run: ./scripts/run_certificate_bundle_writer_tests.sh /tmp/acgn-certificate-ci
 

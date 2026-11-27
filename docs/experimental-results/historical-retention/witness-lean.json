@@ -1,0 +1,14 @@
+{
+  "source": "docs/section3-repair-audit/formal/SurvivorWitnessOrder.lean",
+  "sourceSha256": "5646fd1a5bc97850381bc88883b6dfa9d3b168a15b183fab66049f09ef3fcb8c",
+  "lean": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+  "measuredCommit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "axiomInventory": [
+    "'SurvivorWitnessOrder.same_key_same_orders' depends on axioms: [propext]",
+    "'SurvivorWitnessOrder.first_survivor_in_116_case' depends on axioms: [propext]",
+    "'SurvivorWitnessOrder.reordered_minima' depends on axioms: [propext]",
+    "'SurvivorWitnessOrder.completion_cost' depends on axioms: [propext]",
+    "'SurvivorWitnessOrder.ordinary_witness_owns_tie' depends on axioms: [propext]",
+    "'SurvivorWitnessOrder.selected_witness_replays' does not depend on any axioms"
+  ]
+}
