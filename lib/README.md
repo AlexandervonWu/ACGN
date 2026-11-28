@@ -29,6 +29,12 @@ availability. Compile all of `src`, and put compiled classes **before** `lib/*`
 on the runtime classpath, as the supplied runners do. Do not use the old parser
 binary alone against the new runtime.
 
+The Pardinus 6.2.0 source overlay in `src/kodkod/engine/fol2sat/NestedSet.java`
+gives each Boolean translator its own mutable set of variables. The bundled
+implementation shared one root across concurrent Alloy solves. The overlay
+preserves child-scope traversal and the public API. The Apache 2.0 license is
+included in `alloy.jar` at `META-INF/LICENSE.txt`.
+
 `DependencyCompatibilityTest` checks module, predicate, function and assertion
 conversion, temporal SAT/check execution, solver lookup, and duplicate dependency
 classes. The dependency changes do not update archived experiment JARs or results.

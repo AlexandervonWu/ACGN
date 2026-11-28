@@ -5,16 +5,40 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import is.fivefivefive.CanDis.augmentation.AlloyEquivalenceValidator.ExecutionOptions;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import kodkod.engine.fol2sat.NestedSet;
 import kodkod.engine.satlab.SATFactory;
 
 /** Run in a fresh JVM: concurrent rewards must not discover unrelated solvers. */
 public final class RewarderConcurrencyTest {
+    private static void checkTranslatorScopes() {
+        NestedSet<String> first = NestedSet.empty();
+        first.add("outer");
+        NestedSet<String> second = NestedSet.empty();
+        if (second.iterator().hasNext() || first.parent() != null || second.parent() != null) {
+            throw new AssertionError("Each solver translation must start with an empty root scope");
+        }
+        NestedSet<String> child = first.createNested();
+        child.addAll(List.of("inner", "inner"));
+        var contents = new ArrayList<String>();
+        child.forEach(contents::add);
+        if (child.parent() != first || !contents.equals(List.of("inner"))) {
+            throw new AssertionError("A child scope must retain only its own variable set");
+        }
+        contents.clear();
+        first.forEach(contents::add);
+        if (!contents.equals(List.of("outer")) || second.iterator().hasNext()) {
+            throw new AssertionError("Adding inner variables changed another solver scope");
+        }
+    }
+
     public static void main(String[] args) throws Exception {
+        checkTranslatorScopes();
         if (!SATFactory.DEFAULT.id().equals("sat4j")
                 || SATFactory.DEFAULT.getLibraries().length != 0) {
             throw new AssertionError("Reward solver must remain pure-Java SAT4J");
