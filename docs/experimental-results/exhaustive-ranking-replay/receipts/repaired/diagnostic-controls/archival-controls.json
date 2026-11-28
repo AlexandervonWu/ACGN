@@ -1,0 +1,122 @@
+{
+  "baselineCommit": "3fa9d25d8e1d708dd948b0442b4285424a0ef39b",
+  "candidateCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "probeSHA": "705093dd6cc4838f83ac2520f04be52b5207eb2c5a7874f60e10212f543ee960",
+  "harnesses": {
+    "FastLocalPaidScopeTest": "9f097c6b67d008ea3a15f7acdcc2758d6428caa145fd5c897ca207230360e6f1",
+    "RetainedPaidCompletionTest": "574720a4db93500b03035cbd42632d3a0a4fe15ba90bfe33faa2a5a25904de20"
+  },
+  "sourceSHA": "0ab09e9058636fe784649c922f65b755a3e8e9e165a58279e8361716105a93d3",
+  "runs": [
+    {
+      "stage": "candidate-04",
+      "jarSHA": "37daeb477538fed3f13c3c521125d49ae01d70dfa89666d3bae40984428b4f82",
+      "test": "FastLocalPaidScopeTest",
+      "exit": 1,
+      "assertion": "Exception in thread \"main\" java.lang.AssertionError: unsupported scope disjoint [root normal form := SOME p : one P . disjoint((QT_FORMULA_SOME2(DECLROOT_disj((ONE T), t, u), ((u in (t . r)) && (p in (t . r)) && (t in T) && (u in T))) || (p !in (p . r))))]",
+      "facts": [],
+      "log": "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/diagnosis/completed-original/archival-05/candidate-04-FastLocalPaidScopeTest.log",
+      "logSHA": "bcd99b88e0b5f2d92b57ef00c4a70df3c8a0d23d4e6b2cd5230bdaf13e2a551d"
+    },
+    {
+      "stage": "candidate-04",
+      "jarSHA": "37daeb477538fed3f13c3c521125d49ae01d70dfa89666d3bae40984428b4f82",
+      "test": "RetainedPaidCompletionTest",
+      "exit": 1,
+      "assertion": "Exception in thread \"main\" java.lang.AssertionError: no scalar candidate expansion or fabricated selected paid map",
+      "facts": [],
+      "log": "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/diagnosis/completed-original/archival-05/candidate-04-RetainedPaidCompletionTest.log",
+      "logSHA": "6599e5fdcb08a14475c7028841e2ee3e8cfaa4ef671770ac735f2167144ff8c4"
+    },
+    {
+      "stage": "candidate-04",
+      "jarSHA": "37daeb477538fed3f13c3c521125d49ae01d70dfa89666d3bae40984428b4f82",
+      "test": "ArchiveFacts",
+      "exit": 0,
+      "assertion": null,
+      "facts": [
+        {
+          "fixedChoiceChecked": true,
+          "endpointChecked": true,
+          "publicFast": 27,
+          "paid": {
+            "_q1": "_q0"
+          },
+          "ordinaryDirect": false,
+          "nativeReason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+          "actualNative": "MATCHED",
+          "direction": "forward"
+        },
+        {
+          "fixedChoiceChecked": true,
+          "endpointChecked": true,
+          "publicFast": 27,
+          "paid": {
+            "_q0": "_q1"
+          },
+          "ordinaryDirect": false,
+          "nativeReason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+          "actualNative": "MATCHED",
+          "direction": "reverse"
+        }
+      ],
+      "log": "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/diagnosis/completed-original/archival-05/candidate-04-ArchiveFacts.log",
+      "logSHA": "102844a25683162e2aaaf6dd197c5fb91496a662b41b6bfb135a2b17aee64a36"
+    },
+    {
+      "stage": "final-05",
+      "jarSHA": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+      "test": "FastLocalPaidScopeTest",
+      "exit": 1,
+      "assertion": "Exception in thread \"main\" java.lang.AssertionError: unsupported scope disjoint [root normal form := SOME p : one P . disjoint((QT_FORMULA_SOME2(DECLROOT_disj((ONE T), t, u), ((u in (t . r)) && (p in (t . r)) && (t in T) && (u in T))) || (p !in (p . r))))]",
+      "facts": [],
+      "log": "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/diagnosis/completed-original/archival-05/final-05-FastLocalPaidScopeTest.log",
+      "logSHA": "bcd99b88e0b5f2d92b57ef00c4a70df3c8a0d23d4e6b2cd5230bdaf13e2a551d"
+    },
+    {
+      "stage": "final-05",
+      "jarSHA": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+      "test": "RetainedPaidCompletionTest",
+      "exit": 1,
+      "assertion": "Exception in thread \"main\" java.lang.AssertionError: no scalar candidate expansion or fabricated selected paid map",
+      "facts": [],
+      "log": "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/diagnosis/completed-original/archival-05/final-05-RetainedPaidCompletionTest.log",
+      "logSHA": "6599e5fdcb08a14475c7028841e2ee3e8cfaa4ef671770ac735f2167144ff8c4"
+    },
+    {
+      "stage": "final-05",
+      "jarSHA": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+      "test": "ArchiveFacts",
+      "exit": 0,
+      "assertion": null,
+      "facts": [
+        {
+          "fixedChoiceChecked": true,
+          "endpointChecked": true,
+          "publicFast": 27,
+          "paid": {
+            "_q1": "_q0"
+          },
+          "ordinaryDirect": false,
+          "nativeReason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+          "actualNative": "MATCHED",
+          "direction": "forward"
+        },
+        {
+          "fixedChoiceChecked": true,
+          "endpointChecked": true,
+          "publicFast": 27,
+          "paid": {
+            "_q0": "_q1"
+          },
+          "ordinaryDirect": false,
+          "nativeReason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+          "actualNative": "MATCHED",
+          "direction": "reverse"
+        }
+      ],
+      "log": "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/diagnosis/completed-original/archival-05/final-05-ArchiveFacts.log",
+      "logSHA": "3aceb894ee7bb5a980beccf980d7c3a5b081b552aff43471c40ed3bfac065f11"
+    }
+  ]
+}

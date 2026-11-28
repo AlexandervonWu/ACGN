@@ -1,0 +1,25 @@
+{
+  "files": {
+    "cohort/attest_closure.py": "54088ca4c5db01b1e30e02531a73371be9de14fc7b35df5a72589cda169674f2",
+    "cohort/auditor-identity.json": "e9cc9add2b3f242c7ac84ad4803dbf5c525cc528c856500cd402a37fda2a3554",
+    "cohort/verify_inputs.py": "5c711fd72a34e6c5b37fedcc79d8f38365c04df8f9525601bc71a09bd4a45a2d",
+    "final-handoff/calibration.log": "88fea49af325ec935ac4be79097c702a31bec365fffd9eeb060bc4f4b39b1a93",
+    "final-handoff/handoff.py": "82a4075be5cfd4a377f7acf3a5283d81d2196447c31cd397a96037696540115b",
+    "final-handoff/test_handoff.py": "565c2d9bcd55ce1b07eab393b40a2d256d457620da8fd5dc296ce103cbb8537b",
+    "frozen/docs/experimental-results/historical-retention/paid-rank-witnesses-floor.jsonl": "10c66cfbb1dc54736db337da524936eca5e8b758ad67928405ce96b14d1ed915",
+    "packaging/compare_censuses.py": "ce63bf3dd9b9dba9adc98de3a475defa89ae8c44157dd5bb784956a4b26f5358",
+    "packaging/replay_regressions.py": "6b18bc2bb664dc2e67fdd90eb47fe0962a510a0d5d10975561440203a1d4cb62",
+    "portable-tiled/ExhaustiveNativeReplay.java": "4e6c6fce1ef83b1dddedb96840b8683e14dba3a4a180f65180a37fe9a30ecc6e",
+    "portable-tiled/launch.sh": "0f8e6263ceeeeae8eda0161f584c70f5a54ac9d217ead921a64b86dfdcdba851",
+    "portable-tiled/plans.py": "f1480b571b3a3ddabcf042412f78c17445104d468ed586181ab47eded7c60c37",
+    "portable-tiled/prepare.py": "01b03d97aef41a1915a03764f9a48d7a8b77d86519a0788141c324f8452a15df",
+    "portable-tiled/supervise.py": "2bf77efdc39bfb4537ec9705b06c7514485dcc2de9dee208b68bb2423cd2f3cf",
+    "preflight/freeze-ranking-floor.py": "96b83dffc490a4cdaf88f2a17d437efb97401ad2d05b02b93493ee9caff86cc8",
+    "regression-audit/native_commitment.py": "7e1b99c660cdd98ffa5b294eb7338f81685419949246d930dfe69588766cbc6d",
+    "regression-audit/verify_checkpoint.py": "4fd2fd7711002d9ec585bea8d8585fa781e2bdf7d98ecbc90d2058b9d8239685"
+  },
+  "inputCohortSha256": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+  "originalNativeRunnerSha256": "a2cf64f0889624b0dc675b73d80f5b34caca2d73c9448b788713463b8abc3f02",
+  "schema": "acgn-one-time-closed-census-launch-contract-v2",
+  "supersedes": "ab56c14973b0fc1b1a834a06c8b870ec9d771e8383500469219ea712081d3d3d"
+}

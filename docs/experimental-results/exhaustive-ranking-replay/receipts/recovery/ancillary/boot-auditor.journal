@@ -1,0 +1,60 @@
+Nov 27 21:17:46 augustus-x870e systemd[3076]: Starting acgn-final-native-audits-v2-zHOYRIEP.service - ACGN independent final native replay and historical coverage audits...
+Nov 27 21:18:00 augustus-x870e python3[4262]: Traceback (most recent call last):
+Nov 27 21:18:00 augustus-x870e python3[4262]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 259, in <module>
+Nov 27 21:18:00 augustus-x870e python3[4262]:     (worker(args.stage,a) if args.stage else supervise(a))
+Nov 27 21:18:00 augustus-x870e python3[4262]:      ^^^^^^^^^^^^^^^^^^^^
+Nov 27 21:18:00 augustus-x870e python3[4262]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 208, in worker
+Nov 27 21:18:00 augustus-x870e python3[4262]:     done=state/(spec+"-done.json");evidence=stage(spec,a["root"],tools,t,state)
+Nov 27 21:18:00 augustus-x870e python3[4262]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Nov 27 21:18:00 augustus-x870e python3[4262]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 195, in stage
+Nov 27 21:18:00 augustus-x870e python3[4262]:     run(tools/"certify.py",root,"--retention-run",t,log=state/"census.log")
+Nov 27 21:18:00 augustus-x870e python3[4262]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 75, in run
+Nov 27 21:18:00 augustus-x870e python3[4262]:     require(result.returncode in allowed,f"Stage failed {code.name}, code {result.returncode}, log {log}")
+Nov 27 21:18:00 augustus-x870e python3[4262]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 32, in require
+Nov 27 21:18:00 augustus-x870e python3[4262]:     raise ValueError(message)
+Nov 27 21:18:00 augustus-x870e python3[4262]: ValueError: Stage failed certify.py, code 1, log /home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/census.log
+Nov 27 21:18:00 augustus-x870e python3[3119]: Traceback (most recent call last):
+Nov 27 21:18:00 augustus-x870e python3[3119]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 259, in <module>
+Nov 27 21:18:00 augustus-x870e python3[3119]:     (worker(args.stage,a) if args.stage else supervise(a))
+Nov 27 21:18:00 augustus-x870e python3[3119]:                                              ^^^^^^^^^^^^
+Nov 27 21:18:00 augustus-x870e python3[3119]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 236, in supervise
+Nov 27 21:18:00 augustus-x870e python3[3119]:     require(rc==0, f"Final candidate stage {name} failed (return {rc})")
+Nov 27 21:18:00 augustus-x870e python3[3119]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 32, in require
+Nov 27 21:18:00 augustus-x870e python3[3119]:     raise ValueError(message)
+Nov 27 21:18:00 augustus-x870e python3[3119]: ValueError: Final candidate stage census failed (return 1)
+Nov 27 21:18:00 augustus-x870e systemd[3076]: acgn-final-native-audits-v2-zHOYRIEP.service: Main process exited, code=exited, status=1/FAILURE
+Nov 27 21:18:00 augustus-x870e systemd[3076]: acgn-final-native-audits-v2-zHOYRIEP.service: Failed with result 'exit-code'.
+Nov 27 21:18:00 augustus-x870e systemd[3076]: Failed to start acgn-final-native-audits-v2-zHOYRIEP.service - ACGN independent final native replay and historical coverage audits.
+Nov 27 21:18:00 augustus-x870e systemd[3076]: acgn-final-native-audits-v2-zHOYRIEP.service: Consumed 21.283s CPU time.
+Nov 27 21:19:30 augustus-x870e systemd[3076]: acgn-final-native-audits-v2-zHOYRIEP.service: Scheduled restart job, restart counter is at 1.
+Nov 27 21:19:30 augustus-x870e systemd[3076]: Starting acgn-final-native-audits-v2-zHOYRIEP.service - ACGN independent final native replay and historical coverage audits...
+Nov 27 21:19:51 augustus-x870e python3[11120]: Traceback (most recent call last):
+Nov 27 21:19:51 augustus-x870e python3[11120]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 259, in <module>
+Nov 27 21:19:51 augustus-x870e python3[11120]:     (worker(args.stage,a) if args.stage else supervise(a))
+Nov 27 21:19:51 augustus-x870e python3[11120]:      ^^^^^^^^^^^^^^^^^^^^
+Nov 27 21:19:51 augustus-x870e python3[11120]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 208, in worker
+Nov 27 21:19:51 augustus-x870e python3[11120]:     done=state/(spec+"-done.json");evidence=stage(spec,a["root"],tools,t,state)
+Nov 27 21:19:51 augustus-x870e python3[11120]:                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Nov 27 21:19:51 augustus-x870e python3[11120]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 195, in stage
+Nov 27 21:19:51 augustus-x870e python3[11120]:     run(tools/"certify.py",root,"--retention-run",t,log=state/"census.log")
+Nov 27 21:19:51 augustus-x870e python3[11120]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 75, in run
+Nov 27 21:19:51 augustus-x870e python3[11120]:     require(result.returncode in allowed,f"Stage failed {code.name}, code {result.returncode}, log {log}")
+Nov 27 21:19:51 augustus-x870e python3[11120]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 32, in require
+Nov 27 21:19:51 augustus-x870e python3[11120]:     raise ValueError(message)
+Nov 27 21:19:51 augustus-x870e python3[11120]: ValueError: Stage failed certify.py, code 1, log /home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/census.log
+Nov 27 21:19:54 augustus-x870e python3[11113]: Traceback (most recent call last):
+Nov 27 21:19:54 augustus-x870e python3[11113]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 259, in <module>
+Nov 27 21:19:54 augustus-x870e python3[11113]:     (worker(args.stage,a) if args.stage else supervise(a))
+Nov 27 21:19:54 augustus-x870e python3[11113]:                                              ^^^^^^^^^^^^
+Nov 27 21:19:54 augustus-x870e python3[11113]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 236, in supervise
+Nov 27 21:19:54 augustus-x870e python3[11113]:     require(rc==0, f"Final candidate stage {name} failed (return {rc})")
+Nov 27 21:19:54 augustus-x870e python3[11113]:   File "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-audit-handoff-v2/final_consumer.py", line 32, in require
+Nov 27 21:19:54 augustus-x870e python3[11113]:     raise ValueError(message)
+Nov 27 21:19:54 augustus-x870e python3[11113]: ValueError: Final candidate stage census failed (return 1)
+Nov 27 21:19:54 augustus-x870e systemd[3076]: acgn-final-native-audits-v2-zHOYRIEP.service: Main process exited, code=exited, status=1/FAILURE
+Nov 27 21:19:55 augustus-x870e systemd[3076]: acgn-final-native-audits-v2-zHOYRIEP.service: Failed with result 'exit-code'.
+Nov 27 21:19:55 augustus-x870e systemd[3076]: Failed to start acgn-final-native-audits-v2-zHOYRIEP.service - ACGN independent final native replay and historical coverage audits.
+Nov 27 21:19:55 augustus-x870e systemd[3076]: acgn-final-native-audits-v2-zHOYRIEP.service: Consumed 40.402s CPU time.
+Nov 27 21:20:56 augustus-x870e systemd[3076]: Stopped acgn-final-native-audits-v2-zHOYRIEP.service - ACGN independent final native replay and historical coverage audits.
+Nov 27 21:20:56 augustus-x870e systemd[3076]: acgn-final-native-audits-v2-zHOYRIEP.service: Consumed 40.402s CPU time.
+Nov 27 21:20:56 augustus-x870e systemd[3076]: Starting acgn-final-native-audits-v2-zHOYRIEP.service - ACGN independent final native replay and historical coverage audits...

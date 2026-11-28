@@ -1,0 +1,4 @@
+'CrossedDeclarationReplay.charge_of_choice' depends on axioms: [propext, Quot.sound]
+'CrossedDeclarationReplay.preference_preserves_charge' depends on axioms: [propext, Quot.sound]
+'CrossedDeclarationReplay.strictly_better_retained_path_survives' depends on axioms: [propext]
+'CrossedDeclarationReplay.distinct_replays_with_equal_length_and_cost' depends on axioms: [propext, Quot.sound]

@@ -1,0 +1,37 @@
+{
+  "adapterIdentitySha256": "a2cf64f0889624b0dc675b73d80f5b34caca2d73c9448b788713463b8abc3f02",
+  "cohorts": {
+    "baselineFailure": 386,
+    "historical83": 83
+  },
+  "directions": 938,
+  "engineSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "failures": 0,
+  "firstFailure": null,
+  "inputManifestSha256": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+  "ledgerSha256": "fb3feab4ce6ace3d1b2fb5a430dc576c98e4bec45a430ab3bcb2795930e803bf",
+  "originalIncidentSnapshotSha256": "83ad85eecaa4a4fe054617d2eddd609e701026be140469b9bde379269748c53a",
+  "pairs": 469,
+  "partInputSha256": {
+    "part-000": "6201eea937f419be134effb4327c15cd3e3a6581a0b776f828b465f5936003fe",
+    "part-001": "d88840474f409f33192baef354decfb709bf9f9cb27563ce17b08bde6c233db7",
+    "part-002": "d6d97f61f654b96e58826dd149d01e7a032c3f61a04d6aa84eb2de40119c77ed",
+    "part-003": "b41f3b756c52dda750827da12e94a531f9ffccceccf3bc0fc4bd2b9d6eb53951",
+    "part-004": "f1c85f67f3519f2309c4554cf6f524d6f416cf9c60b02c80780d3f02b98fc9f6",
+    "part-005": "a82f26893119e3c68464b718c49a79df06701fa5c6df02792a84b873e9b74347",
+    "part-006": "0bde8da30e6f5cd38e75f99734b583e1c6dfd975281f54d84238a5c2c691ef05",
+    "part-007": "b17b653ed894d864a097e1bd2aa9a86c9fb902f8cdc633c14c308a720447bbdf"
+  },
+  "partOutputSha256": {
+    "part-000": "6905e7cb485431358d65a6da4f3aced15e34d48dcd8d083eeb5e3a4014816e33",
+    "part-001": "891ad8cd780b1e3362c2c065808a2caba40dc295a6f599c6ef5afbcfcc9faf5d",
+    "part-002": "623b4b2331e60c5f13beac46ded1dd1017aa33e676c9d508af31fc334bde0285",
+    "part-003": "85b9b56f0bade3ddd08a48c20bd6b3acbc3ec575300dca205fec93b6fd533a5e",
+    "part-004": "67d5850a2c590ebbbac9c54861330df10c660cff08ca6afe44144a5360829f15",
+    "part-005": "ca99f3cc2c5f9d3da9701e7bbd2ee12a6663ed8921b0295826cd5b18d1b818c7",
+    "part-006": "e6a6716e8cb16a1209c336de21cd47291af25dc1b74c5336bedd2d341cba2b0a",
+    "part-007": "80d0749856c4ba535c094d959ef29d83908d1da0af0721baffe0e71a24e6ed09"
+  },
+  "status": "VERIFIED",
+  "verifierSha256": "6b18bc2bb664dc2e67fdd90eb47fe0962a510a0d5d10975561440203a1d4cb62"
+}

@@ -176,31 +176,21 @@ with zero project-defined axioms, zero \texttt{sorry} placeholders, and zero
 
 \subsection{Formal Proofs vs.\ Implementation Checks and Empirical Evidence}
 
-To keep formal and empirical claims distinct:
-\begin{itemize}
-\item \textbf{Formal-model theorems} (Table~\ref{tab:lean-correspondence})
-  establish exactness, realization soundness, collision soundness, and
-  coherence-preserving finite-unfolding soundness over the Lean abstract
-  model, plus one concrete machine-checked abstract trace in
-  \texttt{TraceEnvelopeWitness}.
-\item \textbf{Java implementation checks} consist of (i)~in-process
-  strict-every-transition invariant and certificate checks in
-  Certificate-Integrated IR, (ii)~an independent Java certificate verifier and
-  adversarial suite covering support contraction, collision, union, symmetry,
-  rebuilding, path compression, container laws, binder orbits, and incomplete
-  evidence, (iii)~the native-operation comparison across all 61,598 eligible
-  paired comparisons (0 mismatches, 0 unchecked, 0 invalid replays, 0 errors),
-  and (iv)~bounded Alloy checks on the union of 4,499 natural zero claims and
-  29 capability subtype checks.
-\item \textbf{Open verification boundary:} The native-operation comparator
-  authenticates its \texttt{FROZEN\_NORMALIZED\_IR} boundary, while general
-  Java-to-Lean correspondence (\texttt{javaLeanCorrespondence\allowbreak Checked}),
-  source-to-certificate wire replay (\texttt{sourceCertificateWire\allowbreak ReplayChecked}),
-  and public repair-sequence linkage (\texttt{publicSequenceLinked}) remain
-  open. Likewise, observed zero-discrepancy agreement between Fast Rewrite and
-  Certificate-Integrated IR is an empirical check on the evaluated workloads,
-  not a universal equivalence theorem.
-\end{itemize}
+Table~\ref{tab:lean-correspondence} establishes exactness, realization and
+collision soundness, and coherence-preserving finite unfolding in the
+abstract model. \texttt{TraceEnvelopeWitness} supplies a checked abstract trace.
+In Java, Certificate-Integrated checks each transition. An independent
+verifier exercises support contraction, collision, union, symmetry,
+rebuilding, path compression, container laws, binder orbits and incomplete
+evidence. Bounded Alloy checked 5,137 natural zero claims in the full
+experiment and 29 capability subtype checks.
+
+The native checker starts at the frozen normalized IR. It replayed both
+paths on all 61,598 student--oracle comparisons and all \replayPairs{}
+ranking pairs. The checks include the source
+certificates, endpoint correspondence and replay of fixed choices.
+General Java-to-Lean correspondence, source-to-certificate wire replay
+and public repair-sequence linkage remain open.
 
 \paragraph{Source rewrites added in v3.1.}
 In \path{docs/section3-repair-audit/formal/Phase5SourceRules.lean},
@@ -212,3 +202,12 @@ In \path{docs/section3-repair-audit/formal/Phase5SourceRules.lean},
 the observed carrier. The subdomain and difference lemmas restrict the
 binding at its original instant. These are results about the formal source
 semantics, not a proof of the whole Java frontend.
+
+\paragraph{Paid ranking witnesses.}
+Lean checks finite models of declaration edits and tie selection. The
+models distinguish occurrence identity from edit cost, show when reordering
+eligible choices preserves their minimum, and replay concrete paths. For
+the last ten pairs the model checks two source positions of a shared binder.
+The reverse distance-71 example retains $0\mapsto1$ and $2\mapsto0$.
+Completing that path preserves the selected matrix program, charge and
+mapping under the assumed source and permutation evidence.

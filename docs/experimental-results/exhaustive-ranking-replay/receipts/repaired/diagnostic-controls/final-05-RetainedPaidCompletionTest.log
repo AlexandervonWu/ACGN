@@ -1,0 +1,34 @@
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: DummySymbol{type='local_var'}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+source certificates: flat=2 container=0 chain=3 join=0 binder=1; typed independent-block declaration order; wire correspondence NOT claimed
+source certificates: flat=1 container=0 chain=3 join=0 binder=0; typed independent-block declaration order; wire correspondence NOT claimed
+Exception in thread "main" java.lang.AssertionError: no scalar candidate expansion or fabricated selected paid map
+	at is.fivefivefive.CanDis.core.RetainedPaidCompletionTest.check(RetainedPaidCompletionTest.java:18)
+	at is.fivefivefive.CanDis.core.RetainedPaidCompletionTest.direction(RetainedPaidCompletionTest.java:86)
+	at is.fivefivefive.CanDis.core.RetainedPaidCompletionTest.main(RetainedPaidCompletionTest.java:198)

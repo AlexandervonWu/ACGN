@@ -1,0 +1,15 @@
+{
+  "engine": "original",
+  "jarOrder": [
+    "AlloyASG-Release.jar",
+    "slf4j-simple-2.0.20.jar",
+    "commons-cli-1.11.0.jar",
+    "json-java.jar",
+    "slf4j-api-2.0.20.jar",
+    "AlloyParser.jar",
+    "AlloyASG.jar",
+    "alloy.jar"
+  ],
+  "observedBy": "Live measured JVM java.class.path property",
+  "pid": "659901"
+}

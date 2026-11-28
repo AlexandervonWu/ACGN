@@ -1,0 +1,4 @@
+import java.nio.file.*;import edu.mit.csail.sdg.parser.CompUtil;import edu.mit.csail.sdg.alloy4.A4Reporter;import edu.mit.csail.sdg.translator.*;import org.json.*;
+public class IndependentDisjointSolver {
+ public static void main(String[] args)throws Exception {var s=Files.readString(Path.of(args[0]));s+="\nrun {disjoint and not ordinary} for 3\n";var m=CompUtil.parseEverything_fromString(A4Reporter.NOP,s);var options=new A4Options();options.solver=kodkod.engine.satlab.SATFactory.get("sat4j");var r=new JSONArray();for(var cmd:m.getAllCommands()){var ans=TranslateAlloyToKodkod.execute_command(A4Reporter.NOP,m.getAllReachableSigs(),cmd,options);r.put(new JSONObject().put("command",cmd.toString()).put("satisfiable",ans.satisfiable()).put("instance",ans.toString()));}Files.writeString(Path.of(args[1]),r.toString(2)+"\n");}
+}

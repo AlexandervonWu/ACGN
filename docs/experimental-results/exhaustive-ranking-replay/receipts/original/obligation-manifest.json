@@ -1,0 +1,20 @@
+{
+  "buildReproduction": "f8017e93cf94003ecd74e1afe4a75198fa337c3249fccd0aa34c93f154a4b159",
+  "cohortEdges": 1894168,
+  "inputs": {
+    "closure-contract.json": "860152fe049b6add686c223df761a885daafab8e55f0f22e31591927ff54f903",
+    "cohort/auditor-identity.json": "e9cc9add2b3f242c7ac84ad4803dbf5c525cc528c856500cd402a37fda2a3554",
+    "cohort/input-recount.json": "480c47907228e8b6c03143a9df9685254c977c4d13435c1d06a77c975b506120",
+    "cohort/manifest.json": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+    "preflight/calibrate.py": "f12384d18743fa88f91f47b79ec775bec931efa9204f52cacd3d9b1b73196f8f",
+    "preflight/calibration/result.json": "f10c71da02ba6434b824acfdd49632b4cdc0423fcafa474d7b34270a9cf7bcfb",
+    "preflight/rebuild/build-replay.json": "c926beb7e7f02e3100e922b71c3a26885c0d21c849e91df8b8e6894fe65d1be6",
+    "runner-identity.json": "a2cf64f0889624b0dc675b73d80f5b34caca2d73c9448b788713463b8abc3f02"
+  },
+  "negativeControls": "Each of three original paid witnesses had equal distances and equal action counts on both engines, and changed from MISMATCH on the preceding JAR to MATCHED on the measured JAR.",
+  "publicEvidenceTarget": "cohort/compact report and full per-edge release ledger",
+  "rootSha256": "1ee9c4b9fc02cad20b18de5d1e0f965ce6650b0cc45b1a261456b2346873226a",
+  "scope": "All originally measured forward paid ranking pairs checked on the original frozen engine.",
+  "sourceRunId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "trustFile": "closure-contract.json"
+}

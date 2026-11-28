@@ -1,0 +1,11 @@
+{
+  "candidateCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "candidateSidecarIdentitySha256": "2e2ee0b9958bd18d1f513349ae3ec4cdcf855188b976c7ee32b07c1a3fab96e2",
+  "checkerSha256": "2ee22133767b5823d7104d8e7b77817347ca6b556c2385c4ac57ae9ebaaf2bd6",
+  "classSha256": "6df896e26ed7357f0c44c380a2968f530ed3785c3079bb7531164cfb63839097",
+  "commands": 1339,
+  "driverSha256": "e89253cf0140bd3cc0541cb6c98a70275e65bc34c28e9b04810537954d5cf56f",
+  "inputSha256": "7f420e36ed7ce98d545ae56fd3ca533c49eb162eab015656f2cd3c0754d93510",
+  "schema": "acgn-archived-original-fixed-command-live-v1"
+}

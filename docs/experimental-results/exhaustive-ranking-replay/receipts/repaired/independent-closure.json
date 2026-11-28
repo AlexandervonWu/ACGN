@@ -1,0 +1,95 @@
+{
+  "archivedForward": {
+    "counts": {
+      "both": {
+        "MATCHED": 3
+      },
+      "paid": {
+        "MATCHED": 4138
+      },
+      "ratchet-forward": {
+        "MATCHED": 83
+      },
+      "stratified": {
+        "MATCHED": 181
+      }
+    },
+    "distinct": 4319,
+    "originalSourceHashBoundPaidComparisons": 4319,
+    "sourceSummarySha256": "257e07ff3657328ad05a93410b0a6f921fc11cd4652a5d94ee955aa904d64b38",
+    "status": "VERIFIED"
+  },
+  "archivedReverse": {
+    "candidateIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+    "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+    "cohorts": {
+      "ratchet-reverse": {
+        "MATCHED": 83
+      },
+      "reverse": {
+        "MATCHED": 3
+      }
+    },
+    "commitmentReceiptSha256": "8b50bb9c63a1c811c1d82b70db79004749e3710732d0c89d470cc833622565f7",
+    "directions": 86,
+    "inputRegistrationSha256": "9436625a8400e027b8f0754cede74cc2efd19ee1fd2b3cc8d6deda46f28c971a",
+    "native": {
+      "MATCHED": 86
+    },
+    "originalBoundCostsChecked": true,
+    "status": "VERIFIED"
+  },
+  "auditorRegistrationSha256": "ad67107ec7dc1e691000d98abe3c8d6bae0f65fae3067f45fdfce38782da8266",
+  "candidateCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "candidateNativeRanking": {
+    "checked": 1894168,
+    "nonconforming": 0,
+    "rows": 1894168,
+    "status": "VERIFIED",
+    "summarySha256": "257e07ff3657328ad05a93410b0a6f921fc11cd4652a5d94ee955aa904d64b38"
+  },
+  "candidateRunnerSha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "executionPlansSha256": "7455a1437326f595d46008ea601583eb2eb10ed4fa4736bbc6ecf52aa6aec861",
+  "experimentUuid": "617d9fb3-5c46-419b-a596-e167f973985e",
+  "nonconforming": 0,
+  "originalScoreProducer": {
+    "baselineNativeRunnerIdentitySha256": "a2cf64f0889624b0dc675b73d80f5b34caca2d73c9448b788713463b8abc3f02",
+    "combinedInputsSha256": "6818cebe040d27d080bd48e3bfdef66a87b8d825b65206e6bc048da88e8017c5",
+    "commit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+    "jarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+    "rankingManifestSha256": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+    "runId": "f49d49b0-2590-4fbf-b617-50c8358b0985"
+  },
+  "producerCompletionSha256": "661462f9dfab95ff7418b7b317a12a5abefaa4d0565607328f49d65c7b917938",
+  "rows": 1894168,
+  "sourceAndScopeRetention": {
+    "archivedSolver": {
+      "SAT": 105,
+      "UNSAT": 1234
+    },
+    "cohorts": {
+      "fixed": 1234,
+      "paired": 61598,
+      "sat-control": 105,
+      "zero": 19271
+    },
+    "commandLedgerSha256": "d806d0e4140c6e0e9e9d8fd8540fc71b4acb1e656e7ee31294b20d53240f8690",
+    "nonconforming": 0,
+    "releaseSha256": "939ccc6f0cb204f3dedf8618a4e201c38e32268f5de6e7ade08871cbdb472874",
+    "sourceLedgerSha256": "26fb3d14717f95e5d281191f16dd710208e5da41b003217b9e7285970aa1cee6",
+    "sourceScopes": {
+      "originalSlottedPaired": 2228,
+      "originalSlottedZero": 8952,
+      "pairedFixedCommand": 347,
+      "pairedStructuralZero": 5137,
+      "poolCommandComponentPairs": 20629,
+      "poolFixedCommand": 1234,
+      "poolStructuralComponentPairs": 19271,
+      "previousSatControls": 105,
+      "zeroStructuralZero": 19271
+    },
+    "status": "VERIFIED"
+  },
+  "status": "VERIFIED"
+}

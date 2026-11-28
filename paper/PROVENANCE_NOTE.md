@@ -9,6 +9,8 @@ v3.3 tables and per-invariant panels from 26 November 2026. The synthetic
 scaling grid remains the v3 experiment. The release evidence records the exact
 cohorts for the native trace diagnostics.
 
+The exhaustive replay completed on 28 November 2026 UTC at `177500afd23b74d3d3695b9c38fb6ad0c0709838` (run `617d9fb3-5c46-419b-a596-e167f973985e`). It checked both native programs and both published costs for all 1,894,168 ranking pairs. The full-run figure still uses the original nearest-distance observations. The exhaustive comparison confirmed the score on every one of its ranked inputs. The supplementary replay repeated all 26,673 temporal comparisons. Across editions 196 ordered programs carried different JVM allocation numbers for the same local source occurrences. Substituting the archived numbers reproduced all 392 original and repaired digests. Historical structural and fixed-command cohorts have separate receipts. [Replay evidence and repaired-pair inventory](../docs/experimental-results/exhaustive-ranking-replay/README.md)
+
 ## Previous manuscript revisions
 
 The v3.3 paper uses the audited paired, reference-pool, ablation, capability and natural slot-typing measurements. The exact source commit is d5c0c2a07504d53b13b28c61e9e64768c37eb984. The historical 540-predicate synthetic grid remains bound to the v3 release. See the v3.3 headlines and replay data.

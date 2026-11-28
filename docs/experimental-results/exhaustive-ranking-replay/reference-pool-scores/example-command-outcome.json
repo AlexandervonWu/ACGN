@@ -1,0 +1,27 @@
+{
+  "decision": {
+    "bitwidth": 4,
+    "check": "correct",
+    "left": "this/acgnPoolRef192xinv6c",
+    "native": "UNSAT",
+    "ordinal": 0,
+    "parsedSourceHashes": {
+      "/$alloy4$/models/util/integer.als": "d15e0dfd7b8150f2e77cdb9557196de90896163ba16a7611b3f8fd9cf9dff7eb",
+      "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/previously-covered/runs/177500afd23b-79e63cd786f7/archived-commands/comparison.als": "424f90357dc04ce0be157dda044e7d1717148772163f1af38fdba32791459faa"
+    },
+    "result": "SCOPED_EQUIVALENCE",
+    "right": "this/acgnPoolRef193xinv6",
+    "rules": [
+      "fiber"
+    ],
+    "scope": "FIXED_COMMAND",
+    "traceMax": -1,
+    "traceMin": -1
+  },
+  "pair": [
+    192,
+    193
+  ],
+  "parsedSourceSha256": "424f90357dc04ce0be157dda044e7d1717148772163f1af38fdba32791459faa",
+  "sha256": "424f90357dc04ce0be157dda044e7d1717148772163f1af38fdba32791459faa"
+}

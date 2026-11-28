@@ -1,0 +1,105 @@
+{
+  "builds": "Two isolated classfile sets must reproduce every class in the measured JAR; compare deterministic class digests.",
+  "claim": "Each pair in the complete ranking ledger, keyed by source path/hash and original predicate for both endpoints, produces equal checked native edit witnesses in Fast Rewrite and Certificate-Integrated, at the independently recorded positive cost.",
+  "dataset": {
+    "byteCount": 30141317,
+    "fileCount": 66080,
+    "root": "[CHECKOUT]/classified-data",
+    "sha256": "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689"
+  },
+  "dependencies": [
+    {
+      "path": "lib/AlloyASG-Release.jar",
+      "sha256": "fe672d7e54b75ce2e68fd512a3e0aa11f58cd8694b6b02b8da9606958a4847c4",
+      "sizeBytes": 85380
+    },
+    {
+      "path": "lib/AlloyASG.jar",
+      "sha256": "5adc247bae551739bb61db848eb8ba6ee3292300f126e2b286c3a298a22c9dc6",
+      "sizeBytes": 42535
+    },
+    {
+      "path": "lib/AlloyParser.jar",
+      "sha256": "be040bcd26ddcf042bb629f9c2a8c56e2f8bca0c829281c5cc0d07a047474fe3",
+      "sizeBytes": 121873
+    },
+    {
+      "path": "lib/alloy.jar",
+      "sha256": "8a8746b89d95f28762903c9acbd2bee8aca5014fe49a522b7184ba32ffcc5b58",
+      "sizeBytes": 20971507
+    },
+    {
+      "path": "lib/commons-cli-1.11.0.jar",
+      "sha256": "8f7f8605d68e15bf32db61ec94eac6fdafc51b1bdbe1e0e0802b57d23f387792",
+      "sizeBytes": 110167
+    },
+    {
+      "path": "lib/json-java.jar",
+      "sha256": "7dd2de1533e766e2b6c07d8194da85145ad313a167a4760050f5c9b6839604fe",
+      "sizeBytes": 89800
+    },
+    {
+      "path": "lib/slf4j-api-2.0.20.jar",
+      "sha256": "7e1446499b359675d8aabe6af2de86b85e72ae8a2a932c0b40d0e5ba57097439",
+      "sizeBytes": 70255
+    },
+    {
+      "path": "lib/slf4j-simple-2.0.20.jar",
+      "sha256": "8e701404786a4f87219d39d4853c86dfe4e86ae99376a39749df6c08e75022e0",
+      "sizeBytes": 15705
+    }
+  ],
+  "environment": {
+    "java": "openjdk version \"17.0.21.1\" 2026-11-17",
+    "os": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
+    "python": "3.10.11"
+  },
+  "excluded": [
+    "Reverse direction for all pairs",
+    "Public source-to-edit certification and Java-to-Lean refinement",
+    "All Alloy programs outside this cohort"
+  ],
+  "failurePolicy": "Preserve each failing witness and failure reason. Infrastructure interruption can retry the identical pair on the same frozen build. Any changed engine gets a new input root and complete census.",
+  "inputEdition": "0ef41a420deb5772e3ce0f709ad2730215b48215",
+  "inputs": {
+    "docs/experimental-results/2026-11-25/references.jsonl.gz": "a135caa38f3c6720fb5c00581fe4a72808068081c6e2a2d7b4f4e44ed3e51524",
+    "docs/experimental-results/historical-retention/ReferenceTrace.java": "471f64c6c21ff7cb5efeeaf3e26634430c97d01c8e299f231258b384f346e73a",
+    "docs/experimental-results/historical-retention/paired-comparisons.jsonl.gz": "dc99a6ef526998e865c3c1bddd274088aa30faad86e165deaa528f602184bf0c",
+    "docs/experimental-results/historical-retention/ranking-scores.jsonl.gz": "5ca73249a44b97f9290a4bd12923802c808fddbf168564daaf8c04d373b14778",
+    "docs/experimental-results/historical-retention/run-receipt.json": "f4c4cafb055bb942b2aeaed7db5b7f6758be8cb8f690b0670d311228e6854a47"
+  },
+  "invariantPools": 181,
+  "javaSource": {
+    "byteCount": 9494278,
+    "fileCount": 628,
+    "sha256": "8e1289129fbaec4a245e2b38383549e44418497b95d75f97150dfdf3673bfdf9"
+  },
+  "measuredJarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "orientation": "original submission predicate to original reference predicate",
+  "outputStates": [
+    "VERIFIED",
+    "BLOCKED",
+    "INFRASTRUCTURE_FAILURE"
+  ],
+  "pass": [
+    "Exact corpus, dependencies, engine and verifier identity",
+    "No duplicates, omissions or substitutions under original predicate/direction; equal expected scores must themselves be checked by native replay",
+    "Original native comparison status MATCHED and reason CHECKED_NATIVE_ACTIONS_EQUAL",
+    "Endpoint correspondence, source certificates and fixed replay choices all checked",
+    "Validated static actions with equal counts, or equal ordered block effects and equal block counts on temporal forms",
+    "Mismatches, invalid, unchecked, errors, score drift and missing receipts are all zero"
+  ],
+  "producerIdentity": "ef824f42c55344416129e04ea75e51e9dd943d252f4f879973e4af077a38ad41",
+  "producerRevision": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "producerRun": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "provenance": "The final report on exhaustive forward ranking replay must reference this obligation, a completed registered verifier and the complete per-edge receipts.",
+  "schema": "all-ranking-native-replay-v1",
+  "submittedPredicates": 42386,
+  "targetPopulation": 1894168,
+  "trusted": [
+    "Linux process, filesystem and hardware",
+    "JDK 17, Python 3, SHA-256 and Git",
+    "Archived Alloy parser, original source-to-normalized IR and recorded selection of original predicates",
+    "Native operation comparator and its independent certificate/fixed-choice replay implementation on the measured JAR"
+  ]
+}

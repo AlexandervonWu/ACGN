@@ -1,0 +1,349 @@
+{
+  "afterEvidence": "shard-0995-16-after.json.gz",
+  "afterEvidenceSha256": "2826c7fb6fa4611e013e19a00a9c39b53f0a7d4c6bec0f0c3599c1ca14325a65",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "certifiedFirst": {
+    "component": "declaration",
+    "effect": [
+      {
+        "cost": 1,
+        "kind": "update",
+        "leftIndex": 0,
+        "payloadAction": "update",
+        "rightIndex": 0,
+        "source": {
+          "bindingPath": "root/temporalroot[0]/decl[0]@pos",
+          "phase": {
+            "sourcePath": "phase[0]/temporal[0]",
+            "typedRole": "ALWAYS"
+          },
+          "tuple": [
+            "ALL",
+            "Train",
+            "ONE",
+            "0"
+          ],
+          "type": "RELATION[5:Train]"
+        },
+        "target": {
+          "bindingPath": "root/temporalroot[0]/decl[0]@pos",
+          "phase": {
+            "sourcePath": "phase[0]/temporal[0]",
+            "typedRole": "ALWAYS"
+          },
+          "tuple": [
+            "ALL",
+            "Track",
+            "ONE",
+            "0"
+          ],
+          "type": "RELATION[5:Track]"
+        }
+      },
+      {
+        "cost": 1,
+        "kind": "update",
+        "leftIndex": 1,
+        "payloadAction": "update",
+        "rightIndex": 1,
+        "source": {
+          "bindingPath": "root/temporalroot[0]/body[1]/decl[0]@pos",
+          "phase": {
+            "sourcePath": "phase[0]/temporal[0]",
+            "typedRole": "ALWAYS"
+          },
+          "tuple": [
+            "SOME",
+            "Track",
+            "ONE",
+            "0"
+          ],
+          "type": "RELATION[5:Track]"
+        },
+        "target": {
+          "bindingPath": "root/temporalroot[0]/decl[1]@pos",
+          "phase": {
+            "sourcePath": "phase[0]/temporal[0]",
+            "typedRole": "ALWAYS"
+          },
+          "tuple": [
+            "ALL",
+            "Train",
+            "ONE",
+            "0"
+          ],
+          "type": "RELATION[5:Train]"
+        }
+      }
+    ],
+    "entries": [
+      {
+        "nativeIndex": 16,
+        "payload": {
+          "cost": 1,
+          "kind": "update",
+          "leftIndex": 0,
+          "payloadAction": "update",
+          "rightIndex": 0,
+          "source": {
+            "admission": "[\"19:alloy-binder-domain[1:5:Train]{0:}\",0,[],\"AlloyCarrier(Train)\",\"19:alloy-binder-domain[1:5:Train]{0:}\"]",
+            "occurrence": "[false,1,\"\",0,0]",
+            "tuple": [
+              "ALL",
+              "Train",
+              "ONE",
+              "0"
+            ]
+          },
+          "target": {
+            "admission": "[\"19:alloy-binder-domain[1:5:Track]{0:}\",0,[],\"AlloyCarrier(Track)\",\"19:alloy-binder-domain[1:5:Track]{0:}\"]",
+            "occurrence": "[false,1,\"\",0,0]",
+            "tuple": [
+              "ALL",
+              "Track",
+              "ONE",
+              "0"
+            ]
+          }
+        },
+        "row": {
+          "component": "declaration",
+          "cost": 1,
+          "payloadPath": "/nativeDeclarationPrograms/2/operations/0"
+        }
+      },
+      {
+        "nativeIndex": 17,
+        "payload": {
+          "cost": 1,
+          "kind": "update",
+          "leftIndex": 1,
+          "payloadAction": "update",
+          "rightIndex": 1,
+          "source": {
+            "admission": "[\"19:alloy-binder-domain[1:5:Track]{0:}\",1,[],\"AlloyCarrier(Track)\",\"19:alloy-binder-domain[1:5:Track]{0:}\"]",
+            "occurrence": "[false,1,\"\",1,1]",
+            "tuple": [
+              "SOME",
+              "Track",
+              "ONE",
+              "0"
+            ]
+          },
+          "target": {
+            "admission": "[\"19:alloy-binder-domain[1:5:Train]{0:}\",0,[],\"AlloyCarrier(Train)\",\"19:alloy-binder-domain[1:5:Train]{0:}\"]",
+            "occurrence": "[false,1,\"\",1,1]",
+            "tuple": [
+              "ALL",
+              "Train",
+              "ONE",
+              "0"
+            ]
+          }
+        },
+        "row": {
+          "component": "declaration",
+          "cost": 1,
+          "payloadPath": "/nativeDeclarationPrograms/2/operations/1"
+        }
+      }
+    ]
+  },
+  "certifiedProgramPreserved": false,
+  "cost": 31,
+  "fastFirst": {
+    "component": "declaration",
+    "effect": [
+      {
+        "cost": 1,
+        "kind": "insert",
+        "leftIndex": -1,
+        "payloadAction": "insert",
+        "rightIndex": 0,
+        "source": null,
+        "target": {
+          "bindingPath": "root/temporalroot[0]/decl[0]@pos",
+          "phase": {
+            "sourcePath": "phase[0]/temporal[0]",
+            "typedRole": "ALWAYS"
+          },
+          "tuple": [
+            "ALL",
+            "Track",
+            "ONE",
+            "0"
+          ],
+          "type": "RELATION[5:Track]"
+        }
+      },
+      {
+        "cost": 0,
+        "kind": "keep",
+        "leftIndex": 0,
+        "payloadAction": "checked-original-coordinate-transport",
+        "rightIndex": 1,
+        "source": {
+          "bindingPath": "root/temporalroot[0]/decl[0]@pos",
+          "phase": {
+            "sourcePath": "phase[0]/temporal[0]",
+            "typedRole": "ALWAYS"
+          },
+          "tuple": [
+            "ALL",
+            "Train",
+            "ONE",
+            "0"
+          ],
+          "type": "RELATION[5:Train]"
+        },
+        "target": {
+          "bindingPath": "root/temporalroot[0]/decl[1]@pos",
+          "phase": {
+            "sourcePath": "phase[0]/temporal[0]",
+            "typedRole": "ALWAYS"
+          },
+          "tuple": [
+            "ALL",
+            "Train",
+            "ONE",
+            "0"
+          ],
+          "type": "RELATION[5:Train]"
+        }
+      },
+      {
+        "cost": 1,
+        "kind": "delete",
+        "leftIndex": 1,
+        "payloadAction": "delete",
+        "rightIndex": -1,
+        "source": {
+          "bindingPath": "root/temporalroot[0]/body[1]/decl[0]@pos",
+          "phase": {
+            "sourcePath": "phase[0]/temporal[0]",
+            "typedRole": "ALWAYS"
+          },
+          "tuple": [
+            "SOME",
+            "Track",
+            "ONE",
+            "0"
+          ],
+          "type": "RELATION[5:Track]"
+        },
+        "target": null
+      }
+    ],
+    "entries": [
+      {
+        "nativeIndex": 13,
+        "payload": {
+          "cost": 1,
+          "kind": "insert",
+          "leftIndex": -1,
+          "payloadAction": "insert",
+          "rightIndex": 0,
+          "source": null,
+          "target": {
+            "admission": "[\"_q0\",\"tk\",\"root/temporalroot[0]/decl[0]@pos\",\"Track\",\"RELATION[5:Track]\"]",
+            "occurrence": "phase/1/declaration/0",
+            "tuple": [
+              "ALL",
+              "Track",
+              "ONE",
+              "0"
+            ]
+          }
+        },
+        "row": {
+          "component": "declaration",
+          "cost": 1,
+          "payloadPath": "/nativeDeclarationPrograms/1/operations/0"
+        }
+      },
+      {
+        "nativeIndex": 14,
+        "payload": {
+          "cost": 0,
+          "kind": "keep",
+          "leftIndex": 0,
+          "payloadAction": "coordinate-align",
+          "rightIndex": 1,
+          "source": {
+            "admission": "[\"_q0\",\"t\",\"root/temporalroot[0]/decl[0]@pos\",\"Train\",\"RELATION[5:Train]\"]",
+            "occurrence": "phase/1/declaration/0",
+            "tuple": [
+              "ALL",
+              "Train",
+              "ONE",
+              "0"
+            ]
+          },
+          "target": {
+            "admission": "[\"_q1\",\"t\",\"root/temporalroot[0]/decl[1]@pos\",\"Train\",\"RELATION[5:Train]\"]",
+            "occurrence": "phase/1/declaration/1",
+            "tuple": [
+              "ALL",
+              "Train",
+              "ONE",
+              "0"
+            ]
+          }
+        },
+        "row": {
+          "component": "declaration",
+          "cost": 0,
+          "payloadPath": "/nativeDeclarationPrograms/1/operations/1"
+        }
+      },
+      {
+        "nativeIndex": 15,
+        "payload": {
+          "cost": 1,
+          "kind": "delete",
+          "leftIndex": 1,
+          "payloadAction": "delete",
+          "rightIndex": -1,
+          "source": {
+            "admission": "[\"_q1\",\"tr\",\"root/temporalroot[0]/body[1]/decl[0]@pos\",\"Track\",\"RELATION[5:Track]\"]",
+            "occurrence": "phase/1/declaration/1",
+            "tuple": [
+              "SOME",
+              "Track",
+              "ONE",
+              "0"
+            ]
+          },
+          "target": null
+        },
+        "row": {
+          "component": "declaration",
+          "cost": 1,
+          "payloadPath": "/nativeDeclarationPrograms/1/operations/2"
+        }
+      }
+    ]
+  },
+  "kind": "TEMPORAL_BLOCK_EFFECTS",
+  "left": [
+    "trainStationOld/both/4nsnayKaTKYhmfE3R_inv3.als",
+    "inv3",
+    "0a857824e9708af2e8fe7cd5885ba8c07e026dd18aeb8075ec06cfb35558e0cd"
+  ],
+  "newCount": 6,
+  "newSequenceSha256": "79b11bc56b3cfd1de5129efa0307da47ef2dde15386fef3b2713d87d9b40654d",
+  "oldCertifiedSequenceSha256": "7845caf7ecbd8fc8f99e14cb2070db9802ffa796757507aa5d31e21b07f87bf5",
+  "oldCounts": [
+    6,
+    6
+  ],
+  "oldFastSequenceSha256": "79b11bc56b3cfd1de5129efa0307da47ef2dde15386fef3b2713d87d9b40654d",
+  "originalFirstDifference": 4,
+  "originalIncident": "shard-0995-16-2f919310-7229-4350-a5a8-1728dbccc06b.json.gz",
+  "originalIncidentSha256": "4d37d8699d81f71ec3be94eb4edc80521ce47f08439e3ab57694de975e65067c",
+  "right": [
+    "trainStationOld/correct/HyBg2Dar2EdhFQvf3_inv3.als",
+    "inv3",
+    "cfa163112566c5e7ab9c0893237057260f6f73e1f12b19d870afa53b67813c48"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "archivalOffsetFileSha256": "974403614368ab466fa69a9bff8d0e515e5ef502ce6e06e1b2ffc147d5793ede",
+  "archiveCommitmentsReconstructedWithOnlyLocalOccurrenceTranslation": 196,
+  "archivedFinalHashDifferent": 196,
+  "archivedFinalHashEqual": 26477,
+  "coldToFreshOffsetsSha256": "b6d6e5dd444bf3b21a25c8fd64eae4205752a3f8dd1bf5ab1bcd257491049768",
+  "exactColdEffectProgramsAmongThese": 3,
+  "exactSourceFiles": 4881,
+  "finalCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "finalJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "fullMeasuredTemporalLedgerSha256": "257e07ff3657328ad05a93410b0a6f921fc11cd4652a5d94ee955aa904d64b38",
+  "locallyNamedOnlyOnSource": 173,
+  "locallyNamedOnlyOnTarget": 23,
+  "nativeCaptureManifestSha256": "c3ae7d4cf125797bc837d60e259b0d3f8a1c0a70efc1812f09057fb88f59547b",
+  "rawBlocksRetainedForBothArms": true,
+  "sameKeysAsOriginallyObservedCrossVersionChanges": true,
+  "solelyUniformFreshVersusColdEffectRelabelling": 196,
+  "status": "VERIFIED",
+  "supplementaryTemporalRows": 26673,
+  "withLocalBindingSourceOccurrence": 196,
+  "withinReplayStrictProgramMatches": 26673
+}

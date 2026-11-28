@@ -1,0 +1,19 @@
+{
+  "damaged": "candidates/final-177500afd23b-d89d3e0a/independent-checkpoints/shard-0506.json",
+  "preserved": "reboot-recovery-45338c1a/independent/shard-0506.derived.torn.json",
+  "damagedBytes": 0,
+  "damagedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "producerReceiptSha256": "efa8a9639f8dd3e9f6dcdfe740742ff8def377710a8fe8a4b93dc9d7725f7361",
+  "rawOutputSha256": "1ce913c7fcdb4fe31066a482e6cb614f6ada6146104694db8a509cff3e038ea3",
+  "rows": 1914,
+  "candidateIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "checkedClosedJsonCounts": {
+    "rankIndependent": 861,
+    "rankProducer": 862,
+    "retention": 210,
+    "originalPools": 120,
+    "finalPools": 145,
+    "overlap": 120,
+    "nativeStages": 5
+  }
+}

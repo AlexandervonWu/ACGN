@@ -1,0 +1,14 @@
+{
+  "candidateCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "candidateIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "checkerSha256": "181a0c4804f06c0c5c0c72a69c8ae7956ec8f759afcaaef6466945d5a76ccc30",
+  "expandedInputsSha256": "1a9a68f645b19ef126f6ede8d10492b2c8adf760bc286573dd0b70300518e6ef",
+  "originalInventories": {
+    "native-reference-inputs.tsv.gz": "23483b5dc59418ec0e42c3ee7d2485afcd1b033a2c66c90d9249192abc1bb0d4",
+    "paid-rank-witnesses-measured.jsonl": "5af1b5fe83317ddeadea6ca2e2c108ff1c361002588d4896a69185427749a010",
+    "paid-rank-witnesses-replays.jsonl": "07b8865b038ffcfbcf80fbdd5944145f959b18ab474fe59a09284c06d4073ad4",
+    "stratified-native-traces.jsonl.gz": "0a6dce5330d84bb3870a39621803946619efc81a26b697bde8e6f84c574a61fb"
+  },
+  "rows": 86
+}

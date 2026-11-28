@@ -1,0 +1,182 @@
+{
+  "candidateBuildReceiptSha256": "8144a8dd5b061e591519a49c35e0a7ff80c53f44dc96e07be4a44719998788f5",
+  "candidateRunId": "617d9fb3-5c46-419b-a596-e167f973985e",
+  "checkedOrderedNativeWitnesses": 1894168,
+  "checkerSha256": "073b6e18eb5575e8e20c8e2bf3fb95b5d58d2cf859d144af870a19b2bc820ece",
+  "chunks": [
+    {
+      "bytes": 1198764,
+      "path": "native-ranking-000.jsonl.gz",
+      "rows": 99955,
+      "sha256": "969499e9c55ea8603efa975b5f91aa147fe87c4eaf170e6c1385090f45bb6eba",
+      "submissions": 4790
+    },
+    {
+      "bytes": 1519461,
+      "path": "native-ranking-001.jsonl.gz",
+      "rows": 99962,
+      "sha256": "29ec03d9de2870176df63b5afa474a063aa7e26fa808cf76b6d40ccd400f2f94",
+      "submissions": 3667
+    },
+    {
+      "bytes": 1509953,
+      "path": "native-ranking-002.jsonl.gz",
+      "rows": 99897,
+      "sha256": "23347d6e1041ebbd71719c92f7f53cf55f56b1a32ee90e3c9f21bfe656b35380",
+      "submissions": 3332
+    },
+    {
+      "bytes": 1550895,
+      "path": "native-ranking-003.jsonl.gz",
+      "rows": 99975,
+      "sha256": "3c361a437429273830775a82c76465b075e00c78e6d5e4d784fa5cb03ee319cd",
+      "submissions": 645
+    },
+    {
+      "bytes": 1632346,
+      "path": "native-ranking-004.jsonl.gz",
+      "rows": 99991,
+      "sha256": "c58374615d9e061b8a6eab855122e86c895377b82befa3fb27ded8560d6dfdde",
+      "submissions": 6033
+    },
+    {
+      "bytes": 1523698,
+      "path": "native-ranking-005.jsonl.gz",
+      "rows": 99999,
+      "sha256": "8f02c3230c1cac303ff56b4b0ba6e36d1370d1715230aa057bbb4124794b3ce8",
+      "submissions": 4076
+    },
+    {
+      "bytes": 2135884,
+      "path": "native-ranking-006.jsonl.gz",
+      "rows": 99914,
+      "sha256": "26b9159af1486fc595d309532ed6e6c428a2acf314eed7231b2577c0a7111915",
+      "submissions": 1233
+    },
+    {
+      "bytes": 1371717,
+      "path": "native-ranking-007.jsonl.gz",
+      "rows": 99902,
+      "sha256": "bed13df5f42859c05e19e3e150fd1bc6b034412d4a38eef8dac979367f3d26af",
+      "submissions": 879
+    },
+    {
+      "bytes": 1537379,
+      "path": "native-ranking-008.jsonl.gz",
+      "rows": 99876,
+      "sha256": "965575854e242efc202a0522337e37189384e6bcbc95a0be87a3e396f26956a4",
+      "submissions": 574
+    },
+    {
+      "bytes": 1529618,
+      "path": "native-ranking-009.jsonl.gz",
+      "rows": 99876,
+      "sha256": "ac9558fd5eba3127d4a45a79b48e08bbefb06f1be28e3bab1675131e973a58d7",
+      "submissions": 574
+    },
+    {
+      "bytes": 1462649,
+      "path": "native-ranking-010.jsonl.gz",
+      "rows": 99924,
+      "sha256": "adecb9adf8eac811fa1a8bb73d694c17ddcaeb16a023cae5d310b11da08ef98c",
+      "submissions": 560
+    },
+    {
+      "bytes": 1270912,
+      "path": "native-ranking-011.jsonl.gz",
+      "rows": 99897,
+      "sha256": "17b8cd16d27b4b800c3c0d3e066b906c9ea08106cab81b30226dee8394853d64",
+      "submissions": 497
+    },
+    {
+      "bytes": 1183146,
+      "path": "native-ranking-012.jsonl.gz",
+      "rows": 99939,
+      "sha256": "b26a7e71a9cb5016971f3fa1870fd3863ad1ba627251a3b11892958e6e855a8c",
+      "submissions": 2556
+    },
+    {
+      "bytes": 1647879,
+      "path": "native-ranking-013.jsonl.gz",
+      "rows": 99906,
+      "sha256": "a6d827cff8ee4c1933fd24b76d5f9b0bf2fdf10ebc57fecb5b4fc4067021455d",
+      "submissions": 920
+    },
+    {
+      "bytes": 1709427,
+      "path": "native-ranking-014.jsonl.gz",
+      "rows": 99900,
+      "sha256": "915cc6a8f0812b64fc48488cd7e6d9ed2f2684ad73dfa26921b8ed3c8bd2e220",
+      "submissions": 925
+    },
+    {
+      "bytes": 1642708,
+      "path": "native-ranking-015.jsonl.gz",
+      "rows": 99920,
+      "sha256": "c6170126fe04066087d345d21dee4fee618233978c07fdd9437b6b26182b7b78",
+      "submissions": 915
+    },
+    {
+      "bytes": 1402546,
+      "path": "native-ranking-016.jsonl.gz",
+      "rows": 99962,
+      "sha256": "419f2ffb8c5fdcb330dd890d55f3ef9c21e35f518d42113003694c6e0e2889cd",
+      "submissions": 1622
+    },
+    {
+      "bytes": 1484432,
+      "path": "native-ranking-017.jsonl.gz",
+      "rows": 99955,
+      "sha256": "91291ac2c14e43820b7061ee190b3ce84b6cce94d6de2449f2709b5118e6b645",
+      "submissions": 2484
+    },
+    {
+      "bytes": 1135314,
+      "path": "native-ranking-018.jsonl.gz",
+      "rows": 95418,
+      "sha256": "162f85bf3596b5145cf39dae1e7c3926a1fee0096cddfbc4a938f9e4fe26a310",
+      "submissions": 6104
+    }
+  ],
+  "complete": true,
+  "declaredMatches": {
+    "endpointCorrespondenceChecked": true,
+    "fixedChoiceReplaysChecked": true,
+    "nativeSequencesEqual": true,
+    "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+    "sourceCertificatesChecked": true,
+    "status": "MATCHED"
+  },
+  "executionPlansSha256": "7455a1437326f595d46008ea601583eb2eb10ed4fa4736bbc6ecf52aa6aec861",
+  "failures": [],
+  "inputCheckerSha256": "5c711fd72a34e6c5b37fedcc79d8f38365c04df8f9525601bc71a09bd4a45a2d",
+  "inputManifestSha256": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+  "matchedModes": {
+    "FLAT_ACTIONS": 1867495,
+    "TEMPORAL_BLOCK_EFFECTS": 26673
+  },
+  "measuredCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "measuredJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "nonconforming": 0,
+  "nonmatchingSha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83",
+  "orderedProgramCheckerSha256": "7e1b99c660cdd98ffa5b294eb7338f81685419949246d930dfe69588766cbc6d",
+  "originalScoreCommit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "originalScoreJarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "producerIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "references": 4496,
+  "releaseCommit": "0ef41a420deb5772e3ce0f709ad2730215b48215",
+  "required": 1059,
+  "rows": 1894168,
+  "schema": "candidate-exhaustive-native-ranking-commitments-v1",
+  "sequences": {
+    "!": "nonconforming native replay, full incident digest follows",
+    "F": "FLAT_ACTIONS",
+    "T": "TEMPORAL_BLOCK_EFFECTS"
+  },
+  "shardBindingsSha256": "957165993103a54d4a344d9defcdbc91983a30f0b9960f5ff5531d30423b9e94",
+  "shardsChecked": 1059,
+  "sourceIndexSha256": "478957ae05251d4913b05cad3ee7bfcc1cea747f3672de238c8dfa1afce449ea",
+  "sourceRunId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "status": "VERIFIED",
+  "submissions": 42386
+}

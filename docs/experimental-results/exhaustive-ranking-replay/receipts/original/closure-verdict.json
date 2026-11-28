@@ -1,0 +1,12 @@
+{
+  "auditorIdentity": "e9cc9add2b3f242c7ac84ad4803dbf5c525cc528c856500cd402a37fda2a3554",
+  "checkedOrderedNativeWitnesses": 1893782,
+  "complete": true,
+  "nonconforming": 386,
+  "portableRecount": "b501e5c56eabd352a1cf4a3a7f46b5bb6a4c8b419b4a714511a65b3bbddb191f",
+  "rawRecount": "2d2229e7997f13690cad607ff79e89c9d57ca59836720acae6b192246bc14a3e",
+  "receipt": "e48d5c1b6cd6fde60fbbeea51e1c51f8b2fc041d7627e473665b0686260046aa",
+  "rows": 1894168,
+  "status": "BLOCKED",
+  "summary": "5dc1545c3ed3bc061ee889fa4dd238e81c1e162687303452a739f604777cfd06"
+}

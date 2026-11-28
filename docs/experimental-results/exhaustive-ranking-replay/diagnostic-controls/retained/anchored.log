@@ -1,0 +1,135 @@
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: DummySymbol{type='local_var'}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+source certificates: flat=2 container=0 chain=3 join=0 binder=1; typed independent-block declaration order; wire correspondence NOT claimed
+source certificates: flat=1 container=0 chain=3 join=0 binder=0; typed independent-block declaration order; wire correspondence NOT claimed
+forward cross-arm sequence: {"certifiedActions":[{"cost":0,"kind":"node","source":"$","target":"$"},{"cost":0,"kind":"node","source":"$/0","target":"$/0"},{"cost":1,"kind":"node","source":"$/0/0","target":"$/0/1"},{"cost":1,"kind":"node","source":"$/0/0/0","target":"$/0/1/0"},{"cost":2,"kind":"delete","source":"$/0/0/0/0","target":null},{"cost":1,"kind":"delete","source":"$/0/0/0/1","target":null},{"cost":1,"kind":"node","source":"$/0/0/1","target":"$/0/1/1"},{"cost":1,"kind":"insert","source":null,"target":"$/0/1/1/0"},{"cost":1,"kind":"node","source":"$/0/0/1/0","target":"$/0/1/1/1"},{"cost":4,"kind":"delete","source":"$/0/0/1/0/0","target":null},{"cost":6,"kind":"delete","source":"$/0/0/1/0/1","target":null},{"cost":1,"kind":"node","source":"$/0/0/1/1","target":"$/0/1/1/2"},{"cost":3,"kind":"delete","source":"$/0/0/1/1/0","target":null},{"cost":1,"kind":"delete","source":"$/0/0/1/1/1","target":null},{"cost":0,"kind":"node","source":"$/0/1","target":"$/0/0"},{"cost":0,"kind":"node","source":"$/0/1/0","target":"$/0/0/0"},{"cost":1,"kind":"node","source":"$/0/1/0/0","target":"$/0/0/0/0"},{"cost":1,"kind":"insert","source":null,"target":"$/0/0/0/0/0"},{"cost":1,"kind":"insert","source":null,"target":"$/0/0/0/0/1"},{"cost":0,"kind":"node","source":"$/0/1/0/1","target":"$/0/0/0/1"},{"cost":0,"kind":"node","source":"$/0/1/1","target":"$/0/0/1"}],"certifiedPermutation":{"left":[1,0],"right":[0,1]},"fastActions":[{"cost":0,"kind":"node","source":"$","target":"$"},{"cost":0,"kind":"node","source":"$/0","target":"$/0"},{"cost":1,"kind":"node","source":"$/0/0","target":"$/0/1"},{"cost":1,"kind":"node","source":"$/0/0/0","target":"$/0/1/0"},{"cost":2,"kind":"delete","source":"$/0/0/0/0","target":null},{"cost":1,"kind":"delete","source":"$/0/0/0/1","target":null},{"cost":1,"kind":"node","source":"$/0/0/1","target":"$/0/1/1"},{"cost":1,"kind":"insert","source":null,"target":"$/0/1/1/0"},{"cost":1,"kind":"node","source":"$/0/0/1/0","target":"$/0/1/1/1"},{"cost":4,"kind":"delete","source":"$/0/0/1/0/0","target":null},{"cost":6,"kind":"delete","source":"$/0/0/1/0/1","target":null},{"cost":1,"kind":"node","source":"$/0/0/1/1","target":"$/0/1/1/2"},{"cost":3,"kind":"delete","source":"$/0/0/1/1/0","target":null},{"cost":1,"kind":"delete","source":"$/0/0/1/1/1","target":null},{"cost":0,"kind":"node","source":"$/0/1","target":"$/0/0"},{"cost":0,"kind":"node","source":"$/0/1/0","target":"$/0/0/0"},{"cost":1,"kind":"node","source":"$/0/1/0/0","target":"$/0/0/0/0"},{"cost":1,"kind":"insert","source":null,"target":"$/0/0/0/0/0"},{"cost":1,"kind":"insert","source":null,"target":"$/0/0/0/0/1"},{"cost":0,"kind":"node","source":"$/0/1/0/1","target":"$/0/0/0/1"},{"cost":0,"kind":"node","source":"$/0/1/1","target":"$/0/0/1"}],"orderedDeclarationActionsEqual":true,"certifiedDeclarationActions":[{"leftIndex":0,"cost":1,"kind":"update","rightIndex":0,"source":["ALL","Person","ONE","0"],"target":["ALL","Class","ONE","0"]},{"leftIndex":1,"cost":0,"kind":"keep","rightIndex":1,"source":["ALL","Person","ONE","0"],"target":["ALL","Person","ONE","0"]}],"fastDeclarationActions":[{"leftIndex":0,"cost":1,"kind":"update","rightIndex":0,"source":["ALL","Person","ONE","0"],"target":["ALL","Class","ONE","0"]},{"leftIndex":1,"cost":0,"kind":"keep","rightIndex":1,"source":["ALL","Person","ONE","0"],"target":["ALL","Person","ONE","0"]}],"publicCorrespondenceChecked":false,"orderedMatrixActionsEqual":true,"metricEndpointCorrespondenceChecked":true,"fastPermutation":{"cost":0,"source":[1,0],"admission":"ORIGINAL_SOURCE_CERTIFIED_PREFIX_TRANSPOSITION","target":[0,1]}}
+source certificates: flat=1 container=0 chain=3 join=0 binder=0; typed independent-block declaration order; wire correspondence NOT claimed
+source certificates: flat=2 container=0 chain=3 join=0 binder=1; typed independent-block declaration order; wire correspondence NOT claimed
+reverse cross-arm sequence: {"certifiedActions":[{"cost":0,"kind":"node","source":"$","target":"$"},{"cost":0,"kind":"node","source":"$/0","target":"$/0"},{"cost":0,"kind":"node","source":"$/0/0","target":"$/0/1"},{"cost":0,"kind":"node","source":"$/0/0/0","target":"$/0/1/0"},{"cost":1,"kind":"node","source":"$/0/0/0/0","target":"$/0/1/0/0"},{"cost":1,"kind":"delete","source":"$/0/0/0/0/0","target":null},{"cost":1,"kind":"delete","source":"$/0/0/0/0/1","target":null},{"cost":0,"kind":"node","source":"$/0/0/0/1","target":"$/0/1/0/1"},{"cost":0,"kind":"node","source":"$/0/0/1","target":"$/0/1/1"},{"cost":1,"kind":"node","source":"$/0/1","target":"$/0/0"},{"cost":1,"kind":"node","source":"$/0/1/0","target":"$/0/0/0"},{"cost":2,"kind":"insert","source":null,"target":"$/0/0/0/0"},{"cost":1,"kind":"insert","source":null,"target":"$/0/0/0/1"},{"cost":1,"kind":"node","source":"$/0/1/1","target":"$/0/0/1"},{"cost":1,"kind":"delete","source":"$/0/1/1/0","target":null},{"cost":1,"kind":"node","source":"$/0/1/1/1","target":"$/0/0/1/0"},{"cost":4,"kind":"insert","source":null,"target":"$/0/0/1/0/0"},{"cost":6,"kind":"insert","source":null,"target":"$/0/0/1/0/1"},{"cost":1,"kind":"node","source":"$/0/1/1/2","target":"$/0/0/1/1"},{"cost":3,"kind":"insert","source":null,"target":"$/0/0/1/1/0"},{"cost":1,"kind":"insert","source":null,"target":"$/0/0/1/1/1"}],"certifiedPermutation":{"left":[0,1],"right":[1,0]},"fastActions":[{"cost":0,"kind":"node","source":"$","target":"$"},{"cost":0,"kind":"node","source":"$/0","target":"$/0"},{"cost":0,"kind":"node","source":"$/0/0","target":"$/0/1"},{"cost":0,"kind":"node","source":"$/0/0/0","target":"$/0/1/0"},{"cost":1,"kind":"node","source":"$/0/0/0/0","target":"$/0/1/0/0"},{"cost":1,"kind":"delete","source":"$/0/0/0/0/0","target":null},{"cost":1,"kind":"delete","source":"$/0/0/0/0/1","target":null},{"cost":0,"kind":"node","source":"$/0/0/0/1","target":"$/0/1/0/1"},{"cost":0,"kind":"node","source":"$/0/0/1","target":"$/0/1/1"},{"cost":1,"kind":"node","source":"$/0/1","target":"$/0/0"},{"cost":1,"kind":"node","source":"$/0/1/0","target":"$/0/0/0"},{"cost":2,"kind":"insert","source":null,"target":"$/0/0/0/0"},{"cost":1,"kind":"insert","source":null,"target":"$/0/0/0/1"},{"cost":1,"kind":"node","source":"$/0/1/1","target":"$/0/0/1"},{"cost":1,"kind":"delete","source":"$/0/1/1/0","target":null},{"cost":1,"kind":"node","source":"$/0/1/1/1","target":"$/0/0/1/0"},{"cost":4,"kind":"insert","source":null,"target":"$/0/0/1/0/0"},{"cost":6,"kind":"insert","source":null,"target":"$/0/0/1/0/1"},{"cost":1,"kind":"node","source":"$/0/1/1/2","target":"$/0/0/1/1"},{"cost":3,"kind":"insert","source":null,"target":"$/0/0/1/1/0"},{"cost":1,"kind":"insert","source":null,"target":"$/0/0/1/1/1"}],"orderedDeclarationActionsEqual":true,"certifiedDeclarationActions":[{"leftIndex":0,"cost":1,"kind":"update","rightIndex":0,"source":["ALL","Class","ONE","0"],"target":["ALL","Person","ONE","0"]},{"leftIndex":1,"cost":0,"kind":"keep","rightIndex":1,"source":["ALL","Person","ONE","0"],"target":["ALL","Person","ONE","0"]}],"fastDeclarationActions":[{"leftIndex":0,"cost":1,"kind":"update","rightIndex":0,"source":["ALL","Class","ONE","0"],"target":["ALL","Person","ONE","0"]},{"leftIndex":1,"cost":0,"kind":"keep","rightIndex":1,"source":["ALL","Person","ONE","0"],"target":["ALL","Person","ONE","0"]}],"publicCorrespondenceChecked":false,"orderedMatrixActionsEqual":true,"metricEndpointCorrespondenceChecked":true,"fastPermutation":{"cost":0,"source":[0,1],"admission":"ORIGINAL_SOURCE_CERTIFIED_PREFIX_TRANSPOSITION","target":[1,0]}}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOP_NOT_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: DummySymbol{type='local_var'}
+Adding key: MiddleSymbol{name='QT_FORMULA_ONE5', infiniteRoot=true, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_MINUS', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: DummySymbol{type='local_var'}
+Adding key: DeclRootSymbol{semantic=1}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_MINUS', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_INTERSECT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: MiddleSymbol{name='QT_FORMULA_SOME2', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_LONE4', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='local_var'}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: DummySymbol{type='local_var'}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: DummySymbol{type='local_var'}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+RetainedPaidCompletionTest: 113 checks passed; both native27 receipts complete numerically, public/wire/Java-Lean BLOCKED

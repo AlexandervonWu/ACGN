@@ -1,0 +1,35 @@
+{
+  "archivedSummarySha256": {
+    "original": "5dc1545c3ed3bc061ee889fa4dd238e81c1e162687303452a739f604777cfd06",
+    "repaired": "257e07ff3657328ad05a93410b0a6f921fc11cd4652a5d94ee955aa904d64b38"
+  },
+  "casesByEndpointSide": {
+    "source": 346,
+    "target": 46
+  },
+  "editions": [
+    "original",
+    "repaired"
+  ],
+  "historicalProgramHashes": 392,
+  "offsetRange": [
+    37446,
+    15696032
+  ],
+  "pairs": 196,
+  "registrySha256": "23ce706bb52380de530181603914271d42f35fb50c9895ca2011ec05f6bf880e",
+  "rejectedControls": [
+    "wrong allocation base",
+    "wrong source phase",
+    "wrong archival hash",
+    "self-consistent but incorrect offset",
+    "two distinct uses of one declaration conflated",
+    "different live tree path",
+    "different declaration tuple",
+    "foreign predicate"
+  ],
+  "schema": "archived-temporal-occurrence-preimages-v1",
+  "sourceFiles": 101,
+  "sourceTableSha256": "cdc7c01f352b9ee15ac29d1d43eefc92f287f12d5ff7ef7d1f35cfcbe3b087bb",
+  "status": "VERIFIED"
+}

@@ -1,0 +1,32 @@
+{
+  "archivedLineageRegistrySha256": "23ce706bb52380de530181603914271d42f35fb50c9895ca2011ec05f6bf880e",
+  "captureReceiptSha256": {
+    "cold": "dc37ba81faba161d7e6e9771c9f7489cfc6ff431c7b9feaf15e4dafbc9e6c6fa",
+    "warm": "38a966b6c5c6fd1abfc499f1748166d859a21b7d7fdd2423d33efa71c7dc6200"
+  },
+  "checks": {
+    "bothArchivedProgramsReconstructed": 196,
+    "coldExactArchivedRawPrograms": 0,
+    "coldRepeatsIdentical": 392,
+    "coldSameAcrossEngines": 196,
+    "exactArchivedReconstructions": 392,
+    "warmExactArchivedRawPrograms": 0,
+    "warmOnlyConsistentOccurrenceOffset": 392,
+    "warmSameAcrossEngines": 196
+  },
+  "distinctNativeReceipts": 393,
+  "distinctWitnesses": 304,
+  "freshJvmObservations": 1176,
+  "largestArchiveOffset": 15696032,
+  "largestWarmOffset": 1653,
+  "measurementsSha256": "a394d2c38a07980656cf6f32dd7a05c24816ee8781c2d11b09f8b931bb8be8ee",
+  "receiptsFileSha256": "e1c0c4a1b6304d943dccea3189fef00f0405a8a8a84b699dc4ff5bf33880b47e",
+  "rows": 196,
+  "smallestArchiveOffset": 37446,
+  "smallestWarmOffset": 233,
+  "sourceBindingsSha256": "80c40141058d7fd2116080a4e20d277016ccb7505ce39c8420881e13188e920e",
+  "sourceComparisonSha256": "cdc7c01f352b9ee15ac29d1d43eefc92f287f12d5ff7ef7d1f35cfcbe3b087bb",
+  "sourceFiles": 101,
+  "status": "VERIFIED",
+  "witnessFileSha256": "d5f04eb746e0c8782078a4d1b8c29f63286439c9f65bff58dfcf4f96577c3966"
+}

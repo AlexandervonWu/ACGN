@@ -1,0 +1,202 @@
+{
+  "allReconstructedRows": 1914,
+  "archivedCommands": {
+    "native": {
+      "SAT": 105,
+      "UNSAT": 1234
+    },
+    "status": "VERIFIED",
+    "unexpected": []
+  },
+  "archivedLog": {
+    "path": "reboot-recovery-45338c1a/independent/boot-auditor.journal",
+    "sha256": "7454229a42f063b21fd5b48a9dab7b36ad0ffbe7f9b81bb25ad5d4742ebd687e"
+  },
+  "bootId": "45338c1a-e913-4e7a-a34c-0fc87bb9e8bf",
+  "bootUtc": "2026-11-28T03:16:35+00:00",
+  "candidateCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "candidateIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "candidateUuid": "617d9fb3-5c46-419b-a596-e167f973985e",
+  "damagedRecord": {
+    "path": "reboot-recovery-45338c1a/independent/damage.json",
+    "sha256": "d4fbc8f075e6f7fde1da7cf4d9790ab847a4c722ff9f8fc0e89f3b4c6776b1b0"
+  },
+  "diagnosis": "Only the independently derived shard 0506 checkpoint was empty. The registered verifier rejected it when reloading the previous session. The supervisor stopped the other two in-flight sibling stages on this exception.",
+  "finishedNativeStages": {
+    "commands": {
+      "path": "final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/commands-done.json",
+      "sha256": "54173b9bdb02da198157d70b1cb7fe8f31f0c3c465a7d20691402cdcdc24d5fd"
+    },
+    "format": {
+      "path": "final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/format-done.json",
+      "sha256": "6fdcd9862d5e056036b352478522cb9326ab1a6613041baa6ce526086f01800c"
+    },
+    "reverse": {
+      "path": "final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/reverse-done.json",
+      "sha256": "8c4ccdb484b74df5cd513c1df8c0318b53818bd457a8718ef34df292c9232fae"
+    }
+  },
+  "frozenMarker": {
+    "path": "final-handoff/final-started.json",
+    "sha256": "46d5aec5875f00a876bbda5db448e2357332017f276e72b8438e237eff8a049a"
+  },
+  "historicalNativeCounts": {
+    "fixed": 1234,
+    "paired": 33220,
+    "sat-control": 105,
+    "zero": 19271
+  },
+  "historicalNativeFailures": [],
+  "historicalNativeRegistration": {
+    "path": "previously-covered/runs/177500afd23b-79e63cd786f7/identity.json",
+    "sha256": "2e2ee0b9958bd18d1f513349ae3ec4cdcf855188b976c7ee32b07c1a3fab96e2"
+  },
+  "nativePartialRecount": {
+    "path": "reference-pool-scalars/snapshots/recount-2026-11-28T03-22-05/summary.json",
+    "sha256": "ed23eff1f29c3cd18b21495a4bbf9ff84975b3e312514d91457e5edf2f0ebc37"
+  },
+  "observedAtUtc": "2026-11-28T03:22:45.530151+00:00",
+  "oldDamagedBytes": {
+    "path": "reboot-recovery-45338c1a/independent/shard-0506.derived.torn.json",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "otherRecovery": [
+    "Restored 45% original and 98% candidate CPU quotas for the two supplemental positive-scalar workers.",
+    "Restored the earlier transient pool comparison as a login-resumable unit with the same comparator.",
+    "The two release packaging services are awaiting their original complete-evidence conditions."
+  ],
+  "paidReverseControls": 86,
+  "positiveScalarControls": {
+    "commonPositiveRows": 46464,
+    "finalPositiveRows": 57216,
+    "originalPositiveRows": 46464
+  },
+  "positiveScalarDifferences": [],
+  "postBootHistoricalNativePrefixes": [
+    {
+      "capturedCompleteRows": 256,
+      "completePrefixSha256": "0ebf64176055f11939a3be85cb7db0593e093f11f08275c35c9bbd8ade1134a4",
+      "lastOrdinal": 255,
+      "postBootMTime": 1795836153.4068913,
+      "shard": "paired-129"
+    },
+    {
+      "capturedCompleteRows": 237,
+      "completePrefixSha256": "86822b61381e1a36dc0d610e46eb3f38c44c5b413da0d998584033a371af4ef0",
+      "lastOrdinal": 236,
+      "postBootMTime": 1795836164.7400267,
+      "shard": "paired-128"
+    },
+    {
+      "capturedCompleteRows": 12,
+      "completePrefixSha256": "7476738c1baf373877da4d6a728ec5f1e1d8bec154a3f8fbd76dd25d8e9cf343",
+      "lastOrdinal": 11,
+      "postBootMTime": 1795836165.115031,
+      "shard": "paired-130"
+    }
+  ],
+  "postBootScalarSeals": {
+    "final": {
+      "postBootSeals": 12,
+      "receipt": {
+        "path": "reference-pool-scalars/final-617d9fb3-5c46-419b-a596-e167f973985e/results/p138.json",
+        "sha256": "7affafad9dcab85995986812db8f54c54d437285e78859a5b851a1d744f5e83e"
+      },
+      "rows": 384
+    },
+    "original": {
+      "postBootSeals": 1,
+      "receipt": {
+        "path": "reference-pool-scalars/original/results/p120.json",
+        "sha256": "085930352fcfb7c685826c28afae4b43533558a34a9e589e6c22b0ad9454ecd2"
+      },
+      "rows": 384
+    }
+  },
+  "rankObservation": {
+    "MATCHED": 1524064
+  },
+  "rankProgress": {
+    "path": "reboot-recovery-45338c1a/independent/rank-progress.json",
+    "sha256": "67f4eb6ef3a68aee5ef9dd84ca27fba929d08bd108e0d151a2d9d9843b3cf87d"
+  },
+  "rankRows": 1524064,
+  "reconstructedRecord": {
+    "path": "reboot-recovery-45338c1a/independent/shard-0506.revalidated.json",
+    "sha256": "869e1da6df00afcab61a681182bb1c1362fac8891b2dd056b997e510c4087210"
+  },
+  "scalarRegistration": {
+    "path": "reference-pool-scalars/registration.json",
+    "sha256": "a0f97331c5e5516b21a6a24817dde70267c7fa11b554d4eebf0a58e7ade36180"
+  },
+  "schema": "acgn-independent-reboot-recovery-v1",
+  "sealedRankShards": 866,
+  "status": "RESUMED",
+  "supervisedUnits": {
+    "acgn-final-native-audits-v2-zHOYRIEP.service": {
+      "ActiveEnterTimestamp": "",
+      "ActiveState": "activating",
+      "CPUQuotaPerSecUSec": "infinity",
+      "CPUWeight": "50",
+      "InvocationID": "e8e127b8c3ec4d159c71a2b44ca751ac",
+      "MainPID": "11418",
+      "SubState": "start"
+    },
+    "acgn-final-reference-pool-scalars-zHOYRIEP.service": {
+      "ActiveEnterTimestamp": "",
+      "ActiveState": "activating",
+      "CPUQuotaPerSecUSec": "980ms",
+      "CPUWeight": "12",
+      "InvocationID": "fdd962bd171a400a8eb285acf3878c9f",
+      "MainPID": "3106",
+      "SubState": "start"
+    },
+    "acgn-historical-reference-pool-scalars-recovery-zHOYRIEP.service": {
+      "ActiveEnterTimestamp": "",
+      "ActiveState": "activating",
+      "CPUQuotaPerSecUSec": "450ms",
+      "CPUWeight": "12",
+      "InvocationID": "06266a5e836444c087e3b6a39fdf9a30",
+      "MainPID": "3117",
+      "SubState": "start"
+    },
+    "acgn-pool-reserve-release-zHOYRIEP.path": {
+      "ActiveEnterTimestamp": "Fri 2026-11-27 21:17:46 CST",
+      "ActiveState": "active",
+      "InvocationID": "48a4be677f6648999442f15394e1e650",
+      "SubState": "waiting"
+    },
+    "acgn-positive-pool-overlap-zHOYRIEP.service": {
+      "ActiveEnterTimestamp": "Fri 2026-11-27 21:21:17 CST",
+      "ActiveState": "active",
+      "CPUQuotaPerSecUSec": "infinity",
+      "CPUWeight": "10",
+      "InvocationID": "a876c0d5abc04e949a2b2323199dfb17",
+      "MainPID": "11544",
+      "SubState": "running"
+    },
+    "acgn-release-recovery-pools-zHOYRIEP.service": {
+      "ActiveEnterTimestamp": "",
+      "ActiveState": "activating",
+      "CPUQuotaPerSecUSec": "infinity",
+      "CPUWeight": "[not set]",
+      "InvocationID": "65e1b46988a94a7ab516840e0a2d6de1",
+      "MainPID": "3108",
+      "SubState": "start"
+    },
+    "acgn-release-recovery-stages-zHOYRIEP.service": {
+      "ActiveEnterTimestamp": "",
+      "ActiveState": "activating",
+      "CPUQuotaPerSecUSec": "infinity",
+      "CPUWeight": "[not set]",
+      "InvocationID": "fa8ba9baaf3a4d94a92b66fa14cf743c",
+      "MainPID": "3110",
+      "SubState": "start"
+    }
+  },
+  "verifierRegistration": {
+    "path": "candidates/final-177500afd23b-d89d3e0a/independent-auditor.json",
+    "sha256": "ad67107ec7dc1e691000d98abe3c8d6bae0f65fae3067f45fdfce38782da8266"
+  }
+}

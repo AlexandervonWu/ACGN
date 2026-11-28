@@ -1,0 +1,7 @@
+'CoursesPaidAlignmentTie.every_prefix_replays_at_three' depends on axioms: [propext]
+'CoursesPaidAlignmentTie.charge_prefer' depends on axioms: [propext]
+'CoursesPaidAlignmentTie.changing_only_prior_preserves_charge' depends on axioms: [propext]
+'CoursesPaidAlignmentTie.exact_attained_tables_and_winners' depends on axioms: [propext]
+'CoursesPaidAlignmentTie.empty_paid_prior_respects_visited_scope' depends on axioms: [propext]
+'CoursesPaidAlignmentTie.reference_body_changes_the_certified_witness' depends on axioms: [propext]
+'CoursesPaidAlignmentTie.matrix_programs_in_the_actual_receipts' depends on axioms: [propext]

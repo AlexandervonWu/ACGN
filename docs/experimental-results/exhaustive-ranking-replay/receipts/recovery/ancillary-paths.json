@@ -1,0 +1,17 @@
+{
+  "candidates/final-177500afd23b-d89d3e0a/independent-auditor.json": "bindings/candidates/final-177500afd23b-d89d3e0a/independent-auditor.json",
+  "final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/commands-done.json": "bindings/final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/commands-done.json",
+  "final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/format-done.json": "bindings/final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/format-done.json",
+  "final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/reverse-done.json": "bindings/final-audit-handoff-v2/run-617d9fb3-5c46-419b-a596-e167f973985e/reverse-done.json",
+  "final-handoff/final-started.json": "bindings/final-handoff/final-started.json",
+  "previously-covered/runs/177500afd23b-79e63cd786f7/identity.json": "bindings/previously-covered/runs/177500afd23b-79e63cd786f7/identity.json",
+  "reboot-recovery-45338c1a/independent/boot-auditor.journal": "ancillary/boot-auditor.journal",
+  "reboot-recovery-45338c1a/independent/damage.json": "ancillary/damage.json",
+  "reboot-recovery-45338c1a/independent/rank-progress.json": "ancillary/rank-progress.json",
+  "reboot-recovery-45338c1a/independent/shard-0506.derived.torn.json": "ancillary/shard-0506.derived.torn.json",
+  "reboot-recovery-45338c1a/independent/shard-0506.revalidated.json": "ancillary/shard-0506.revalidated.json",
+  "reference-pool-scalars/final-617d9fb3-5c46-419b-a596-e167f973985e/results/p138.json": "bindings/reference-pool-scalars/final-617d9fb3-5c46-419b-a596-e167f973985e/results/p138.json",
+  "reference-pool-scalars/original/results/p120.json": "bindings/reference-pool-scalars/original/results/p120.json",
+  "reference-pool-scalars/registration.json": "bindings/reference-pool-scalars/registration.json",
+  "reference-pool-scalars/snapshots/recount-2026-11-28T03-22-05/summary.json": "bindings/reference-pool-scalars/snapshots/recount-2026-11-28T03-22-05/summary.json"
+}

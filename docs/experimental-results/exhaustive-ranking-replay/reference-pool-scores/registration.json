@@ -1,0 +1,14 @@
+{
+  "files": {
+    "PoolScalars.java": "3330b071b3b8ff67f1df36b28e843ae6f298bbd234f28145222d6720af068d07",
+    "inputs.json": "43e6752dab8e7bcb8e467d09a4e32a377ef7732089327e3065bddf84e3fdb6ff",
+    "inputs.py": "c89aaea858de5bcedc6eb0eb171f8a0f60314c673fc764d5d62a8a1b91334dad",
+    "run.py": "aea1ae741b18035e78d98e7f72a34a20f4f86d0115618e71309831c48caf36a8"
+  },
+  "independentFinalBasis": "final-started.json classic V2 validation",
+  "originalNegativePredicate": "Fast == Certified > 0; all first issues retained",
+  "positive": 112761,
+  "runtime": "650 MiB / 16 cache entries, medium 1200/4, deep 2100/2 on failed shard, failed attempts archived, 8 GiB host reserve",
+  "schema": "ACGN-historical-positive-reference-scalar-census-v1",
+  "sourceCatalog": "frozen original path, predicate, SHA-256, original pool orientation"
+}

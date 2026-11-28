@@ -1,0 +1,230 @@
+[
+  {
+    "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+    "fast": 27,
+    "paidActions": [
+      {
+        "targetTuple": [
+          "SOME",
+          "P",
+          "ONE",
+          "0"
+        ],
+        "cost": 1,
+        "stage": "declaration",
+        "kind": "insert",
+        "sourceTuple": null,
+        "source": null,
+        "target": 1
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0",
+        "target": "$/0/0"
+      },
+      {
+        "cost": 5,
+        "stage": "matrix",
+        "kind": "insert",
+        "source": null,
+        "target": "$/0/0/0"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/0",
+        "target": "$/0/0/1"
+      },
+      {
+        "cost": 2,
+        "stage": "matrix",
+        "kind": "delete",
+        "source": "$/0/0/0/0",
+        "target": null
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/0/1",
+        "target": "$/0/0/1/0"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/0/2",
+        "target": "$/0/0/1/1"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/1",
+        "target": "$/0/0/2"
+      },
+      {
+        "cost": 5,
+        "stage": "matrix",
+        "kind": "delete",
+        "source": "$/0/0/1/0",
+        "target": null
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/1/1",
+        "target": "$/0/0/2/0"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/1/1/0",
+        "target": "$/0/0/2/0/0"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/1/1/1/0",
+        "target": "$/0/0/2/0/1/0"
+      },
+      {
+        "cost": 3,
+        "stage": "matrix",
+        "kind": "delete",
+        "source": "$/0/0/1/2",
+        "target": null
+      },
+      {
+        "cost": 3,
+        "stage": "matrix",
+        "kind": "delete",
+        "source": "$/0/0/1/3",
+        "target": null
+      }
+    ],
+    "certified": 27,
+    "order": "disjoint-to-ordinary",
+    "status": "MATCHED"
+  },
+  {
+    "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+    "fast": 27,
+    "paidActions": [
+      {
+        "targetTuple": null,
+        "cost": 1,
+        "stage": "declaration",
+        "kind": "delete",
+        "sourceTuple": [
+          "SOME",
+          "P",
+          "ONE",
+          "0"
+        ],
+        "source": 1,
+        "target": null
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0",
+        "target": "$/0/0"
+      },
+      {
+        "cost": 5,
+        "stage": "matrix",
+        "kind": "delete",
+        "source": "$/0/0/0",
+        "target": null
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/1",
+        "target": "$/0/0/0"
+      },
+      {
+        "cost": 2,
+        "stage": "matrix",
+        "kind": "insert",
+        "source": null,
+        "target": "$/0/0/0/0"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/1/0",
+        "target": "$/0/0/0/1"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/1/1",
+        "target": "$/0/0/0/2"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/2",
+        "target": "$/0/0/1"
+      },
+      {
+        "cost": 5,
+        "stage": "matrix",
+        "kind": "insert",
+        "source": null,
+        "target": "$/0/0/1/0"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/2/0",
+        "target": "$/0/0/1/1"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/2/0/0",
+        "target": "$/0/0/1/1/0"
+      },
+      {
+        "cost": 1,
+        "stage": "matrix",
+        "kind": "node",
+        "source": "$/0/0/2/0/1/0",
+        "target": "$/0/0/1/1/1/0"
+      },
+      {
+        "cost": 3,
+        "stage": "matrix",
+        "kind": "insert",
+        "source": null,
+        "target": "$/0/0/1/2"
+      },
+      {
+        "cost": 3,
+        "stage": "matrix",
+        "kind": "insert",
+        "source": null,
+        "target": "$/0/0/1/3"
+      }
+    ],
+    "certified": 27,
+    "order": "ordinary-to-disjoint",
+    "status": "MATCHED"
+  }
+]

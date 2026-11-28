@@ -1,0 +1,15 @@
+{
+  "archived-original-command-receipt.json": "d806d0e4140c6e0e9e9d8fd8540fc71b4acb1e656e7ee31294b20d53240f8690",
+  "archived-original-command-registration.json": "742e63750f3afa25bde6899912aa80290f22f74078d808098e571f929ec1eaed",
+  "archived-original-command-results.jsonl.gz": "759d7ade868471540568c484c00e8c778ad6b0ccf6fd510560208dfb8118a285",
+  "build-receipt": "8144a8dd5b061e591519a49c35e0a7ff80c53f44dc96e07be4a44719998788f5",
+  "combined-verdict.json": "b29a7ef2ead3f1f659ddf12f86b032fe5da5be656a0130d66de6a0a5631f23a6",
+  "fixed.jsonl.gz": "4c51f5207f278a9306c85dfab198624eaab33beb5f4f848bde673c3b7df37b6a",
+  "identity.json": "2e2ee0b9958bd18d1f513349ae3ec4cdcf855188b976c7ee32b07c1a3fab96e2",
+  "losses.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+  "paired.jsonl.gz": "196e299c6c954a1724b61fc2565e6502c9616605aa68ca95aacb2c423f5b6725",
+  "sat-control.jsonl.gz": "e47dc915a38abdeda498a07da862f3d6c6abfb84292fb6d4a1a68cd7f48a0f84",
+  "shard-bindings.json": "83c9c09fe201c7a0a447ba862be563e1638857753bc369891edb9028ab131f86",
+  "verification.json": "26fb3d14717f95e5d281191f16dd710208e5da41b003217b9e7285970aa1cee6",
+  "zero.jsonl.gz": "84741a3a8ae93df050ce92b93f60df563ab7e52338e3866654ce0cc5ade36909"
+}

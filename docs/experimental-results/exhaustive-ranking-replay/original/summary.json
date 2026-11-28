@@ -1,0 +1,183 @@
+{
+  "checkedOrderedNativeWitnesses": 1893782,
+  "checkerSha256": "6a36339c5645d0bf353499bb23ebece254f374a5e2bec09cfccd016eb6f8f27b",
+  "chunks": [
+    {
+      "bytes": 1198767,
+      "path": "native-ranking-000.jsonl.gz",
+      "rows": 99955,
+      "sha256": "2e6b959a91211fa8079feb320f2f44628dd5b3ef4d4fdd78d76280b40027741f",
+      "submissions": 4790
+    },
+    {
+      "bytes": 1520501,
+      "path": "native-ranking-001.jsonl.gz",
+      "rows": 99962,
+      "sha256": "801bcee79582818f2899bb63e74230654090b6943c8aaf45b79097b27ecd7e9f",
+      "submissions": 3667
+    },
+    {
+      "bytes": 1513260,
+      "path": "native-ranking-002.jsonl.gz",
+      "rows": 99897,
+      "sha256": "d8ab2c15354e1792517d27c2cc5c6ca50f851ff4662ce05edb70917204337961",
+      "submissions": 3332
+    },
+    {
+      "bytes": 1555155,
+      "path": "native-ranking-003.jsonl.gz",
+      "rows": 99975,
+      "sha256": "0668172b5e628d7c79ddd0ea66da65fb1054df463bb5664f590702312cf607d8",
+      "submissions": 645
+    },
+    {
+      "bytes": 1632349,
+      "path": "native-ranking-004.jsonl.gz",
+      "rows": 99991,
+      "sha256": "a0356405070e207e40cebf28c809e79d6c2226ee27cc5368c3b0abd2e132f51a",
+      "submissions": 6033
+    },
+    {
+      "bytes": 1523705,
+      "path": "native-ranking-005.jsonl.gz",
+      "rows": 99999,
+      "sha256": "11bbe3e5b6cf75d80cbb68ec023dcd135550221cab1518b8ca75647e85372a6f",
+      "submissions": 4076
+    },
+    {
+      "bytes": 2138126,
+      "path": "native-ranking-006.jsonl.gz",
+      "rows": 99914,
+      "sha256": "e1848d39aa3a7ed235857ae32f02bd6dc43eb7025fcfcd81e7dd291bce559d8c",
+      "submissions": 1233
+    },
+    {
+      "bytes": 1371718,
+      "path": "native-ranking-007.jsonl.gz",
+      "rows": 99902,
+      "sha256": "3009147547a49ab4d5d48ffea39e536eaff9dd0d5d285e34650d8e82a1f49a09",
+      "submissions": 879
+    },
+    {
+      "bytes": 1537379,
+      "path": "native-ranking-008.jsonl.gz",
+      "rows": 99876,
+      "sha256": "965575854e242efc202a0522337e37189384e6bcbc95a0be87a3e396f26956a4",
+      "submissions": 574
+    },
+    {
+      "bytes": 1529618,
+      "path": "native-ranking-009.jsonl.gz",
+      "rows": 99876,
+      "sha256": "ac9558fd5eba3127d4a45a79b48e08bbefb06f1be28e3bab1675131e973a58d7",
+      "submissions": 574
+    },
+    {
+      "bytes": 1462649,
+      "path": "native-ranking-010.jsonl.gz",
+      "rows": 99924,
+      "sha256": "adecb9adf8eac811fa1a8bb73d694c17ddcaeb16a023cae5d310b11da08ef98c",
+      "submissions": 560
+    },
+    {
+      "bytes": 1270919,
+      "path": "native-ranking-011.jsonl.gz",
+      "rows": 99897,
+      "sha256": "406c76ce58e9636eabe22a1a73752b3ead20a1263fa90983065c5b2ad0e95b13",
+      "submissions": 497
+    },
+    {
+      "bytes": 1183165,
+      "path": "native-ranking-012.jsonl.gz",
+      "rows": 99939,
+      "sha256": "fe14bd3725174011fb1eec5ff15b7fbb3c629be864636201be428748cffd5a47",
+      "submissions": 2556
+    },
+    {
+      "bytes": 1648474,
+      "path": "native-ranking-013.jsonl.gz",
+      "rows": 99906,
+      "sha256": "08fcb1d0a5ac65f728db78a9f7cff738c9d07f412ca2261d878b8ec338a4faf6",
+      "submissions": 920
+    },
+    {
+      "bytes": 1709485,
+      "path": "native-ranking-014.jsonl.gz",
+      "rows": 99900,
+      "sha256": "a90f5988b9050aafe8505223a7ad7ea7acd2c43196008192f375b31e606f6dbb",
+      "submissions": 925
+    },
+    {
+      "bytes": 1642748,
+      "path": "native-ranking-015.jsonl.gz",
+      "rows": 99920,
+      "sha256": "0d91703acf840d3920bab0aefff0a8a06184697cec0376548a12b1c737fc967a",
+      "submissions": 915
+    },
+    {
+      "bytes": 1402771,
+      "path": "native-ranking-016.jsonl.gz",
+      "rows": 99962,
+      "sha256": "27e68dca605e06a1053c15692ea4048f00ca65c3a8abd8b4b0ddb5767d9c154f",
+      "submissions": 1622
+    },
+    {
+      "bytes": 1484432,
+      "path": "native-ranking-017.jsonl.gz",
+      "rows": 99955,
+      "sha256": "91291ac2c14e43820b7061ee190b3ce84b6cce94d6de2449f2709b5118e6b645",
+      "submissions": 2484
+    },
+    {
+      "bytes": 1135580,
+      "path": "native-ranking-018.jsonl.gz",
+      "rows": 95418,
+      "sha256": "ea0e5e758ff801fb1eed3674b4210e42709ee6cb9f4eff991d2b8478d3ca5ef4",
+      "submissions": 6104
+    }
+  ],
+  "complete": true,
+  "declaredMatches": {
+    "endpointCorrespondenceChecked": true,
+    "fixedChoiceReplaysChecked": true,
+    "nativeSequencesEqual": true,
+    "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+    "sourceCertificatesChecked": true,
+    "status": "MATCHED"
+  },
+  "failures": [
+    {
+      "count": 386,
+      "reason": "CHECKED_NATIVE_ACTIONS_DIFFER",
+      "status": "MISMATCH"
+    }
+  ],
+  "inputCheckerSha256": "5c711fd72a34e6c5b37fedcc79d8f38365c04df8f9525601bc71a09bd4a45a2d",
+  "inputManifestSha256": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+  "matchedModes": {
+    "FLAT_ACTIONS": 1867114,
+    "TEMPORAL_BLOCK_EFFECTS": 26668
+  },
+  "measuredCommit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "measuredJarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "nonconforming": 386,
+  "nonmatchingSha256": "b8d951c01b6ba98e0766a18c8eb8f13499399cfbb9b2aabd3751b4583ac74dbe",
+  "orderedProgramCheckerSha256": "7e1b99c660cdd98ffa5b294eb7338f81685419949246d930dfe69588766cbc6d",
+  "producerIdentitySha256": "a2cf64f0889624b0dc675b73d80f5b34caca2d73c9448b788713463b8abc3f02",
+  "references": 4496,
+  "releaseCommit": "0ef41a420deb5772e3ce0f709ad2730215b48215",
+  "required": 1059,
+  "rows": 1894168,
+  "schema": "exhaustive-native-ranking-commitments-v1",
+  "sequences": {
+    "!": "nonconforming native replay, full incident digest follows",
+    "F": "FLAT_ACTIONS",
+    "T": "TEMPORAL_BLOCK_EFFECTS"
+  },
+  "shardBindingsSha256": "36a88a1fb098b553db74b1244f39995ff94b93a6b21a01851bec007ba27ac4db",
+  "shardsChecked": 1059,
+  "sourceIndexSha256": "385fa3113c3a25a2366ace59e7eda5b964e45c486cfa6e3a21b41a30287f34f1",
+  "sourceRunId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "status": "BLOCKED",
+  "submissions": 42386
+}

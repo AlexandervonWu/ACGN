@@ -1,0 +1,20 @@
+{
+  "alloyFilesCount": 66080,
+  "astIdenticalExclusions": 21,
+  "checkerSha256": "5c711fd72a34e6c5b37fedcc79d8f38365c04df8f9525601bc71a09bd4a45a2d",
+  "closureContractSha256": "860152fe049b6add686c223df761a885daafab8e55f0f22e31591927ff54f903",
+  "combinedInputsSha256": "6818cebe040d27d080bd48e3bfdef66a87b8d825b65206e6bc048da88e8017c5",
+  "engineCommit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+  "manifestSha256": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+  "measuredJarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "originallyMeasuredRun": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "pools": 181,
+  "references": 4496,
+  "releaseCommit": "0ef41a420deb5772e3ce0f709ad2730215b48215",
+  "rows": 1894168,
+  "scope": "INPUT_COHORT",
+  "shards": 1059,
+  "status": "VERIFIED",
+  "submittedPaths": 42386,
+  "verifiedOriginalSources": 46701
+}

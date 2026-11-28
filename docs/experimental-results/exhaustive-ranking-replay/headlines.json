@@ -1,0 +1,110 @@
+{
+  "allPositiveWithinPoolPairs": 112761,
+  "archivedSolverOutcomes": {
+    "SAT": 105,
+    "UNSAT": 1234
+  },
+  "evidenceSha256": {
+    "original/summary.json": "5dc1545c3ed3bc061ee889fa4dd238e81c1e162687303452a739f604777cfd06",
+    "ranking-program-changes.json": "00ac67843ea76366cbe031fd16db69ac99ebdff98c04eded2d96e6f3faf971b4",
+    "receipts/repaired/historical-preflight-summary.json": "248940fe3bc127a35032a7fab13a7e64dbd6591755698e21a069edcc7dd66881",
+    "receipts/repaired/independent-closure.json": "0d524e016820fdd09a9407fb04a12174a4090343e58848da25b0816ffdca2f94",
+    "reference-pool-scores/command-components/summary.json": "5505b489ddff5ed8dfc4746594879d3cd3d113abb1e5d6f4829c8b63268844c0",
+    "reference-pool-scores/summary.json": "912a52444be333b935496ca417b7922024525987a522357ab8233e95fbd2611e",
+    "repaired-ranking-pairs.csv": "44cdcc36576d6baa2c26c95b4bbd76b5fa7373ddd3f3335613442d791dd1b9d3",
+    "repaired/summary.json": "257e07ff3657328ad05a93410b0a6f921fc11cd4652a5d94ee955aa904d64b38",
+    "stage-attribution/tables/final-timeline.csv": "f4996e79b3d6ce0be93f0812522d3630d51955f93cb5e1f3ed4256762734644b",
+    "temporal-program-replay/summary.json": "aa0286c28817866d9a1639370acedd4d84ddd31a9384179c1b9690e9b11bc366"
+  },
+  "fixedCommandComponents": 1743,
+  "historicalBidirectionalPairs": 469,
+  "historicalDirectionFailures": 0,
+  "historicalDirections": 938,
+  "historicalRankingScoresReproduced": 1894168,
+  "measuredCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "originalDifferent": 386,
+  "originalMatched": 1893782,
+  "originalSlottedReferenceZeros": 8952,
+  "paired": {
+    "additionalCorrectPositiveDistancePairs": 259,
+    "correct": 19212,
+    "correctZeros": 5137,
+    "fixedCommandDecisions": 347,
+    "incorrect": 42386,
+    "incorrectZeros": 0,
+    "slottedZeros": 2228
+  },
+  "previouslyMatchingPrograms": {
+    "archivedDigestsReproducedAfterRestoringNumbers": 392,
+    "rawDigestChanged": 196,
+    "rawDigestUnchanged": 1893586,
+    "sameEditsWithDifferentProcessLocalNumbers": 196
+  },
+  "rankingPairs": 1894168,
+  "rankingRun": "617d9fb3-5c46-419b-a596-e167f973985e",
+  "referenceGraph": {
+    "additionalDirectScopedLinks": 1107,
+    "commandComponentPairs": 20629,
+    "directFixedLinks": 1234,
+    "directNativeZeros": 19271,
+    "disconnectedSatControls": 105,
+    "fixedLinksAlsoStructural": 127,
+    "structuralComponentPairs": 19271
+  },
+  "referencePools": 181,
+  "references": 4496,
+  "repairedDifferent": 0,
+  "repairedMatched": 1894168,
+  "repairedModes": {
+    "FLAT_ACTIONS": 1867495,
+    "TEMPORAL_BLOCK_EFFECTS": 26673
+  },
+  "repairs": [
+    {
+      "cause": "Counting-binder positions",
+      "engineCommitPrefix": "229cf5da",
+      "firstDurableForwardPairs": 136,
+      "stage": "candidate-01"
+    },
+    {
+      "cause": "Declaration permutation order",
+      "engineCommitPrefix": "0157d270",
+      "firstDurableForwardPairs": 47,
+      "stage": "candidate-02"
+    },
+    {
+      "cause": "Linked temporal declaration tie",
+      "engineCommitPrefix": "7bda8c50",
+      "firstDurableForwardPairs": 5,
+      "stage": "candidate-03"
+    },
+    {
+      "cause": "Target binder group selection",
+      "engineCommitPrefix": "3fa9d25d",
+      "firstDurableForwardPairs": 188,
+      "stage": "candidate-04"
+    },
+    {
+      "cause": "Coalesced source declaration slots",
+      "engineCommitPrefix": "7d24ea60",
+      "firstDurableForwardPairs": 10,
+      "stage": "final"
+    }
+  ],
+  "replayBoundary": "FROZEN_NORMALIZED_IR",
+  "sourceAndScopeRetention": {
+    "originalSlottedPaired": 2228,
+    "originalSlottedZero": 8952,
+    "pairedFixedCommand": 347,
+    "pairedStructuralZero": 5137,
+    "poolCommandComponentPairs": 20629,
+    "poolFixedCommand": 1234,
+    "poolStructuralComponentPairs": 19271,
+    "previousSatControls": 105,
+    "zeroStructuralZero": 19271
+  },
+  "structuralForms": 1816,
+  "structuralZeros": 19271,
+  "submissions": 42386,
+  "withinPoolPairs": 132032
+}

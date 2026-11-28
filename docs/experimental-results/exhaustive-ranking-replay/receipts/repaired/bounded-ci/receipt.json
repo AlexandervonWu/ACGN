@@ -1,0 +1,16 @@
+{
+  "checkoutChangesAfter": [],
+  "cleanBefore": true,
+  "command": "bash scripts/run_bounded_ci_java_tests.sh",
+  "elapsedSeconds": 408.73145322001074,
+  "exit": 0,
+  "finishedUtc": "2026-11-27T20:13:34.774338+00:00",
+  "gitCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "gitTree": "318a914b81f731fdcebc5dc7de22430765cd1f21",
+  "javac": "javac 17.0.21.1",
+  "lean": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+  "logSha256": "b355c1f9e0faa34f4240f6c806bb2dd23a23a2b9afc288b97554469d501d7ff3",
+  "resourceReceiptSha256": "cf1c765037a272f6684c2889041c6090b502c557dba84d66d1f5074967b7be2b",
+  "schema": "acgn-clean-revision-bounded-ci-v1",
+  "startedUtc": "2026-11-27T20:06:46.042898+00:00"
+}

@@ -1,18 +1,29 @@
 \paragraph{Historical retention and native replay.}
-The archives through v3.3 contain \histPublishedPaired{} distinct student--oracle
-pairs and \histPublishedRefs{} direct reference pairs that reached zero in at
-least one edition. Both paths retained every such pair. The regression test
-checks each pair by its source and predicate identities in both engines. The 105 historical Alloy
-counterexamples remained in separate fixed-command components. Seven CV
-pairs had lost their shared structural form in v3.3. The repaired rules
-cover these cases, including empty carriers, and each equivalence has a Lean proof.
+Both paths retained all \histPublishedPaired{} student--oracle and
+\histPublishedRefs{} direct reference zeros archived through v3.3.
+The 105 historical Alloy counterexamples stayed in separate fixed-command
+components. Lean proves each of the seven recovered CV equivalences,
+including on empty carriers.
 
-The native checker replayed the edits selected by each engine from its
-frozen normalized inputs. The ordered actions or temporal block effects
-agreed on all 61,598 student--oracle comparisons, all 19,271
-zero-distance reference pairs and 4,138 positive-distance ranking
-comparisons selected for alternating quantifiers. Previously, completing a
-partial binder map could displace an equally cheap ordinary alignment. Both
-engines now break these ties by the surviving declaration positions. The
-83 affected comparisons also agreed in reverse. A separate sample of one
-paid comparison from each of the 181 pools agreed throughout.
+The native checker replayed each engine's chosen edits from its frozen
+normalized inputs. It compared ordered actions, including zero-cost keeps
+and permutations, or the ordered component and effect of each temporal
+block. Although all ranking distances agreed, \replayOriginalFailures{}
+witnesses differed. At distance three, for example, one path retained a
+\texttt{User} binder and the other a \texttt{Photo} binder.
+
+Using source positions for counting binders repaired 136 pairs, and visiting
+permutations in declaration order repaired 47. Keeping a linked temporal
+witness on a tie repaired five. Comparing eligible target binder groups
+repaired 188. In the final ten, normalization had merged a binder occurring
+in two declarations. Each original declaration supplied its own slot for
+the selected matrix mapping.
+
+Across all \replayPairs{} ranked pairs the repaired engines matched on
+1,867,495 flat action sequences and 26,673 temporal block sequences,
+preserving every score. In 196 temporal traces, the JVM numbered the same
+local variable occurrences differently across runs. Restoring those numbers
+reproduced both archived traces for every pair, with every edit unchanged.
+All 61,598 student--oracle and 19,271 zero-distance reference replays also
+agreed. The release gate checks these \replayOriginalFailures{} ranking
+repairs and 83 earlier regressions in both directions.

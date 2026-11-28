@@ -1,0 +1,400 @@
+{
+  "commit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "compilerScriptSha256": "e8f57f6991861f0956427824a02cbe6734752413663e575aec331c1394df2f0b",
+  "leanBinarySha256": "bf8d54e4714cc4b03d3f6bb34c83b7202b87e49c8bfcbff6895c085bb90ceb38",
+  "leanVersion": "Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)",
+  "modules": [
+    {
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "docs/section3-repair-audit/formal/SurvivorWitnessOrder.lean",
+      "printedTheorems": [],
+      "sourceSha256": "5646fd1a5bc97850381bc88883b6dfa9d3b168a15b183fab66049f09ef3fcb8c"
+    },
+    {
+      "logSha256": "ec6962c7bace55a3598ced603f1992dbcfd10b4a43c7bca7e629e18aefa1c718",
+      "path": "docs/distance-parity-20261107/DeclarationReplay.lean",
+      "printedTheorems": [
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "DeclarationReplay.delete_all"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "DeclarationReplay.two_deletions"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "DeclarationReplay.wrong_occurrence_rejected"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "DeclarationReplay.unconsumed_source_rejected"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "DeclarationReplay.ordered_cost"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "DeclarationReplay.numerical_coverage_not_authority"
+        }
+      ],
+      "sourceSha256": "1b5c9e7a4f83ae414b947812da2cc751d269703fddad5f42e37871b07a55b827"
+    },
+    {
+      "logSha256": "9d7f3535bc4319b337b9a7b07f83224edd83c8802ea3f88a655a6653453cba6a",
+      "path": "docs/section3-repair-audit/formal/CrossedDeclarationReplay.lean",
+      "printedTheorems": [
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "CrossedDeclarationReplay.charge_of_choice"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "CrossedDeclarationReplay.preference_preserves_charge"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CrossedDeclarationReplay.strictly_better_retained_path_survives"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "CrossedDeclarationReplay.distinct_replays_with_equal_length_and_cost"
+        }
+      ],
+      "sourceSha256": "e2e251ded3b5cb557b01c5d8984f21b5b2903e56821c8a3b69a9b8f7023f06b6"
+    },
+    {
+      "logSha256": "6a83f34fa8669a46d9042691e1fd1385879a21d29ece4ec57250954b1c4cb39b",
+      "path": "docs/section3-repair-audit/formal/OriginalOccurrenceOrder.lean",
+      "printedTheorems": [
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "OriginalOccurrenceOrder.minimum_corresponds"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "OriginalOccurrenceOrder.recover_metric_choice"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "OriginalOccurrenceOrder.recover_original_choice"
+        },
+        {
+          "axioms": [],
+          "name": "OriginalOccurrenceOrder.original_position_fixed_iff"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "OriginalOccurrenceOrder.target_preference_reverses_at_cost_seven"
+        }
+      ],
+      "sourceSha256": "66eb48d7857745a8dd4a893acbb5b8a46aa46bdf52ae229c3ef001cdf55ee5a6"
+    },
+    {
+      "logSha256": "41966cad4941bde4546592887247d77e6a59cbc74306cae8a4aada7108994517",
+      "path": "docs/section3-repair-audit/formal/TemporalDeclarationTie.lean",
+      "printedTheorems": [
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "TemporalDeclarationTie.both_station_programs_replay"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "TemporalDeclarationTie.cost_is_minimum"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "TemporalDeclarationTie.chooses_eligible_coherent_on_tie"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "TemporalDeclarationTie.preserves_strictly_cheaper_paid"
+        }
+      ],
+      "sourceSha256": "395196015dd4cd711a70553f306c0476fbe6e12e4ceccd4b8e8df9865db5d446"
+    },
+    {
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "docs/section3-repair-audit/formal/CoursesPaidData.lean",
+      "printedTheorems": [],
+      "sourceSha256": "90cf7b3ebf3336cd7ff4f19699ecced00f84cf16d4dc8d462440ba272f244f84"
+    },
+    {
+      "logSha256": "04f7ab0f9ef8ed33f0c5411a60efeafe061af07b6fcc870bfa0d1b1e37ea3090",
+      "path": "docs/section3-repair-audit/formal/CoursesPaidAlignmentTie.lean",
+      "printedTheorems": [
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoursesPaidAlignmentTie.every_prefix_replays_at_three"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoursesPaidAlignmentTie.charge_prefer"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoursesPaidAlignmentTie.changing_only_prior_preserves_charge"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoursesPaidAlignmentTie.exact_attained_tables_and_winners"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoursesPaidAlignmentTie.empty_paid_prior_respects_visited_scope"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoursesPaidAlignmentTie.reference_body_changes_the_certified_witness"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoursesPaidAlignmentTie.matrix_programs_in_the_actual_receipts"
+        }
+      ],
+      "sourceSha256": "a56f54590bf96146534563bf3b855119f3ee6b9343ccd6771acd3878307ae20d"
+    },
+    {
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "docs/section3-repair-audit/formal/CoursesRepairedNative.lean",
+      "printedTheorems": [],
+      "sourceSha256": "f4c33e4ab321162b4faa58e04d93fdd8331a0f64b7ce1799043eb9f36ae4675b"
+    },
+    {
+      "logSha256": "217f6763f28bce0dc9004651c3fdf2abcac389de0831cde0da0601986e8df91d",
+      "path": "docs/section3-repair-audit/formal/SingleSourceClassMinimum.lean",
+      "printedTheorems": [
+        {
+          "axioms": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "name": "SingleSourceClassMinimum.fold_spec"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "name": "SingleSourceClassMinimum.grouped_spec"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "name": "SingleSourceClassMinimum.same_objective_as_unpartitioned"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "SingleSourceClassMinimum.fixed_links_do_not_change_objective"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "SingleSourceClassMinimum.first_attaining_survives"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "SingleSourceClassMinimum.single_target_of_one_source"
+        },
+        {
+          "axioms": [],
+          "name": "SingleSourceClassMinimum.matched_class_is_unique"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "SingleSourceClassMinimum.restrict_cover"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "name": "SingleSourceClassMinimum.split_single_source_preserves_minimum"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "SingleSourceClassMinimum.empty_residual_witness_in_every_fiber"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "SingleSourceClassMinimum.Incident.repaired_prior_selects_project"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "SingleSourceClassMinimum.Incident.repaired_inv5_programs"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "SingleSourceClassMinimum.Incident.measured_repair_reproduces_the_certified_programs"
+        }
+      ],
+      "sourceSha256": "0c068808397bf97dff38ecb8c2fb5bf875c9e716f8e4812a77276190bd71700b"
+    },
+    {
+      "logSha256": "6fc18aec9382033a76d0ed3f3f0842eab1f5ab21d6d1393a4794e3792daeb8a4",
+      "path": "docs/section3-repair-audit/formal/CoalescedDeclarationFrames.lean",
+      "printedTheorems": [
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoalescedDeclarationFrames.reads_original_slot"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoalescedDeclarationFrames.requires_complete_arity"
+        },
+        {
+          "axioms": [],
+          "name": "CoalescedDeclarationFrames.one_key_cannot_encode_both"
+        },
+        {
+          "axioms": [],
+          "name": "CoalescedDeclarationFrames.two_complete_occurrences"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "CoalescedDeclarationFrames.rejects_foreign_or_missing_frame"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "CoalescedDeclarationFrames.equal_charge_different_occurrences"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "name": "CoalescedDeclarationFrames.gap_minimum_allows_only_length_edits"
+        },
+        {
+          "axioms": [
+            "propext"
+          ],
+          "name": "CoalescedDeclarationFrames.reverse_71_replays_at_selected_links"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Quot.sound"
+          ],
+          "name": "CoalescedDeclarationFrames.exchange_checks_every_frame"
+        },
+        {
+          "axioms": [],
+          "name": "CoalescedDeclarationFrames.blocks_a_dependency_or_different_domain"
+        },
+        {
+          "axioms": [],
+          "name": "CoalescedDeclarationFrames.preserves_matrix_program_and_charge"
+        },
+        {
+          "axioms": [
+            "propext",
+            "Classical.choice",
+            "Quot.sound"
+          ],
+          "name": "CoalescedDeclarationFrames.attaches_exactly_an_attaining_linked_path"
+        }
+      ],
+      "sourceSha256": "8cff8cbace2396a5ed0377d4c3bd515f84da161e9b8ec3bb63a4c9ac1de5a1b7"
+    }
+  ],
+  "schema": "acgn-ranking-replay-kernel-inventory-v1",
+  "scope": "Finite source-frame, order, replay and selection models. Source association is checked by the native corpus tests. Java-to-Lean refinement and public source-to-edit certification remain open.",
+  "status": "VERIFIED"
+}

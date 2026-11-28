@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-27T19:47:59.927277+00:00",
+  "attemptedRows": 1894168,
+  "completedShardStatusCounts": {
+    "MATCHED": 1893782,
+    "MISMATCH": 386
+  },
+  "completedShards": 1059,
+  "hostAvailableBytes": 27117805568,
+  "identitySha256": "a2cf64f0889624b0dc675b73d80f5b34caca2d73c9448b788713463b8abc3f02",
+  "pendingShards": 0,
+  "running": [],
+  "targetRows": 1894168,
+  "volumeFree": 244207321088
+}

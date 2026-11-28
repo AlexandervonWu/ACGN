@@ -1,0 +1,10 @@
+{
+  "candidateIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "originalExpectedRows": 60,
+  "rawSerialDigest": "d02c1e816ed9adf3a8dcd202f98a46351fa7a316ba961ec56eb474223f94c96f",
+  "rawTiledDigest": "262181958ea56917fc54b0368d53130aa0c5c47a19e2253bed93eb49322dfb46",
+  "rows": 60,
+  "status": "VERIFIED",
+  "unequalObservationOrdinals": []
+}

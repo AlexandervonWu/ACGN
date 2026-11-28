@@ -1,0 +1,36 @@
+{
+  "candidateCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "candidateSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "connectedHistoricalSatControls": [],
+  "exactArchivedNativeOutcomes": {
+    "SAT": 105,
+    "UNSAT": 1234
+  },
+  "nativeCheckedStates": {
+    "MATCHED": 80869,
+    "SCOPE_RETAINED": 1339
+  },
+  "nonconformingNativeOrCommandJobs": 0,
+  "originalCommandsWithUnexpectedResult": [],
+  "originalInputSha256": "f843f4aed936766e3b918327293d06d2ce42106149ecc129429a9e3dc52f9a36",
+  "rawVerdictSha256": "26fb3d14717f95e5d281191f16dd710208e5da41b003217b9e7285970aa1cee6",
+  "runIdentitySha256": "2e2ee0b9958bd18d1f513349ae3ec4cdcf855188b976c7ee32b07c1a3fab96e2",
+  "sourceHistory": {
+    "originalSlottedPaired": 2228,
+    "originalSlottedZero": 8952,
+    "pairedFixedCommand": 347,
+    "pairedStructuralZero": 5137,
+    "poolCommandComponentPairs": 20629,
+    "poolFixedCommand": 1234,
+    "poolStructuralComponentPairs": 19271,
+    "previousSatControls": 105,
+    "zeroStructuralZero": 19271
+  },
+  "sourceNativeCommands": {
+    "fixed": 1234,
+    "paired": 61598,
+    "sat-control": 105,
+    "zero": 19271
+  },
+  "status": "VERIFIED"
+}

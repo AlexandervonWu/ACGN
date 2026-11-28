@@ -1,0 +1,20 @@
+{
+  "counts": {
+    "both": {
+      "MATCHED": 3
+    },
+    "paid": {
+      "MATCHED": 4138
+    },
+    "ratchet-forward": {
+      "MATCHED": 83
+    },
+    "stratified": {
+      "MATCHED": 181
+    }
+  },
+  "distinct": 4319,
+  "originalSourceHashBoundPaidComparisons": 4319,
+  "sourceSummarySha256": "257e07ff3657328ad05a93410b0a6f921fc11cd4652a5d94ee955aa904d64b38",
+  "status": "VERIFIED"
+}

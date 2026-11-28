@@ -1,0 +1,28 @@
+{
+  "candidateCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "candidateIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "files": {
+    "EmitNativePrograms.java": "5fdd303654dd4f6ce2be3d357d400402d98a1e6c15eac17bc6fda04bd0f65198",
+    "certify.py": "0ed9136d7645fbe73c25c7241d1f0c6b2db9fbc9f1946c85c9fa5c98f380e5ef",
+    "controls.py": "181a0c4804f06c0c5c0c72a69c8ae7956ec8f759afcaaef6466945d5a76ccc30",
+    "historical_forward.py": "a128c928000e1ab0875bad43e754035972d06d8acc9606ea58fcb8cb069090c9",
+    "lookup_native.py": "ec6ef6ba8090cfe0783988fe5d05c3a8946807f7d936069519eb06d0a06ebe0c",
+    "native_commitment.py": "7e1b99c660cdd98ffa5b294eb7338f81685419949246d930dfe69588766cbc6d",
+    "qa/test_archive_shape.py": "dbcce9367784d3542bd79143cf54c0d2a1b0f1ae382108c23e2bd84ddc451465",
+    "qualify.py": "def60ee8baadc134a6920bd7b4d55d4d726e866a78a334f8ca9e961e51dc7ede",
+    "registry.py": "4248167046f6f2dd99a6860ac534e71773e8337e541b87d3ba612d8956e54438",
+    "replay_lookup.py": "03a76d6aa7157c05b9ca681db1363311f4bb8821c0d4f18501cc90b454b3632d",
+    "verify_compact.py": "29104733d05f3bc2e7f4ff420649c6f66b8c417dd04025932bf6e448ac3374be",
+    "verify_inputs.py": "5c711fd72a34e6c5b37fedcc79d8f38365c04df8f9525601bc71a09bd4a45a2d",
+    "verify_results.py": "073b6e18eb5575e8e20c8e2bf3fb95b5d58d2cf859d144af870a19b2bc820ece"
+  },
+  "finalHandoffSha256": "46d5aec5875f00a876bbda5db448e2357332017f276e72b8438e237eff8a049a",
+  "inputManifestSha256": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+  "originalAuditorSha256": "e9cc9add2b3f242c7ac84ad4803dbf5c525cc528c856500cd402a37fda2a3554",
+  "originalScoreRunId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "qualificationSha256": "8103f2f8e7712e46ac0ae16b66b58bac4fe5b8f6dc9bea709860253576b8688d",
+  "registeredAt": "2026-11-27T20:15:07.734903+00:00",
+  "schema": "acgn-independent-candidate-ranking-verifiers-v1",
+  "tiledCalibrationSha256": "ba6a4dca74f169d6bd087d2aa4964563af8649682ff5092129c12d77e8013575"
+}

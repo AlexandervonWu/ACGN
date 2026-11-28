@@ -1,0 +1,10 @@
+{
+  "auditorSha256": "e9cc9add2b3f242c7ac84ad4803dbf5c525cc528c856500cd402a37fda2a3554",
+  "closureVerdictSha256": "e0766dbc7c5798796ce41e56c04e75cc6004757bcbe0bcc1a9f741acd95fab46",
+  "complete": true,
+  "nativeClaimStatus": "BLOCKED",
+  "nonconforming": 386,
+  "producerIdentitySha256": "a2cf64f0889624b0dc675b73d80f5b34caca2d73c9448b788713463b8abc3f02",
+  "rows": 1894168,
+  "verifierRegistration": "VERIFIED"
+}

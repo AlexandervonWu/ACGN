@@ -1,0 +1,6 @@
+'DeclarationReplay.delete_all' depends on axioms: [propext]
+'DeclarationReplay.two_deletions' depends on axioms: [propext]
+'DeclarationReplay.wrong_occurrence_rejected' depends on axioms: [propext]
+'DeclarationReplay.unconsumed_source_rejected' depends on axioms: [propext]
+'DeclarationReplay.ordered_cost' depends on axioms: [propext]
+'DeclarationReplay.numerical_coverage_not_authority' depends on axioms: [propext]

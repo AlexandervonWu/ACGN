@@ -1,0 +1,52 @@
+{
+  "measuredSource": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "jarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "testSha256": "5c45ea99ed5cbfcb5c62b39ba6943bcf5de39d8ef2a4f2a6a70bbac5b0caea95",
+  "restoredFixtureSha256": "fc175f27271e72d12ef8c0dcf2715b0807da318628e40a78b74686f53ba761a1",
+  "compiledTestSha256": "c27d6271363f3320c2bc4516ff9cd31bda6106f8869fdb44a47de21a1bc44030",
+  "registeredParserConcreteChecks": 208,
+  "fullHarnessExit": 0,
+  "solvers": [
+    {
+      "satisfiable": true,
+      "instance": "---Trace---\n------State 0 (loop)-------\nuniv={P$0, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7}\nInt={-8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7}\nseq/Int={0, 1, 2}\nString={}\nnone={}\nthis/P={P$0}\nthis/P<:r={P$0->P$0}\nthis/S={}\nthis/T={P$0}\nthis/U={}\nskolem $ordinary_p={P$0}\n",
+      "command": "Run run$1 for 3 but exactly 1 P"
+    },
+    {
+      "satisfiable": false,
+      "instance": "---OUTCOME---\nUnsatisfiable.\n",
+      "command": "Run run$2 for 3"
+    }
+  ],
+  "contrast": [
+    {
+      "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+      "fast": 27,
+      "certified": 27,
+      "order": "disjoint-to-ordinary",
+      "status": "MATCHED"
+    },
+    {
+      "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+      "fast": 27,
+      "certified": 27,
+      "order": "ordinary-to-disjoint",
+      "status": "MATCHED"
+    }
+  ],
+  "paths": {
+    "source.als": "9f5e60e85f3903975eb5baa4247ab768eabd8f3bff757e975b701f476962a3c5",
+    "IndependentDisjointSolver.java": "a2f83d1521fe162ecc5cb207f002f11e9870745001207d6332b69e0c7ef5e483",
+    "solver.json": "07e6dae42b1ae8a9853207921610dd769a624002a02c4aa38934e6c133ddf3e6",
+    "DisjointNativeContrast.java": "592bc51825af12bc3ae903209a2205607478503562e9869264d87ceb202432e1",
+    "native-contrast.json": "6bafc77456e3e76c5b80d3e59d2b4ff8f83d7ef6d30d6164affaea3ff3f523d8",
+    "issued.log": "6952ceb58928854cdf197dd4e8cd21b054da8253b4de2fb603e1405821f645fa",
+    "issued.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  "originalDisjointAdmission": "7080ad81",
+  "previousMasking": {
+    "archivalDisjointExpectation": "9a9ed0f1",
+    "missingPinnedFixture": "fc175f27271e72d12ef8c0dcf2715b0807da318628e40a78b74686f53ba761a1",
+    "ltsInv4": "student 4 separate owners; reference 2. Additional idempotent conjunct reuses one current issued body twice and preserves the original formula, with all 6 malformed duplicate controls rejected."
+  }
+}

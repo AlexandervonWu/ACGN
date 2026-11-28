@@ -1,0 +1,30 @@
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: DummySymbol{type='local_var'}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='BOP_IN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+FACT {"fixedChoiceChecked":true,"endpointChecked":true,"publicFast":27,"paid":{"_q1":"_q0"},"ordinaryDirect":false,"nativeReason":"CHECKED_NATIVE_ACTIONS_EQUAL","actualNative":"MATCHED","direction":"forward"}
+FACT {"fixedChoiceChecked":true,"endpointChecked":true,"publicFast":27,"paid":{"_q0":"_q1"},"ordinaryDirect":false,"nativeReason":"CHECKED_NATIVE_ACTIONS_EQUAL","actualNative":"MATCHED","direction":"reverse"}

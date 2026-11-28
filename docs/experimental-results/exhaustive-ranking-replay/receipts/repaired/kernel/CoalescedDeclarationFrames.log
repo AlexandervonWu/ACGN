@@ -1,0 +1,16 @@
+'CoalescedDeclarationFrames.reads_original_slot' depends on axioms: [propext]
+'CoalescedDeclarationFrames.requires_complete_arity' depends on axioms: [propext]
+'CoalescedDeclarationFrames.one_key_cannot_encode_both' does not depend on any axioms
+'CoalescedDeclarationFrames.two_complete_occurrences' does not depend on any axioms
+'CoalescedDeclarationFrames.rejects_foreign_or_missing_frame' depends on axioms: [propext, Quot.sound]
+'CoalescedDeclarationFrames.equal_charge_different_occurrences' depends on axioms: [propext, Quot.sound]
+'CoalescedDeclarationFrames.gap_minimum_allows_only_length_edits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'CoalescedDeclarationFrames.reverse_71_replays_at_selected_links' depends on axioms: [propext]
+'CoalescedDeclarationFrames.exchange_checks_every_frame' depends on axioms: [propext, Quot.sound]
+'CoalescedDeclarationFrames.blocks_a_dependency_or_different_domain' does not depend on any axioms
+'CoalescedDeclarationFrames.preserves_matrix_program_and_charge' does not depend on any axioms
+'CoalescedDeclarationFrames.attaches_exactly_an_attaining_linked_path' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]

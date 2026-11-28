@@ -1,0 +1,1298 @@
+{
+  "additionalDirectScopedLinks": 1107,
+  "candidateCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "candidateJar": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "catalogSha256": "d2ffb181e2921e8536db9d2836f22f50a2faf9a22edebf83552ce68bb44bf5b1",
+  "commandComponentPairs": 20629,
+  "commandComponents": 1743,
+  "compactSha256": "939ccc6f0cb204f3dedf8618a4e201c38e32268f5de6e7ade08871cbdb472874",
+  "directFixedLinks": 1234,
+  "directNativeZeros": 19271,
+  "disconnectedSatControls": 105,
+  "fixedLinksAlsoStructural": 127,
+  "fullyClassifiedPairs": 132032,
+  "historicalPoolsSha256": "cf54427aef0af5135f1a15eb6d3c002afd32091a3536fb3ca5e959061a2c8d20",
+  "paired": {
+    "additionalCorrectPositiveDistancePairs": 259,
+    "correct": 19212,
+    "correctZeros": 5137,
+    "fixedCommandDecisions": 347,
+    "incorrect": 42386,
+    "incorrectZeros": 0,
+    "slottedZeros": 2228
+  },
+  "pooledDetails": {
+    "classroom_fol/inv1": [
+      9,
+      2,
+      18,
+      2,
+      18
+    ],
+    "classroom_fol/inv10": [
+      10,
+      3,
+      28,
+      3,
+      28
+    ],
+    "classroom_fol/inv11": [
+      19,
+      7,
+      78,
+      7,
+      78
+    ],
+    "classroom_fol/inv12": [
+      18,
+      2,
+      121,
+      2,
+      121
+    ],
+    "classroom_fol/inv13": [
+      13,
+      4,
+      37,
+      4,
+      37
+    ],
+    "classroom_fol/inv14": [
+      25,
+      3,
+      253,
+      3,
+      253
+    ],
+    "classroom_fol/inv15": [
+      8,
+      7,
+      1,
+      7,
+      1
+    ],
+    "classroom_fol/inv2": [
+      13,
+      4,
+      37,
+      4,
+      37
+    ],
+    "classroom_fol/inv3": [
+      31,
+      7,
+      235,
+      7,
+      235
+    ],
+    "classroom_fol/inv4": [
+      24,
+      4,
+      118,
+      4,
+      118
+    ],
+    "classroom_fol/inv5": [
+      22,
+      5,
+      109,
+      5,
+      109
+    ],
+    "classroom_fol/inv6": [
+      14,
+      7,
+      22,
+      6,
+      24
+    ],
+    "classroom_fol/inv7": [
+      17,
+      7,
+      31,
+      7,
+      31
+    ],
+    "classroom_fol/inv8": [
+      25,
+      6,
+      190,
+      5,
+      191
+    ],
+    "classroom_fol/inv9": [
+      31,
+      8,
+      254,
+      6,
+      259
+    ],
+    "classroom_rl/inv1": [
+      10,
+      5,
+      11,
+      5,
+      11
+    ],
+    "classroom_rl/inv10": [
+      18,
+      10,
+      12,
+      10,
+      12
+    ],
+    "classroom_rl/inv11": [
+      25,
+      12,
+      38,
+      12,
+      38
+    ],
+    "classroom_rl/inv12": [
+      15,
+      9,
+      7,
+      9,
+      7
+    ],
+    "classroom_rl/inv13": [
+      24,
+      17,
+      10,
+      17,
+      10
+    ],
+    "classroom_rl/inv14": [
+      19,
+      11,
+      19,
+      11,
+      19
+    ],
+    "classroom_rl/inv15": [
+      10,
+      4,
+      13,
+      4,
+      13
+    ],
+    "classroom_rl/inv2": [
+      7,
+      2,
+      15,
+      2,
+      15
+    ],
+    "classroom_rl/inv3": [
+      22,
+      6,
+      108,
+      6,
+      108
+    ],
+    "classroom_rl/inv4": [
+      22,
+      6,
+      55,
+      6,
+      55
+    ],
+    "classroom_rl/inv5": [
+      16,
+      7,
+      16,
+      7,
+      16
+    ],
+    "classroom_rl/inv6": [
+      14,
+      10,
+      7,
+      9,
+      11
+    ],
+    "classroom_rl/inv7": [
+      21,
+      12,
+      16,
+      10,
+      33
+    ],
+    "classroom_rl/inv8": [
+      15,
+      10,
+      9,
+      8,
+      12
+    ],
+    "classroom_rl/inv9": [
+      28,
+      15,
+      25,
+      12,
+      40
+    ],
+    "coursesNew/inv1": [
+      62,
+      20,
+      173,
+      17,
+      186
+    ],
+    "coursesNew/inv10": [
+      56,
+      17,
+      210,
+      17,
+      210
+    ],
+    "coursesNew/inv11": [
+      20,
+      11,
+      30,
+      11,
+      30
+    ],
+    "coursesNew/inv12": [
+      13,
+      6,
+      14,
+      6,
+      14
+    ],
+    "coursesNew/inv13": [
+      3,
+      3,
+      0,
+      3,
+      0
+    ],
+    "coursesNew/inv14": [
+      6,
+      4,
+      2,
+      4,
+      2
+    ],
+    "coursesNew/inv15": [
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "coursesNew/inv2": [
+      53,
+      16,
+      128,
+      13,
+      141
+    ],
+    "coursesNew/inv3": [
+      22,
+      11,
+      16,
+      8,
+      39
+    ],
+    "coursesNew/inv4": [
+      31,
+      10,
+      64,
+      8,
+      108
+    ],
+    "coursesNew/inv5": [
+      108,
+      42,
+      285,
+      42,
+      285
+    ],
+    "coursesNew/inv6": [
+      9,
+      7,
+      2,
+      7,
+      2
+    ],
+    "coursesNew/inv7": [
+      7,
+      4,
+      4,
+      4,
+      4
+    ],
+    "coursesNew/inv8": [
+      13,
+      5,
+      23,
+      5,
+      23
+    ],
+    "coursesNew/inv9": [
+      4,
+      4,
+      0,
+      4,
+      0
+    ],
+    "coursesOld/inv1": [
+      78,
+      24,
+      275,
+      22,
+      278
+    ],
+    "coursesOld/inv10": [
+      52,
+      22,
+      117,
+      22,
+      117
+    ],
+    "coursesOld/inv11": [
+      25,
+      16,
+      16,
+      16,
+      16
+    ],
+    "coursesOld/inv12": [
+      10,
+      8,
+      2,
+      8,
+      2
+    ],
+    "coursesOld/inv13": [
+      15,
+      9,
+      21,
+      9,
+      21
+    ],
+    "coursesOld/inv14": [
+      8,
+      7,
+      1,
+      7,
+      1
+    ],
+    "coursesOld/inv15": [
+      5,
+      5,
+      0,
+      5,
+      0
+    ],
+    "coursesOld/inv2": [
+      61,
+      20,
+      175,
+      19,
+      176
+    ],
+    "coursesOld/inv3": [
+      26,
+      13,
+      28,
+      13,
+      28
+    ],
+    "coursesOld/inv4": [
+      44,
+      17,
+      92,
+      14,
+      125
+    ],
+    "coursesOld/inv5": [
+      155,
+      54,
+      634,
+      54,
+      634
+    ],
+    "coursesOld/inv6": [
+      16,
+      7,
+      22,
+      7,
+      22
+    ],
+    "coursesOld/inv7": [
+      6,
+      5,
+      1,
+      5,
+      1
+    ],
+    "coursesOld/inv8": [
+      19,
+      9,
+      22,
+      9,
+      22
+    ],
+    "coursesOld/inv9": [
+      7,
+      6,
+      1,
+      6,
+      1
+    ],
+    "cv_v1/inv1": [
+      10,
+      5,
+      15,
+      5,
+      15
+    ],
+    "cv_v1/inv2": [
+      19,
+      10,
+      12,
+      10,
+      12
+    ],
+    "cv_v1/inv3": [
+      11,
+      6,
+      6,
+      6,
+      6
+    ],
+    "cv_v1/inv4": [
+      2,
+      1,
+      1,
+      1,
+      1
+    ],
+    "cv_v2/inv1": [
+      6,
+      4,
+      3,
+      4,
+      3
+    ],
+    "cv_v2/inv2": [
+      10,
+      8,
+      3,
+      8,
+      3
+    ],
+    "cv_v2/inv3": [
+      8,
+      4,
+      6,
+      4,
+      6
+    ],
+    "cv_v2/inv4": [
+      8,
+      8,
+      0,
+      8,
+      0
+    ],
+    "graphs/inv1": [
+      47,
+      22,
+      76,
+      22,
+      76
+    ],
+    "graphs/inv2": [
+      36,
+      17,
+      92,
+      16,
+      94
+    ],
+    "graphs/inv3": [
+      22,
+      12,
+      32,
+      12,
+      32
+    ],
+    "graphs/inv4": [
+      28,
+      14,
+      33,
+      14,
+      33
+    ],
+    "graphs/inv5": [
+      24,
+      10,
+      45,
+      10,
+      45
+    ],
+    "graphs/inv6": [
+      21,
+      12,
+      37,
+      12,
+      37
+    ],
+    "graphs/inv7": [
+      21,
+      11,
+      31,
+      11,
+      31
+    ],
+    "graphs/inv8": [
+      25,
+      13,
+      34,
+      13,
+      34
+    ],
+    "lts/inv1": [
+      13,
+      8,
+      8,
+      8,
+      8
+    ],
+    "lts/inv2": [
+      7,
+      6,
+      1,
+      6,
+      1
+    ],
+    "lts/inv3": [
+      14,
+      7,
+      17,
+      7,
+      17
+    ],
+    "lts/inv4": [
+      26,
+      11,
+      43,
+      11,
+      43
+    ],
+    "lts/inv5": [
+      21,
+      9,
+      31,
+      9,
+      31
+    ],
+    "lts/inv6": [
+      19,
+      13,
+      7,
+      13,
+      7
+    ],
+    "lts/inv7": [
+      5,
+      2,
+      4,
+      2,
+      4
+    ],
+    "productionLineNew/inv1": [
+      31,
+      15,
+      53,
+      15,
+      53
+    ],
+    "productionLineNew/inv10": [
+      2,
+      2,
+      0,
+      2,
+      0
+    ],
+    "productionLineNew/inv2": [
+      57,
+      22,
+      193,
+      22,
+      193
+    ],
+    "productionLineNew/inv3": [
+      17,
+      8,
+      25,
+      7,
+      27
+    ],
+    "productionLineNew/inv4": [
+      35,
+      19,
+      56,
+      19,
+      56
+    ],
+    "productionLineNew/inv5": [
+      34,
+      8,
+      260,
+      8,
+      260
+    ],
+    "productionLineNew/inv6": [
+      13,
+      7,
+      12,
+      7,
+      12
+    ],
+    "productionLineNew/inv7": [
+      13,
+      3,
+      55,
+      3,
+      55
+    ],
+    "productionLineNew/inv8": [
+      34,
+      11,
+      78,
+      11,
+      78
+    ],
+    "productionLineNew/inv9": [
+      13,
+      10,
+      6,
+      10,
+      6
+    ],
+    "productionLine_v1/inv1": [
+      7,
+      6,
+      1,
+      5,
+      3
+    ],
+    "productionLine_v1/inv2": [
+      10,
+      6,
+      5,
+      6,
+      5
+    ],
+    "productionLine_v1/inv3": [
+      18,
+      14,
+      5,
+      14,
+      5
+    ],
+    "productionLine_v1/inv4": [
+      23,
+      18,
+      6,
+      18,
+      6
+    ],
+    "productionLine_v2/inv1": [
+      29,
+      9,
+      70,
+      9,
+      70
+    ],
+    "productionLine_v2/inv10": [
+      3,
+      3,
+      0,
+      3,
+      0
+    ],
+    "productionLine_v2/inv2": [
+      63,
+      28,
+      148,
+      28,
+      148
+    ],
+    "productionLine_v2/inv3": [
+      23,
+      12,
+      26,
+      12,
+      26
+    ],
+    "productionLine_v2/inv4": [
+      47,
+      26,
+      102,
+      26,
+      102
+    ],
+    "productionLine_v2/inv5": [
+      45,
+      13,
+      336,
+      13,
+      336
+    ],
+    "productionLine_v2/inv6": [
+      12,
+      6,
+      13,
+      6,
+      13
+    ],
+    "productionLine_v2/inv7": [
+      21,
+      7,
+      62,
+      7,
+      62
+    ],
+    "productionLine_v2/inv8": [
+      41,
+      19,
+      57,
+      19,
+      57
+    ],
+    "productionLine_v2/inv9": [
+      70,
+      53,
+      50,
+      53,
+      50
+    ],
+    "socialMedia/inv1": [
+      106,
+      42,
+      287,
+      39,
+      409
+    ],
+    "socialMedia/inv2": [
+      88,
+      32,
+      268,
+      32,
+      268
+    ],
+    "socialMedia/inv3": [
+      174,
+      45,
+      1341,
+      45,
+      1341
+    ],
+    "socialMedia/inv4": [
+      201,
+      41,
+      5435,
+      38,
+      5448
+    ],
+    "socialMedia/inv5": [
+      9,
+      6,
+      4,
+      6,
+      4
+    ],
+    "socialMedia/inv6": [
+      114,
+      29,
+      525,
+      29,
+      525
+    ],
+    "socialMedia/inv7": [
+      108,
+      36,
+      515,
+      36,
+      515
+    ],
+    "socialMedia/inv8": [
+      119,
+      34,
+      820,
+      34,
+      820
+    ],
+    "trainStationNew/inv1": [
+      39,
+      7,
+      497,
+      7,
+      497
+    ],
+    "trainStationNew/inv10": [
+      30,
+      12,
+      77,
+      12,
+      77
+    ],
+    "trainStationNew/inv2": [
+      31,
+      17,
+      31,
+      15,
+      42
+    ],
+    "trainStationNew/inv3": [
+      40,
+      18,
+      97,
+      14,
+      219
+    ],
+    "trainStationNew/inv4": [
+      51,
+      24,
+      72,
+      21,
+      137
+    ],
+    "trainStationNew/inv5": [
+      43,
+      23,
+      68,
+      1,
+      903
+    ],
+    "trainStationNew/inv6": [
+      28,
+      8,
+      157,
+      8,
+      157
+    ],
+    "trainStationNew/inv7": [
+      16,
+      11,
+      8,
+      11,
+      8
+    ],
+    "trainStationNew/inv8": [
+      51,
+      11,
+      295,
+      11,
+      295
+    ],
+    "trainStationNew/inv9": [
+      31,
+      12,
+      126,
+      12,
+      126
+    ],
+    "trainStationOld/inv1": [
+      7,
+      4,
+      6,
+      4,
+      6
+    ],
+    "trainStationOld/inv10": [
+      6,
+      4,
+      3,
+      4,
+      3
+    ],
+    "trainStationOld/inv11": [
+      3,
+      2,
+      1,
+      2,
+      1
+    ],
+    "trainStationOld/inv13": [
+      3,
+      2,
+      1,
+      2,
+      1
+    ],
+    "trainStationOld/inv14": [
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "trainStationOld/inv15": [
+      4,
+      4,
+      0,
+      4,
+      0
+    ],
+    "trainStationOld/inv16": [
+      2,
+      2,
+      0,
+      2,
+      0
+    ],
+    "trainStationOld/inv17": [
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "trainStationOld/inv2": [
+      4,
+      4,
+      0,
+      4,
+      0
+    ],
+    "trainStationOld/inv3": [
+      10,
+      6,
+      7,
+      6,
+      7
+    ],
+    "trainStationOld/inv4": [
+      9,
+      6,
+      3,
+      6,
+      3
+    ],
+    "trainStationOld/inv5": [
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "trainStationOld/inv6": [
+      3,
+      3,
+      0,
+      3,
+      0
+    ],
+    "trainStationOld/inv7": [
+      4,
+      2,
+      3,
+      2,
+      3
+    ],
+    "trainStationOld/inv8": [
+      3,
+      3,
+      0,
+      3,
+      0
+    ],
+    "trainStationOld/inv9": [
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "trash_fol/inv1": [
+      19,
+      4,
+      93,
+      4,
+      93
+    ],
+    "trash_fol/inv10": [
+      27,
+      5,
+      181,
+      5,
+      181
+    ],
+    "trash_fol/inv2": [
+      14,
+      5,
+      37,
+      5,
+      37
+    ],
+    "trash_fol/inv3": [
+      9,
+      2,
+      28,
+      2,
+      28
+    ],
+    "trash_fol/inv4": [
+      21,
+      4,
+      153,
+      4,
+      153
+    ],
+    "trash_fol/inv5": [
+      18,
+      7,
+      35,
+      7,
+      35
+    ],
+    "trash_fol/inv6": [
+      32,
+      8,
+      300,
+      6,
+      303
+    ],
+    "trash_fol/inv7": [
+      33,
+      7,
+      146,
+      7,
+      146
+    ],
+    "trash_fol/inv8": [
+      34,
+      11,
+      169,
+      10,
+      170
+    ],
+    "trash_fol/inv9": [
+      46,
+      13,
+      344,
+      13,
+      344
+    ],
+    "trash_ltl/inv1": [
+      16,
+      9,
+      13,
+      9,
+      13
+    ],
+    "trash_ltl/inv10": [
+      3,
+      2,
+      1,
+      2,
+      1
+    ],
+    "trash_ltl/inv11": [
+      8,
+      3,
+      11,
+      3,
+      11
+    ],
+    "trash_ltl/inv12": [
+      6,
+      5,
+      1,
+      5,
+      1
+    ],
+    "trash_ltl/inv13": [
+      16,
+      10,
+      10,
+      10,
+      10
+    ],
+    "trash_ltl/inv14": [
+      20,
+      4,
+      136,
+      4,
+      136
+    ],
+    "trash_ltl/inv15": [
+      2,
+      2,
+      0,
+      2,
+      0
+    ],
+    "trash_ltl/inv16": [
+      6,
+      2,
+      10,
+      2,
+      10
+    ],
+    "trash_ltl/inv17": [
+      12,
+      4,
+      36,
+      4,
+      36
+    ],
+    "trash_ltl/inv18": [
+      6,
+      2,
+      7,
+      2,
+      7
+    ],
+    "trash_ltl/inv19": [
+      3,
+      1,
+      3,
+      1,
+      3
+    ],
+    "trash_ltl/inv2": [
+      4,
+      2,
+      2,
+      2,
+      2
+    ],
+    "trash_ltl/inv20": [
+      6,
+      2,
+      10,
+      2,
+      10
+    ],
+    "trash_ltl/inv3": [
+      2,
+      1,
+      1,
+      1,
+      1
+    ],
+    "trash_ltl/inv4": [
+      4,
+      1,
+      6,
+      1,
+      6
+    ],
+    "trash_ltl/inv5": [
+      8,
+      4,
+      7,
+      4,
+      7
+    ],
+    "trash_ltl/inv6": [
+      15,
+      6,
+      25,
+      6,
+      25
+    ],
+    "trash_ltl/inv7": [
+      5,
+      2,
+      6,
+      2,
+      6
+    ],
+    "trash_ltl/inv8": [
+      7,
+      3,
+      6,
+      3,
+      6
+    ],
+    "trash_ltl/inv9": [
+      8,
+      4,
+      10,
+      4,
+      10
+    ],
+    "trash_rl/inv1": [
+      19,
+      7,
+      51,
+      7,
+      51
+    ],
+    "trash_rl/inv10": [
+      27,
+      11,
+      53,
+      11,
+      53
+    ],
+    "trash_rl/inv2": [
+      12,
+      5,
+      18,
+      5,
+      18
+    ],
+    "trash_rl/inv3": [
+      11,
+      4,
+      28,
+      4,
+      28
+    ],
+    "trash_rl/inv4": [
+      22,
+      5,
+      153,
+      5,
+      153
+    ],
+    "trash_rl/inv5": [
+      18,
+      7,
+      30,
+      7,
+      30
+    ],
+    "trash_rl/inv6": [
+      18,
+      12,
+      10,
+      11,
+      13
+    ],
+    "trash_rl/inv7": [
+      34,
+      14,
+      69,
+      14,
+      69
+    ],
+    "trash_rl/inv8": [
+      15,
+      11,
+      5,
+      11,
+      5
+    ],
+    "trash_rl/inv9": [
+      25,
+      18,
+      13,
+      18,
+      13
+    ]
+  },
+  "pooledReferences": 4496,
+  "pools": 181,
+  "positiveScoreRecountSha256": "912a52444be333b935496ca417b7922024525987a522357ab8233e95fbd2611e",
+  "structuralComponentPairs": 19271,
+  "structuralForms": 1816
+}

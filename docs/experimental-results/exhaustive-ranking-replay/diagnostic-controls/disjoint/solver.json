@@ -1,0 +1,12 @@
+[
+  {
+    "satisfiable": true,
+    "instance": "---Trace---\n------State 0 (loop)-------\nuniv={P$0, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7}\nInt={-8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7}\nseq/Int={0, 1, 2}\nString={}\nnone={}\nthis/P={P$0}\nthis/P<:r={P$0->P$0}\nthis/S={}\nthis/T={P$0}\nthis/U={}\nskolem $ordinary_p={P$0}\n",
+    "command": "Run run$1 for 3 but exactly 1 P"
+  },
+  {
+    "satisfiable": false,
+    "instance": "---OUTCOME---\nUnsatisfiable.\n",
+    "command": "Run run$2 for 3"
+  }
+]

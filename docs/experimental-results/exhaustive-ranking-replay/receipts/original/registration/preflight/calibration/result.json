@@ -1,0 +1,248 @@
+{
+  "checkedCases": 3,
+  "frozenBulkWorkerSha256": "8d70d8ec585adda5c691a589fa667bd0c056af604a019d79bcc9ff875efed834",
+  "jars": [
+    {
+      "jarSha256": "3cfd40fed17536a9b4ffcb295ff5595a231f7361c148db4d9b4ac4db0461b306",
+      "label": "before",
+      "rows": [
+        {
+          "certifiedActionCount": 50,
+          "certifiedDistance": 116,
+          "certifiedFirst": {
+            "cost": 0,
+            "source": [
+              0,
+              1,
+              2
+            ],
+            "stage": "declarationPermutation",
+            "target": [
+              1,
+              0,
+              2,
+              3
+            ]
+          },
+          "certifiedSequenceSha256": "e3581bfd75154cf66fe74094441a0ce7a1f5eb01df665649d142971d0a306e75",
+          "checked": false,
+          "endpointCorrespondenceChecked": true,
+          "expected": 116,
+          "fastActionCount": 50,
+          "fastDistance": 116,
+          "fastFirst": {
+            "cost": 0,
+            "source": [
+              1,
+              0,
+              2
+            ],
+            "stage": "declarationPermutation",
+            "target": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "fastSequenceSha256": "8697723856882effc253c20153fa37859f17269705741f01c2eba0f9eed67399",
+          "firstDifference": 0,
+          "fixedChoiceReplaysChecked": true,
+          "kind": "paid",
+          "left": "socialMedia/both/3NQGxGNXRZ8MttRwf_inv7.als",
+          "leftPredicate": "inv7",
+          "nativeSequencesEqual": false,
+          "ordinal": 0,
+          "reason": "CHECKED_NATIVE_ACTIONS_DIFFER",
+          "right": "socialMedia/correct/FenQC7rfPuuWaGAba_inv7.als",
+          "rightPredicate": "inv7",
+          "sequenceKind": "FLAT_ACTIONS",
+          "sourceCertificatesChecked": true,
+          "status": "MISMATCH"
+        },
+        {
+          "certifiedActionCount": 46,
+          "certifiedDistance": 68,
+          "certifiedFirst": {
+            "cost": 0,
+            "source": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "stage": "declarationPermutation",
+            "target": [
+              0,
+              1
+            ]
+          },
+          "certifiedSequenceSha256": "3773f9bf1467600c007b46e244d6eb30bce852db83168abb42c9401a1bce9116",
+          "checked": false,
+          "endpointCorrespondenceChecked": true,
+          "expected": 68,
+          "fastActionCount": 46,
+          "fastDistance": 68,
+          "fastFirst": {
+            "cost": 0,
+            "source": [
+              1,
+              0,
+              2,
+              3
+            ],
+            "stage": "declarationPermutation",
+            "target": [
+              0,
+              1
+            ]
+          },
+          "fastSequenceSha256": "6cf478ae60dad5fc1afb7d76c3cdad3b41a20a1b65246c149f59b4c804e4dbeb",
+          "firstDifference": 0,
+          "fixedChoiceReplaysChecked": true,
+          "kind": "paid",
+          "left": "socialMedia/over/xA8cXXtWbKB3ZC3iB_inv7.als",
+          "leftPredicate": "inv7",
+          "nativeSequencesEqual": false,
+          "ordinal": 1,
+          "reason": "CHECKED_NATIVE_ACTIONS_DIFFER",
+          "right": "socialMedia/correct/9HkyW8hcYX2AQ3QEf_inv7.als",
+          "rightPredicate": "inv7",
+          "sequenceKind": "FLAT_ACTIONS",
+          "sourceCertificatesChecked": true,
+          "status": "MISMATCH"
+        },
+        {
+          "certifiedActionCount": 58,
+          "certifiedDistance": 118,
+          "certifiedFirst": {
+            "cost": 0,
+            "source": [
+              0,
+              2,
+              1
+            ],
+            "stage": "declarationPermutation",
+            "target": [
+              1,
+              0,
+              2,
+              3
+            ]
+          },
+          "certifiedSequenceSha256": "517d1a6ac6eee7b91d06a068801a927477a328147d549e5eea8aacfbb5acbc0d",
+          "checked": false,
+          "endpointCorrespondenceChecked": true,
+          "expected": 118,
+          "fastActionCount": 58,
+          "fastDistance": 118,
+          "fastFirst": {
+            "cost": 0,
+            "source": [
+              2,
+              0,
+              1
+            ],
+            "stage": "declarationPermutation",
+            "target": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "fastSequenceSha256": "a2ff3963a926871ddf7003f3292ae3e306dc43992e21968661e3cdb4abdb5145",
+          "firstDifference": 0,
+          "fixedChoiceReplaysChecked": true,
+          "kind": "paid",
+          "left": "socialMedia/under/qhigeg6grNDhySQ8Z_inv7.als",
+          "leftPredicate": "inv7",
+          "nativeSequencesEqual": false,
+          "ordinal": 2,
+          "reason": "CHECKED_NATIVE_ACTIONS_DIFFER",
+          "right": "socialMedia/correct/FenQC7rfPuuWaGAba_inv7.als",
+          "rightPredicate": "inv7",
+          "sequenceKind": "FLAT_ACTIONS",
+          "sourceCertificatesChecked": true,
+          "status": "MISMATCH"
+        }
+      ]
+    },
+    {
+      "jarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+      "label": "measured",
+      "rows": [
+        {
+          "certifiedActionCount": 50,
+          "certifiedDistance": 116,
+          "certifiedSequenceSha256": "e3581bfd75154cf66fe74094441a0ce7a1f5eb01df665649d142971d0a306e75",
+          "checked": true,
+          "endpointCorrespondenceChecked": true,
+          "expected": 116,
+          "fastActionCount": 50,
+          "fastDistance": 116,
+          "fastSequenceSha256": "e3581bfd75154cf66fe74094441a0ce7a1f5eb01df665649d142971d0a306e75",
+          "fixedChoiceReplaysChecked": true,
+          "kind": "paid",
+          "left": "socialMedia/both/3NQGxGNXRZ8MttRwf_inv7.als",
+          "leftPredicate": "inv7",
+          "nativeSequencesEqual": true,
+          "ordinal": 0,
+          "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+          "right": "socialMedia/correct/FenQC7rfPuuWaGAba_inv7.als",
+          "rightPredicate": "inv7",
+          "sequenceKind": "FLAT_ACTIONS",
+          "sourceCertificatesChecked": true,
+          "status": "MATCHED"
+        },
+        {
+          "certifiedActionCount": 46,
+          "certifiedDistance": 68,
+          "certifiedSequenceSha256": "3773f9bf1467600c007b46e244d6eb30bce852db83168abb42c9401a1bce9116",
+          "checked": true,
+          "endpointCorrespondenceChecked": true,
+          "expected": 68,
+          "fastActionCount": 46,
+          "fastDistance": 68,
+          "fastSequenceSha256": "3773f9bf1467600c007b46e244d6eb30bce852db83168abb42c9401a1bce9116",
+          "fixedChoiceReplaysChecked": true,
+          "kind": "paid",
+          "left": "socialMedia/over/xA8cXXtWbKB3ZC3iB_inv7.als",
+          "leftPredicate": "inv7",
+          "nativeSequencesEqual": true,
+          "ordinal": 1,
+          "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+          "right": "socialMedia/correct/9HkyW8hcYX2AQ3QEf_inv7.als",
+          "rightPredicate": "inv7",
+          "sequenceKind": "FLAT_ACTIONS",
+          "sourceCertificatesChecked": true,
+          "status": "MATCHED"
+        },
+        {
+          "certifiedActionCount": 58,
+          "certifiedDistance": 118,
+          "certifiedSequenceSha256": "517d1a6ac6eee7b91d06a068801a927477a328147d549e5eea8aacfbb5acbc0d",
+          "checked": true,
+          "endpointCorrespondenceChecked": true,
+          "expected": 118,
+          "fastActionCount": 58,
+          "fastDistance": 118,
+          "fastSequenceSha256": "517d1a6ac6eee7b91d06a068801a927477a328147d549e5eea8aacfbb5acbc0d",
+          "fixedChoiceReplaysChecked": true,
+          "kind": "paid",
+          "left": "socialMedia/under/qhigeg6grNDhySQ8Z_inv7.als",
+          "leftPredicate": "inv7",
+          "nativeSequencesEqual": true,
+          "ordinal": 2,
+          "reason": "CHECKED_NATIVE_ACTIONS_EQUAL",
+          "right": "socialMedia/correct/FenQC7rfPuuWaGAba_inv7.als",
+          "rightPredicate": "inv7",
+          "sequenceKind": "FLAT_ACTIONS",
+          "sourceCertificatesChecked": true,
+          "status": "MATCHED"
+        }
+      ]
+    }
+  ],
+  "passStatus": "PASS"
+}

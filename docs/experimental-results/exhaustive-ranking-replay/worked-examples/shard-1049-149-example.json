@@ -1,0 +1,57 @@
+{
+  "afterEvidence": "shard-1049-149-after.json.gz",
+  "afterEvidenceSha256": "e55e660432f030423307f0bec77c1d326bf1e53173d41b06f47f7da120e1bb36",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "certifiedFirst": {
+    "cost": 0,
+    "source": [
+      2,
+      0,
+      1
+    ],
+    "stage": "declarationPermutation",
+    "target": [
+      2,
+      1,
+      0
+    ]
+  },
+  "certifiedProgramPreserved": true,
+  "cost": 7,
+  "fastFirst": {
+    "cost": 0,
+    "source": [
+      2,
+      0,
+      1
+    ],
+    "stage": "declarationPermutation",
+    "target": [
+      1,
+      0,
+      2
+    ]
+  },
+  "kind": "FLAT_ACTIONS",
+  "left": [
+    "trash_rl/both/6teqhZ4S6dQHzNmwZ_inv6.als",
+    "inv6",
+    "4b08f39bb97812a799b11cd7434dd4e705d57102f8d72129550beb8cb39aff34"
+  ],
+  "newCount": 19,
+  "newSequenceSha256": "14470b99193becae7923073fc69abbc358fc8d3c61f8cfbaa6cd89c09e710887",
+  "oldCertifiedSequenceSha256": "14470b99193becae7923073fc69abbc358fc8d3c61f8cfbaa6cd89c09e710887",
+  "oldCounts": [
+    19,
+    19
+  ],
+  "oldFastSequenceSha256": "69c375886e2d5cd19fb034fd2546fd0ba92bd38b18be0a30a38d7291caa4ff58",
+  "originalFirstDifference": 0,
+  "originalIncident": "shard-1049-149-4b763c62-4873-4756-bcff-65e1d168b388.json.gz",
+  "originalIncidentSha256": "d497949d01f9b70ca58433039cb08b791fad63bc956a0571e639be6621c05d58",
+  "right": [
+    "trash_rl/correct/BXtpoiLjoFchf9QvM_inv6.als",
+    "inv6",
+    "5d29b68225296c728b7de394a9edbff8be0a0e7342298d709ccea519ad356633"
+  ]
+}

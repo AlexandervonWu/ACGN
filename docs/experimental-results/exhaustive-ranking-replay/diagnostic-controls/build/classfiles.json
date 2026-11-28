@@ -1,0 +1,19 @@
+{
+  "changedClassfiles": [
+    "is/fivefivefive/CanDis/core/FastLocalPaidScopeTest.class",
+    "is/fivefivefive/CanDis/core/RetainedPaidCompletionTest$1PriorFamily.class",
+    "is/fivefivefive/CanDis/core/RetainedPaidCompletionTest.class"
+  ],
+  "classfilesCompared": 1582,
+  "controlCommit": "2ab010c639e1ac1adca595d8fa33a1f499512aad",
+  "controlJarSha256": "9fd6ae0a77a38b18edb4e14facfcdefa87cc7fd18b2b8d7bb1d974d46a1021b0",
+  "identicalClassfiles": 1579,
+  "measuredCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "measuredJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "schema": "acgn-standalone-control-classfile-comparison-v1",
+  "sourceChanges": [
+    "src/is/fivefivefive/CanDis/core/FastLocalPaidScopeTest.java",
+    "src/is/fivefivefive/CanDis/core/RetainedPaidCompletionTest.java"
+  ],
+  "status": "VERIFIED"
+}

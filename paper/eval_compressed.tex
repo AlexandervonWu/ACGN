@@ -2,10 +2,11 @@
 \label{sec:evaluation}
 
 The Alloy case study uses the Alloy~6 parser, Kodkod, SAT4J and Pardinus.
-The supervised run completed on 27 November 2026 UTC from commit \texttt{9693595e}.
-It covers the paired corpus, full reference pools, natural ablation,
-controlled capability suite and natural slot-typing comparison. The
-synthetic scaling grid comes from the earlier v3 experiment.
+The full experiment at \texttt{9693595e} covered the paired corpus, reference
+pools, natural ablation, controlled capability suite and natural slot-typing
+comparison. On 28 November 2026 UTC we completed a second, exhaustive native
+replay at \texttt{177500af} on the same ranking inputs. The synthetic scaling
+grid comes from the earlier v3 experiment.
 
 \subsection{Implementation and experimental setup}
 \label{sec:eval-setup}
@@ -24,8 +25,8 @@ source normalization rules and established repair distance metric:
 \end{itemize}
 Both implementations selected the same structural zeros on the paired
 corpus and correct-reference pools and gave equal scalar scores for all
-1,894,168 positive-distance ranking comparisons. We report their shared
-effectiveness and measure each implementation's resource use separately.
+\replayPairs{} positive-distance ranking comparisons. We report their shared
+effectiveness. The resource measurements below come from the full experiment.
 
 To isolate representation choices, we compare \CanDis{} against five distinct
 ablation baselines sharing a common bounded explicit-law rewrite frontier
@@ -98,36 +99,33 @@ The two metrics can select different nearest references.
 \subsection{What does checking a particular Alloy command add?}
 \label{sec:scoped-pools}
 
-A structural rewrite must hold wherever its key is reused. For instance, the
-v3.1 rule moving a universal quantifier across \texttt{always} requires a
-static domain: a later state must not introduce an atom that was absent at
-the time of quantification. The five further rule families compare selected
-relation rows or columns, bounded relation differences, ordinary and mixed
-role selections, and threshold classifiers. Their conclusions need not survive
-a change of command. With four-bit signed integers, for example, eight
-predecessors are enough to make a count wrap negative. The test
-\texttt{\#succs.t > 1} then fails although \texttt{not lone succs.t} holds.
+A structural rewrite must hold wherever its key is reused. Moving a universal
+quantifier across \texttt{always}, for example, requires a static domain.
+Five command-specific families compare selected rows or columns, bounded
+differences, ordinary and mixed role selections, and thresholds. Integer
+width matters. With four-bit signed integers, eight predecessors make
+\texttt{\#succs.t > 1} false although \texttt{not lone succs.t} holds.
 
-The default comparison distinguishes structural equality from equality under
-a fixed check of the two predicates. The latter test uses the resolved field,
-binder and temporal frame, the effective carrier bounds and the actual integer
-width. A match must produce the same witness in both orientations and the
-native solver must find no counterexample. An \textsc{unsat} result without a
-rule is not a new edge. For references from different files, the comparison
-first checks that the relocated predicates retain their typed definitions,
-imports, facts and compatible command bounds. It never substitutes a scoped
-edge for an edit trace or writes that edge into the structural canonical key.
+A command-specific edge requires the same rule witness in both orientations
+and an Alloy check finding no counterexample at the recorded bounds.
+The rule checks the field, binder and temporal frame, carrier bounds and
+integer width. Across files we also check that the typed definitions, imports
+and facts survive relocation into a common command. Each such edge applies
+only to that command.
 
-Every eligible student--oracle pair had a fixed command. A rule matched
-347 pairs, recognizing 259 correct pairs beyond structural
-equality. Across the 132,032 pairs of correct references every comparison
-had a common command context and 1,234 pairs matched a rule.
+Rules matched 347 student--oracle pairs, including 259 correct pairs with
+positive structural distance. All 132,032 reference pairs had compatible
+command contexts, and 1,234 matched a rule.
 
 To count \emph{structural forms}, we connect references in an invariant pool
 when they have structural distance zero and count the connected components.
 For \emph{fixed-command components}, we add the verified command-specific
-edges and count again. A single new edge can join two entire components. The 4,496 references reduced to 1,816 structural forms
-and then to 1,743 fixed-command components. Both paths recognized
+edges and count again. For example, two classroom references require every
+teacher to teach a class. One tests \texttt{some t.Teaches}, the other
+\texttt{\#t.Teaches > 0}. Their structural distance is seven. With at most
+three classes and four-bit integers, Alloy found no disagreement, so a
+command-specific edge joins their two forms. The 4,496 references yielded
+1,816 structural forms and 1,743 fixed-command components. Both paths recognized
 all 8,952 original Slotted reference zeros and 10,319 more,
 for 19,271 direct structural zeros.
 
@@ -268,12 +266,9 @@ The study did not profile the share attributable to each operation.
 \subsection{Scope and limitations}
 \label{sec:eval-limits}
 
-The Lean results address the abstract graph model. The Java results are
-supported by in-process certificate checks, bounded native-operation
-comparisons and the archived Alloy checks. Public operation witnesses and
-end-to-end Java-to-Lean refinement remain open. The inherited labels and
-recorded bounds limit the Alloy case study. The corpus contains 4,482
-AST-identical paired rows and 21 cross-file raw-AST-identical reference
-comparisons outside the distance measurements. Fresh-process timing
-comes from a single run per ablation arm. The historical synthetic grid
-preserves censored observations in cells where a trial reached its deadline.
+The corpus uses inherited labels and recorded command bounds. The distance
+measurements exclude 4,482 AST-identical student--oracle files and 21 cross-file
+AST identities in the rankings. Each ablation arm ran in one fresh process.
+Synthetic timeouts remain censored observations. The native checks start from
+frozen normalized inputs. Appendix~\ref{app:formal-details} gives the
+Java and Lean verification boundaries.

@@ -1,0 +1,4 @@
+'TemporalDeclarationTie.both_station_programs_replay' depends on axioms: [propext, Quot.sound]
+'TemporalDeclarationTie.cost_is_minimum' depends on axioms: [propext, Quot.sound]
+'TemporalDeclarationTie.chooses_eligible_coherent_on_tie' depends on axioms: [propext]
+'TemporalDeclarationTie.preserves_strictly_cheaper_paid' depends on axioms: [propext, Quot.sound]

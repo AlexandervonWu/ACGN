@@ -1,0 +1,15 @@
+'SingleSourceClassMinimum.fold_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SingleSourceClassMinimum.grouped_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SingleSourceClassMinimum.same_objective_as_unpartitioned' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SingleSourceClassMinimum.fixed_links_do_not_change_objective' depends on axioms: [propext]
+'SingleSourceClassMinimum.first_attaining_survives' depends on axioms: [propext, Quot.sound]
+'SingleSourceClassMinimum.single_target_of_one_source' depends on axioms: [propext, Quot.sound]
+'SingleSourceClassMinimum.matched_class_is_unique' does not depend on any axioms
+'SingleSourceClassMinimum.restrict_cover' depends on axioms: [propext, Quot.sound]
+'SingleSourceClassMinimum.split_single_source_preserves_minimum' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'SingleSourceClassMinimum.empty_residual_witness_in_every_fiber' depends on axioms: [propext, Quot.sound]
+'SingleSourceClassMinimum.Incident.repaired_prior_selects_project' depends on axioms: [propext]
+'SingleSourceClassMinimum.Incident.repaired_inv5_programs' depends on axioms: [propext]
+'SingleSourceClassMinimum.Incident.measured_repair_reproduces_the_certified_programs' depends on axioms: [propext]

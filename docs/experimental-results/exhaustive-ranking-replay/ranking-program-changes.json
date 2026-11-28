@@ -1,0 +1,99 @@
+{
+  "changedPairsSha256": "cdc7c01f352b9ee15ac29d1d43eefc92f287f12d5ff7ef7d1f35cfcbe3b087bb",
+  "changedPreviousMatchesByPool": [
+    {
+      "pairs": 2,
+      "predicate": "inv4",
+      "question": "classroom_fol"
+    },
+    {
+      "pairs": 22,
+      "predicate": "inv5",
+      "question": "classroom_fol"
+    },
+    {
+      "pairs": 88,
+      "predicate": "inv4",
+      "question": "cv_v2"
+    },
+    {
+      "pairs": 1,
+      "predicate": "inv2",
+      "question": "lts"
+    },
+    {
+      "pairs": 5,
+      "predicate": "inv4",
+      "question": "productionLine_v1"
+    },
+    {
+      "pairs": 18,
+      "predicate": "inv2",
+      "question": "socialMedia"
+    },
+    {
+      "pairs": 1,
+      "predicate": "inv4",
+      "question": "socialMedia"
+    },
+    {
+      "pairs": 20,
+      "predicate": "inv3",
+      "question": "trainStationOld"
+    },
+    {
+      "pairs": 13,
+      "predicate": "inv5",
+      "question": "trainStationOld"
+    },
+    {
+      "pairs": 24,
+      "predicate": "inv12",
+      "question": "trash_ltl"
+    },
+    {
+      "pairs": 1,
+      "predicate": "inv2",
+      "question": "trash_rl"
+    },
+    {
+      "pairs": 1,
+      "predicate": "inv7",
+      "question": "trash_rl"
+    }
+  ],
+  "changedPreviousMatchesByProgramKind": [
+    {
+      "original": "TEMPORAL_BLOCK_EFFECTS",
+      "pairs": 196,
+      "repaired": "TEMPORAL_BLOCK_EFFECTS"
+    }
+  ],
+  "changedPreviousMatchesWithEqualKindAndCount": 196,
+  "cohortManifestSha256": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+  "joinedPositiveScores": 1894168,
+  "originalDivergencesResolvedTo": {
+    "originalCertified": 381,
+    "originalFast": 5
+  },
+  "originalMatched": 1893782,
+  "originalMatchedModes": {
+    "FLAT_ACTIONS": 1867114,
+    "TEMPORAL_BLOCK_EFFECTS": 26668
+  },
+  "originalScoreRunId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "originalSummarySha256": "5dc1545c3ed3bc061ee889fa4dd238e81c1e162687303452a739f604777cfd06",
+  "previouslyMatched": {
+    "changedOrderedProgram": 196,
+    "sameOrderedProgram": 1893586
+  },
+  "publishedRankingScoresSha256": "5ca73249a44b97f9290a4bd12923802c808fddbf168564daaf8c04d373b14778",
+  "repairedMatched": 1894168,
+  "repairedMatchedModes": {
+    "FLAT_ACTIONS": 1867495,
+    "TEMPORAL_BLOCK_EFFECTS": 26673
+  },
+  "repairedSummarySha256": "257e07ff3657328ad05a93410b0a6f921fc11cd4652a5d94ee955aa904d64b38",
+  "rows": 1894168,
+  "sumOfJoinedPositiveDistances": 43054808
+}

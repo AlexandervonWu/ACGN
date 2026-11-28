@@ -1,0 +1,22 @@
+{
+  "archive": {
+    "reference-pool-scores/files.json": "829e983f3c4a6a965c4dcd8f38662739bffe8262229a7b5a21a2697a8a849e9d",
+    "reference-pool-scores/reference-catalog.tsv": "d2ffb181e2921e8536db9d2836f22f50a2faf9a22edebf83552ce68bb44bf5b1",
+    "reference-pool-scores/summary.json": "912a52444be333b935496ca417b7922024525987a522357ab8233e95fbd2611e",
+    "retention/SHA256.json": "939ccc6f0cb204f3dedf8618a4e201c38e32268f5de6e7ade08871cbdb472874",
+    "retention/archived-original-command-results.jsonl.gz": "759d7ade868471540568c484c00e8c778ad6b0ccf6fd510560208dfb8118a285",
+    "retention/combined-verdict.json": "b29a7ef2ead3f1f659ddf12f86b032fe5da5be656a0130d66de6a0a5631f23a6",
+    "retention/fixed.jsonl.gz": "4c51f5207f278a9306c85dfab198624eaab33beb5f4f848bde673c3b7df37b6a",
+    "retention/paired.jsonl.gz": "196e299c6c954a1724b61fc2565e6502c9616605aa68ca95aacb2c423f5b6725",
+    "retention/sat-control.jsonl.gz": "e47dc915a38abdeda498a07da862f3d6c6abfb84292fb6d4a1a68cd7f48a0f84",
+    "retention/zero.jsonl.gz": "84741a3a8ae93df050ce92b93f60df563ab7e52338e3866654ce0cc5ade36909"
+  },
+  "files": {
+    "README.md": "6e489edf5c756228523505f5f74d115e69e805afd0b7188632669a3148974f05",
+    "summary.json": "5505b489ddff5ed8dfc4746594879d3cd3d113abb1e5d6f4829c8b63268844c0",
+    "verify.py": "09ba8df552866de86a5c3ccbf8a02db07e7590a5bd2341c54d5943dc2589c0e4"
+  },
+  "repository": {
+    "docs/experimental-results/historical-retention/correct-pools.csv": "cf54427aef0af5135f1a15eb6d3c002afd32091a3536fb3ca5e959061a2c8d20"
+  }
+}

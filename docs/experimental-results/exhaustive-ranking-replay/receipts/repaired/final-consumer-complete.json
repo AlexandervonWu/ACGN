@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-28T06:41:11.325390+00:00",
+  "candidateIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "closureSha256": "0d524e016820fdd09a9407fb04a12174a4090343e58848da25b0816ffdca2f94",
+  "markerSha256": "46d5aec5875f00a876bbda5db448e2357332017f276e72b8438e237eff8a049a",
+  "retentionVerdictSha256": "b29a7ef2ead3f1f659ddf12f86b032fe5da5be656a0130d66de6a0a5631f23a6",
+  "rows": 1894168,
+  "status": "VERIFIED"
+}

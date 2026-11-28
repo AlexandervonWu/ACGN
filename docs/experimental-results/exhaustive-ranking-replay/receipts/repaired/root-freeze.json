@@ -1,0 +1,26 @@
+{
+  "buildReceiptSha256": "8144a8dd5b061e591519a49c35e0a7ff80c53f44dc96e07be4a44719998788f5",
+  "buildRoot": "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/builds/final-05-registered",
+  "collector": "parallel-one",
+  "commit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "expandedFloorSha256": "f7e666fb7b1d0d8863c5514c3d8549d749c708cc7a44a8758cfc839f7e21f57f",
+  "finalRoot": "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/candidates/final-177500afd23b-d89d3e0a",
+  "handoffContractSha256": "f97c8e1b1995733680cce64378ed35fb5a8ce27e1c96a0971789c6a1e7113b4d",
+  "initialHeapMiB": 160,
+  "issuedAt": "2026-11-27T20:07:56.223815+00:00",
+  "jarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "maxFreeRatio": 70,
+  "maximumHeapMiB": 400,
+  "minFreeRatio": 40,
+  "originalAttestationSha256": "527eae726d486116a30dfc8ca78b54751c80c0d1f791e5e238b6bffa2230aeca",
+  "originalReadySha256": "2d251334c0dcf5369e94cfb8986d633a6b10fb99ea5d503a9d71a7778a1d2cf0",
+  "prerequisiteFiles": {
+    "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/closed-stage-attribution/through-04/summary.json": "14ad4cc303432bbcbd977911368b614c84c3f6fb799b8bdbfcb15d26acfbe20f",
+    "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/diagnosis/final-05-kernel/receipt.json": "0ef6803fa6a5da1c73e1a18c0ea4d982578b1885e251cf7aadc4f72801920a90",
+    "/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/preflight/build-registered-revision.py": "ef836a9da10bec4a9c341318436f8a7c061d32f9d5083c96bcaeb34dccdd6def"
+  },
+  "registrationId": "d89d3e0a-88b8-4418-835d-d6af8992d2cf",
+  "repo": "/home/augustus/.codex/worktrees/v33-release/ACGN",
+  "schema": "acgn-final-ranking-freeze-v1",
+  "workers": 29
+}

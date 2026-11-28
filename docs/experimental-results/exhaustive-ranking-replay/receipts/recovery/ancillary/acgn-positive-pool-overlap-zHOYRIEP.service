@@ -1,0 +1,15 @@
+[Unit]
+Description=Compare sealed historical and final native reference-pool scalar receipts
+ConditionPathExists=/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/final-handoff/final-started.json
+[Service]
+Type=exec
+Nice=19
+CPUWeight=10
+CPUAffinity=31
+WorkingDirectory=/home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/reference-pool-scalars
+ExecStart=/usr/bin/python3 -B -u /home/augustus/.local/state/acgn-experiments/all-ranking-traces-zHOYRIEP/reference-pool-scalars/compare_ready.py
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=60
+[Install]
+WantedBy=default.target

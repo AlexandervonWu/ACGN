@@ -1,0 +1,30 @@
+{
+  "candidateRunId": "617d9fb3-5c46-419b-a596-e167f973985e",
+  "engineBuildReceiptSha256": "8144a8dd5b061e591519a49c35e0a7ff80c53f44dc96e07be4a44719998788f5",
+  "engineCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "executionPlanSha256": "50c20dedc539b725de1074dc7fbe1096087494a0385a37e10aae0724f84fe189",
+  "finishedAt": "2026-11-28T03:14:33.737484+00:00",
+  "heapMiB": 400,
+  "identitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "inputSha256": "3e0e85f21dd9bf760b08b3fae73dcc9b05f9f69c90dad8d6fae1a4cf90c5293a",
+  "jarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "measurement": {
+    "cacheHits": 3301,
+    "cacheMisses": 527,
+    "elapsedSeconds": 1225.122592988,
+    "newRows": 1914,
+    "rows": 1914,
+    "shard": "shard-0506"
+  },
+  "originalScoreRunId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "outputSha256": "1ce913c7fcdb4fe31066a482e6cb614f6ada6146104694db8a509cff3e038ea3",
+  "referenceCache": 2,
+  "resumedRows": 0,
+  "rows": 1914,
+  "shard": "shard-0506",
+  "startedAt": "2026-11-28T02:54:08.544212+00:00",
+  "statusCounts": {
+    "MATCHED": 1914
+  },
+  "worker": 27
+}

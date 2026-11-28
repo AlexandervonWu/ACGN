@@ -1,0 +1,57 @@
+{
+  "afterEvidence": "shard-0377-109-after.json.gz",
+  "afterEvidenceSha256": "cde1e12beb748e383cf5702a5b5fc6ac86e090ddc790b701670ebcb4dd172d18",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "certifiedFirst": {
+    "cost": 1,
+    "kind": "insert",
+    "source": null,
+    "sourceTuple": null,
+    "stage": "declaration",
+    "target": 0,
+    "targetTuple": [
+      "ALL",
+      "Photo",
+      "ONE",
+      "0"
+    ]
+  },
+  "certifiedProgramPreserved": true,
+  "cost": 3,
+  "fastFirst": {
+    "cost": 1,
+    "kind": "delete",
+    "source": 0,
+    "sourceTuple": [
+      "ONE",
+      "User",
+      "ONE",
+      "0"
+    ],
+    "stage": "declaration",
+    "target": null,
+    "targetTuple": null
+  },
+  "kind": "FLAT_ACTIONS",
+  "left": [
+    "socialMedia/both/26DDAj6ASk6EfaPvY_inv1.als",
+    "inv1",
+    "f9d0dd3b0e0fea51ec300ae1b8a18b725d39a274acc7ebf558affc79c6edb0b0"
+  ],
+  "newCount": 10,
+  "newSequenceSha256": "b9ca3e197cb13b5cc889c76be1e777cdaaf16c79e4e9f765e8a85f1866510012",
+  "oldCertifiedSequenceSha256": "b9ca3e197cb13b5cc889c76be1e777cdaaf16c79e4e9f765e8a85f1866510012",
+  "oldCounts": [
+    10,
+    10
+  ],
+  "oldFastSequenceSha256": "5b19a2b5af56d41182e92782e576d4ebf61e34e165d47320a522925f0e1d1f56",
+  "originalFirstDifference": 1,
+  "originalIncident": "shard-0377-109-4f6bc323-fe37-4bfb-8aae-104aee585817.json.gz",
+  "originalIncidentSha256": "619ce744994190730e5ff31306b93cb7d7258c55db3a8ba75a4c94f58f510301",
+  "right": [
+    "socialMedia/correct/2BAGPQKaHm7FbKGip_inv1.als",
+    "inv1",
+    "78657d2e5a69dc85d27710ba492f6372b32331229f2822a9e1a116d81096454b"
+  ]
+}

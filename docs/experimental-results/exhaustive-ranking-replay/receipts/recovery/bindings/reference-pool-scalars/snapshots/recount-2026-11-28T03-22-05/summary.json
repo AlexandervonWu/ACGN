@@ -1,0 +1,65 @@
+{
+  "archivedCommands": {
+    "native": {
+      "SAT": 105,
+      "UNSAT": 1234
+    },
+    "status": "VERIFIED",
+    "unexpected": []
+  },
+  "asOfUtc": "2026-11-28T03:22:05.576995+00:00",
+  "basis": "Sealed positive scalar shards; independently verified complete native records through each captured byte prefix. Reverse count is observed worker progress.",
+  "bindingsSha256": "4b73b632e08217d738eb40445065db8d254a28f359d1f772d6039c3a2fc7faff",
+  "commonPositiveShards": 121,
+  "finalJar": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "finalUuid": "617d9fb3-5c46-419b-a596-e167f973985e",
+  "nativeFailures": [],
+  "nativeIncidentFiles": [],
+  "nativeRows": {
+    "fixed": 1234,
+    "paired": 33220,
+    "sat-control": 105,
+    "zero": 19271
+  },
+  "nativeStates": [
+    {
+      "kind": "fixed",
+      "rows": 1234,
+      "state": "SCOPE_RETAINED"
+    },
+    {
+      "kind": "paired",
+      "rows": 33220,
+      "state": "MATCHED"
+    },
+    {
+      "kind": "sat-control",
+      "rows": 105,
+      "state": "SCOPE_RETAINED"
+    },
+    {
+      "kind": "zero",
+      "rows": 19271,
+      "state": "MATCHED"
+    }
+  ],
+  "recountToolSha256": "f2f17b05e4ff83db8fdf0e97bd61f2dbe0efde739ecb064688f588aa5c3ed5b0",
+  "reverseFailures": [],
+  "reverseObserved": 86,
+  "scalarCases": {
+    "differentCertifiedDistance": 0,
+    "differentFastDistance": 0,
+    "finalFastCertifiedDisagreement": 0,
+    "finalZeroOnFormerPositive": 0,
+    "originalFastCertifiedDisagreement": 0,
+    "originalHistoricalZeroOnPositive": 0
+  },
+  "scalarDifferences": [],
+  "scalarRows": {
+    "commonPositiveRows": 46464,
+    "finalPositiveRows": 57216,
+    "originalPositiveRows": 46464
+  },
+  "sourceManifestSha256": "43e6752dab8e7bcb8e467d09a4e32a377ef7732089327e3065bddf84e3fdb6ff",
+  "startedUtc": "2026-11-28T03:22:01.561916+00:00"
+}

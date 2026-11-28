@@ -1,0 +1,9 @@
+{
+  "calibrationRows": 60,
+  "candidateIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "eligibleOriginalOrdinalsChecked": 1894168,
+  "executionPlansChecked": 1059,
+  "missingDuplicatedSubstitutedAndNoncanonicalOrdinalRejected": true,
+  "nativeStatusFieldCorruptionRejected": true,
+  "qualification": "PASS"
+}

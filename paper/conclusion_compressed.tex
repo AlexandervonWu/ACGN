@@ -1,21 +1,18 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-Typed flexible-arity slotted e-graphs unify algebraic container quotients
-with typed variable interfaces by separating an expression's effective-support
-kernel from its caller placement. Over the abstract formal model, we proved that
-complete finite quotient presentations yield exact canonical shapes,
-structural realization and compatible shape collisions preserve source
-equations, and updates satisfying a local coherence invariant give sound
-judgments between finite unfoldings.
+Typed flexible-arity slotted e-graphs separate an expression's effective
+support from its placement in the caller's context. In the abstract model,
+complete finite quotient presentations yield exact canonical shapes.
+Structural realization and compatible collisions preserve source equations,
+and locally coherent updates give sound judgments between finite unfoldings.
 
-On the Alloy4Fun corpus both rewrite paths retained every recorded structural
-zero, including those found by original Slotted, and added 2,909 correct
-student--oracle pairs beyond Slotted. Neither path assigned zero to an
-incorrect submission. Command-specific rules recognized 259 further
-correct pairs. On full-reference search the paths agreed on all 1,894,168
-scalar scores. Native replay also agreed on the checked reference subsets.
-The historical synthetic grid shows how heterogeneous slot types can reduce
-the cost of searching binder renamings.
+Both Alloy rewrite paths retained every archived structural zero. They
+recognized 2,909 correct student--oracle pairs beyond original Slotted and
+assigned zero to no incorrect submission. Fixed-command rules recognized
+259 further correct pairs. Repairing \replayOriginalFailures{} equal-cost
+disagreements brought the ordered native replays into agreement on all
+\replayPairs{} ranking pairs. The synthetic grid also shows how heterogeneous
+slot types reduce the cost of searching binder renamings.
 
 \label{end:main-text}

@@ -1,0 +1,5 @@
+'OriginalOccurrenceOrder.minimum_corresponds' depends on axioms: [propext, Quot.sound]
+'OriginalOccurrenceOrder.recover_metric_choice' depends on axioms: [propext, Quot.sound]
+'OriginalOccurrenceOrder.recover_original_choice' depends on axioms: [propext, Quot.sound]
+'OriginalOccurrenceOrder.original_position_fixed_iff' does not depend on any axioms
+'OriginalOccurrenceOrder.target_preference_reverses_at_cost_seven' depends on axioms: [propext]

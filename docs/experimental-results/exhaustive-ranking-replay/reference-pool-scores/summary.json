@@ -1,0 +1,59 @@
+{
+  "allPairs": 132032,
+  "components": {
+    "finalCertified": {
+      "additionalZerosBeyondSlotted": 10319,
+      "componentPairs": 19271,
+      "missingSlotted": 0,
+      "structuralForms": 1816,
+      "zeros": 19271
+    },
+    "finalFast": {
+      "additionalZerosBeyondSlotted": 10319,
+      "componentPairs": 19271,
+      "missingSlotted": 0,
+      "structuralForms": 1816,
+      "zeros": 19271
+    },
+    "originalCertified": {
+      "additionalZerosBeyondSlotted": 10319,
+      "componentPairs": 19271,
+      "missingSlotted": 0,
+      "structuralForms": 1816,
+      "zeros": 19271
+    },
+    "originalFast": {
+      "additionalZerosBeyondSlotted": 10319,
+      "componentPairs": 19271,
+      "missingSlotted": 0,
+      "structuralForms": 1816,
+      "zeros": 19271
+    }
+  },
+  "crossVersionScoreChanges": {
+    "Certified": 0,
+    "Fast": 0,
+    "either": 0
+  },
+  "finalCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+  "finalJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "finalRunId": "617d9fb3-5c46-419b-a596-e167f973985e",
+  "markerSha256": "46d5aec5875f00a876bbda5db448e2357332017f276e72b8438e237eff8a049a",
+  "newScalarDifferences": 0,
+  "observedChanges": [],
+  "originalJarSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "originalScalarDifferences": 0,
+  "originalSlottedDistancesSha256": "372e5e26ddda280573308f54c3dafd1ec05a4f671d7365f7d1f9ba677bd33a71",
+  "originalSlottedZeros": 8952,
+  "perPoolSha256": "1cbb07f2e3b3c94ff70575148d25c0d9e210aee4a773aad07e47f5f3d12a4267",
+  "recordedPositiveInputs": 112761,
+  "referenceNodes": 4496,
+  "referencePools": 181,
+  "scalarPositiveSha256": "d911814942c2bbb6e6612a922d85c57d7db4d5a81783b6dc385e689a23553d13",
+  "sourceCatalogSha256": "d2ffb181e2921e8536db9d2836f22f50a2faf9a22edebf83552ce68bb44bf5b1",
+  "status": "VERIFIED",
+  "structuralForms": 1816,
+  "structuralZeros": 19271,
+  "zeroNativeSelections": 19271,
+  "zeroNativeSha256": "84741a3a8ae93df050ce92b93f60df563ab7e52338e3866654ce0cc5ade36909"
+}

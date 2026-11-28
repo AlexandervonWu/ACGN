@@ -1,0 +1,20 @@
+{
+  "original": {
+    "commit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+    "fileSha256": {
+      "src/is/fivefivefive/CanDis/LocalOwnerCorrespondence.java": "e30046bdb8584daae955c4bd5baea0ad2f676d77280a28369fc25de2ef0a0b86",
+      "src/is/fivefivefive/CanDis/TemporalOperationCorrespondence.java": "5870a66bc15849e46c87e36cda3ecfedc038d9b1db8674c30a16f3c122b459a6",
+      "src/is/fivefivefive/CanDis/core/EGraphNode.java": "640706acc9ec912e904cbfb66adf690198a78d7953ccbf310f0e28fe91b5362a",
+      "src/is/fivefivefive/CanDis/core/NormalForm.java": "b4fbf47cc86f2e3234c0e3d3dfbc00eb5375e42076d511d426cbad7eed4533ea"
+    }
+  },
+  "repaired": {
+    "commit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+    "fileSha256": {
+      "src/is/fivefivefive/CanDis/LocalOwnerCorrespondence.java": "e30046bdb8584daae955c4bd5baea0ad2f676d77280a28369fc25de2ef0a0b86",
+      "src/is/fivefivefive/CanDis/TemporalOperationCorrespondence.java": "5870a66bc15849e46c87e36cda3ecfedc038d9b1db8674c30a16f3c122b459a6",
+      "src/is/fivefivefive/CanDis/core/EGraphNode.java": "640706acc9ec912e904cbfb66adf690198a78d7953ccbf310f0e28fe91b5362a",
+      "src/is/fivefivefive/CanDis/core/NormalForm.java": "b4fbf47cc86f2e3234c0e3d3dfbc00eb5375e42076d511d426cbad7eed4533ea"
+    }
+  }
+}

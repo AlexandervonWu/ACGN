@@ -1,0 +1,52 @@
+{
+  "archives": {
+    "candidate-01.zip": "90fff3ccac09131e371f64dd8ae60b8154622f54df4617e7fd5e8990421fa147",
+    "candidate-02.zip": "2c35c46186f95db1f117e8e9e4b9ff21afe71ef37ba82532b1fd649c910d9f2b",
+    "candidate-03.zip": "54c0b88b4b14f1044badb1e32839fd9e3ed55a389b6dea6200ba51040f86d420",
+    "candidate-04.zip": "2a75aa4dfcaa9556c68aeeaf6e2188f69da82a9e09face88c0755bf2513812d3",
+    "final.zip": "1f8d27d4675d0f08a4edd8d7300100ef28d61411aae400cfbbd5c96fb6b8b676",
+    "original-programs.zip": "027740a876657bb2606fbe6257a529bcab8b928026ef3c0491b83341bd903d87",
+    "original-replay.zip": "0fa50e34d7288e49cc1d534ea05dba270ea6f35e00e0552c43ed65c9e6f61caa",
+    "runtime.zip": "242c53898fdc231371c4cb92b7d6dae241fe98d6780fefa38581129369050e6f",
+    "shared-inputs.zip": "bbbedb7c5ff283f10df4337ce1d456da39cd0de266dddaa727065b3647ffc3a0"
+  },
+  "final": {
+    "commit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+    "directions": 938,
+    "forwardAndReverseMatched": 938,
+    "fullClosureSha256": "0d524e016820fdd09a9407fb04a12174a4090343e58848da25b0816ffdca2f94",
+    "fullForwardProgramsMatched": 469,
+    "fullSummarySha256": "257e07ff3657328ad05a93410b0a6f921fc11cd4652a5d94ee955aa904d64b38",
+    "historical": 83,
+    "identitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+    "jarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+    "markerSha256": "46d5aec5875f00a876bbda5db448e2357332017f276e72b8438e237eff8a049a",
+    "original": 386,
+    "preflightRecountSha256": "b80734cc524675e3ddeb5784c4afb5b66a0765b4fedc9bd3103d52cf969437dd",
+    "uuid": "617d9fb3-5c46-419b-a596-e167f973985e"
+  },
+  "readerSha256": "b6a2a51d0819c1a705ab3838a3c19e83e899b11110e5a2c5f2d47143730fa2a7",
+  "schema": "acgn-closed-native-stage-attribution-v1",
+  "stages": [
+    "original-replay",
+    "candidate-01",
+    "candidate-02",
+    "candidate-03",
+    "candidate-04"
+  ],
+  "tables": {
+    "README.md": "f04a03d5cdaa43149e9bdfcddd7afe82bd892e8c264a41ee9a304aba37d0957e",
+    "final_rows.py": "3e437eee4aaf6d95c508f2bd085e49b0154d3607c6d3bc70d0ed102d26514237",
+    "tables/all-386-original-pairs.csv": "e1413e17ade259e9ddeab887067d203b9f71cf4fd4454f27877e6c42811c7b08",
+    "tables/complete-pair-observations.jsonl.gz": "aea508c691817218e30f7577309c3ff03c3dc2339acd72b081f6589a5a7a0b2b",
+    "tables/directions.csv": "5c5161ec8c52cbb978baafa88d4a5431c93e765cc9fa3a8ac1256a9ad1817672",
+    "tables/final-directions.csv": "b103e77d8111e8bb16ec742f2f3c10a0d24931adff932d5759c83218842d1546",
+    "tables/final-timeline.csv": "f4996e79b3d6ce0be93f0812522d3630d51955f93cb5e1f3ed4256762734644b",
+    "tables/final-transitions.json": "b54d68f0dbda5a4029e219544c700e014f23fde7c360b927193a6c748fa52a0d",
+    "tables/original-signals.json": "45f5624913444777750f59db46787ad4869add85a42c589312ec8ac1acde2287",
+    "tables/pairs.csv": "f71cdd896e9e9bf16e2f0a3a808461fc9666cee973a2cef54307ea8ae61c6814",
+    "tables/recount.json": "d18ba97aaf0f1dd9c8482a2ec41d7751b0c906b33feb915e8ea4e98d172ff1d3",
+    "tables/summary.json": "14ad4cc303432bbcbd977911368b614c84c3f6fb799b8bdbfcb15d26acfbe20f",
+    "tables/unresolved.csv": "4085950c292be54eea576e4208374b0b8a5681b07e5d7e831c9c1447ca9f4700"
+  }
+}

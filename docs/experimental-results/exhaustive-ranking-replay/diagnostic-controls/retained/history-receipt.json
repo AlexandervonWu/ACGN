@@ -1,0 +1,781 @@
+{
+  "controlSourceSha256": "b89402278a42541c9ea08cb65cd545065f5f571242b7ff1f5f275917da39b22a",
+  "freshAlloy": {
+    "domain-proof.json": {
+      "results": [
+        {
+          "bitwidth": 4,
+          "formula": "not (inv14 iff reduced)",
+          "overallScope": 3,
+          "satisfiable": false
+        },
+        {
+          "bitwidth": 4,
+          "formula": "no Class and some Group and inv14 and not (no Group or active)",
+          "overallScope": 3,
+          "satisfiable": true
+        },
+        {
+          "bitwidth": 4,
+          "formula": "some Class and no Group and inv14 and not (no Class or active)",
+          "overallScope": 3,
+          "satisfiable": true
+        }
+      ],
+      "sha256": "249fabb87ae381c627c01e688250e205c3b0382081d26f747908879d4ff5cda3"
+    },
+    "exception-proof.json": {
+      "results": [
+        {
+          "bitwidth": 4,
+          "formula": "not (inv14 iff reduced)",
+          "overallScope": 3,
+          "satisfiable": false
+        },
+        {
+          "bitwidth": 4,
+          "formula": "some Student and some Project and not (inv14 iff noCommon)",
+          "overallScope": 3,
+          "satisfiable": true
+        }
+      ],
+      "sha256": "1841ee9bcdb2710ff6d8139efa1fba71c215636e633306b6bb87b4bf8bf165bc"
+    }
+  },
+  "harnessChecks": 113,
+  "harnessLogSha256": "b5b7f4218de54d4870037ed079457813ac679c83e6b52465a36d9ccd212eb0d6",
+  "harnessReceipt": "031d7640535a0b9a29db3b6c55cb435c0f6c6e52720cf796fe74358b6cbc7cf0",
+  "normalizedMatrixDigests": {
+    "xJnit-historical-retention-PKEpK7Tg-matrix.json": "3b6ad7a5e62d598d0ef75ad27aa45f57ae809421c9cae61d8b2a9650eb1e523a",
+    "xJnit-v3.3-20261126-KxC26CdK-matrix.json": "0d068c850b16ffafc0fea1d663890d9a2741dee0df3e613ad5c725cb73f8f24a"
+  },
+  "old20CrossReplay": {
+    "path": "ef46feaea/YKy8LYsKdapW3xqbn_inv14.als-recaptured-cross.json",
+    "results": [
+      {
+        "archived20": true,
+        "detail": "Selected representative missing child",
+        "left": "inv14",
+        "status": "INVALID_REPLAY"
+      },
+      {
+        "archived20": false,
+        "detail": "CHECKED_NATIVE_ACTIONS_EQUAL",
+        "left": "inv14",
+        "status": "MATCHED"
+      },
+      {
+        "archived20": true,
+        "detail": "Selected representative missing child",
+        "left": "inv14c",
+        "status": "INVALID_REPLAY"
+      },
+      {
+        "archived20": false,
+        "detail": "CHECKED_NATIVE_ACTIONS_EQUAL",
+        "left": "inv14c",
+        "status": "MATCHED"
+      }
+    ],
+    "sha256": "ca2d24f9a90f84e941282875ba1468b2e80faf4a57ae0779efe436c1d293e491"
+  },
+  "revisions": [
+    {
+      "engineSha256": "dedbeba41d05747e7791ba3ab5122bf76023fa9c281186f27ed289928743264a",
+      "results": [
+        {
+          "components": [
+            20,
+            0,
+            2,
+            18
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 22,
+          "path": "4b22429df/YKy8LYsKdapW3xqbn_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "732799626a44ea57e5bdfb9a412d98c4f426d0ce8717515c4b07b06b0897b996",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s : one Person ALL c : one Class ALL g : one Group ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher)))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ]
+        },
+        {
+          "components": [
+            20,
+            0,
+            2,
+            18
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 22,
+          "path": "4b22429df/YKy8LYsKdapW3xqbn_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "6ea0fb83e0efcb3a920265cddb3c7e0288bb1704833c8816594f8711aa52244f",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL s : one Person ALL c : one Class ALL g : one Group ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher)))"
+          ]
+        },
+        {
+          "components": [
+            49,
+            0,
+            2,
+            47
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 30,
+          "path": "4b22429df/xJnitBpFv9K74WNvf_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "050fbe451477729ea2003a3fda4fecb2eeeddaf3fc9f8fa5b0413fb67d4d35c3",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ]
+        },
+        {
+          "components": [
+            49,
+            0,
+            2,
+            47
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 30,
+          "path": "4b22429df/xJnitBpFv9K74WNvf_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "5f1afc6c314efb08cd7a69fe39b083bf0f5bf9c47f4ccf699504bed7409e397f",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ]
+        }
+      ],
+      "sourceCommit": "4b22429df6d79ef11ac77eef028837abbac17a0f",
+      "stage": "4b22429df"
+    },
+    {
+      "engineSha256": "aad75d90f413720bfa030a00592d84c9ce451233e9cc9542cd723b5a7be2b9e9",
+      "results": [
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 22,
+          "path": "ef46feaea/YKy8LYsKdapW3xqbn_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "2096a14bad4c06bc606eeea7838e452ecfabccc02973d5eeb9e129ceae1e7c11",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ]
+        },
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 22,
+          "path": "ef46feaea/YKy8LYsKdapW3xqbn_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "127aaa137696250e7e50af83bd02983d1a1f2e5cfcaf565a6211a9b0988b3c59",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ]
+        },
+        {
+          "components": [
+            49,
+            0,
+            2,
+            47
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 30,
+          "path": "ef46feaea/xJnitBpFv9K74WNvf_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "a2fe144c0404eda4e3e2ad761f2c748382c49ec4b60facf13b2be5195f28b3e3",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ]
+        },
+        {
+          "components": [
+            49,
+            0,
+            2,
+            47
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 30,
+          "path": "ef46feaea/xJnitBpFv9K74WNvf_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "2187854c3134ef4ec14d653db45ffd690973cbe01545b1a044288b03a64f032d",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ]
+        }
+      ],
+      "sourceCommit": "ef46feaeaa22d9c12475cde38159fbf65021c748",
+      "stage": "ef46feaea"
+    },
+    {
+      "engineSha256": "aa497d2737078f75100c261cdf30d688df8405221477a622e107419d908d43d2",
+      "results": [
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-v3.3-20261126-KxC26CdK/YKy8LYsKdapW3xqbn_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "33d614729f8ff60e6b926ccab1e58eeba77eaa18847626a6051c10eed81f1437",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ]
+        },
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-v3.3-20261126-KxC26CdK/YKy8LYsKdapW3xqbn_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "7e2a1915c8b7b11bd36a6370b8e4bcaed66471cd93c09408555546f93ac856c2",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ]
+        },
+        {
+          "components": [
+            49,
+            0,
+            2,
+            47
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-v3.3-20261126-KxC26CdK/xJnitBpFv9K74WNvf_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "25b3ccc8104efbc7cdfc1b646fd7c8c7710b6b16850f60f842b8c7be41335637",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ]
+        },
+        {
+          "components": [
+            49,
+            0,
+            2,
+            47
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-v3.3-20261126-KxC26CdK/xJnitBpFv9K74WNvf_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "df121138e13fdd0892fef2307aa11d72d3ca093fe85c2aeffad0aea23f62f462",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ]
+        }
+      ],
+      "sourceCommit": "d5c0c2a07504d53b13b28c61e9e64768c37eb984",
+      "stage": "registered-v3.3-20261126-KxC26CdK"
+    },
+    {
+      "engineSha256": "a106073b8faaf60749ec0217568839b2b8eb143633283967633e393592f38478",
+      "results": [
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-historical-retention-PKEpK7Tg/YKy8LYsKdapW3xqbn_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "a28e0236fc39b122f18a2a62a0bfd36ae0a1045168333095437a9f8bd83344b4",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ]
+        },
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-historical-retention-PKEpK7Tg/YKy8LYsKdapW3xqbn_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "1a6696d6a85f2fd9d79f1b82abb12ee8360171f59e3bb6a3cdd9d52996ba335d",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ]
+        },
+        {
+          "components": [
+            35,
+            0,
+            2,
+            33
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-historical-retention-PKEpK7Tg/xJnitBpFv9K74WNvf_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "b85bd7a7a2c8566d27bc4a6483197e07964bda7f35a73c7a308d4333ef772f9d",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ]
+        },
+        {
+          "components": [
+            35,
+            0,
+            2,
+            33
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-historical-retention-PKEpK7Tg/xJnitBpFv9K74WNvf_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "a0201a884326340d5f048c3ba3400620ff87d0fc9af613885e16e7b13b4ad3ec",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ]
+        }
+      ],
+      "sourceCommit": "8875464ccaf3f7972f1fa8fcfa03b9328c44b9b9",
+      "stage": "registered-historical-retention-PKEpK7Tg"
+    },
+    {
+      "engineSha256": "927111f15f3f322dc297cfab147a1e931b37e1b7a331da3d8fd9f89e66af2487",
+      "results": [
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-historical-retention-retry-awky6iou/YKy8LYsKdapW3xqbn_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "a28e0236fc39b122f18a2a62a0bfd36ae0a1045168333095437a9f8bd83344b4",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ]
+        },
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-historical-retention-retry-awky6iou/YKy8LYsKdapW3xqbn_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "1a6696d6a85f2fd9d79f1b82abb12ee8360171f59e3bb6a3cdd9d52996ba335d",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ]
+        },
+        {
+          "components": [
+            35,
+            0,
+            2,
+            33
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-historical-retention-retry-awky6iou/xJnitBpFv9K74WNvf_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "b85bd7a7a2c8566d27bc4a6483197e07964bda7f35a73c7a308d4333ef772f9d",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ]
+        },
+        {
+          "components": [
+            35,
+            0,
+            2,
+            33
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-historical-retention-retry-awky6iou/xJnitBpFv9K74WNvf_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "a0201a884326340d5f048c3ba3400620ff87d0fc9af613885e16e7b13b4ad3ec",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ]
+        }
+      ],
+      "sourceCommit": "82816f683a5078c1d846334ab9d55a723baa1cc7",
+      "stage": "registered-historical-retention-retry-awky6iou"
+    },
+    {
+      "engineSha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+      "results": [
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-original/YKy8LYsKdapW3xqbn_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "a28e0236fc39b122f18a2a62a0bfd36ae0a1045168333095437a9f8bd83344b4",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ]
+        },
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-original/YKy8LYsKdapW3xqbn_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "1a6696d6a85f2fd9d79f1b82abb12ee8360171f59e3bb6a3cdd9d52996ba335d",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ]
+        },
+        {
+          "components": [
+            35,
+            0,
+            2,
+            33
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-original/xJnitBpFv9K74WNvf_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "b85bd7a7a2c8566d27bc4a6483197e07964bda7f35a73c7a308d4333ef772f9d",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ]
+        },
+        {
+          "components": [
+            35,
+            0,
+            2,
+            33
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-original/xJnitBpFv9K74WNvf_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "a0201a884326340d5f048c3ba3400620ff87d0fc9af613885e16e7b13b4ad3ec",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ]
+        }
+      ],
+      "sourceCommit": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+      "stage": "registered-original"
+    },
+    {
+      "engineSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+      "results": [
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-final/YKy8LYsKdapW3xqbn_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "a28e0236fc39b122f18a2a62a0bfd36ae0a1045168333095437a9f8bd83344b4",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ]
+        },
+        {
+          "components": [
+            22,
+            0,
+            1,
+            21
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 23,
+          "path": "registered-final/YKy8LYsKdapW3xqbn_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "1a6696d6a85f2fd9d79f1b82abb12ee8360171f59e3bb6a3cdd9d52996ba335d",
+          "source": "classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL c : one Class ALL p : one Person . inv14c(((((Teaches . c) -> p) in Tutors) || (p !in ((c . Groups) . Group))))"
+          ],
+          "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+          "targetIr": [
+            "root normal form := ALL s : one Person ALL t : one Person . inv14(((((t -> s) in Tutors) && ((t -> t) in Tutors)) || (s !in Student) || (t !in Teacher) || (NO Class) || (NO Group)))"
+          ]
+        },
+        {
+          "components": [
+            35,
+            0,
+            2,
+            33
+          ],
+          "left": "inv14",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-final/xJnitBpFv9K74WNvf_inv14.als-0.json",
+          "right": "inv14c",
+          "sha256": "b85bd7a7a2c8566d27bc4a6483197e07964bda7f35a73c7a308d4333ef772f9d",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ]
+        },
+        {
+          "components": [
+            35,
+            0,
+            2,
+            33
+          ],
+          "left": "inv14c",
+          "native": "MATCHED",
+          "nativeLength": 31,
+          "path": "registered-final/xJnitBpFv9K74WNvf_inv14.als-1.json",
+          "right": "inv14",
+          "sha256": "a0201a884326340d5f048c3ba3400620ff87d0fc9af613885e16e7b13b4ad3ec",
+          "source": "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+          "sourceIr": [
+            "root normal form := ALL p : one Person ALL disj#1 x : one Project ALL disj#1 y : one Project . inv14c(((((projects . x) & (projects . y)) in p) || (x !in (p . projects)) || (y !in (p . projects))))"
+          ],
+          "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+          "targetIr": [
+            "root normal form := ALL s1 : one Person ALL s2 : one Person . inv14(((ONE DECLROOT_default((ONE Project), p)) || (s1 !in Student) || (s2 !in Student)))"
+          ]
+        }
+      ],
+      "sourceCommit": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+      "stage": "registered-final"
+    }
+  ],
+  "sase": [
+    {
+      "actions": 24,
+      "cost": 27,
+      "direction": 0,
+      "paid": {
+        "_q1": "_q0"
+      },
+      "receipt": "sase-0.json",
+      "selected": {
+        "_q0": "_q1",
+        "_q1": "_q0"
+      },
+      "sha256": "5466d30b5f5c03d126d8730e2545f0e49f79f154ab4dd0b5cdbe407b2ec7aac9"
+    },
+    {
+      "actions": 24,
+      "cost": 27,
+      "direction": 1,
+      "paid": {
+        "_q0": "_q1"
+      },
+      "receipt": "sase-1.json",
+      "selected": {
+        "_q0": "_q1",
+        "_q1": "_q0"
+      },
+      "sha256": "894c3d36a8bd17fc738f66a0fc4f3c1854e6e3dc55fc0c0e6e11aad42a793187"
+    }
+  ],
+  "scope": "Two historical standalone controls on seven version-bound engines in both directions, plus the SASE standalone suite on the final engine",
+  "status": "VERIFIED"
+}

@@ -1,0 +1,35 @@
+{
+  "calibration": {
+    "qa/reproduced-negative-declaration.json": "b1bacf36211024ce83299b42c7ec2283b1785fe32e827d031a8b30cd943663fd",
+    "qa/reproduced-positive-temporal.json": "b8dd4a5348ab8f06ddbe0972ed3e3e67a0928775a49762261d9d2ac5ac8a8db1",
+    "qa/temporal-cases.tsv": "db594bff4312063a12d89f5a60db5dd4dd1033d47a6a86d401b886c0b402ed32",
+    "qa/unit-temporal.jsonl": "68e17443fa8b073021d9664320d75ee96f665ffdcfb9817cee34117ca1505350"
+  },
+  "closureContractSha256": "860152fe049b6add686c223df761a885daafab8e55f0f22e31591927ff54f903",
+  "files": {
+    "EmitNativePrograms.java": "5fdd303654dd4f6ce2be3d357d400402d98a1e6c15eac17bc6fda04bd0f65198",
+    "build_inputs.py": "c4445e93ba76ef5738f862bd61f35d96e5040d5ae93e5aab9fa2a8cda3b57c5f",
+    "finalize.py": "0cc53ed2828f4489bcbcde09495db5ad79f3605cfe8f55170478b9ecef395c89",
+    "lookup_native.py": "ab0b45ed3953a3a932d654fdbf0f91256fb61bc1064a7b02dd2509a983020b8e",
+    "native_commitment.py": "7e1b99c660cdd98ffa5b294eb7338f81685419949246d930dfe69588766cbc6d",
+    "qa/test_archive_shape.py": "b6c2e608f18337dc443117492064d3d00c51d709fbc0a3728c7e42d9622204be",
+    "replay_lookup.py": "de5349e173de8da2a47574650ea96f83845a89f6dbc1b78873c26cce63e38d0c",
+    "test_verifiers.py": "48719df5b5a7b8bda71ccf7f0fb4d3e3c0544e3d9ea6d09be2c596346d700047",
+    "verify_compact.py": "c22ff086d44fa230723f29a322e64572a983af51df723a08056ea469034ccdee",
+    "verify_inputs.py": "5c711fd72a34e6c5b37fedcc79d8f38365c04df8f9525601bc71a09bd4a45a2d",
+    "verify_results.py": "6a36339c5645d0bf353499bb23ebece254f374a5e2bec09cfccd016eb6f8f27b",
+    "watch_receipts.py": "6ce4939670bbe97ef7ca1bee9999e22855680a012a67ad7b18113bc199420b2b"
+  },
+  "inputManifestSha256": "074fbe5573ccf33de100f85cc14a7d0f33c297271b933401ee061d066da99ff5",
+  "priorRegistrationSha256": "4ebe2cf79890fba4008856d2fe6e01b32f6714897180d4875e47c9d8d4dbd6ac",
+  "registeredAt": "2026-11-27T05:18:50.169556+00:00",
+  "revisionNote": "Standalone single-pair lookup authenticates the complete original corpus and dependency receipt before re-execution. Raw and portable recount checkers and native comparator retain their initial hashes.",
+  "runnerIdentitySha256": "a2cf64f0889624b0dc675b73d80f5b34caca2d73c9448b788713463b8abc3f02",
+  "schema": "acgn-exhaustive-native-independent-verifiers-v1",
+  "scope": [
+    "raw outcome coverage for every original forward ranking",
+    "reconstruction of original source SHA/predicate/score TSV plus native sequence commitments",
+    "original failed programs checked independently",
+    "single-edge full native program replay"
+  ]
+}

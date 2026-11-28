@@ -37,11 +37,11 @@ The full ablation checks the selected predicates on every measured file.
 
 ### Latest results after v3.3
 
-Both rewrite paths returned structural distance zero on **5,137 correct student–oracle pairs** in the supervised 66,080-file run. They retained every one of the 2,228 original Slotted zeros, added 2,909 correct pairs, and assigned zero to none of the 42,386 incorrect submissions.
+Fast Rewrite and Certificate-Integrated matched on **all 1,894,168 ordered native replays**, including the ordered block effects on 26,673 temporal pairs. The previous engine agreed on every distance but chose different edits on 386 pairs. Five repairs resolved all 386 while preserving every ranking distance. The regression suite checks those pairs and the 83 earlier divergences in both directions, for 938 passing replays. [Full results](docs/experimental-results/exhaustive-ranking-replay/README.md) · [All 386 repairs by source pair and cause](docs/experimental-results/exhaustive-ranking-replay/repairs-by-pair.csv) · [Paper](docs/experimental-results/exhaustive-ranking-replay/paper-exhaustive-ranking-replay.pdf)
 
-Across the 181 correct-reference pools, both paths retained all 8,952 original Slotted zeros and found **19,271** direct structural zeros in total. The 4,496 reference ASTs yielded 1,816 structural forms and 1,743 components after verified fixed-command links were added. The full-run retention check protects the source identities of the historical pairs in both engines.
+On the paired corpus, both paths gave structural distance zero to **5,137 of 19,212** correct distinct-AST student–oracle pairs. They retained all 2,228 original Slotted zeros and added 2,909. None of the 42,386 incorrect submissions received zero. Rules verified under the original Alloy command recognized 259 further correct pairs at positive structural distance.
 
-Native operation replay matched on all 61,598 student–oracle comparisons, all 19,271 structural reference zeros, and all 4,138 paid reference pairs checked for the mixed-quantifier issue. One additional paid comparison in each of the 181 pools also matched. The 83 repaired paid witnesses matched in reverse. Both engines agreed on all 1,894,168 ranking distances. [Full results and verification](docs/experimental-results/historical-retention/README.md) · [Recovered reference pairs](docs/experimental-results/historical-retention/repaired-reference-pairs.csv) · [Updated paper](docs/experimental-results/historical-retention/paper-historical-retention.pdf)
+Across 181 reference pools, both paths found **19,271 direct structural zeros**, retaining all 8,952 Slotted zeros. Grouping the 4,496 reference ASTs by structural zero gives 1,816 forms. Adding links verified under the fixed Alloy command gives 1,743 connected components. The 105 pairs with a solver counterexample stayed in separate components. Both paths retained the seven reference pairs that v3.1 recognized and v3.3 lost. [Headline data](docs/experimental-results/exhaustive-ranking-replay/headlines.json) · [Historical reference recoveries, with the seven labeled v3.1](docs/experimental-results/historical-retention/repaired-reference-pairs.csv)
 
 ### v3.3 full-corpus results
 
@@ -209,7 +209,7 @@ snapshot below and the separate v2.16 validation run.
 
 ## Headline Results
 
-The latest natural-corpus measurements are in the [historical retention report](docs/experimental-results/historical-retention/README.md). The previous full study suite ran on November 15-16, 2026, using commit
+The latest [exhaustive ranking replay](docs/experimental-results/exhaustive-ranking-replay/README.md) checks the ordered programs and ranking distances from the [historical retention study](docs/experimental-results/historical-retention/README.md). The previous full study suite ran on November 15-16, 2026, using commit
 `2d70f89ab67241cd071387ecedd3b2f432821921`. The
 [v3 report](docs/experimental-results/2026-11-16/README.md) includes the
 full paired corpus, full-reference Augmenter, seven ablation and capability

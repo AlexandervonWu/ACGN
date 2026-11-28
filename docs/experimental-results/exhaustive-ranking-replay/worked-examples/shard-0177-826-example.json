@@ -1,0 +1,62 @@
+{
+  "afterEvidence": "shard-0177-826-after.json.gz",
+  "afterEvidenceSha256": "19061047ef8c86896e3aa5851c73f5d982f58fd0bc28af77b25770f0370cfb90",
+  "candidateJarSha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "certifiedFirst": {
+    "cost": 1,
+    "kind": "update",
+    "source": 0,
+    "sourceTuple": [
+      "ALL",
+      "Person",
+      "ONE",
+      "0"
+    ],
+    "stage": "declaration",
+    "target": 0,
+    "targetTuple": [
+      "ALL",
+      "Project",
+      "ONE",
+      "0"
+    ]
+  },
+  "certifiedProgramPreserved": true,
+  "cost": 24,
+  "fastFirst": {
+    "cost": 1,
+    "kind": "insert",
+    "source": null,
+    "sourceTuple": null,
+    "stage": "declaration",
+    "target": 0,
+    "targetTuple": [
+      "ALL",
+      "Project",
+      "ONE",
+      "0"
+    ]
+  },
+  "kind": "FLAT_ACTIONS",
+  "left": [
+    "coursesOld/both/7Loz62RbT7xNgGnAz_inv5.als",
+    "inv5",
+    "233c577f0467417587ef6163b5c7a50f263109b787c7e03cb38af967246d5df2"
+  ],
+  "newCount": 21,
+  "newSequenceSha256": "398284704a64344be86178d566f42156596cf83f3cacd80448aeabbedfb7d3de",
+  "oldCertifiedSequenceSha256": "398284704a64344be86178d566f42156596cf83f3cacd80448aeabbedfb7d3de",
+  "oldCounts": [
+    17,
+    21
+  ],
+  "oldFastSequenceSha256": "5ba7b16684642b1d85cf32e62f3ecdc04c5644ec406052b5dc453259fa75f9f0",
+  "originalFirstDifference": 1,
+  "originalIncident": "shard-0177-826-ae1eed04-9fc4-4de7-b28d-63c7ebbb9770.json.gz",
+  "originalIncidentSha256": "1781557986a59f7b6e775f578ea24dbe053152cf1d4e0088157dd21678422400",
+  "right": [
+    "coursesOld/correct/CrK63WiBfF7nH9da2_inv5.als",
+    "inv5",
+    "bb7071cf3c4dc52d1f9fe13308d921fd82224e61d43172f5b144b0ad32e46c13"
+  ]
+}

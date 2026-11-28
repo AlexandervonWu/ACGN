@@ -1,0 +1,17 @@
+{
+  "archiveSummary": "5dc1545c3ed3bc061ee889fa4dd238e81c1e162687303452a739f604777cfd06",
+  "auditor": "e9cc9add2b3f242c7ac84ad4803dbf5c525cc528c856500cd402a37fda2a3554",
+  "failed": 386,
+  "finalAttestation": "527eae726d486116a30dfc8ca78b54751c80c0d1f791e5e238b6bffa2230aeca",
+  "implementation": "692b16f3a738d6e91e54f1f7a55c89296a90ece426c5ba4ee4e5387d39674ea5",
+  "matched": 1893782,
+  "nativeClaim": "BLOCKED",
+  "portable": "e8353c1fc7fe80473f9125ff2d777e73241513794d08dfc55d9c535a05ef5682",
+  "provenance": {
+    "auditorSha256": "e9cc9add2b3f242c7ac84ad4803dbf5c525cc528c856500cd402a37fda2a3554",
+    "registration": "VERIFIED"
+  },
+  "raw": "7485edf6114e2cb4abcd0ef89340df075bdb123e2621b5dd0cdcd903a6c670f3",
+  "recount": "VERIFIED",
+  "rows": 1894168
+}

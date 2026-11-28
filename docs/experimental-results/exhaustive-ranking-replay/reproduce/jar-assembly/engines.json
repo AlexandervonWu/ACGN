@@ -1,0 +1,44 @@
+{
+  "candidate-01": {
+    "git": "229cf5da22ccbc30f6cf459e6cdf7097b96dc78d",
+    "javac": "17.0.21.1",
+    "sha256": "fca6fb6be5e9ec3aead6f1b85357c4dfc6f18a53c6d5b316f8acf17beff4c176",
+    "zipEntries": "candidate-01-entries.tsv.gz",
+    "zipEntriesSha256": "78d9d6a215a7975300fab54fe69ca4af4c8e5854892db3caf4b771f274022d72"
+  },
+  "candidate-02": {
+    "git": "0157d270f59e380ea14a605ed78ef5d472de9901",
+    "javac": "17.0.21.1",
+    "sha256": "e16932ee164436738e8c88aadf3c5f4fe8752ca67125a46efe7423a527604a5b",
+    "zipEntries": "candidate-02-entries.tsv.gz",
+    "zipEntriesSha256": "751b3b54c4159c4e40640e2bdf8d47616e30b74551794b63b59720ef34a43027"
+  },
+  "candidate-03": {
+    "git": "7bda8c50290d4bd3c93344ed897a24a6c5479d39",
+    "javac": "17.0.21.1",
+    "sha256": "391ca7be99361e2c96a0c3c6c8b652d807208742ceed0ce8423d535a2074f4cf",
+    "zipEntries": "candidate-03-entries.tsv.gz",
+    "zipEntriesSha256": "ac93697077ea8d26ba1eaeb6001578d2526695e32c6c12ef3e02ba0a1f76d027"
+  },
+  "candidate-04": {
+    "git": "3fa9d25d8e1d708dd948b0442b4285424a0ef39b",
+    "javac": "17.0.21.1",
+    "sha256": "37daeb477538fed3f13c3c521125d49ae01d70dfa89666d3bae40984428b4f82",
+    "zipEntries": "candidate-04-entries.tsv.gz",
+    "zipEntriesSha256": "ac93697077ea8d26ba1eaeb6001578d2526695e32c6c12ef3e02ba0a1f76d027"
+  },
+  "original": {
+    "git": "9693595eb4f60c6c70b6d8d174ee309d1fdcf9aa",
+    "javac": "17.0.21.1",
+    "sha256": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+    "zipEntries": "original-entries.tsv.gz",
+    "zipEntriesSha256": "5a00fb4c428338b89090e20a63000db451276a7964433ca0b072c2cd3c9c2802"
+  },
+  "repaired": {
+    "git": "177500afd23b74d3d3695b9c38fb6ad0c0709838",
+    "javac": "17.0.21.1",
+    "sha256": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+    "zipEntries": "repaired-entries.tsv.gz",
+    "zipEntriesSha256": "9e6862380d0bd888648c954e6001634f2bc1753eeb08697fac132cd15edda98a"
+  }
+}

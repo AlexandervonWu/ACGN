@@ -1,0 +1,191 @@
+{
+  "at": "2026-11-28T03:15:19.915302+00:00",
+  "attemptedRows": 1541613,
+  "candidateRunId": "617d9fb3-5c46-419b-a596-e167f973985e",
+  "completedShardStatusCounts": {
+    "MATCHED": 1512232
+  },
+  "completedShards": 860,
+  "hostAvailableBytes": 9216221184,
+  "identitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "originalScoreRunId": "f49d49b0-2590-4fbf-b617-50c8358b0985",
+  "pendingShards": 170,
+  "running": [
+    {
+      "goal": 1944,
+      "rows": 889,
+      "shard": "shard-0782",
+      "slot": 0
+    },
+    {
+      "goal": 1914,
+      "rows": 945,
+      "shard": "shard-0511",
+      "slot": 1
+    },
+    {
+      "goal": 1944,
+      "rows": 617,
+      "shard": "shard-0785",
+      "slot": 2
+    },
+    {
+      "goal": 1944,
+      "rows": 673,
+      "shard": "shard-0787",
+      "slot": 3
+    },
+    {
+      "goal": 1914,
+      "rows": 401,
+      "shard": "shard-0512",
+      "slot": 4
+    },
+    {
+      "goal": 2010,
+      "rows": 217,
+      "shard": "shard-0676",
+      "slot": 5
+    },
+    {
+      "goal": 1944,
+      "rows": 1153,
+      "shard": "shard-0781",
+      "slot": 6
+    },
+    {
+      "goal": 1944,
+      "rows": 761,
+      "shard": "shard-0786",
+      "slot": 7
+    },
+    {
+      "goal": 2010,
+      "rows": 1649,
+      "shard": "shard-0673",
+      "slot": 8
+    },
+    {
+      "goal": 1944,
+      "rows": 993,
+      "shard": "shard-0783",
+      "slot": 9
+    },
+    {
+      "goal": 1914,
+      "rows": 969,
+      "shard": "shard-0510",
+      "slot": 10
+    },
+    {
+      "goal": 1944,
+      "rows": 1841,
+      "shard": "shard-0774",
+      "slot": 11
+    },
+    {
+      "goal": 1944,
+      "rows": 1361,
+      "shard": "shard-0780",
+      "slot": 12
+    },
+    {
+      "goal": 1914,
+      "rows": 1593,
+      "shard": "shard-0507",
+      "slot": 13
+    },
+    {
+      "goal": 1944,
+      "rows": 1785,
+      "shard": "shard-0775",
+      "slot": 14
+    },
+    {
+      "goal": 1944,
+      "rows": 337,
+      "shard": "shard-0789",
+      "slot": 15
+    },
+    {
+      "goal": 2010,
+      "rows": 1777,
+      "shard": "shard-0674",
+      "slot": 16
+    },
+    {
+      "goal": 1944,
+      "rows": 593,
+      "shard": "shard-0788",
+      "slot": 17
+    },
+    {
+      "goal": 1944,
+      "rows": 1897,
+      "shard": "shard-0777",
+      "slot": 18
+    },
+    {
+      "goal": 1944,
+      "rows": 849,
+      "shard": "shard-0784",
+      "slot": 19
+    },
+    {
+      "goal": 1944,
+      "rows": 1721,
+      "shard": "shard-0776",
+      "slot": 20
+    },
+    {
+      "goal": 1944,
+      "rows": 393,
+      "shard": "shard-0790",
+      "slot": 21
+    },
+    {
+      "goal": 1914,
+      "rows": 1449,
+      "shard": "shard-0509",
+      "slot": 22
+    },
+    {
+      "goal": 1944,
+      "rows": 89,
+      "shard": "shard-0792",
+      "slot": 23
+    },
+    {
+      "goal": 1944,
+      "rows": 1441,
+      "shard": "shard-0778",
+      "slot": 24
+    },
+    {
+      "goal": 1944,
+      "rows": 153,
+      "shard": "shard-0791",
+      "slot": 25
+    },
+    {
+      "goal": 1944,
+      "rows": 1545,
+      "shard": "shard-0779",
+      "slot": 26
+    },
+    {
+      "goal": 1914,
+      "rows": 73,
+      "shard": "shard-0513",
+      "slot": 27
+    },
+    {
+      "goal": 2010,
+      "rows": 1217,
+      "shard": "shard-0675",
+      "slot": 28
+    }
+  ],
+  "targetRows": 1894168,
+  "volumeFree": 238600577024
+}

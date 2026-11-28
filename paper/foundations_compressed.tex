@@ -205,11 +205,10 @@ composing with $\iota_n$ yields $\omega_n=\iota_n\circ\sigma_n$.\qed
 If enumeration stops early under a heuristic budget instead of satisfying
 carrier completeness, equal shapes still witness equivalence ($\Rightarrow$),
 but two structurally equivalent expressions need not select the same minimum
-($\Leftarrow$). For example, in Alloy, \texttt{all u: User, p: Photo | p in Ad}
-drops the unused variable \texttt{u} during kernel extraction and contracts to
-effective support $\Delta=\{\texttt{p}:\mathsf{Photo}\}$, so its shape matches
-\texttt{all p: Photo | p in Ad} via a bijection between their one-slot
-effective contexts even though their ambient contexts have different sizes.
+($\Leftarrow$). For example, consider the open Alloy body \texttt{p in Ad} in contexts
+$(u\!:\!\mathsf{User},p\!:\!\mathsf{Photo})$ and $(p\!:\!\mathsf{Photo})$.
+In each context the body reads only $p$. Its effective support therefore
+contains one photo slot, so the identity on that slot matches the two shapes.
 
 \subsection{Building canonical records and search cost}
 \label{sec:canonicalization-procedure}

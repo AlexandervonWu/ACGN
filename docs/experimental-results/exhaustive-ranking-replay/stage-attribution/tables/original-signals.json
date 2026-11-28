@@ -1,0 +1,78 @@
+{
+  "csvSha256": "e1413e17ade259e9ddeab887067d203b9f71cf4fd4454f27877e6c42811c7b08",
+  "distinctReferenceIds": 125,
+  "firstOperationSignals": [
+    {
+      "count": 136,
+      "signature": [
+        "FLAT_ACTIONS",
+        "declaration",
+        "delete",
+        "declaration",
+        "insert"
+      ]
+    },
+    {
+      "count": 125,
+      "signature": [
+        "FLAT_ACTIONS",
+        "declaration",
+        "insert",
+        "declaration",
+        "delete"
+      ]
+    },
+    {
+      "count": 63,
+      "signature": [
+        "FLAT_ACTIONS",
+        "declaration",
+        "insert",
+        "declaration",
+        "update"
+      ]
+    },
+    {
+      "count": 57,
+      "signature": [
+        "FLAT_ACTIONS",
+        "declarationPermutation",
+        null,
+        "declarationPermutation",
+        null
+      ]
+    },
+    {
+      "count": 5,
+      "signature": [
+        "TEMPORAL_BLOCK_EFFECTS",
+        "declaration",
+        null,
+        "declaration",
+        null
+      ]
+    }
+  ],
+  "inputsSha256": "1442865286cdc9cf8a5a6551cba56adb5949b733370f6c2199bdfee55ac797c9",
+  "originalReportSha256": "5dc1545c3ed3bc061ee889fa4dd238e81c1e162687303452a739f604777cfd06",
+  "pairs": 386,
+  "pools": {
+    "coursesNew/inv4": 4,
+    "coursesNew/inv5": 26,
+    "coursesNew/inv9": 1,
+    "coursesOld/inv12": 7,
+    "coursesOld/inv4": 60,
+    "coursesOld/inv5": 162,
+    "socialMedia/inv1": 66,
+    "socialMedia/inv4": 4,
+    "socialMedia/inv7": 33,
+    "socialMedia/inv8": 2,
+    "trainStationNew/inv2": 6,
+    "trainStationOld/inv3": 5,
+    "trash_rl/inv6": 10
+  },
+  "scalarStatus": {
+    "BOTH_MATCH_MEASURED_SCORE": 386
+  },
+  "submissions": 61
+}

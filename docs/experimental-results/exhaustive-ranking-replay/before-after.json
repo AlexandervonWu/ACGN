@@ -1,0 +1,89 @@
+{
+  "incidentPools": [
+    {
+      "pairs": 4,
+      "predicate": "inv4",
+      "question": "coursesNew"
+    },
+    {
+      "pairs": 26,
+      "predicate": "inv5",
+      "question": "coursesNew"
+    },
+    {
+      "pairs": 1,
+      "predicate": "inv9",
+      "question": "coursesNew"
+    },
+    {
+      "pairs": 7,
+      "predicate": "inv12",
+      "question": "coursesOld"
+    },
+    {
+      "pairs": 60,
+      "predicate": "inv4",
+      "question": "coursesOld"
+    },
+    {
+      "pairs": 162,
+      "predicate": "inv5",
+      "question": "coursesOld"
+    },
+    {
+      "pairs": 66,
+      "predicate": "inv1",
+      "question": "socialMedia"
+    },
+    {
+      "pairs": 4,
+      "predicate": "inv4",
+      "question": "socialMedia"
+    },
+    {
+      "pairs": 33,
+      "predicate": "inv7",
+      "question": "socialMedia"
+    },
+    {
+      "pairs": 2,
+      "predicate": "inv8",
+      "question": "socialMedia"
+    },
+    {
+      "pairs": 6,
+      "predicate": "inv2",
+      "question": "trainStationNew"
+    },
+    {
+      "pairs": 5,
+      "predicate": "inv3",
+      "question": "trainStationOld"
+    },
+    {
+      "pairs": 10,
+      "predicate": "inv6",
+      "question": "trash_rl"
+    }
+  ],
+  "newFloor": 469,
+  "newFloorSha256": "f7e666fb7b1d0d8863c5514c3d8549d749c708cc7a44a8758cfc839f7e21f57f",
+  "oldFloor": 83,
+  "originalCertifiedVersusRepairedProgram": {
+    "changed": 201,
+    "same": 1893967
+  },
+  "originalFastVersusRepairedProgram": {
+    "changed": 577,
+    "same": 1893591
+  },
+  "originalFloorSha256": "10c66cfbb1dc54736db337da524936eca5e8b758ad67928405ce96b14d1ed915",
+  "originalJar": "a4c30092d064b8fa39011d888b2a9898a8b5060588e3356bb98e8ba34543217e",
+  "originalNonconforming": 386,
+  "originalSummarySha256": "5dc1545c3ed3bc061ee889fa4dd238e81c1e162687303452a739f604777cfd06",
+  "repairedJar": "79e63cd786f7da185185a078ffd7979c036b8034abd1643b5797ae8dd1613bdd",
+  "repairedNonconforming": 0,
+  "repairedPairsCsvSha256": "44cdcc36576d6baa2c26c95b4bbd76b5fa7373ddd3f3335613442d791dd1b9d3",
+  "repairedSummarySha256": "257e07ff3657328ad05a93410b0a6f921fc11cd4652a5d94ee955aa904d64b38",
+  "rows": 1894168
+}

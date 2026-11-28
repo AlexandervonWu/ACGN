@@ -1,0 +1,15 @@
+{
+  "candidateIdentitySha256": "71e64001db8aa2255956584de45a5c80baefcdd3905564ac2124067d64b79d62",
+  "inputSha256": "3e0e85f21dd9bf760b08b3fae73dcc9b05f9f69c90dad8d6fae1a4cf90c5293a",
+  "matchedModes": {
+    "FLAT_ACTIONS": 1914
+  },
+  "outputSha256": "1ce913c7fcdb4fe31066a482e6cb614f6ada6146104694db8a509cff3e038ea3",
+  "planSha256": "50c20dedc539b725de1074dc7fbe1096087494a0385a37e10aae0724f84fe189",
+  "receiptSha256": "efa8a9639f8dd3e9f6dcdfe740742ff8def377710a8fe8a4b93dc9d7725f7361",
+  "rows": 1914,
+  "shard": "shard-0506",
+  "status": {
+    "MATCHED": 1914
+  }
+}

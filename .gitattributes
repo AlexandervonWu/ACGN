@@ -2,3 +2,9 @@
 /docs/canonical-edit-learning/results/multistep_repair_20261004/evidence.tar.gz filter=lfs diff=lfs merge=lfs -text
 /docs/canonical-edit-learning/results/local_scaling_20261004/evidence.tar.gz filter=lfs diff=lfs merge=lfs -text
 /docs/canonical-edit-learning/results/**/*.tar.gz filter=lfs diff=lfs merge=lfs -text
+
+# Preserve the measured file bytes used by the replay archive's SHA-256 inventory.
+/docs/experimental-results/exhaustive-ranking-replay/** -text
+/docs/experimental-results/exhaustive-ranking-replay/stage-attribution/tables/*.csv whitespace=cr-at-eol
+/docs/experimental-results/exhaustive-ranking-replay/reference-pool-scores/pools.csv whitespace=cr-at-eol
+/docs/experimental-results/exhaustive-ranking-replay/reference-pool-scores/example.als -whitespace
